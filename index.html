@@ -439,15 +439,14 @@
     }
 
 
-
-
     .status-grid-columned {
       display: grid;
       gap: 20px;
       margin-top: 20px;
       justify-content: space-between;
       flex-wrap: wrap;
-      grid-template-columns: repeat(4, 1fr); /* ⬅️ 3 fixed columns */
+      grid-template-columns: repeat(4, 1fr); /* ⬅️ 4 fixed columns */
+      /* max-width: 800px; */
     }
 
     .status-column {
@@ -738,7 +737,8 @@
 
     <hr style="border: none; border-top: 2px solid #D0E6E6; margin: 30px 0;">
 
-    <div class="grid">
+    
+    <div class="grid" style="margin-bottom: 20px;">
       <div class="chart-box">
         <h3>Ouvert – Commencé – Enquête complétée (EE1–EE4)</h3>
         <div id="chart1" class="chart-container"></div>
@@ -791,77 +791,9 @@
           </ol>
         </div>
       </div>
+    </div>
 
-      <!-- <div class="chart-box">
-        <h3 id="chart6-title">Top 8 entreprises</h3>
-        <div id="chart6" class="chart-container"></div>
-        <button class="analysis-toggle" onclick="toggleAnalysis('chart6-analysis')">Afficher/Masquer l’analyse</button>
-        <div id="chart6-analysis" class="analysis-content">
-          <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
-          <ul style="padding-left: 20px;">
-            <li><strong>Décathlon, Orange, Société Générale :</strong> Employeurs récurrents visibles dans toutes les vagues.</li>
-            <li><strong>Secteurs forts :</strong> Distribution et banque/assurance (Carrefour, AXA, Société Générale).</li>
-            <li><strong>Catégorie “Autre” importante :</strong> Beaucoup de diplômés en dehors du top 8 entreprises.</li>
-            <li><strong>Présence régulière d’employeurs :</strong> Indice de relations fortes ou d’intérêt récurrent pour le profil diplômé.</li>
-          </ul>
-
-          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
-          <ol style="padding-left: 20px;">
-            <li><strong>Renforcer les relations entreprises :</strong> Avec les groupes majeurs (ex : AXA, Orange, Decathlon).</li>
-            <li><strong>Explorer les recruteurs “Autres” :</strong> Mieux comprendre et identifier ces structures.</li>
-            <li><strong>Mettre en valeur les employeurs partenaires :</strong> Dans les communications institutionnelles.</li>
-            <li><strong>Segmenter les entreprises :</strong> Pour mieux cibler l'accompagnement par secteur.</li>
-          </ol>
-        </div>
-
-      </div> -->
-
-      <!-- <div class="chart-box">
-        <h3>Statut professionnel</h3>
-        <div class="manual-legend">
-          <div class="legend-item">
-            <span class="legend-color" style="background-color: #457B9D;"></span>
-            <span class="legend-label">A un emploi</span>
-          </div>
-          <div class="legend-item">
-            <span class="legend-color" style="background-color: #D69B5A;"></span>
-            <span class="legend-label">Recherche un emploi</span>
-          </div>
-          <div class="legend-item">
-            <span class="legend-color" style="background-color: #2A9D8F;"></span>
-            <span class="legend-label">Poursuit des études</span>
-          </div>
-          <div class="legend-item">
-            <span class="legend-color" style="background-color: #A77A82;"></span>
-            <span class="legend-label">Aucune activité</span>
-          </div>
-        </div>
-        <div id="chart2" class="chart-grid-container">
-          <div id="chart2-es1" class="chart-grid-item" style="width: 100%; height: 300px;"></div>
-          <div id="chart2-es2" class="chart-grid-item" style="width: 100%; height: 300px;"></div>
-          <div id="chart2-es3" class="chart-grid-item" style="width: 100%; height: 300px;"></div>
-          <div id="chart2-es4" class="chart-grid-item" style="width: 100%; height: 300px;"></div>
-        </div>
-        <button class="analysis-toggle" onclick="toggleAnalysis('chart2-analysis')">Afficher/Masquer l’analyse</button>
-        <div id="chart2-analysis" class="analysis-content" style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
-          <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
-          <ul style="padding-left: 20px;">
-            <li><strong>Majorité en emploi :</strong> Dès EE2, la majorité des diplômés ayant répondu sont en poste.</li>
-            <li><strong>Stabilité croissante :</strong> Le nombre de chercheurs d’emploi passe de 20 à 4.</li>
-            <li><strong>Peu de poursuites d'études :</strong> 4 à 5 par enquête seulement.</li>
-            <li><strong>Très faible inactivité :</strong> Les inactifs sont marginaux.</li>
-          </ul>
-
-          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
-          <ol style="padding-left: 20px;">
-            <li><strong>Mettre en avant les bons résultats :</strong> “80 % des diplômés en emploi” dans les messages de relance.</li>
-            <li><strong>Ajouter des filtres dynamiques :</strong> dans le tableau de bord par profil.</li>
-            <li><strong>Montrer l’évolution :</strong> Mettre en avant la montée de l’emploi entre EE2 et EE4.</li>
-            <li><strong>Améliorer le suivi des demandeurs :</strong> Services spécifiques pour ceux qui cherchent encore un emploi.</li>
-          </ol>
-        </div>
-      </div> -->
-
+    <div class="grid" style="margin-bottom: 20px;">
       <div class="chart-box">
         <h3>Statut professionnel</h3>
         <div class="status-grid-columned">
@@ -951,7 +883,9 @@
         </div>
 
       </div>
+    </div>
 
+    <div class="grid">
       <div class="chart-box">
         <h3>Type de contrat</h3>
         <div id="chart3" class="chart-container"></div>
@@ -1005,6 +939,7 @@
 
 
     </div>
+
   </main>
 
   <!-- Charts Initialization Scripts -->
