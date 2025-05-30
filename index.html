@@ -442,11 +442,12 @@
 
 
     .status-grid-columned {
-      display: flex;
-      gap: 16px;
+      display: grid;
+      gap: 20px;
       margin-top: 20px;
       justify-content: space-between;
       flex-wrap: wrap;
+      grid-template-columns: repeat(4, 1fr); /* ⬅️ 3 fixed columns */
     }
 
     .status-column {
@@ -925,7 +926,7 @@
           </div> -->
           <div class="legend-item">
             <span class="legend-color" style="background-color: #2A9D8F;"></span>
-            <span class="legend-label">Oui</span>
+            <span class="legend-label">Ayant un poste de Manager</span>
           </div>
         </div>
         <div id="chart4" style="width: 100%; height: 300px;"></div>
@@ -1613,7 +1614,7 @@ am5.ready(function() {
           stroke: color,
           fill: color,
           tooltip: am5.Tooltip.new(root, {
-            labelText: `${name}: {valueY}`
+            labelText: `Ayant un poste de Manager: {valueY}`
           })
         })
       );
