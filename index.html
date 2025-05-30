@@ -604,7 +604,7 @@
         <h3 style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;"><strong>Les bonnes compétences</strong></h3>
         
         <!-- Optional: Show a placeholder or small summary -->
-        <p style="text-align: center; color: #1E9180; font-weight: 500;"><span><strong>62%</strong></span> de compétences utilisées par ces étudiants dans leur travail.</p>
+        <p style="text-align: center; color: #1E9180; font-weight: 500;"><span><strong>69%</strong></span> des compétences ciblées sont utlisées après 24 mois.</p>
         <table style="margin: 0 auto; text-align: center;"><thead>
           <tr style="font-size: 15px; color: #6B7280">
             <th style="padding-left: 5px;">EE1</th>
@@ -919,13 +919,13 @@
       <div class="chart-box">
         <h3>Niveau managérial</h3>
         <div class="manual-legend">
-          <div class="legend-item">
+          <!-- <div class="legend-item">
             <span class="legend-color" style="background-color: #A77A82;"></span>
             <span class="legend-label">Oui</span>
-          </div>
+          </div> -->
           <div class="legend-item">
             <span class="legend-color" style="background-color: #2A9D8F;"></span>
-            <span class="legend-label">Non</span>
+            <span class="legend-label">Oui</span>
           </div>
         </div>
         <div id="chart4" style="width: 100%; height: 300px;"></div>
@@ -1564,10 +1564,10 @@ am5.ready(function() {
 
   // Chart 4: Niveau managérial (Line Chart)
   const chart4DataLine = [
-    { es: "EE1", Oui: 0, Non: 0 },
-    { es: "EE2", Oui: 20, Non: 114 },
-    { es: "EE3", Oui: 25, Non: 90 },
-    { es: "EE4", Oui: 30, Non: 88 }
+    { es: "EE1", Oui: 0,  },
+    { es: "EE2", Oui: 20, },
+    { es: "EE3", Oui: 25, },
+    { es: "EE4", Oui: 30, }
   ];
 
   function createLineChartManager(containerId, data) {
@@ -1637,8 +1637,8 @@ am5.ready(function() {
     }
 
     // Add "Oui" and "Non" series
-    createSeries("Oui", "Oui", am5.color("#A77A82"));
-    createSeries("Non", "Non", am5.color("#2A9D8F"));
+    createSeries("Oui", "Oui", am5.color("#2A9D8F"));
+    // createSeries("Non", "Non", am5.color("#A77A82"));
 
     chart.set("cursor", am5xy.XYCursor.new(root, {
       behavior: "none",
