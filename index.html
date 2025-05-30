@@ -1,0 +1,2174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nextera Enquête ouverte – Tableau de bord</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://i.imgur.com/8XDJPhr.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- AmCharts Library -->
+  <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/radar.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/plugins/wordCloud.js"></script>
+  <style>
+    :root {
+      --primary: #8FD2D2;
+      --dark: #0E3F2D;
+      --accent: #15616D;
+      --neutral: #A0A0A0;
+      --bg-light: #F5F8FA;
+      --sidebar-bg: #F0FAFC;
+      --sidebar-border: #D0E6E6;
+      --sidebar-width: 220px;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      display: flex;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg-light);
+    }
+
+    .analysis-toggle {
+      margin-top: 15px;
+      background-color: #15616D;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .analysis-content {
+      display: none;
+      margin-top: 15px;
+      border-left: 4px solid #15616D;
+      padding-left: 15px;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Enhanced Sidebar Styling */
+    .sidebar {
+      width: var(--sidebar-width);
+      /* background: linear-gradient(135deg, #F8FDFD 0%, #F0FAFC 100%); */
+      background: #FFFFFF;
+      border-right: 1px solid var(--sidebar-border);
+      color: var(--dark);
+      padding: 0;
+      min-height: 100vh;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Logo Container */
+    .sidebar .logo-container {
+      padding: 30px 20px;
+      text-align: center;
+      background: linear-gradient(135deg, #ffffff 0%, #f8fdfd 100%);
+      border-bottom: 1px solid #e6f3f3;
+      margin-bottom: 20px;
+    }
+
+    .sidebar .logo-container img {
+      width: 160px;
+      height: auto;
+      max-width: 100%;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+      transition: all 0.3s ease;
+    }
+
+    .sidebar .logo-container img:hover {
+      transform: scale(1.02);
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+    }
+
+    /* Navigation Styling */
+    .sidebar nav {
+      padding: 0 20px;
+    }
+
+    .sidebar nav a {
+      display: block;
+      color: var(--dark);
+      text-decoration: none;
+      margin: 8px 0;
+      font-weight: 500;
+      font-size: 15px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sidebar nav a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(143, 210, 210, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .sidebar nav a:hover::before {
+      left: 100%;
+    }
+
+    .sidebar nav a:hover {
+      background-color: rgba(143, 210, 210, 0.1);
+      transform: translateX(4px);
+      box-shadow: 0 2px 8px rgba(143, 210, 210, 0.2);
+    }
+
+    .sidebar nav a.active {
+      /* background: linear-gradient(135deg, #8FD2D2 0%, #7BCACA 100%); */
+      background: #EBF3F5;
+      /* color: white; */
+      color: #003D46;
+      box-shadow: 0 4px 12px rgba(143, 210, 210, 0.3);
+      transform: translateX(2px);
+    }
+
+    .sidebar nav a.active:hover {
+      /* background: linear-gradient(135deg, #7BCACA 0%, #6BC2C2 100%); */
+      background: #c3d8dd;
+      transform: translateX(6px);
+    }
+
+    /* Add some elegant spacing */
+    .sidebar::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 20px;
+      right: 20px;
+      height: 1px;
+      /* background: var(--dark); */
+      /* background: linear-gradient(90deg, transparent, var(--sidebar-border), transparent); */
+    }
+    .content {
+      flex: 1;
+      padding: 20px;
+      background-color: var(--bg-light);
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    header h1 {
+      font-size: 24px;
+      color: var(--dark);
+    }
+    header h4 {
+      /* font-size: 24px; */
+      color: var(--dark);
+    }
+    .filters {
+      display: flex;
+      gap: 10px;
+    }
+    .filters select {
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    /* .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 20px;
+    } */
+     .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* ⬅️ 2 fixed columns */
+      gap: 20px;
+    }
+    @media (max-width: 1000px) {
+      .grid {
+        grid-template-columns: 1fr; /* Stack on smaller screens */
+      }
+    }
+    .grid1 {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr); /* ⬅️ 4 fixed columns */
+      gap: 20px;
+      width: 100%;
+      max-width: 500px; /* Or any max width you like */
+      margin: 0 auto;
+    }
+    @media (max-width: 400px) {
+      .grid1 {
+        grid-template-columns: 1fr; /* Stack on smaller screens */
+      }
+    }
+     .grid2 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr); /* ⬅️ 4 fixed columns */
+      gap: 20px;
+    }
+    @media (max-width: 1000px) {
+      .grid2 {
+        grid-template-columns: 1fr; /* Stack on smaller screens */
+      }
+    }
+    .grid3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* ⬅️ 3 fixed columns */
+      gap: 20px;
+    }
+    @media (max-width: 1000px) {
+      .grid3 {
+        grid-template-columns: 1fr; /* Stack on smaller screens */
+      }
+    }
+    .chart-box {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    }
+    .chart-box h3 {
+      margin-bottom: 10px;
+      font-size: 16px;
+      color: var(--accent);
+    }
+    .chart-container {
+      width: 100%;
+      height: 450px;
+    }
+    .chart-grid-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      max-width: 100%;
+      height: 700px;
+      margin-top: 20px;
+    }
+
+    .chart-grid-item {
+      width: 100%;
+      height: 500px;
+      position: relative;
+    }
+    #chart2.chart-container{
+      height: 600px;
+    }
+    #chart4.chart-container{
+      height: 450px;
+    }
+    .manual-legend {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px; /* Space between legend items */
+      padding: 10px 0;
+      flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px; /* Space between color box and label */
+    }
+
+    .legend-color {
+      width: 14px;
+      height: 14px;
+      border-radius: 2px; /* Slightly rounded corners for a polished look */
+      display: inline-block;
+    }
+
+    .legend-label {
+      font-size: 16px;
+      color: #666666;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    #chart2.chart-grid-container {
+      position: relative;
+    }
+    #chart4.chart-grid-container {
+      position: relative;
+    }
+    #chart3.chart-container{
+      height: 700px;
+    }
+    #chart6.chart-container {
+      height: 480px;
+    }
+    #chart1.chart-container {
+      height: 500px;
+    }
+    #chart5.chart-container{
+      height: 700px;
+    }
+    #chart6 .company-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      /* justify-content: space-between; */
+    }
+
+    #chart6 .company-item {
+      flex: 1 1 calc(25% - 10px);
+      min-width: 80px;
+      max-width: 150px;
+      text-align: center;
+      /* padding-bottom: 10px; */
+    }
+    /* #chart6 .company-item img {
+      width: 100%;
+      height: auto;
+    } */
+
+    .tabs {
+      margin-bottom: 10px;
+    }
+    .tab-button {
+      background-color: #ffffff;
+      border: 1px solid #15616D;
+      color: #15616D;
+      padding: 5px 12px;
+      margin-right: 5px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+    .tab-button:hover {
+      background-color: #15616D;
+      color: #fff;
+    }
+    .tab-button.active {
+      background-color: #15616D;
+      color: #fff;
+    }
+
+    .tab-button3 {
+      background-color: #ffffff;
+      border: 1px solid #15616D;
+      color: #15616D;
+      padding: 5px 12px;
+      margin-right: 5px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+    .tab-button3:hover {
+      background-color: #15616D;
+      color: #fff;
+    }
+    .tab-button3.active {
+      background-color: #15616D;
+      color: #fff;
+    }
+
+    .tab-button4 {
+      background-color: #ffffff;
+      border: 1px solid #15616D;
+      color: #15616D;
+      padding: 5px 12px;
+      margin-right: 5px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+    .tab-button4:hover {
+      background-color: #15616D;
+      color: #fff;
+    }
+    .tab-button4.active {
+      background-color: #15616D;
+      color: #fff;
+    }
+
+    .tab-button5 {
+      background-color: #ffffff;
+      border: 1px solid #15616D;
+      color: #15616D;
+      padding: 5px 12px;
+      margin-right: 5px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+    .tab-button5:hover {
+      background-color: #15616D;
+      color: #fff;
+    }
+    .tab-button5.active {
+      background-color: #15616D;
+      color: #fff;
+    }
+
+    .tab-button6 {
+      background-color: #ffffff;
+      border: 1px solid #15616D;
+      color: #15616D;
+      padding: 5px 12px;
+      margin-right: 5px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+    .tab-button6:hover {
+      background-color: #15616D;
+      color: #fff;
+    }
+    .tab-button6.active {
+      background-color: #15616D;
+      color: #fff;
+    }
+
+
+
+
+    .status-grid-columned {
+      display: flex;
+      gap: 16px;
+      margin-top: 20px;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .status-column {
+      flex: 1;
+      min-width: 180px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .es-label {
+      font-weight: bold;
+      font-size: 17px;
+      color: #15616D;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+
+    .status-card {
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      background-color: #f5f7fa;
+      color: #333;
+    }
+
+    /* Category Colors */
+    .emploi {
+      background-color: #E6F0F9;
+      border-left: 4px solid #457B9D;
+    }
+    .recherche {
+      background-color: #FAF2E6;
+      border-left: 4px solid #D69B5A;
+    }
+    .etudes {
+      background-color: #E6F7F4;
+      border-left: 4px solid #2A9D8F;
+    }
+    .inactif {
+      background-color: #F9E9EC;
+      border-left: 4px solid #A77A82;
+    }
+
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="logo-container">
+      <img src="https://i.imgur.com/CNq3MUN.png" alt="Nextera Logo">
+    </div>
+    <nav>
+      <a href="#" class="active">Tableau de bord</a>
+      <!-- Add more navigation items as needed -->
+    </nav>
+  </aside>
+  <main class="content">
+    <header>
+      <h1>RDC 2022 - Enquêtes d'Employabilité</h1>
+      <h4>EE1 : Certification &nbsp;| &nbsp;
+
+      <!-- </h4> -->
+      <!-- <h4> -->
+        EE2 : Après 6 mois &nbsp;| &nbsp;
+
+      <!-- </h4> -->
+      <!-- <h4> -->
+        EE3 : Après 12 mois &nbsp;| &nbsp;
+
+      <!-- </h4> -->
+      <!-- <h4> -->
+        EE4 : Après 24 mois
+
+      </h4>
+      <!-- <div class="filters">
+        <label for="cohort">Cohort:</label>
+        <select id="cohort">
+          <option value="2022">2022</option>
+          <option value="2023" selected>2023</option>
+          <option value="2024">2024</option>
+        </select>
+      </div> -->
+    </header>
+
+    <div class="grid2" style="margin-bottom: 20px;">
+      <div class="chart-box" style="text-align: center;">
+        <h3 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;"><strong>Postes</strong></h3>
+        <p style="padding-top: 10px; color: #1E9180 "><strong>Postes ciblés après 24 mois :<span style="color:#2C8B7D	;"> 42%  </span></strong></p>
+        <table style="margin: 0 auto; text-align: center;"><thead>
+          <tr style="font-size: 15px; color: #6B7280 ">
+            <th style="padding-left: 5px;">EE1</th>
+            <th style="padding-left: 5px;">EE2</th>
+            <th style="padding-left: 5px;">EE3</th>
+            <th style="padding-left: 5px;">EE4</th>
+          </tr></thead>
+        <tbody>
+          <tr style="font-size: 13px; color: #159E8E	">
+            <td>0%</td>
+            <td>43%</td>
+            <td>46%</td>
+            <td>42%</td>
+          </tr>
+        </tbody>
+        </table>
+        <!-- <p style="color:#49928a; padding-bottom: 25px;"><strong>27% (Basé sur EE2)</strong></p> -->
+      </div>
+
+      <div class="chart-box" style="text-align: center;">
+        <h3 style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;"><strong>Domaines</strong></h3>
+        <p style="padding-top: 10px; color: #1E9180 "><strong>Domaines ciblés après 24 mois :<span style="color:#49928a;"> 97%  </span></strong></p>
+        <table style="margin: 0 auto; text-align: center;"><thead>
+          <tr style="font-size: 15px;  color: #6B7280 ">
+            <th style="padding-left: 5px;">EE1</th>
+            <th style="padding-left: 5px;">EE2</th>
+            <th style="padding-left: 5px;">EE3</th>
+            <th style="padding-left: 5px;">EE4</th>
+          </tr></thead>
+        <tbody>
+          <tr style="font-size: 13px; color: #159E8E">
+            <td>0%</td>
+            <td>71%</td>
+            <td>85%</td>
+            <td>97%</td>
+          </tr>
+        </tbody>
+        </table>
+      </div>
+
+      <div class="chart-box" style="text-align: center;">
+        <h3 style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;"><strong>Salaires</strong></h3>
+        <p style="padding-top: 10px; color: #1E9180"><strong>Salaires ciblés après 24 mois :<span style="color:#49928a;"> 5% </span></strong></p>
+        <table style="margin: 0 auto; text-align: center;"><thead>
+          <tr style="font-size: 15px; color: #6B7280">
+            <th style="padding-left: 5px;">EE1</th>
+            <th style="padding-left: 5px;">EE2</th>
+            <th style="padding-left: 5px;">EE3</th>
+            <th style="padding-left: 5px;">EE4</th>
+          </tr></thead>
+        <tbody>
+          <tr style="font-size: 13px; color: #159E8E">
+            <td>0%</td>
+            <td>5%</td>
+            <td>4%</td>
+            <td>5%</td>
+          </tr>
+        </tbody>
+        </table>
+      </div>
+
+      <div class="chart-box">
+        <h3 style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;"><strong>Les bonnes compétences</strong></h3>
+        
+        <!-- Optional: Show a placeholder or small summary -->
+        <p style="text-align: center; color: #1E9180; font-weight: 500;"><span><strong>62%</strong></span> de compétences utilisées par ces étudiants dans leur travail.</p>
+        <table style="margin: 0 auto; text-align: center;"><thead>
+          <tr style="font-size: 15px; color: #6B7280">
+            <th style="padding-left: 5px;">EE1</th>
+            <th style="padding-left: 5px;">EE2</th>
+            <th style="padding-left: 5px;">EE3</th>
+            <th style="padding-left: 5px;">EE4</th>
+          </tr></thead>
+        <tbody>
+          <tr style="font-size: 13px; color: #159E8E">
+            <td>0%</td>
+            <td>54%</td>
+            <td>63%</td>
+            <td>69%</td>
+          </tr>
+        </tbody>
+        </table>
+        <!-- <button class="analysis-toggle" onclick="toggleAnalysis('chart-final-analysis')" style="margin-top: 10px;">Afficher/Masquer l’analyse</button>
+
+        <div id="chart-final-analysis" class="analysis-content" style="display: none; margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
+          
+          <h4 style="color: #15616D; margin-bottom: 10px;">🔍 Analyse</h4>
+          <ul style="padding-left: 20px;">
+            <li><strong>Postes visés :</strong> les diplômés ciblent des métiers à forte valeur ajoutée tels que chef de projet, analyste data, consultant, ou product owner.</li>
+            <li><strong>Secteurs dynamiques :</strong> IT, finance, conseil, et industrie dominent les intentions, montrant une bonne orientation vers des secteurs en croissance.</li>
+            <li><strong>Salaires ciblés :</strong> une majorité vise la tranche <strong>1 900€ à 2 199€</strong> à partir d’EE2, avec un pic à 17% à EE3.</li>
+          </ul>
+
+          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandation</h4>
+          <ol style="padding-left: 20px;">
+            <li><span style="color: #2e7d32;"><strong>Aligner la formation</strong></span> avec les besoins du marché en renforçant les compétences clés des secteurs porteurs.</li>
+            <li><span style="color: #2e7d32;"><strong>Renforcer le suivi post-formation</strong></span> (coaching, réseau, accompagnement) pour convertir les intentions en opportunités concrètes.</li>
+          </ol>
+        </div> -->
+      </div>
+
+
+
+    </div>
+
+    <div class="grid1" style="margin-bottom: 20px;">
+      <div class="chart-box" style="background-color: rgb(248, 245, 221);">
+        <h3 style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;"><strong>Analyse</strong></h3>
+        
+        <!-- Optional: Show a placeholder or small summary -->
+        <p style="text-align: center; color: #1E9180; font-weight: 500;">Contribution du programme RDC à l’employabilité des diplômés.</p>
+        <button class="analysis-toggle" onclick="toggleAnalysis('chart-final-analysis')"   style="margin: 10px auto 0 auto; display: block;">Afficher/Masquer l’analyse</button>
+
+        <div id="chart-final-analysis" class="analysis-content" style="display: none; margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
+          
+          <h4 style="color: #15616D; margin-bottom: 10px;">🔍 Analyse</h4>
+          <ul style="padding-left: 20px;">
+            <li><strong>Postes visés :</strong> les diplômés ciblent des métiers à forte valeur ajoutée tels que chef de projet, analyste data, consultant, ou product owner.</li>
+            <li><strong>Secteurs dynamiques :</strong> IT, finance, conseil, et industrie dominent les intentions, montrant une bonne orientation vers des secteurs en croissance.</li>
+            <li><strong>Salaires ciblés :</strong> une majorité vise la tranche <strong>1 900€ à 2 199€</strong> à partir d’EE2, avec un pic à 17% à EE3.</li>
+          </ul>
+
+          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandation</h4>
+          <ol style="padding-left: 20px;">
+            <li><span style="color: #2e7d32;"><strong>Aligner la formation</strong></span> avec les besoins du marché en renforçant les compétences clés des secteurs porteurs.</li>
+            <li><span style="color: #2e7d32;"><strong>Renforcer le suivi post-formation</strong></span> (coaching, réseau, accompagnement) pour convertir les intentions en opportunités concrètes.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-bottom: 20px;">
+      <div class="chart-box" style="text-align: center;">
+        <h3 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;"><strong>Les 3 premiers postes</strong></h3>
+        <p style="padding-top: 10px;"><strong>Conseiller commercial<span style="color:#49928a;"> 17%</span></strong></p>
+        <p><strong>Commercial<span style="color:#49928a;"> 14%</span></strong></p>
+        <p><strong>Responsable des ventes<span style="color:#49928a;"> 4%</span></strong></p>
+        <!-- <p style="color:#49928a; padding-bottom: 25px;"><strong>27% (Basé sur EE2)</strong></p> -->
+      </div>
+
+      <div class="chart-box" style="text-align: center;">
+        <h3 style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;"><strong>Les 3 principaux domaines</strong></h3>
+        <p style="padding-top: 10px;"><strong>Immobilier <span style="color:#49928a;"> 22%</span></strong></p>
+        <p><strong>Commerce<span style="color:#49928a;"> 6%</span></strong></p>
+        <p><strong>Assurance<span style="color:#49928a;"> 4%</span></strong></p>
+      </div>
+
+      <div class="chart-box" style="text-align: center;">
+        <h3 style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;"><strong>Fourchette salariale moyenne</strong></h3>
+        <p style="padding-top: 20px;"><strong>1 600€ – 1 899€</strong></p>
+        <p style="color:#49928a; padding-bottom: 25px;"><strong>38.57%</strong></p>
+      </div>
+
+      <div class="chart-box" style="text-align: center;">
+        <h3 style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;"><strong>Taux de satisfaction de la formation</strong></h3>
+        <p style="padding-top: 10px; color:#1E9180 ; font-size: 40px;"><strong>73%</strong></p>
+        <!-- <p style="color:#49928a; padding-bottom: 25px;"><strong>72.68%</strong></p> -->
+      </div>
+    </div>
+
+    <hr style="border: none; border-top: 2px solid #D0E6E6; margin: 30px 0;">
+
+    <div class="grid3" style="margin-bottom: 20px;">
+      <div class="chart-box" style="text-align: center; background-color: rgb(226, 246, 250);">
+        <h3 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;"><strong>Poursuite d'études</strong></h3>
+        <p style="color:#1E9180 ; font-size: 40px;"><strong>56%</strong></p>
+        <!-- <p style="color:#49928a; padding-bottom: 25px;"><strong>27% (Basé sur EE2)</strong></p> -->
+      </div>
+
+      <div class="chart-box" style="text-align: center; background-color: rgb(226, 250, 233);">
+        <h3 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;"><strong>Domaine de Poursuite d'études</strong></h3>
+        <!-- <p style="padding-top: 10px; color: #1E9180 "><strong><span style="color:#2C8B7D	;"> 56%  </span></strong></p> -->
+        <table style="margin: 0 auto; text-align: center;"><thead>
+          <tr style="font-size: 15px; color: #6B7280 ">
+            <th style="padding-left: 5px;">Commerce / Affaires</th>
+            <th style="padding-left: 5px;">Management / Stratégie d’entreprise</th>
+            <th style="padding-left: 5px;">Ingénierie d’affaires</th>
+          </tr></thead>
+        <tbody>
+          <tr style="font-size: 13px; color: #159E8E	">
+            <td>31%</td>
+            <td>27%</td>
+            <td>13%</td>
+          </tr>
+        </tbody>
+        </table>
+        <!-- <p style="color:#49928a; padding-bottom: 25px;"><strong>27% (Basé sur EE2)</strong></p> -->
+      </div>
+
+      <div class="chart-box" style="text-align: center; background-color: rgb(250, 239, 226);">
+        <h3 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;"><strong>Niveau TOP cible BAC+5</strong></h3>
+        <p style="color:#1E9180 ; font-size: 40px;"><strong>80%</strong></p>
+        <!-- <p style="color:#49928a; padding-bottom: 25px;"><strong>27% (Basé sur EE2)</strong></p> -->
+      </div>
+    </div>
+
+    <hr style="border: none; border-top: 2px solid #D0E6E6; margin: 30px 0;">
+
+    <div class="grid">
+      <div class="chart-box">
+        <h3>Ouvert – Commencé – Enquête complétée (EE1–EE4)</h3>
+        <div id="chart1" class="chart-container"></div>
+        <button class="analysis-toggle" onclick="toggleAnalysis('chart1-analysis')">Afficher/Masquer l’analyse</button>
+        <div id="chart1-analysis" class="analysis-content" style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
+          <h4 style="color: #15616D; margin-bottom: 10px;">🔍 Analyse</h4>
+          <ul style="padding-left: 20px;">
+            <li><strong>Baisse progressive de l’ouverture :</strong> le nombre d'anciens élèves qui ouvrent l’e-mail diminue fortement à chaque vague (de 383 à 110).</li>
+            <li><strong>Bonne complétion après ouverture :</strong> les taux de complétion sont très élevés à partir de EE3 (86% à 96%), ce qui montre que les répondants sont motivés une fois engagés.</li>
+            <li><strong>EE2 marque une chute majeure :</strong> entre EE1 et EE2, le nombre de démarrages chute de plus de moitié, ce qui est préoccupant.</li>
+          </ul>
+
+          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
+          <ol style="padding-left: 20px;">
+            <li><strong>Optimiser les objets d’e-mail</strong> pour être plus engageants et personnalisés (ex. : “Dites-nous où vous en êtes, [Prénom] !”).</li>
+            <li><strong>Envoyer plusieurs rappels</strong> (2 à 3 par vague) avec un ton de plus en plus directif ou incitatif.</li>
+            <li><strong>Alléger le questionnaire</strong> pour le rendre plus rapide à remplir (objectif : moins de 5 minutes).</li>
+            <li><strong>Proposer des incitations</strong> (ex. : tirage au sort, certificat de participation, bon cadeau).</li>
+            <li><strong>Adapter le format au mobile</strong> : vérifier que le formulaire est lisible et simple sur smartphone.</li>
+            <li><strong>Humaniser le message</strong> : ajouter une introduction personnelle d’un responsable ou d’un ancien élève.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <h3 id="chart6-title">Les 8 premières entreprises</h3>
+        <div class="tabs">
+          <button class="tab-button6" data-tab="EE1">EE1</button>
+          <button class="tab-button6 active" data-tab="EE2">EE2</button>
+          <button class="tab-button6" data-tab="EE3">EE3</button>
+          <button class="tab-button6" data-tab="EE4">EE4</button>
+        </div>
+        <div id="chart6" class="chart-container"></div>
+        <button class="analysis-toggle" onclick="toggleAnalysis('chart6-analysis')">Afficher/Masquer l’analyse</button>
+        <div id="chart6-analysis" class="analysis-content">
+          <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
+          <ul style="padding-left: 20px;">
+            <li><strong>Décathlon, Orange, Société Générale :</strong> Employeurs récurrents visibles dans toutes les vagues.</li>
+            <li><strong>Secteurs forts :</strong> Distribution et banque/assurance (Carrefour, AXA, Société Générale).</li>
+            <li><strong>Catégorie “Autre” importante :</strong> Beaucoup de diplômés en dehors du top 8 entreprises.</li>
+            <li><strong>Présence régulière d’employeurs :</strong> Indice de relations fortes ou d’intérêt récurrent pour le profil diplômé.</li>
+          </ul>
+
+          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
+          <ol style="padding-left: 20px;">
+            <li><strong>Renforcer les relations entreprises :</strong> Avec les groupes majeurs (ex : AXA, Orange, Decathlon).</li>
+            <li><strong>Explorer les recruteurs “Autres” :</strong> Mieux comprendre et identifier ces structures.</li>
+            <li><strong>Mettre en valeur les employeurs partenaires :</strong> Dans les communications institutionnelles.</li>
+            <li><strong>Segmenter les entreprises :</strong> Pour mieux cibler l'accompagnement par secteur.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- <div class="chart-box">
+        <h3 id="chart6-title">Top 8 entreprises</h3>
+        <div id="chart6" class="chart-container"></div>
+        <button class="analysis-toggle" onclick="toggleAnalysis('chart6-analysis')">Afficher/Masquer l’analyse</button>
+        <div id="chart6-analysis" class="analysis-content">
+          <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
+          <ul style="padding-left: 20px;">
+            <li><strong>Décathlon, Orange, Société Générale :</strong> Employeurs récurrents visibles dans toutes les vagues.</li>
+            <li><strong>Secteurs forts :</strong> Distribution et banque/assurance (Carrefour, AXA, Société Générale).</li>
+            <li><strong>Catégorie “Autre” importante :</strong> Beaucoup de diplômés en dehors du top 8 entreprises.</li>
+            <li><strong>Présence régulière d’employeurs :</strong> Indice de relations fortes ou d’intérêt récurrent pour le profil diplômé.</li>
+          </ul>
+
+          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
+          <ol style="padding-left: 20px;">
+            <li><strong>Renforcer les relations entreprises :</strong> Avec les groupes majeurs (ex : AXA, Orange, Decathlon).</li>
+            <li><strong>Explorer les recruteurs “Autres” :</strong> Mieux comprendre et identifier ces structures.</li>
+            <li><strong>Mettre en valeur les employeurs partenaires :</strong> Dans les communications institutionnelles.</li>
+            <li><strong>Segmenter les entreprises :</strong> Pour mieux cibler l'accompagnement par secteur.</li>
+          </ol>
+        </div>
+
+      </div> -->
+
+      <!-- <div class="chart-box">
+        <h3>Statut professionnel</h3>
+        <div class="manual-legend">
+          <div class="legend-item">
+            <span class="legend-color" style="background-color: #457B9D;"></span>
+            <span class="legend-label">A un emploi</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background-color: #D69B5A;"></span>
+            <span class="legend-label">Recherche un emploi</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background-color: #2A9D8F;"></span>
+            <span class="legend-label">Poursuit des études</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background-color: #A77A82;"></span>
+            <span class="legend-label">Aucune activité</span>
+          </div>
+        </div>
+        <div id="chart2" class="chart-grid-container">
+          <div id="chart2-es1" class="chart-grid-item" style="width: 100%; height: 300px;"></div>
+          <div id="chart2-es2" class="chart-grid-item" style="width: 100%; height: 300px;"></div>
+          <div id="chart2-es3" class="chart-grid-item" style="width: 100%; height: 300px;"></div>
+          <div id="chart2-es4" class="chart-grid-item" style="width: 100%; height: 300px;"></div>
+        </div>
+        <button class="analysis-toggle" onclick="toggleAnalysis('chart2-analysis')">Afficher/Masquer l’analyse</button>
+        <div id="chart2-analysis" class="analysis-content" style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
+          <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
+          <ul style="padding-left: 20px;">
+            <li><strong>Majorité en emploi :</strong> Dès EE2, la majorité des diplômés ayant répondu sont en poste.</li>
+            <li><strong>Stabilité croissante :</strong> Le nombre de chercheurs d’emploi passe de 20 à 4.</li>
+            <li><strong>Peu de poursuites d'études :</strong> 4 à 5 par enquête seulement.</li>
+            <li><strong>Très faible inactivité :</strong> Les inactifs sont marginaux.</li>
+          </ul>
+
+          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
+          <ol style="padding-left: 20px;">
+            <li><strong>Mettre en avant les bons résultats :</strong> “80 % des diplômés en emploi” dans les messages de relance.</li>
+            <li><strong>Ajouter des filtres dynamiques :</strong> dans le tableau de bord par profil.</li>
+            <li><strong>Montrer l’évolution :</strong> Mettre en avant la montée de l’emploi entre EE2 et EE4.</li>
+            <li><strong>Améliorer le suivi des demandeurs :</strong> Services spécifiques pour ceux qui cherchent encore un emploi.</li>
+          </ol>
+        </div>
+      </div> -->
+
+      <div class="chart-box">
+        <h3>Statut professionnel</h3>
+        <div class="status-grid-columned">
+          <!-- Column for each ES -->
+          <div class="status-column">
+            <div class="es-label">EE1</div>
+            <div style="margin-bottom: 20px;" class="status-card emploi">A un emploi : 0%</div>
+            <div style="margin-bottom: 20px;" class="status-card recherche">Recherche : 0%</div>
+            <div style="margin-bottom: 20px; font-size: 13px" class="status-card etudes">Poursuit des études : 56%</div>
+            <div style="margin-bottom: 20px;" class="status-card inactif">Inactif : 0%</div>
+          </div>
+          <div class="status-column">
+            <div class="es-label">EE2</div>
+            <div style="margin-bottom: 20px;" class="status-card emploi">A un emploi : 78%</div>
+            <div style="margin-bottom: 20px;" class="status-card recherche">Recherche : 15%</div>
+            <div style="margin-bottom: 20px; font-size: 13px" class="status-card etudes">Poursuit des études : 3%</div>
+            <div style="margin-bottom: 20px;" class="status-card inactif">Inactif : 4%</div>
+          </div>
+          <div class="status-column">
+            <div class="es-label">EE3</div>
+            <div style="margin-bottom: 20px;" class="status-card emploi">A un emploi : 83%</div>
+            <div style="margin-bottom: 20px;" class="status-card recherche">Recherche : 10%</div>
+            <div style="margin-bottom: 20px; font-size: 13px" class="status-card etudes">Poursuit des études : 4%</div>
+            <div style="margin-bottom: 20px;" class="status-card inactif">Inactif : 3%</div>
+          </div>
+          <div class="status-column">
+            <div class="es-label">EE4</div>
+            <div style="margin-bottom: 20px;" class="status-card emploi">A un emploi : 85%</div>
+            <div style="margin-bottom: 20px;" class="status-card recherche">Recherche : 4%</div>
+            <div style="margin-bottom: 20px; font-size: 13px" class="status-card etudes">Poursuit des études : 4%</div>
+            <div style="margin-bottom: 20px;" class="status-card inactif">Inactif : 3%</div>
+          </div>
+        </div>
+        <button style="margin-top: 60px;" class="analysis-toggle" onclick="toggleAnalysis('chart2-analysis')">Afficher/Masquer l’analyse</button>
+        <div id="chart2-analysis" class="analysis-content" style=" margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
+        <!-- <div style="padding-top: 30px; margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;"> -->
+          <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
+          <ul style="padding-left: 20px;">
+            <li><strong>Majorité en emploi :</strong> Dès EE2, la majorité des diplômés ayant répondu sont en poste.</li>
+            <li><strong>Stabilité croissante :</strong> Le nombre de chercheurs d’emploi passe de 20 à 4.</li>
+            <li><strong>Peu de poursuites d'études :</strong> 4 à 5 par enquête seulement.</li>
+            <li><strong>Très faible inactivité :</strong> Les inactifs sont marginaux.</li>
+          </ul>
+
+          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
+          <ol style="padding-left: 20px;">
+            <li><strong>Mettre en avant les bons résultats :</strong> “80 % des diplômés en emploi” dans les messages de relance.</li>
+            <li><strong>Ajouter des filtres dynamiques :</strong> dans le tableau de bord par profil.</li>
+            <li><strong>Montrer l’évolution :</strong> Mettre en avant la montée de l’emploi entre EE2 et EE4.</li>
+            <li><strong>Améliorer le suivi des demandeurs :</strong> Services spécifiques pour ceux qui cherchent encore un emploi.</li>
+          </ol>
+        </div>
+      </div>
+
+
+      <div class="chart-box">
+        <h3>Niveau managérial</h3>
+        <div class="manual-legend">
+          <div class="legend-item">
+            <span class="legend-color" style="background-color: #A77A82;"></span>
+            <span class="legend-label">Oui</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background-color: #2A9D8F;"></span>
+            <span class="legend-label">Non</span>
+          </div>
+        </div>
+        <div id="chart4" style="width: 100%; height: 300px;"></div>
+
+        <button class="analysis-toggle" onclick="toggleAnalysis('chart4-analysis')">Afficher/Masquer l’analyse</button>
+        <div id="chart4-analysis" class="analysis-content" style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
+          <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
+          <ul style="padding-left: 20px;">
+            <li><strong>Nombre croissant de managers :</strong> de 20 à 30 entre EE2 et EE4.</li>
+            <li><strong>Progression constante :</strong> environ +5 à chaque vague.</li>
+            <li><strong>Encore une minorité :</strong> seulement 25 % environ sont managers à EE4.</li>
+            <li><strong>Mobilité ascendante :</strong> le programme semble favoriser l’évolution de carrière.</li>
+          </ul>
+
+          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
+          <ol style="padding-left: 20px;">
+            <li><strong>Partager des parcours inspirants :</strong> anciens élèves devenus managers.</li>
+            <li><strong>Mettre en avant la progression :</strong> sous forme graphique ou comparative.</li>
+            <li><strong>Offrir un accompagnement au leadership :</strong> coaching, mentorat ou formations.</li>
+            <li><strong>Utiliser dans la communication :</strong> pour démontrer l’impact long terme du diplôme.</li>
+          </ol>
+        </div>
+
+      </div>
+
+      <div class="chart-box">
+        <h3>Type de contrat</h3>
+        <div id="chart3" class="chart-container"></div>
+        <button class="analysis-toggle" onclick="toggleAnalysis('chart3-analysis')">Afficher/Masquer l’analyse</button>
+        <div id="chart3-analysis" class="analysis-content" style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
+          <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
+          <ul style="padding-left: 20px;">
+            <li><strong>CDI largement dominant :</strong> Plus de 60 diplômés par vague sont en contrat stable.</li>
+            <li><strong>CDD et intérim peu présents :</strong> Ce qui montre une insertion rapide et sécurisée.</li>
+            <li><strong>L’auto-entrepreneuriat reste solide :</strong> Environ 15 répondants en EE2–EE3.</li>
+            <li><strong>Carrières variées :</strong> Fonctionnaire, gérant, indépendant — diversité des choix.</li>
+          </ul>
+
+          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
+          <ol style="padding-left: 20px;">
+            <li><strong>Mettre en avant les CDI :</strong> Témoignages d’alumni, données chiffrées.</li>
+            <li><strong>Accompagner les entrepreneurs :</strong> Coaching, incubateurs, mise en réseau.</li>
+            <li><strong>Étudier la baisse de l’intérim :</strong> Pour mieux comprendre la tendance.</li>
+            <li><strong>Segmenter les services :</strong> Salariés vs indépendants = besoins différents.</li>
+          </ol>
+        </div>
+
+      </div>
+
+
+
+      <div class="chart-box">
+        <h3>Top 8 fonctions</h3>
+        <div id="chart5" class="chart-container"></div>
+        <button class="analysis-toggle" onclick="toggleAnalysis('chart5-analysis')">Afficher/Masquer l’analyse</button>
+        <div id="chart5-analysis" class="analysis-content" style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
+          <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
+          <ul style="padding-left: 20px;">
+            <li><strong>Les fonctions commerciales dominent :</strong> Conseiller commercial, Commercial, Responsable des ventes sont les plus fréquentes.</li>
+            <li><strong>Les postes marketing sont rares :</strong> Très peu de “Responsable marketing”, “Chef de produit”, etc.</li>
+            <li><strong>La catégorie “Autre” est surutilisée :</strong> 48 réponses en EE2 et EE4 la rendent difficile à exploiter.</li>
+            <li><strong>Peu de changements dans le temps :</strong> La structure des rôles reste stable entre EE2 et EE4.</li>
+          </ul>
+
+          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
+          <ol style="padding-left: 20px;">
+            <li><strong>Réviser les intitulés de poste :</strong> Inclure les rôles fréquents classés dans “Autre”.</li>
+            <li><strong>Mettre en avant les rôles clés :</strong> Aide à l’orientation des futurs diplômés.</li>
+            <li><strong>Analyser les rôles “Autre” :</strong> Ajouter un champ libre pour recueillir ces intitulés.</li>
+            <li><strong>Adapter les services carrière :</strong> Se concentrer sur les postes réellement occupés par les alumni.</li>
+          </ol>
+        </div>
+
+      </div>
+
+
+
+    </div>
+  </main>
+
+  <!-- Charts Initialization Scripts -->
+  <script>
+am5.ready(function() {
+  // Chart 1: Stacked Column Chart (unchanged)
+  // Chart 1: Stacked Column Chart
+  var root = am5.Root.new("chart1");
+  root.setThemes([am5themes_Animated.new(root)]);
+
+  var chart = root.container.children.push(
+    am5xy.XYChart.new(root, {
+      panX: false,
+      panY: false,
+      wheelX: "none",
+      wheelY: "none",
+      layout: root.verticalLayout,
+      paddingBottom: 50,
+      paddingTop: 60, // Increased to accommodate the legend at the top
+      paddingLeft: 15,
+      paddingRight: 15
+    })
+  );
+
+  var data = [
+    { stage: "EE1", Opened: 383, Started: 318, Completed: 318 },
+    { stage: "EE2", Opened: 318, Started: 134, Completed: 134 },
+    { stage: "EE3", Opened: 134, Started: 117, Completed: 115 },
+    { stage: "EE4", Opened: 110, Started: 108, Completed: 106 }
+  ];
+
+  // Create the legend and add it first (so it appears at the top)
+  var legend = chart.children.push(
+    am5.Legend.new(root, {
+      centerX: am5.percent(50), // Center horizontally
+      x: am5.percent(50),
+      centerY: am5.percent(0), // Align to the top
+      y: am5.percent(0),
+      layout: am5.GridLayout.new(root, {
+        maxColumns: 3, // Display items horizontally (3 columns)
+        fixedWidthGrid: false
+      }),
+      paddingTop: 10,
+      paddingBottom: 20
+    })
+  );
+
+  legend.labels.template.setAll({
+    fontSize: 16,
+    fill: am5.color("#666666"),
+    fontFamily: "Segoe UI"
+  });
+
+  legend.markers.template.setAll({
+    width: 12,
+    height: 12
+  });
+
+  var xRenderer = am5xy.AxisRendererX.new(root, {
+    minGridDistance: 80,
+    cellStartLocation: 0.2,
+    cellEndLocation: 0.8,
+    strokeOpacity: 0
+  });
+
+  xRenderer.labels.template.setAll({
+    fontSize: 14,
+    fill: am5.color("#666666"),
+    fontFamily: "Segoe UI"
+  });
+
+  xRenderer.grid.template.set("visible", false);
+
+  var xAxis = chart.xAxes.push(
+    am5xy.CategoryAxis.new(root, {
+      categoryField: "stage",
+      renderer: xRenderer,
+      tooltip: am5.Tooltip.new(root, {})
+    })
+  );
+  xAxis.data.setAll(data);
+
+  var yRenderer = am5xy.AxisRendererY.new(root, {
+    strokeOpacity: 0
+  });
+
+  yRenderer.labels.template.setAll({
+    fontSize: 14,
+    fill: am5.color("#666666"),
+    fontFamily: "Segoe UI"
+  });
+
+  yRenderer.grid.template.setAll({
+    strokeOpacity: 0.1,
+    stroke: am5.color("#A0A0A0")
+  });
+
+  var yAxis = chart.yAxes.push(
+    am5xy.ValueAxis.new(root, {
+      renderer: yRenderer,
+      min: 0,
+      max: 900
+    })
+  );
+
+  function createSeries(name, field, color) {
+    // Calculate totals for each stage
+    let totals = {};
+    data.forEach(item => {
+      totals[item.stage] = (totals[item.stage] || 0) + item[field];
+    });
+
+    var series = chart.series.push(
+      am5xy.ColumnSeries.new(root, {
+        name: name,
+        xAxis: xAxis,
+        yAxis: yAxis,
+        valueYField: field,
+        categoryXField: "stage",
+        clustered: true
+      })
+    );
+
+    series.columns.template.setAll({
+      width: am5.percent(85),
+      fill: am5.color(color),
+      stroke: am5.color(color),
+      cornerRadiusTL: 3,
+      cornerRadiusTR: 3
+    });
+
+    // Preprocess data to calculate accurate 100% percentages
+    data.forEach(row => {
+      const total = row.Opened + row.Started + row.Completed;
+      const rawPercents = {
+        Opened: total ? (row.Opened / total) * 100 : 0,
+        Started: total ? (row.Started / total) * 100 : 0,
+        Completed: total ? (row.Completed / total) * 100 : 0
+      };
+
+      // Round down all values
+      let rounded = {
+        Opened: Math.floor(rawPercents.Opened),
+        Started: Math.floor(rawPercents.Started),
+        Completed: Math.floor(rawPercents.Completed)
+      };
+
+      let sum = rounded.Opened + rounded.Started + rounded.Completed;
+
+      // Distribute remaining percentage to highest remainder
+      let remainders = [
+        { key: "Opened", value: rawPercents.Opened - rounded.Opened },
+        { key: "Started", value: rawPercents.Started - rounded.Started },
+        { key: "Completed", value: rawPercents.Completed - rounded.Completed }
+      ];
+
+      remainders.sort((a, b) => b.value - a.value); // Sort by biggest remainder
+
+      let i = 0;
+      while (sum < 100 && i < remainders.length) {
+        rounded[remainders[i].key]++;
+        sum++;
+        i++;
+      }
+
+      // Attach to row
+      row.OpenedPercent = rounded.Opened;
+      row.StartedPercent = rounded.Started;
+      row.CompletedPercent = rounded.Completed;
+    });
+
+    // Set dynamic tooltip with percentage
+    series.columns.template.adapters.add("tooltipText", function(text, target) {
+      const dataItem = target.dataItem.dataContext;
+      let percentField = field + "Percent"; // e.g., "OpenedPercent"
+      return `${name}: ${dataItem[field]} (${dataItem[percentField]}%)`;
+    });
+
+    series.columns.template.set("tooltip", am5.Tooltip.new(root, {
+      pointerOrientation: "vertical",
+      getFillFromSprite: true,
+      getStrokeFromSprite: true,
+      autoTextColor: true,
+      paddingTop: 6,
+      paddingBottom: 6,
+      paddingLeft: 10,
+      paddingRight: 10
+    }));
+
+    series.columns.template.states.create("hover", {
+      fillOpacity: 0.8
+    });
+
+    // Conditionally add label bullet (skip for "Started" series)
+    if (field !== "Started") {
+      series.bullets.push(function () {
+        return am5.Bullet.new(root, {
+          locationY: 1,
+          sprite: am5.Label.new(root, {
+            text: `{${field}Percent}%`, // e.g., "383 | 100%"
+            centerY: am5.percent(0),
+            centerX: am5.percent(50),
+            dy: -30,
+            populateText: true,
+            fontSize: 13,
+            fontWeight: "500",
+            fill: am5.color("#333")
+          })
+        });
+      });
+    }
+
+    series.data.setAll(data);
+    series.appear();
+
+    legend.data.push(series);
+    return series;
+  }
+
+  createSeries("Notification ouverte", "Opened", "#8FD2D2");
+  createSeries("Ouverture de l'enquête", "Started", "#4A90E2");
+  createSeries("Complété l'enquête", "Completed", "#0E3F2D");
+
+  chart.appear(1000, 100);
+
+
+  // Chart 2: Donut/Ring Chart for Statut professionnel (with createSeries function)
+  // Chart 2: Statut professionnel (4 Donut Charts EE1–EE4)
+  // const chart2Data = {
+  //   EE1: [
+  //     { category: "Aucune activité", value: 0, index: 4 },
+  //     { category: "Recherche un emploi", value: 0, index: 3 },
+  //     { category: "Poursuit des études", value: 0, index: 2 },
+  //     { category: "A un emploi", value: 0, index: 1 },
+  //   ],
+  //   EE2: [
+  //     { category: "Aucune activité", value: 5, index: 4 },
+  //     { category: "Recherche un emploi", value: 20, index: 3 },
+  //     { category: "Poursuit des études", value: 4, index: 2 },
+  //     { category: "A un emploi", value: 105, index: 1 },
+  //   ],
+  //   EE3: [
+  //     { category: "Aucune activité", value: 3, index: 4 },
+  //     { category: "Recherche un emploi", value: 12, index: 3 },
+  //     { category: "Poursuit des études", value: 5, index: 2 },
+  //     { category: "A un emploi", value: 95, index: 1 },
+  //   ],
+  //   EE4: [
+  //     { category: "Aucune activité", value: 3, index: 4 },
+  //     { category: "Recherche un emploi", value: 4, index: 3 },
+  //     { category: "Poursuit des études", value: 4, index: 2 },
+  //     { category: "A un emploi", value: 95, index: 1 },
+  //   ]
+  // };
+
+  // // Colors by category (consistent across all ES charts)
+  // const statusColors = {
+  //   "A un emploi": am5.color("#457B9D"),       // Muted blue (from CDD)
+  //   "Recherche un emploi": am5.color("#D69B5A"),     // Muted sandy yellow (from Fonctionnaire)
+  //   "Poursuit des études": am5.color("#2A9D8F"), // Teal-green (from Auto-Entrepreneur)
+  //   "Aucune activité": am5.color("#A77A82")       // Softer rose taupe (from Mandataire Social)
+  // };
+
+  // // Create chart for each ES
+  // function createDonutChartES(containerId, esLabel, data) {
+  //   const root = am5.Root.new(containerId);
+  //   root.setThemes([am5themes_Animated.new(root)]);
+
+  //   const chart = root.container.children.push(
+  //     am5percent.PieChart.new(root, {
+  //       layout: root.verticalLayout,
+  //       innerRadius: am5.percent(50),
+  //       // outerWidth: am5.percent(50),
+  //       paddingTop: 10,
+  //     })
+  //   );
+
+  //   // Add label in the center
+  //   chart.seriesContainer.children.push(
+  //     am5.Label.new(root, {
+  //       text: esLabel,
+  //       fontSize: 18,
+  //       fontWeight: "600",
+  //       centerX: am5.percent(50),
+  //       centerY: am5.percent(50),
+  //       fill: am5.color("#333")
+  //     })
+  //   );
+
+  //   const series = chart.series.push(
+  //     am5percent.PieSeries.new(root, {
+  //       valueField: "value",
+  //       categoryField: "category",
+  //       alignLabels: false
+  //     })
+  //   );
+
+  //   // Configure the labels
+  //   series.labels.template.setAll({
+  //     text: "{value} | {valuePercentTotal.formatNumber('#.0')}%", // Display value and percentage
+  //     fontSize: 14,
+  //     radius: 0,
+  //     fontFamily: "Segoe UI, Tahoma, Geneva, Verdana, sans-serif",
+  //     fontWeight: "500",
+  //     centerX: am5.percent(50),
+  //     centerY: am5.percent(50),
+  //     fill: am5.color("#333") // Temporary default color
+  //   });
+
+  //   series.labels.template.adapters.add("radius", (radius, target) => {
+  //     const index = target.dataItem.dataContext.index;
+  //     return index === 3 && esLabel === 'EE4' ? 22 : radius; // inside → negative, outside → positive
+  //   });
+
+  //   series.ticks.template.set("visible", false);
+  //   // series.ticks.template.setAll({
+  //   //   visible: true,
+  //   //   stroke: am5.color("#0E3F2D"),
+  //   //   strokeWidth: 3
+  //   // });
+
+  //   series.slices.template.adapters.add("fill", (fill, target) => {
+  //     const cat = target.dataItem.dataContext.category;
+  //     return statusColors[cat] || am5.color("#ccc");
+  //   });
+
+  //   series.slices.template.setAll({
+  //     tooltipText: "{category}: {value} ({valuePercentTotal.formatNumber('#.0')}%)", // Update tooltip to include percentage
+  //     stroke: am5.color("#fff"),
+  //     strokeWidth: 1.5,
+  //     cornerRadius: 6
+  //   });
+
+  //   // Set the data for the series
+  //   series.data.setAll(data);
+
+  //   // Update the label colors to match the slices
+  //   series.labels.each((label) => {
+  //     const dataItem = label.dataItem;
+  //     if (dataItem) {
+  //       const category = dataItem.get("category");
+  //       const color = statusColors[category] || am5.color("#ccc");
+  //       label.set("fill", color);
+  //     }
+  //   });
+  // }
+
+  // // Create all 4 charts
+  // createDonutChartES("chart2-es1", "EE1", chart2Data.EE1);
+  // createDonutChartES("chart2-es2", "EE2", chart2Data.EE2);
+  // createDonutChartES("chart2-es3", "EE3", chart2Data.EE3);
+  // createDonutChartES("chart2-es4", "EE4", chart2Data.EE4);
+
+
+  // Chart 3: Type de Contrat (Horizontal Grouped Bar Chart)
+
+  var root3 = am5.Root.new("chart3");
+  root3.setThemes([am5themes_Animated.new(root3)]);
+
+  var chart3 = root3.container.children.push(am5xy.XYChart.new(root3, {
+    layout: root3.verticalLayout,
+    paddingTop: 20,
+    paddingBottom: 50,
+    panX: true,
+    panY: true,
+    wheelX: "panX",
+    wheelY: "zoomY",
+    pinchZoomX: true
+  }));
+
+  // Define custom color set
+  chart3.get("colors").set("colors", [
+    am5.color("#BCDCDC"), // EE1
+    am5.color("#68B3B3"), // EE2
+    am5.color("#2A8A8A"), // EE3
+    am5.color("#0E4B4B")  // EE4
+  ]);
+
+  chart3.set("scrollbarY", am5.Scrollbar.new(root3, {
+    orientation: "vertical",
+  }));
+
+  // Combined dataset across EE1–EE4
+  let datasets3Combined = [
+    { type: "CDI", EE1: 0, EE2: 63, EE3: 58, EE4: 64 },
+    { type: "CDD", EE1: 0, EE2: 9, EE3: 11, EE4: 9 },
+    { type: "Intérim", EE1: 0, EE2: 7, EE3: 3, EE4: 0 },
+    { type: "Fonctionnaire", EE1: 0, EE2: 1, EE3: 1, EE4: 1 },
+    { type: "Contractuel", EE1: 0, EE2: 3, EE3: 1, EE4: 1 },
+    { type: "Auto-Entrepreneur", EE1: 0, EE2: 15, EE3: 15, EE4: 10 },
+    { type: "Gérant", EE1: 0, EE2: 3, EE3: 5, EE4: 4 },
+    { type: "Indépendant", EE1: 0, EE2: 2, EE3: 1, EE4: 3 },
+    { type: "Mandataire Social", EE1: 0, EE2: 0, EE3: 0, EE4: 0 },
+    { type: "Autre", EE1: 0, EE2: 2, EE3: 0, EE4: 1 }
+  ];
+
+  // Filter out "Autre" category
+  // datasets3Combined = datasets3Combined.filter(item => item.type !== "Autre"); // Exclude "Other" category
+  
+  const top8Chart3 = datasets3Combined
+    .sort((a, b) => (b.EE1 + b.EE2 + b.EE3 + b.EE4) - (a.EE1 + a.EE2 + a.EE3 + a.EE4))
+    .slice(0, 8);
+
+  const categoryBaseColors = {
+    "CDI": "#1D3557",
+    "CDD": "#457B9D",
+    "Intérim": "#A8DADC",
+    "Fonctionnaire": "#F4A261",
+    "Contractuel": "#E76F51",
+    "Auto-Entrepreneur": "#2A9D8F",
+    "Gérant": "#264653",
+    "Indépendant": "#6D597A",
+    "Mandataire Social": "#B5838D",
+    "Autre": "#ADB5BD"
+  };
+
+  function shadeColor(color, percent) {
+    // Lighten or darken by percent (-20 is darker, +20 is lighter)
+    let f = parseInt(color.slice(1), 16),
+        t = percent < 0 ? 0 : 255,
+        p = Math.abs(percent) / 100,
+        R = f >> 16,
+        G = f >> 8 & 0x00FF,
+        B = f & 0x0000FF;
+    return "#" + (
+      0x1000000 +
+      (Math.round((t - R) * p) + R) * 0x10000 +
+      (Math.round((t - G) * p) + G) * 0x100 +
+      (Math.round((t - B) * p) + B)
+    ).toString(16).slice(1);
+  }
+
+  // Create Y Axis (Categories)
+  var yAxis3 = chart3.yAxes.push(
+    am5xy.CategoryAxis.new(root3, {
+      categoryField: "type",
+      renderer: am5xy.AxisRendererY.new(root3, {
+        minGridDistance: 40, // ⬅️ Increase this for more space
+        inversed: true,
+        cellStartLocation: 0.05,
+        cellEndLocation: 0.95
+      })
+    })
+  );
+  yAxis3.data.setAll(top8Chart3);
+
+  // yAxis3.get("renderer").labels.template.setAll({
+  //   oversizedBehavior: "wrap",         // or "truncate"
+  //   maxWidth: 120,                      // ⬅️ Give space to long labels
+  //   fontSize: 14,
+  //   fontWeight: "500",
+  //   fill: am5.color("#333")
+  // });
+
+  // Create X Axis (Values)
+  var xAxis3 = chart3.xAxes.push(
+    am5xy.ValueAxis.new(root3, {
+      min: 0,
+      renderer: am5xy.AxisRendererX.new(root3, {})
+    })
+  );
+
+  // Function to create a series
+  function makeSeries(name, field) {
+    let esIndex = { "EE1": 50, "EE2": 20, "EE3": -20, "EE4": -50 }[name]; // Lighter to darker
+
+    let series = chart3.series.push(
+      am5xy.ColumnSeries.new(root3, {
+        name,
+        xAxis: xAxis3,
+        yAxis: yAxis3,
+        valueXField: field,
+        categoryYField: "type",
+        clustered: true
+      })
+    );
+
+    series.columns.template.setAll({
+      tooltipText: `${name} - {categoryY}: {valueX}`,
+      height: am5.percent(90),
+      width: am5.percent(55),
+      strokeOpacity: 0
+    });
+
+    // Dynamically assign color Basé sur category and series
+    series.columns.template.adapters.add("fill", function(fill, target) {
+      let category = target.dataItem.dataContext.type;
+      let base = categoryBaseColors[category] || "#999";
+      return am5.color(shadeColor(base, esIndex));
+    });
+
+    series.columns.template.adapters.add("stroke", (stroke, target) => {
+      let category = target.dataItem.dataContext.type;
+      let base = categoryBaseColors[category] || "#999";
+      return am5.color(shadeColor(base, esIndex));
+    });
+
+    const esLabelColors = {
+      EE1: "#6D597A",
+      EE2: "#2A9D8F",
+      EE3: "#F4A261",
+      EE4: "#E76F51"
+    };
+
+    // Label bullets (unchanged)
+    series.bullets.push(function () {
+      let label = am5.Label.new(root3, {
+        fontSize: 12,
+        fontFamily: "Segoe UI, Tahoma, Geneva, Verdana, sans-serif",// match your header
+        fontWeight: "500",
+        centerY: am5.percent(50),
+        centerX: am5.percent(0),
+        dx: 1 // space between end of bar and label
+      });
+
+      // Set label text
+      label.adapters.add("text", function (text, target) {
+        let value = target.dataItem.get("valueX");
+        let esLabel = target.dataItem.component.get("name");  // ← gets "EE1", etc.
+        return `${value}`;
+      });
+
+      // Match text color to the fill color of its parent column
+      label.adapters.add("fill", function (fill, target) {
+        let category = target.dataItem.dataContext.type;         // e.g., "CDI"
+        let base = categoryBaseColors[category] || "#999";
+        return am5.color(shadeColor(base, esIndex));             // same function as bar
+      });
+
+      return am5.Bullet.new(root3, {
+        locationX: 1,
+        sprite: label
+      });
+    });
+
+
+    series.data.setAll(top8Chart3);
+
+    series.events.once("datavalidated", function () {
+      am5.array.each(series.dataItems, function(dataItem) {
+        if (dataItem.get("valueX") === 0) {
+          dataItem.set("valueXWorking", 0.5);
+        }
+      });
+    });
+  }
+
+  // Create grouped bars for EE1–EE4
+  makeSeries("EE1", "EE1");
+  makeSeries("EE2", "EE2");
+  makeSeries("EE3", "EE3");
+  makeSeries("EE4", "EE4");
+  // makeSeries("EE1", "EE1", "#BCDCDC");
+  // makeSeries("EE2", "EE2", "#68B3B3");
+  // makeSeries("EE3", "EE3", "#2A8A8A");
+  // makeSeries("EE4", "EE4", "#0E4B4B");
+
+
+  // Chart 4: Niveau managérial (Line Chart)
+  const chart4DataLine = [
+    { es: "EE1", Oui: 0, Non: 0 },
+    { es: "EE2", Oui: 20, Non: 114 },
+    { es: "EE3", Oui: 25, Non: 90 },
+    { es: "EE4", Oui: 30, Non: 88 }
+  ];
+
+  function createLineChartManager(containerId, data) {
+    const root = am5.Root.new(containerId);
+    root.setThemes([am5themes_Animated.new(root)]);
+
+    const chart = root.container.children.push(
+      am5xy.XYChart.new(root, {
+        panX: false,
+        panY: false,
+        wheelX: "none",
+        wheelY: "none",
+        layout: root.verticalLayout
+      })
+    );
+
+    // X Axis (Categories: EE1, EE2...)
+    const xAxis = chart.xAxes.push(
+      am5xy.CategoryAxis.new(root, {
+        categoryField: "es",
+        renderer: am5xy.AxisRendererX.new(root, { minGridDistance: 30 }),
+        tooltip: am5.Tooltip.new(root, {})
+      })
+    );
+    xAxis.data.setAll(data);
+
+    // Y Axis (Values)
+    const yAxis = chart.yAxes.push(
+      am5xy.ValueAxis.new(root, {
+        renderer: am5xy.AxisRendererY.new(root, {})
+      })
+    );
+
+    // Line series function
+    function createSeries(field, name, color) {
+      const series = chart.series.push(
+        am5xy.LineSeries.new(root, {
+          name: name,
+          xAxis: xAxis,
+          yAxis: yAxis,
+          valueYField: field,
+          categoryXField: "es",
+          stroke: color,
+          fill: color,
+          tooltip: am5.Tooltip.new(root, {
+            labelText: `${name}: {valueY}`
+          })
+        })
+      );
+
+      series.strokes.template.setAll({
+        strokeWidth: 3
+      });
+
+      series.bullets.push(() =>
+        am5.Bullet.new(root, {
+          sprite: am5.Circle.new(root, {
+            radius: 5,
+            fill: color,
+            stroke: am5.color(0xffffff),
+            strokeWidth: 2
+          })
+        })
+      );
+
+      series.data.setAll(data);
+    }
+
+    // Add "Oui" and "Non" series
+    createSeries("Oui", "Oui", am5.color("#A77A82"));
+    createSeries("Non", "Non", am5.color("#2A9D8F"));
+
+    chart.set("cursor", am5xy.XYCursor.new(root, {
+      behavior: "none",
+      xAxis: xAxis,
+      yAxis: yAxis
+    }));
+
+    chart.appear(1000, 100);
+  }
+
+  // Render the chart
+  createLineChartManager("chart4", chart4DataLine);
+
+
+  // Chart 5: Top 8 fonctions with tabs and dynamic update
+  // Chart 5: Top 8 fonctions (Grouped Horizontal Bar Chart)
+
+  var root5 = am5.Root.new("chart5");
+  root5.setThemes([am5themes_Animated.new(root5)]);
+
+  var chart5 = root5.container.children.push(am5xy.XYChart.new(root5, {
+    layout: root5.verticalLayout,
+    paddingTop: 20,
+    paddingBottom: 50,
+    panX: true,
+    panY: true,
+    wheelX: "panX",
+    wheelY: "zoomY",
+    pinchZoomX: true
+  }));
+
+  chart5.set("scrollbarY", am5.Scrollbar.new(root5, {
+    orientation: "vertical"
+  }));
+
+  // Your original data
+  const datasets5 = {
+    EE1: [
+      { category: "Représentant commercial", value: 0 },
+      { category: "Chargé(e) de communication", value: 0 },
+      { category: "Chargé(e) d'études marketing", value: 0 },
+      { category: "Responsable de marché", value: 0 },
+      { category: "Responsable marketing", value: 0 },
+      { category: "Responsable de marque", value: 0 },
+      { category: "Chef de produit", value: 0 },
+      { category: "Chef de projet marketing", value: 0 },
+      { category: "Responsable de secteur", value: 0 },
+      { category: "Commercial", value: 0 },
+      { category: "Conseiller commercial", value: 0 },
+      { category: "Responsable des ventes", value: 0 },
+      { category: "Directeur commercial", value: 0 },
+      { category: "Responsable performance marketing et ventes", value: 0 },
+      { category: "Responsable de département/univers", value: 0 },
+      { category: "Responsable des études marketing", value: 0 },
+      { category: "Autre", value: 0 }
+    ],
+    EE2: [
+      { category: "Représentant commercial", value: 3 },
+      { category: "Chargé(e) de communication", value: 1 },
+      { category: "Chargé(e) d'études marketing", value: 0 },
+      { category: "Responsable de marché", value: 0 },
+      { category: "Responsable marketing", value: 0 },
+      { category: "Responsable de marque", value: 0 },
+      { category: "Chef de produit", value: 0 },
+      { category: "Chef de projet marketing", value: 0 },
+      { category: "Responsable de secteur", value: 3 },
+      { category: "Commercial", value: 19 },
+      { category: "Conseiller commercial", value: 24 },
+      { category: "Responsable des ventes", value: 4 },
+      { category: "Directeur commercial", value: 1 },
+      { category: "Responsable performance marketing et ventes", value: 0 },
+      { category: "Responsable de département/univers", value: 1 },
+      { category: "Responsable des études marketing", value: 1 },
+      { category: "Autre", value: 48 }
+    ],
+    EE3: [
+      { category: "Représentant commercial", value: 3 },
+      { category: "Chargé(e) de communication", value: 0 },
+      { category: "Chargé(e) d'études marketing", value: 0 },
+      { category: "Responsable de marché", value: 0 },
+      { category: "Responsable marketing", value: 0 },
+      { category: "Responsable de marque", value: 0 },
+      { category: "Chef de produit", value: 0 },
+      { category: "Chef de projet marketing", value: 1 },
+      { category: "Responsable de secteur", value: 2 },
+      { category: "Commercial", value: 20 },
+      { category: "Conseiller commercial", value: 21 },
+      { category: "Responsable des ventes", value: 5 },
+      { category: "Directeur commercial", value: 0 },
+      { category: "Responsable performance marketing et ventes", value: 0 },
+      { category: "Responsable de département/univers", value: 1 },
+      { category: "Responsable des études marketing", value: 0 },
+      { category: "Autre", value: 42 }
+    ],
+    EE4: [
+      { category: "Représentant commercial", value: 4 },
+      { category: "Chargé(e) de communication", value: 1 },
+      { category: "Chargé(e) d'études marketing", value: 0 },
+      { category: "Responsable de marché", value: 0 },
+      { category: "Responsable marketing", value: 0 },
+      { category: "Responsable de marque", value: 0 },
+      { category: "Chef de produit", value: 0 },
+      { category: "Chef de projet marketing", value: 0 },
+      { category: "Responsable de secteur", value: 0 },
+      { category: "Commercial", value: 14 },
+      { category: "Conseiller commercial", value: 19 },
+      { category: "Responsable des ventes", value: 5 },
+      { category: "Directeur commercial", value: 1 },
+      { category: "Responsable performance marketing et ventes", value: 0 },
+      { category: "Responsable de département/univers", value: 1 },
+      { category: "Responsable des études marketing", value: 0 },
+      { category: "Autre", value: 48 }
+    ]
+  };
+
+  // Step 1: Combine into grouped format
+  function combineESData(datasets) {
+    const combined = {};
+    for (const es of ["EE1", "EE2", "EE3", "EE4"]) {
+      datasets[es].forEach(item => {
+        if (!combined[item.category]) {
+          combined[item.category] = {
+            category: item.category, EE1: 0, EE2: 0, EE3: 0, EE4: 0
+          };
+        }
+        combined[item.category][es] = item.value;
+      });
+    }
+    return Object.values(combined);
+  }
+
+  let dataset5Combined = combineESData(datasets5);
+  const top8 = dataset5Combined
+    .sort((a, b) => (b.EE1 + b.EE2 + b.EE3 + b.EE4) - (a.EE1 + a.EE2 + a.EE3 + a.EE4))
+    .slice(0, 8);
+
+  // yAxis5.data.setAll(top8);
+  // series.data.setAll(top8); // for each series
+
+
+  // Step 2: Set base color per category
+  const jobBaseColors = {
+    "Représentant commercial": "#1D3557",
+    "Chargé(e) de communication": "#457B9D",
+    "Chargé(e) d'études marketing": "#A8DADC",
+    "Responsable de marché": "#F4A261",
+    "Responsable marketing": "#E76F51",
+    "Responsable de marque": "#2A9D8F",
+    "Chef de produit": "#264653",
+    "Chef de projet marketing": "#6D597A",
+    "Responsable de secteur": "#B5838D",
+    "Commercial": "#8ECAE6",
+    "Conseiller commercial": "#219EBC",
+    "Responsable des ventes": "#023047",
+    "Directeur commercial": "#FFB703",
+    "Responsable performance marketing et ventes": "#FB8500",
+    "Responsable de département/univers": "#9B5DE5",
+    "Responsable des études marketing": "#F15BB5",
+    "Autre": "#ADB5BD"
+  };
+
+  // Shading utility (same as Chart 3)
+  function shadeColor(color, percent) {
+    let f = parseInt(color.slice(1), 16),
+        t = percent < 0 ? 0 : 255,
+        p = Math.abs(percent) / 100,
+        R = f >> 16,
+        G = f >> 8 & 0x00FF,
+        B = f & 0x0000FF;
+    return "#" + (
+      0x1000000 +
+      (Math.round((t - R) * p) + R) * 0x10000 +
+      (Math.round((t - G) * p) + G) * 0x100 +
+      (Math.round((t - B) * p) + B)
+    ).toString(16).slice(1);
+  }
+
+  // Step 3: Create axes
+  const yAxis5 = chart5.yAxes.push(
+    am5xy.CategoryAxis.new(root5, {
+      categoryField: "category",
+      renderer: am5xy.AxisRendererY.new(root5, {
+        minGridDistance: 40,
+        inversed: true,
+        cellStartLocation: 0.05,
+        cellEndLocation: 0.95
+      })
+    })
+  );
+  yAxis5.data.setAll(top8);
+
+  const xAxis5 = chart5.xAxes.push(
+    am5xy.ValueAxis.new(root5, {
+      min: 0,
+      renderer: am5xy.AxisRendererX.new(root5, {})
+    })
+  );
+
+  // Step 4: Create grouped series
+  function makeSeries5(name, field) {
+    const esShade = { EE1: 50, EE2: 20, EE3: -20, EE4: -50 }[name];
+
+    const series = chart5.series.push(
+      am5xy.ColumnSeries.new(root5, {
+        name,
+        xAxis: xAxis5,
+        yAxis: yAxis5,
+        valueXField: field,
+        categoryYField: "category",
+        clustered: true
+      })
+    );
+
+    series.columns.template.setAll({
+      tooltipText: `${name} - {categoryY}: {valueX}`,
+      height: am5.percent(90),
+      width: am5.percent(55),
+      strokeOpacity: 0
+    });
+
+    // Dynamic color per category + ES shade
+    series.columns.template.adapters.add("fill", function (fill, target) {
+      const category = target.dataItem.dataContext.category;
+      const base = jobBaseColors[category] || "#999";
+      return am5.color(shadeColor(base, esShade));
+    });
+
+    series.columns.template.adapters.add("stroke", function (stroke, target) {
+      const category = target.dataItem.dataContext.category;
+      const base = jobBaseColors[category] || "#999";
+      return am5.color(shadeColor(base, esShade));
+    });
+
+    // Label bullet (value)
+    series.bullets.push(function () {
+      let label = am5.Label.new(root5, {
+        fontSize: 13,
+        centerY: am5.percent(50),
+        centerX: am5.percent(0),
+        fontFamily: "Segoe UI, Tahoma, Geneva, Verdana, sans-serif", // match your header
+        fontWeight: "500",
+        dx: 1
+      });
+
+      label.adapters.add("text", function (text, target) {
+        const value = target.dataItem.get("valueX");
+        let esLabel = target.dataItem.component.get("name");  // ← gets "EE1", etc.
+        return `${value}`;
+      });
+
+      label.adapters.add("fill", function (fill, target) {
+        const category = target.dataItem.dataContext.category;
+        const base = jobBaseColors[category] || "#999";
+        return am5.color(shadeColor(base, esShade));
+      });
+
+      return am5.Bullet.new(root5, {
+        locationX: 1,
+        sprite: label
+      });
+    });
+
+    // Set data + handle 0 values
+    series.data.setAll(top8);
+    series.events.once("datavalidated", function () {
+      am5.array.each(series.dataItems, function (dataItem) {
+        if (dataItem.get("valueX") === 0) {
+          dataItem.set("valueXWorking", 0.5);
+        }
+      });
+    });
+  }
+
+  // Step 5: Create 4 ES series
+  makeSeries5("EE1", "EE1");
+  makeSeries5("EE2", "EE2");
+  makeSeries5("EE3", "EE3");
+  makeSeries5("EE4", "EE4");
+
+
+
+
+  // Chart 6: Top 8 entreprises (Bar Chart with Logos)
+   // Chart 6: Top 8 Companies (Circle Layout with Logos) - HTML/CSS SolutionMore actions
+  // Clear the chart container and replace with HTML
+  document.getElementById('chart6').innerHTML = `
+    <style>
+      .company-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 20px;
+        gap: 15px; /* Reduced gap to prevent excessive spacing */
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .company-item {
+        display: flex;
+        padding-top: 20px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        
+        flex: 1 1 160px; /* flex-grow, flex-shrink, flex-basis */
+        max-width: 25%;   /* Max 5 per row on large screens */
+        box-sizing: border-box;
+      }
+
+      .company-item:hover {
+        transform: scale(1.05);
+      }
+
+      .company-circle {
+        /* Use percentage-based sizing relative to the parent */
+        width: 80%;
+        aspect-ratio: 1 / 1; /* Ensure the circle stays circular */
+        max-width: 130px; /* Maximum size for larger screens */
+        border: 0px solid #8FD2D2;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: border-width 0.2s ease;
+      }
+
+      .company-item:hover .company-circle {
+        border-width: 4px;
+      }
+
+      .company-logo {
+        max-width: 60%;
+        max-height: 60%;
+        height: auto;
+        object-fit: contain;
+      }
+
+      .company-count {
+        font-size: clamp(10px, 1.5vw, 16px);
+        font-weight: bold;
+        color: #0E3F2D;
+        margin-bottom: 2px;
+        text-align: center;
+      }
+
+      .company-percent {
+        font-size: clamp(8px, 1.2vw, 13px);
+        color: #666666;
+        text-align: center;
+      }
+
+      .company-name {
+        font-size: clamp(8px, 1vw, 12px);
+        color: #888888;
+        text-align: center;
+        margin-top: 5px;
+      }
+
+      /* Media queries for better control at different screen sizes */
+      @media (max-width: 800px) {
+        .company-item {
+          width: calc(25% - 15px); /* 4 items per row */
+          min-width: 90px;
+        }
+
+        .company-circle {
+          width: 75%;
+          max-width: 100px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .company-item {
+          width: calc(33.33% - 15px); /* 3 items per row */
+          min-width: 80px;
+        }
+
+        .company-circle {
+          width: 70%;
+          max-width: 90px;
+        }
+      }
+
+      @media (max-width: 400px) {
+        .company-item {
+          width: calc(50% - 15px); /* 2 items per row */
+          min-width: 70px;
+        }
+
+        .company-circle {
+          width: 65%;
+          max-width: 80px;
+        }
+      }
+    </style>
+    
+    <div class="company-grid" id="companyGrid">
+      <!-- Companies will be inserted here -->
+    </div>
+  `;
+
+  // Company data
+  // var data6 = [
+  //   { company: "Google", value: 120, logo: "https://upload.wikimedia.org/wikipedia/commons/b/b0/Darty.svg" },
+  //   { company: "Microsoft", value: 110, logo: "https://www.decathlon.media/app/fo-html/vues/commun/img/commun/logo-decathlon.svg" },
+  //   { company: "Amazon", value: 95, logo: "https://upload.wikimedia.org/wikipedia/fr/c/cd/Logo_Auchan_%282015%29.svg" },
+  //   { company: "Apple", value: 90, logo: "https://upload.wikimedia.org/wikipedia/fr/3/3b/Logo_Carrefour.svg" },
+  //   { company: "Meta", value: 85, logo: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Pernod_Ricard_logo_2019.svg" },
+  //   { company: "Netflix", value: 80, logo: "https://upload.wikimedia.org/wikipedia/commons/9/94/AXA_Logo.svg" },
+  //   { company: "Tesla", value: 75, logo: "https://upload.wikimedia.org/wikipedia/commons/9/9d/Soci%C3%A9t%C3%A9_G%C3%A9n%C3%A9rale.svg" },
+  //   { company: "IBM", value: 70, logo: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Orange_logo.svg" }
+  // ];
+
+  // Company datasets per ES
+  const datasets6 = {
+    EE1: [
+      { company: "Darty", value: 0, logo: "https://upload.wikimedia.org/wikipedia/commons/b/b0/Darty.svg" },
+      { company: "Decathlon", value: 0, logo: "https://www.decathlon.media/app/fo-html/vues/commun/img/commun/logo-decathlon.svg" },
+      { company: "Auchan", value: 0, logo: "https://upload.wikimedia.org/wikipedia/fr/c/cd/Logo_Auchan_%282015%29.svg" },
+      { company: "Carrefour", value: 0, logo: "https://upload.wikimedia.org/wikipedia/fr/3/3b/Logo_Carrefour.svg" },
+      { company: "Pernod Ricard", value: 0, logo: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Pernod_Ricard_logo_2019.svg" },
+      { company: "AXA Assurances", value: 0, logo: "https://upload.wikimedia.org/wikipedia/commons/9/94/AXA_Logo.svg" },
+      { company: "Société Générale", value: 0, logo: "https://upload.wikimedia.org/wikipedia/commons/9/9d/Soci%C3%A9t%C3%A9_G%C3%A9n%C3%A9rale.svg" },
+      { company: "Orange", value: 0, logo: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Orange_logo.svg" },
+      // { company: "Other", value: 0, logo: "https://www.svgrepo.com/show/490660/company.svg" }
+    ],
+    EE2: [
+      { company: "Darty", value: 4, logo: "https://upload.wikimedia.org/wikipedia/commons/b/b0/Darty.svg" },
+      { company: "Decathlon", value: 9, logo: "https://www.decathlon.media/app/fo-html/vues/commun/img/commun/logo-decathlon.svg" },
+      { company: "Auchan", value: 5, logo: "https://upload.wikimedia.org/wikipedia/fr/c/cd/Logo_Auchan_%282015%29.svg" },
+      { company: "Carrefour", value: 4, logo: "https://upload.wikimedia.org/wikipedia/fr/3/3b/Logo_Carrefour.svg" },
+      { company: "Pernod Ricard", value: 4, logo: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Pernod_Ricard_logo_2019.svg" },
+      { company: "AXA Assurances", value: 5, logo: "https://upload.wikimedia.org/wikipedia/commons/9/94/AXA_Logo.svg" },
+      { company: "Société Générale", value: 5, logo: "https://upload.wikimedia.org/wikipedia/commons/9/9d/Soci%C3%A9t%C3%A9_G%C3%A9n%C3%A9rale.svg" },
+      { company: "Orange", value: 6, logo: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Orange_logo.svg" },
+      // { company: "Other", value: 65, logo: "https://www.svgrepo.com/show/490660/company.svg" }
+    ],
+    EE3: [
+      { company: "Darty", value: 6, logo: "https://upload.wikimedia.org/wikipedia/commons/b/b0/Darty.svg" },
+      { company: "Decathlon", value: 11, logo: "https://www.decathlon.media/app/fo-html/vues/commun/img/commun/logo-decathlon.svg" },
+      { company: "Auchan", value: 6, logo: "https://upload.wikimedia.org/wikipedia/fr/c/cd/Logo_Auchan_%282015%29.svg" },
+      { company: "Carrefour", value: 7, logo: "https://upload.wikimedia.org/wikipedia/fr/3/3b/Logo_Carrefour.svg" },
+      { company: "Pernod Ricard", value: 4, logo: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Pernod_Ricard_logo_2019.svg" },
+      { company: "AXA Assurances", value: 6, logo: "https://upload.wikimedia.org/wikipedia/commons/9/94/AXA_Logo.svg" },
+      { company: "Société Générale", value: 8, logo: "https://upload.wikimedia.org/wikipedia/commons/9/9d/Soci%C3%A9t%C3%A9_G%C3%A9n%C3%A9rale.svg" },
+      { company: "Orange", value: 8, logo: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Orange_logo.svg" },
+      // { company: "Other", value: 0, logo: "https://www.svgrepo.com/show/490660/company.svg" }
+    ],
+    EE4: [
+      { company: "Darty", value: 6, logo: "https://upload.wikimedia.org/wikipedia/commons/b/b0/Darty.svg" },
+      { company: "Decathlon", value: 11, logo: "https://www.decathlon.media/app/fo-html/vues/commun/img/commun/logo-decathlon.svg" },
+      { company: "Auchan", value: 8, logo: "https://upload.wikimedia.org/wikipedia/fr/c/cd/Logo_Auchan_%282015%29.svg" },
+      { company: "Carrefour", value: 8, logo: "https://upload.wikimedia.org/wikipedia/fr/3/3b/Logo_Carrefour.svg" },
+      { company: "Pernod Ricard", value: 7, logo: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Pernod_Ricard_logo_2019.svg" },
+      { company: "AXA Assurances", value: 4, logo: "https://upload.wikimedia.org/wikipedia/commons/9/94/AXA_Logo.svg" },
+      { company: "Société Générale", value: 7, logo: "https://upload.wikimedia.org/wikipedia/commons/9/9d/Soci%C3%A9t%C3%A9_G%C3%A9n%C3%A9rale.svg" },
+      { company: "Orange", value: 9, logo: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Orange_logo.svg" },
+      // { company: "Other", value: 0, logo: "https://www.svgrepo.com/show/490660/company.svg" }
+    ]
+  };
+
+  function renderCompaniesChart(esKey) {
+    const data = datasets6[esKey];
+    const sorted = [...data].sort((a, b) => b.value - a.value);
+    const top8 = sorted.slice(0, 8);
+
+    const topTotal = top8.reduce((sum, item) => sum + item.value, 0);
+    const total = 105;
+    const percentage = Math.round((topTotal / total) * 100);
+
+    // Update title
+    document.getElementById('chart6-title').innerText = `Les 8 premières entreprises : ${topTotal} / ${percentage}%`;
+
+    // Clear previous content
+    const companyGrid = document.getElementById('companyGrid');
+    companyGrid.innerHTML = "";
+
+    // Add percent to each company
+    top8.forEach(company => {
+      const companyItem = document.createElement('div');
+      companyItem.className = 'company-item';
+      const percent = Math.round((company.value / total) * 100);
+
+      companyItem.innerHTML = `
+        <div class="company-circle">
+          <img src="${company.logo}" alt="${company.company}" class="company-logo" onerror="this.style.display='none'">
+        </div>
+        <div class="company-count">${company.value}</div>
+        <div class="company-percent">${percent}%</div>
+        <div class="company-name">${company.company}</div>
+      `;
+
+      companyItem.title = `${company.company}: ${company.value} students (${percent}%)`;
+
+      companyItem.addEventListener("click", () => {
+        console.log(`Clicked on ${company.company}: ${company.value} students`);
+      });
+
+      companyGrid.appendChild(companyItem);
+    });
+  }
+
+  renderCompaniesChart("EE2"); // Initial render
+
+  document.querySelectorAll(".tab-button6").forEach(button => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".tab-button6").forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
+
+      const esKey = button.getAttribute("data-tab");
+      renderCompaniesChart(esKey);
+    });
+  });
+  
+});
+</script>
+<script>
+  function toggleAnalysis(id) {
+    const section = document.getElementById(id);
+    if (section.style.display === "none" || section.style.display === "") {
+      section.style.display = "block";
+    } else {
+      section.style.display = "none";
+    }
+  }
+</script>
+</body>
+</html>
