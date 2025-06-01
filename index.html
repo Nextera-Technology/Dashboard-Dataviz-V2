@@ -750,8 +750,8 @@
         <div id="chart1-analysis" class="analysis-content" style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
           <h4 style="color: #15616D; margin-bottom: 10px;">🔍 Analyse</h4>
           <ul style="padding-left: 20px;">
-            <li><strong>Baisse progressive de l’ouverture :</strong> le nombre d'anciens élèves qui ouvrent l’e-mail diminue fortement à chaque vague (de 383 à 110).</li>
-            <li><strong>Bonne complétion après ouverture :</strong> les taux de complétion sont très élevés à partir de EE3 (86% à 96%), ce qui montre que les répondants sont motivés une fois engagés.</li>
+            <li><strong>Baisse progressive de l’ouverture :</strong> le nombre d'anciens élèves qui ouvrent l’e-mail diminue fortement à chaque vague (de 318 à 108).</li>
+            <li><strong>Bonne complétion après ouverture :</strong> les taux de complétion sont très élevés à partir de EE2 (81% à 90%), ce qui montre que les répondants sont motivés une fois engagés.</li>
             <li><strong>EE2 marque une chute majeure :</strong> entre EE1 et EE2, le nombre de démarrages chute de plus de moitié, ce qui est préoccupant.</li>
           </ul>
 
@@ -976,10 +976,10 @@ am5.ready(function() {
   );
 
   var data = [
-    { stage: "EE1", Opened: 383, Started: 318, Completed: 318 },
-    { stage: "EE2", Opened: 318, Started: 134, Completed: 134 },
-    { stage: "EE3", Opened: 134, Started: 117, Completed: 115 },
-    { stage: "EE4", Opened: 110, Started: 108, Completed: 106 }
+    { stage: "EE1", Opened: 318, Started: 318, Completed: 318 },
+    { stage: "EE2", Opened: 134, Started: 134, Completed: 108 },
+    { stage: "EE3", Opened: 117, Started: 117, Completed: 100 },
+    { stage: "EE4", Opened: 108, Started: 108, Completed: 97 }
   ];
 
   // Create the legend and add it first (so it appears at the top)
@@ -1086,9 +1086,9 @@ am5.ready(function() {
     data.forEach(row => {
       const total = row.Opened + row.Started + row.Completed;
       const rawPercents = {
-        Opened: total ? (row.Opened / total) * 100 : 0,
-        Started: total ? (row.Started / total) * 100 : 0,
-        Completed: total ? (row.Completed / total) * 100 : 0
+        Opened: total ? (row.Opened / 318) * 100 : 0,
+        Started: total ? (row.Started / 318) * 100 : 0,
+        Completed: total ? (row.Completed / 318) * 100 : 0
       };
 
       // Round down all values
