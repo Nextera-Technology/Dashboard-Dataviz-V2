@@ -687,7 +687,7 @@
     </div>
 
     <div class="grid1" style="margin-bottom: 20px;">
-      <div class="chart-box" style="background-color: rgb(248, 245, 221);">
+      <div class="chart-box" style="background-color: #f5e8d5;">
         <h3 style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;"><strong>Analyse</strong></h3>
         
         <!-- Optional: Show a placeholder or small summary -->
@@ -2421,20 +2421,22 @@ am5.ready(function () {
     })
   );
 
+
   // Create series
   var series = chart.series.push(
     am5percent.PieSeries.new(root, {
       name: "Postes",
       valueField: "value",
-      categoryField: "category"
+      categoryField: "category",
+      fillField: "color"
     })
   );
 
   // Set data
   series.data.setAll([
-    { category: "Conseiller commercial", value: 17 },
-    { category: "Commercial", value: 14 },
-    { category: "Responsable des ventes", value: 4 }
+    { category: "Conseiller commercial", value: 17, color: am5.color(0xFFFBBD) },
+    { category: "Commercial", value: 14, color: am5.color(0x7FB069) },
+    { category: "Responsable des ventes", value: 4, color: am5.color(0xE6AA68) }
   ]);
 
   // Add labels
@@ -2454,8 +2456,7 @@ am5.ready(function () {
 </script>
 
 <script>
-am5.ready(function () {
-  // Root for domaine pie
+am5.ready(function() {
   var root2 = am5.Root.new("domainePieChart");
 
   root2.setThemes([am5themes_Animated.new(root2)]);
@@ -2466,26 +2467,18 @@ am5.ready(function () {
     })
   );
 
-  // chart2.get("colors").setAll({
-  //   colors: [
-  //     am5.color(0x49928a), // Immobilier
-  //     am5.color(0x73c2a9), // Commerce
-  //     am5.color(0xa7ddd2)  // Assurance
-  //   ]
-  // });
-
   var series2 = chart2.series.push(
     am5percent.PieSeries.new(root2, {
-      name: "Domaines",
       valueField: "value",
-      categoryField: "category"
+      categoryField: "category",
+      fillField: "color"
     })
   );
 
   series2.data.setAll([
-    { category: "Immobilier", value: 22 },
-    { category: "Commerce", value: 6 },
-    { category: "Assurance", value: 4 }
+    { category: "Immobilier", value: 22, color: am5.color(0x99D17B) },
+    { category: "Commerce", value: 6, color: am5.color(0x95BF8F) },
+    { category: "Assurance", value: 4, color: am5.color(0xB1AE91) }
   ]);
 
   series2.labels.template.setAll({
@@ -2498,7 +2491,6 @@ am5.ready(function () {
     stroke: am5.color(0xffffff),
     strokeWidth: 2
   });
-
 });
 </script>
 
