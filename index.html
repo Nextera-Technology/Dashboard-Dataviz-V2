@@ -523,6 +523,19 @@
       stroke-width: 1.5px;
       cursor: pointer;
     }
+
+
+    .chart-content {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .region-list {
+      flex: 0 0 200px; /* Fixed width for the list */
+      font-size: 14px;
+    }
+
   </style>
 </head>
 <body>
@@ -699,20 +712,22 @@
       </div>
     </div>
 
-    <div class="grid2" style="margin-bottom: 20px;">
+    <div class="grid" style="margin-bottom: 20px;">
       <div class="chart-box" style="text-align: center;">
         <h3 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;"><strong>Les 3 premiers postes</strong></h3>
-        <p style="padding-top: 10px;"><strong>Conseiller commercial<span style="color:#49928a;"> 17%</span></strong></p>
+        <div id="pieChart" style="width: 100%; height: 300px;"></div>
+        <!-- <p style="padding-top: 10px;"><strong>Conseiller commercial<span style="color:#49928a;"> 17%</span></strong></p>
         <p><strong>Commercial<span style="color:#49928a;"> 14%</span></strong></p>
-        <p><strong>Responsable des ventes<span style="color:#49928a;"> 4%</span></strong></p>
+        <p><strong>Responsable des ventes<span style="color:#49928a;"> 4%</span></strong></p> -->
         <!-- <p style="color:#49928a; padding-bottom: 25px;"><strong>27% (Basé sur EE2)</strong></p> -->
       </div>
 
       <div class="chart-box" style="text-align: center;">
         <h3 style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;"><strong>Les 3 principaux domaines</strong></h3>
-        <p style="padding-top: 10px;"><strong>Immobilier <span style="color:#49928a;"> 22%</span></strong></p>
+        <div id="domainePieChart" style="width: 100%; height: 300px; margin: auto;"></div>
+        <!-- <p style="padding-top: 10px;"><strong>Immobilier <span style="color:#49928a;"> 22%</span></strong></p>
         <p><strong>Commerce<span style="color:#49928a;"> 6%</span></strong></p>
-        <p><strong>Assurance<span style="color:#49928a;"> 4%</span></strong></p>
+        <p><strong>Assurance<span style="color:#49928a;"> 4%</span></strong></p> -->
       </div>
 
       <div class="chart-box" style="text-align: center;">
@@ -839,14 +854,29 @@
     <div class="grid" style="margin-bottom: 20px;">
       <div class="chart-box">
         <h3>Étudiants par région</h3>
+        <!-- <div class="region-list">
+          <p>Bretagne: 9</p>
+          <p>Normandie: 13</p>
+          <p>Hauts-de-France: 18</p>
+          <p>Grand Est: 30</p>
+          <p>Pays de la Loire: 8</p>
+          <p>Centre-Val de Loire: 2</p>
+          <p>Île-de-France: 47</p>
+          <p>Bourgogne-Franche-Comté: 2</p>
+          <p>Nouvelle-Aquitaine: 31</p>
+          <p>Auvergne-Rhône-Alpes: 21</p>
+          <p>Occitanie: 45</p>
+          <p>Provence-Alpes-Côte d'Azur: 70</p>
+          <p>Corse: 1</p>
+        </div> -->
         <div id="studentsChart" class="chart-container"></div>
-        <div id="studentsList"></div>
+        <!-- <div id="studentsList"></div> -->
       </div>
 
       <div class="chart-box">
         <h3>Salaire moyen par région (€)</h3>
         <div id="salaryChart" class="chart-container"></div>
-        <div id="salaryList"></div>
+        <!-- <div id="salaryList"></div> -->
       </div>
 
       <div class="chart-box">
@@ -2266,6 +2296,22 @@ am5.ready(function() {
 <script>
   
 am5.ready(function () {
+  const manualColorMap = {
+    "FR-BRE": am5.color(0xffcccc), // light red
+    "FR-NOR": am5.color(0xffcc99),
+    "FR-HDF": am5.color(0xff9966),
+    "FR-GES": am5.color(0xff6600),
+    "FR-PDL": am5.color(0xccffcc),
+    "FR-CVL": am5.color(0x66ff66),
+    "FR-IDF": am5.color(0x339933),
+    "FR-BFC": am5.color(0x66ccff),
+    "FR-NAQ": am5.color(0x3399ff),
+    "FR-ARA": am5.color(0x0033cc),
+    "FR-OCC": am5.color(0x9999ff),
+    "FR-PAC": am5.color(0xcc99ff),
+    "FR-COR": am5.color(0xffffff)
+  };
+
   function createFranceMap(divId, data, labelField) {
     const root = am5.Root.new(divId);
     root.setThemes([am5themes_Animated.new(root)]);
@@ -2304,11 +2350,19 @@ am5.ready(function () {
       fill: am5.color(0x677935)
     });
 
-    const dataItems = Object.entries(data).map(([id, value]) => ({
-      id,
-      value,
-      [labelField]: value
-    }));
+    const dataItems = Object.entries(data).map(([id, value]) => {
+      let numericValue = typeof value === "string"
+        ? parseInt(value.replace(/[^\d]/g, ""))
+        : value;
+
+      return {
+        id,
+        value: numericValue,
+        [labelField]: value,
+        fill: manualColorMap[id] || am5.color(0xd6efff) // default if not specified
+      };
+    });
+
 
     polygonSeries.data.setAll(dataItems);
     chart.appear(1000, 100);
@@ -2350,6 +2404,102 @@ am5.ready(function () {
   createFranceMap("salaryChart", salaryData, "Salaire (€)");
 });
 
+</script>
+
+<script>
+// Create root
+am5.ready(function () {
+  var root = am5.Root.new("pieChart");
+
+  // Set themes
+  root.setThemes([am5themes_Animated.new(root)]);
+
+  // Create chart
+  var chart = root.container.children.push(
+    am5percent.PieChart.new(root, {
+      layout: root.verticalLayout
+    })
+  );
+
+  // Create series
+  var series = chart.series.push(
+    am5percent.PieSeries.new(root, {
+      name: "Postes",
+      valueField: "value",
+      categoryField: "category"
+    })
+  );
+
+  // Set data
+  series.data.setAll([
+    { category: "Conseiller commercial", value: 17 },
+    { category: "Commercial", value: 14 },
+    { category: "Responsable des ventes", value: 4 }
+  ]);
+
+  // Add labels
+  series.labels.template.setAll({
+    text: "{category}: {value}%",
+    fontSize: 14,
+    fill: am5.color(0x00454D)
+  });
+
+  // Customize slices (optional)
+  series.slices.template.setAll({
+    stroke: am5.color(0xffffff),
+    strokeWidth: 2
+  });
+
+}); // end am5.ready()
+</script>
+
+<script>
+am5.ready(function () {
+  // Root for domaine pie
+  var root2 = am5.Root.new("domainePieChart");
+
+  root2.setThemes([am5themes_Animated.new(root2)]);
+
+  var chart2 = root2.container.children.push(
+    am5percent.PieChart.new(root2, {
+      layout: root2.verticalLayout
+    })
+  );
+
+  // chart2.get("colors").setAll({
+  //   colors: [
+  //     am5.color(0x49928a), // Immobilier
+  //     am5.color(0x73c2a9), // Commerce
+  //     am5.color(0xa7ddd2)  // Assurance
+  //   ]
+  // });
+
+  var series2 = chart2.series.push(
+    am5percent.PieSeries.new(root2, {
+      name: "Domaines",
+      valueField: "value",
+      categoryField: "category"
+    })
+  );
+
+  series2.data.setAll([
+    { category: "Immobilier", value: 22 },
+    { category: "Commerce", value: 6 },
+    { category: "Assurance", value: 4 }
+  ]);
+
+  series2.labels.template.setAll({
+    text: "{category}: {value}%",
+    fontSize: 14,
+    fill: am5.color(0x00454D)
+  });
+
+  series2.slices.template.setAll({
+    stroke: am5.color(0xffffff),
+    strokeWidth: 2
+  });
+
+});
 </script>
 
 </body>
