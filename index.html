@@ -2262,7 +2262,9 @@ am5.ready(function() {
     seriesB.appear(1000, 100);
   });
 </script>
+
 <script>
+  
 am5.ready(function () {
   function createFranceMap(divId, data, labelField) {
     const root = am5.Root.new(divId);
@@ -2298,57 +2300,57 @@ am5.ready(function () {
       key: "fill"
     }]);
 
-    // Map and format data
-    const dataItems = Object.entries(data).map(([id, entry]) => {
-      let value = parseInt(entry.toString().replace(/[^\d]/g, ""));
-      return {
-        id,
-        value: value || 0,
-        [labelField]: entry
-      };
+    polygonSeries.mapPolygons.template.states.create("hover", {
+      fill: am5.color(0x677935)
     });
+
+    const dataItems = Object.entries(data).map(([id, value]) => ({
+      id,
+      value,
+      [labelField]: value
+    }));
 
     polygonSeries.data.setAll(dataItems);
     chart.appear(1000, 100);
   }
 
   const studentsData = {
-    "FR-BRE": 9,
-    "FR-NOR": 13,
-    "FR-HDF": 18,
-    "FR-GES": 30,
-    "FR-PDL": 8,
-    "FR-CVL": 2,
-    "FR-IDF": 47,
-    "FR-BFC": 2,
-    "FR-NAQ": 31,
-    "FR-ARA": 21,
-    "FR-OCC": 45,
-    "FR-PAC": 70,
-    "FR-COR": 1
+    "FR-BRE": 9,   // Bretagne
+    "FR-NOR": 13,  // Normandie
+    "FR-HDF": 18,  // Hauts-de-France
+    "FR-GES": 30,  // Grand Est
+    "FR-PDL": 8,   // Pays de la Loire
+    "FR-CVL": 2,   // Centre-Val de Loire
+    "FR-IDF": 47,  // Île-de-France
+    "FR-BFC": 2,   // Bourgogne-Franche-Comté
+    "FR-NAQ": 31,  // Nouvelle-Aquitaine
+    "FR-ARA": 21,  // Auvergne-Rhône-Alpes
+    "FR-OCC": 45,  // Occitanie
+    "FR-PAC": 70,  // Provence-Alpes-Côte d'Azur
+    "FR-COR": 1    // Corse
   };
 
   const salaryData = {
-    "FR-BRE": '1800 €',
-    "FR-NOR": '2120 €',
-    "FR-HDF": '2100 €',
-    "FR-GES": '2500 €',
-    "FR-PDL": '1800 €',
-    "FR-CVL": '0 €',
-    "FR-IDF": '2600 €',
-    "FR-BFC": '1900 €',
-    "FR-NAQ": '2070 €',
-    "FR-ARA": '3150 €',
-    "FR-OCC": '1900 €',
-    "FR-PAC": '2200 €',
-    "FR-COR": '0 €'
+    "FR-BRE": '1800 €',   // Bretagne
+    "FR-NOR": '2120 €',   // Normandie
+    "FR-HDF": '2100 €',   // Hauts-de-France
+    "FR-GES": '2500 €',   // Grand Est
+    "FR-PDL": '1800 €',   // Pays de la Loire
+    "FR-CVL": '0 €',   // Centre-Val de Loire (no data)
+    "FR-IDF": '2600 €',   // Île-de-France
+    "FR-BFC": '1900 €',   // Bourgogne-Franche-Comté
+    "FR-NAQ": '2070 €',   // Nouvelle-Aquitaine
+    "FR-ARA": '3150 €',   // Auvergne-Rhône-Alpes
+    "FR-OCC": '1900 €',   // Occitanie
+    "FR-PAC": '2200 €',   // Provence-Alpes-Côte d'Azur
+    "FR-COR": '0 €'    // Corse (no data)
   };
 
   createFranceMap("studentsChart", studentsData, "Étudiants");
   createFranceMap("salaryChart", salaryData, "Salaire (€)");
 });
-</script>
 
+</script>
 
 </body>
 </html>
