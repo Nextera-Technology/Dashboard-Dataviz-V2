@@ -13,6 +13,11 @@
   <script src="https://cdn.amcharts.com/lib/5/radar.js"></script>
   <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
   <script src="https://cdn.amcharts.com/lib/5/plugins/wordCloud.js"></script>
+
+  <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/geodata/franceLow.js"></script>
+
   <style>
     :root {
       --primary: #8FD2D2;
@@ -498,6 +503,26 @@
       border-left: 4px solid #A77A82;
     }
 
+    .map-container {
+      width: 600px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    svg {
+      width: 100%;
+      height: auto;
+    }
+    .region:hover {
+      stroke: #000;
+      stroke-width: 1.5px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -708,7 +733,7 @@
     <div class="grid3" style="margin-bottom: 20px;">
       <div class="chart-box" style="text-align: center; background-color: rgb(226, 246, 250);">
         <h3 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;"><strong>Poursuite d'études</strong></h3>
-        <p style="color:#1E9180 ; font-size: 40px;"><strong>56%</strong></p>
+        <p style="color:#1E9180 ; font-size: 40px;"><strong>67%</strong></p>
         <!-- <p style="color:#49928a; padding-bottom: 25px;"><strong>27% (Basé sur EE2)</strong></p> -->
       </div>
 
@@ -743,6 +768,20 @@
 
     
     <div class="grid" style="margin-bottom: 20px;">
+      <div class="chart-box">
+        <h3>Effectif & Taux de succès à certification</h3>
+        <div class="legend-item">
+          <span class="legend-color" style="background-color: #8f8f8f;"></span>
+          <span class="legend-label">Nombre total d'étudiants : <strong>383</strong></span>
+        </div>
+        <div id="pieChartA" class="chart-container" style="height: 300px;"></div>
+      </div>
+
+      <div class="chart-box">
+        <h3>Distribution des enquêtes par vague</h3>
+        <div id="pieChartB" class="chart-container" style="height: 300px;"></div>
+      </div>
+
       <div class="chart-box">
         <h3>Ouvert – Commencé – Enquête complétée (EE1–EE4)</h3>
         <div id="chart1" class="chart-container"></div>
@@ -798,6 +837,18 @@
     </div>
 
     <div class="grid" style="margin-bottom: 20px;">
+      <div class="chart-box">
+        <h3>Étudiants par région</h3>
+        <div id="studentsChart" class="chart-container"></div>
+        <div id="studentsList"></div>
+      </div>
+
+      <div class="chart-box">
+        <h3>Salaire moyen par région (€)</h3>
+        <div id="salaryChart" class="chart-container"></div>
+        <div id="salaryList"></div>
+      </div>
+
       <div class="chart-box">
         <h3>Statut professionnel</h3>
         <div class="status-grid-rowed">
@@ -977,9 +1028,9 @@ am5.ready(function() {
 
   var data = [
     { stage: "EE1", Opened: 318, Started: 318, Completed: 318 },
-    { stage: "EE2", Opened: 134, Started: 134, Completed: 108 },
-    { stage: "EE3", Opened: 117, Started: 117, Completed: 100 },
-    { stage: "EE4", Opened: 108, Started: 108, Completed: 97 }
+    { stage: "EE2", Opened: 140, Started: 134, Completed: 133 },
+    { stage: "EE3", Opened: 136, Started: 117, Completed: 115 },
+    { stage: "EE4", Opened: 131, Started: 108, Completed: 104 }
   ];
 
   // Create the legend and add it first (so it appears at the top)
@@ -1084,11 +1135,20 @@ am5.ready(function() {
 
     // Preprocess data to calculate accurate 100% percentages
     data.forEach(row => {
-      const total = row.Opened + row.Started + row.Completed;
+      let total = 318;
+
+      if (row.stage === 'EE2') {
+        total = 140;
+      } else if (row.stage === 'EE3') {
+        total = 136;
+      } else if (row.stage === 'EE4') {
+        total = 131;
+      }
+
       const rawPercents = {
-        Opened: total ? (row.Opened / 318) * 100 : 0,
-        Started: total ? (row.Started / 318) * 100 : 0,
-        Completed: total ? (row.Completed / 318) * 100 : 0
+        Opened: total ? (row.Opened / total) * 100 : 0,
+        Started: total ? (row.Started / total) * 100 : 0,
+        Completed: total ? (row.Completed / total) * 100 : 0
       };
 
       // Round down all values
@@ -2117,5 +2177,178 @@ am5.ready(function() {
     }
   }
 </script>
+
+<script>
+  // Pie Chart A: Total vs Graduated Students
+  am5.ready(function() {
+    var rootA = am5.Root.new("pieChartA");
+    rootA.setThemes([am5themes_Animated.new(rootA)]);
+
+    var chartA = rootA.container.children.push(am5percent.PieChart.new(rootA, {
+      layout: rootA.verticalLayout
+    }));
+
+    var seriesA = chartA.series.push(am5percent.PieSeries.new(rootA, {
+      valueField: "value",
+      categoryField: "category"
+    }));
+
+    // Add spacing between slices
+    seriesA.slices.template.setAll({
+      cornerRadius: 5,
+      shiftRadius: 8 // Pull each slice slightly outward
+    });
+
+    // Format label with integer percentage
+    seriesA.labels.template.setAll({
+      text: "{category}: {value} ({valuePercentTotal.formatNumber('#.#')}%)",
+      fontSize: 14,
+      populateText: true,
+      fontWeight: "500",
+      fill: am5.color("#333")
+    });
+
+    seriesA.slices.template.setAll({
+      tooltipText: "{category}: {value} ({valuePercentTotal.formatNumber('#.#')}%)", // Update tooltip to include percentage
+      stroke: am5.color("#fff"),
+      strokeWidth: 1.5,
+      cornerRadius: 6
+    });
+
+    seriesA.data.setAll([
+      { category: "Diplômé", value: 318 },
+      { category: "Non diplômé", value: 383 - 318 }
+    ]);
+
+    seriesA.appear(1000, 100);
+  });
+
+  // Pie Chart B: Number of Surveys Sent
+  am5.ready(function() {
+    var rootB = am5.Root.new("pieChartB");
+    rootB.setThemes([am5themes_Animated.new(rootB)]);
+
+    var chartB = rootB.container.children.push(am5percent.PieChart.new(rootB, {
+      layout: rootB.verticalLayout
+    }));
+
+    var seriesB = chartB.series.push(am5percent.PieSeries.new(rootB, {
+      valueField: "value",
+      categoryField: "stage"
+    }));
+
+    seriesB.data.setAll([
+      { stage: "EE1", value: 318 },
+      { stage: "EE2", value: 140 },
+      { stage: "EE3", value: 136 },
+      { stage: "EE4", value: 131 }
+    ]);
+
+      // Format label with integer percentage
+    seriesB.labels.template.setAll({
+      text: "{category}: {value} ({valuePercentTotal.formatNumber('#.#')}%)",
+      fontSize: 14,
+      populateText: true,
+      fontWeight: "500",
+      fill: am5.color("#333")
+    });
+
+    seriesB.slices.template.setAll({
+      tooltipText: "{category}: {value} ({valuePercentTotal.formatNumber('#.#')}%)", // Update tooltip to include percentage
+      stroke: am5.color("#fff"),
+      strokeWidth: 1.5,
+      cornerRadius: 6
+    });
+    seriesB.appear(1000, 100);
+  });
+</script>
+<script>
+am5.ready(function () {
+  function createFranceMap(divId, data, labelField) {
+    const root = am5.Root.new(divId);
+    root.setThemes([am5themes_Animated.new(root)]);
+
+    const chart = root.container.children.push(
+      am5map.MapChart.new(root, {
+        panX: "none",
+        panY: "none",
+        wheelY: "none",
+        projection: am5map.geoMercator()
+      })
+    );
+
+    const polygonSeries = chart.series.push(
+      am5map.MapPolygonSeries.new(root, {
+        geoJSON: am5geodata_franceLow,
+        valueField: "value",
+        calculateAggregates: true
+      })
+    );
+
+    polygonSeries.mapPolygons.template.setAll({
+      tooltipText: "{name}: {" + labelField + "}",
+      interactive: true
+    });
+
+    polygonSeries.set("heatRules", [{
+      target: polygonSeries.mapPolygons.template,
+      dataField: "value",
+      min: am5.color(0xD6EFFF),
+      max: am5.color(0x0068B5),
+      key: "fill"
+    }]);
+
+    // Map and format data
+    const dataItems = Object.entries(data).map(([id, entry]) => {
+      let value = parseInt(entry.toString().replace(/[^\d]/g, ""));
+      return {
+        id,
+        value: value || 0,
+        [labelField]: entry
+      };
+    });
+
+    polygonSeries.data.setAll(dataItems);
+    chart.appear(1000, 100);
+  }
+
+  const studentsData = {
+    "FR-BRE": 9,
+    "FR-NOR": 13,
+    "FR-HDF": 18,
+    "FR-GES": 30,
+    "FR-PDL": 8,
+    "FR-CVL": 2,
+    "FR-IDF": 47,
+    "FR-BFC": 2,
+    "FR-NAQ": 31,
+    "FR-ARA": 21,
+    "FR-OCC": 45,
+    "FR-PAC": 70,
+    "FR-COR": 1
+  };
+
+  const salaryData = {
+    "FR-BRE": '1800 €',
+    "FR-NOR": '2120 €',
+    "FR-HDF": '2100 €',
+    "FR-GES": '2500 €',
+    "FR-PDL": '1800 €',
+    "FR-CVL": '0 €',
+    "FR-IDF": '2600 €',
+    "FR-BFC": '1900 €',
+    "FR-NAQ": '2070 €',
+    "FR-ARA": '3150 €',
+    "FR-OCC": '1900 €',
+    "FR-PAC": '2200 €',
+    "FR-COR": '0 €'
+  };
+
+  createFranceMap("studentsChart", studentsData, "Étudiants");
+  createFranceMap("salaryChart", salaryData, "Salaire (€)");
+});
+</script>
+
+
 </body>
 </html>
