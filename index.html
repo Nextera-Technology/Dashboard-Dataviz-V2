@@ -336,6 +336,38 @@
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
 
+    .manual-legend2 {
+      display: flex;
+      justify-content: flex-start; /* Align items to the left */
+      align-items: center;
+      gap: 20px;
+      padding: 10px 0;
+      flex-wrap: wrap;
+      max-width: 400px; /* Controls the total width to maintain 2 items per row */
+      margin: 0 auto;   /* Center the legend container itself on the page */
+    }
+
+    .legend-item2 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 45%;        /* Ensures 2 items fit per row with some gap */
+      /* margin-bottom: 10px; */
+    }
+
+    .legend-color2 {
+      width: 14px;
+      height: 14px;
+      border-radius: 2px;
+      display: inline-block;
+    }
+
+    .legend-label2 {
+      font-size: 16px;
+      color: #666666;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
     #chart2.chart-grid-container {
       position: relative;
     }
@@ -535,6 +567,10 @@
       background-color: #F9E9EC;
       border-left: 4px solid #A77A82;
     }
+    .non {
+      background-color: #f7e6f9;
+      border-left: 4px solid #8d459d;
+    }
 
     .map-container {
       width: 600px;
@@ -619,6 +655,42 @@
       </div> -->
     </header>
 
+    <div class="grid3" style="margin-bottom: 20px;">
+      <div class="chart-box" style="text-align: center; background-color: rgb(226, 246, 250);">
+        <h3 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;"><strong>Poursuite d’étude à 6 mois après la certification</strong></h3>
+        <p style="color:#1E9180 ; font-size: 40px;"><strong>40%</strong></p>
+        <!-- <p style="color:#49928a; padding-bottom: 25px;"><strong>27% (Basé sur EE2)</strong></p> -->
+      </div>
+
+      <div class="chart-box" style="text-align: center; background-color: rgb(226, 250, 233);">
+        <h3 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;"><strong>Domaine de Poursuite d'études</strong></h3>
+        <!-- <p style="padding-top: 10px; color: #1E9180 "><strong><span style="color:#2C8B7D	;"> 56%  </span></strong></p> -->
+        <table style="margin: 0 auto; text-align: center;"><thead>
+          <tr style="font-size: 15px; color: #6B7280 ">
+            <th style="padding-left: 15px;">Immobilier</th>
+            <th style="padding-left: 15px;">Commerce</th>
+            <th style="padding-left: 15px;">Banque / Assurance</th>
+          </tr></thead>
+        <tbody>
+          <tr style="font-size: 18px; color: #159E8E">
+            <td><strong>27%</strong></td>
+            <td><strong>5%</strong></td>
+            <td><strong>4%</strong></td>
+          </tr>
+        </tbody>
+        </table>
+        <!-- <p style="color:#49928a; padding-bottom: 25px;"><strong>27% (Basé sur EE2)</strong></p> -->
+      </div>
+
+      <div class="chart-box" style="text-align: center; background-color: rgb(250, 239, 226);">
+        <h3 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;"><strong>Niveau TOP cible BAC+5</strong></h3>
+        <p style="color:#1E9180 ; font-size: 40px;"><strong>80%</strong></p>
+        <!-- <p style="color:#49928a; padding-bottom: 25px;"><strong>27% (Basé sur EE2)</strong></p> -->
+      </div>
+    </div>
+
+    <hr style="border: none; border-top: 2px solid #D0E6E6; margin: 30px 0;">
+
     <div class="grid2" style="margin-bottom: 20px;">
       <div class="chart-box" style="text-align: center;">
         <h3 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;"><strong>Postes</strong></h3>
@@ -632,10 +704,10 @@
           </tr></thead>
         <tbody>
           <tr style="font-size: 13px; color: #159E8E;">
-            <td style="padding-left: 15px;">0%</td>
-            <td style="padding-left: 15px;">43%</td>
-            <td style="padding-left: 15px;">46%</td>
-            <td style="padding-left: 15px;">42%</td>
+            <td style="padding-left: 15px; font-weight: 700;">0%</td>
+            <td style="padding-left: 15px; font-weight: 700;">43%</td>
+            <td style="padding-left: 15px; font-weight: 700;">46%</td>
+            <td style="padding-left: 15px; font-weight: 700;">42%</td>
           </tr>
         </tbody>
         </table>
@@ -654,10 +726,10 @@
           </tr></thead>
         <tbody>
           <tr style="font-size: 13px; color: #159E8E">
-            <td style="padding-left: 15px;">0%</td>
-            <td style="padding-left: 15px;">71%</td>
-            <td style="padding-left: 15px;">85%</td>
-            <td style="padding-left: 15px;">97%</td>
+            <td style="padding-left: 15px; font-weight: 700;">0%</td>
+            <td style="padding-left: 15px; font-weight: 700;">71%</td>
+            <td style="padding-left: 15px; font-weight: 700;">85%</td>
+            <td style="padding-left: 15px; font-weight: 700;">97%</td>
           </tr>
         </tbody>
         </table>
@@ -675,10 +747,10 @@
           </tr></thead>
         <tbody>
           <tr style="font-size: 13px; color: #159E8E">
-            <td style="padding-left: 15px;">0%</td>
-            <td style="padding-left: 15px;">5%</td>
-            <td style="padding-left: 15px;">4%</td>
-            <td style="padding-left: 15px;">5%</td>
+            <td style="padding-left: 15px; font-weight: 700;">0%</td>
+            <td style="padding-left: 15px; font-weight: 700;">5%</td>
+            <td style="padding-left: 15px; font-weight: 700;">4%</td>
+            <td style="padding-left: 15px; font-weight: 700;">5%</td>
           </tr>
         </tbody>
         </table>
@@ -698,10 +770,10 @@
           </tr></thead>
         <tbody>
           <tr style="font-size: 13px; color: #159E8E">
-            <td style="padding-left: 15px;">0%</td>
-            <td style="padding-left: 15px;">54%</td>
-            <td style="padding-left: 15px;">63%</td>
-            <td style="padding-left: 15px;">69%</td>
+            <td style="padding-left: 15px; font-weight: 700;">0%</td>
+            <td style="padding-left: 15px; font-weight: 700;">54%</td>
+            <td style="padding-left: 15px; font-weight: 700;">63%</td>
+            <td style="padding-left: 15px; font-weight: 700;">69%</td>
           </tr>
         </tbody>
         </table>
@@ -786,44 +858,7 @@
     </div>
 
     <hr style="border: none; border-top: 2px solid #D0E6E6; margin: 30px 0;">
-
-    <div class="grid3" style="margin-bottom: 20px;">
-      <div class="chart-box" style="text-align: center; background-color: rgb(226, 246, 250);">
-        <h3 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;"><strong>Poursuite d'études</strong></h3>
-        <p style="color:#1E9180 ; font-size: 40px;"><strong>67%</strong></p>
-        <!-- <p style="color:#49928a; padding-bottom: 25px;"><strong>27% (Basé sur EE2)</strong></p> -->
-      </div>
-
-      <div class="chart-box" style="text-align: center; background-color: rgb(226, 250, 233);">
-        <h3 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;"><strong>Domaine de Poursuite d'études</strong></h3>
-        <!-- <p style="padding-top: 10px; color: #1E9180 "><strong><span style="color:#2C8B7D	;"> 56%  </span></strong></p> -->
-        <table style="margin: 0 auto; text-align: center;"><thead>
-          <tr style="font-size: 15px; color: #6B7280 ">
-            <th style="padding-left: 5px;">Commerce / Affaires</th>
-            <th style="padding-left: 5px;">Management / Stratégie d’entreprise</th>
-            <th style="padding-left: 5px;">Ingénierie d’affaires</th>
-          </tr></thead>
-        <tbody>
-          <tr style="font-size: 13px; color: #159E8E	">
-            <td>31%</td>
-            <td>27%</td>
-            <td>13%</td>
-          </tr>
-        </tbody>
-        </table>
-        <!-- <p style="color:#49928a; padding-bottom: 25px;"><strong>27% (Basé sur EE2)</strong></p> -->
-      </div>
-
-      <div class="chart-box" style="text-align: center; background-color: rgb(250, 239, 226);">
-        <h3 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;"><strong>Niveau TOP cible BAC+5</strong></h3>
-        <p style="color:#1E9180 ; font-size: 40px;"><strong>80%</strong></p>
-        <!-- <p style="color:#49928a; padding-bottom: 25px;"><strong>27% (Basé sur EE2)</strong></p> -->
-      </div>
-    </div>
-
-    <hr style="border: none; border-top: 2px solid #D0E6E6; margin: 30px 0;">
-
-    
+   
     <div class="grid" style="margin-bottom: 20px;">
       <div class="chart-box">
         <h3>Effectif & Taux de succès à certification</h3>
@@ -846,19 +881,20 @@
         <div id="chart1-analysis" class="analysis-content" style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
           <h4 style="color: #15616D; margin-bottom: 10px;">🔍 Analyse</h4>
           <ul style="padding-left: 20px;">
-            <li><strong>Baisse progressive de l’ouverture :</strong> le nombre d'anciens élèves qui ouvrent l’e-mail diminue fortement à chaque vague (de 318 à 108).</li>
-            <li><strong>Bonne complétion après ouverture :</strong> les taux de complétion sont très élevés à partir de EE2 (81% à 90%), ce qui montre que les répondants sont motivés une fois engagés.</li>
-            <li><strong>EE2 marque une chute majeure :</strong> entre EE1 et EE2, le nombre de démarrages chute de plus de moitié, ce qui est préoccupant.</li>
+            <li><strong>Baisse significative de la participation :</strong> le nombre de réponses passe de 318 à l’EE1 à seulement 104 à l’EE4, montrant un désengagement progressif.</li>
+            <li><strong>Complétion stable chez les engagés :</strong> une fois le questionnaire commencé, les anciens le terminent presque toujours (97 % à l’EE2, 98 % à l’EE3, 96 % à l’EE4).</li>
+            <li><strong>Taux d’ouverture en baisse constante :</strong> les ouvertures d’e-mails chutent de 318 à 108, ce qui peut indiquer une perte d’intérêt ou des problèmes de délivrabilité.</li>
+            <li><strong>Écart net après l’EE1 :</strong> entre EE1 et EE2, toutes les métriques chutent de plus de 50 %, confirmant que l’EE1 est un cas particulier (lié à la remise de diplôme).</li>
           </ul>
 
           <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
           <ol style="padding-left: 20px;">
-            <li><strong>Optimiser les objets d’e-mail</strong> pour être plus engageants et personnalisés (ex. : “Dites-nous où vous en êtes, [Prénom] !”).</li>
-            <li><strong>Envoyer plusieurs rappels</strong> (2 à 3 par vague) avec un ton de plus en plus directif ou incitatif.</li>
-            <li><strong>Alléger le questionnaire</strong> pour le rendre plus rapide à remplir (objectif : moins de 5 minutes).</li>
-            <li><strong>Proposer des incitations</strong> (ex. : tirage au sort, certificat de participation, bon cadeau).</li>
-            <li><strong>Adapter le format au mobile</strong> : vérifier que le formulaire est lisible et simple sur smartphone.</li>
-            <li><strong>Humaniser le message</strong> : ajouter une introduction personnelle d’un responsable ou d’un ancien élève.</li>
+            <li><strong>Segmenter les publics selon leur engagement</strong> et envoyer des messages adaptés (ex. : “Vous nous manquez, [Prénom] !” pour les non-répondants).</li>
+            <li><strong>Renforcer les relances</strong> : prévoir 2 à 3 rappels avec des objets personnalisés ou des tons variés.</li>
+            <li><strong>Raccourcir davantage le questionnaire</strong> : viser moins de 3 minutes pour limiter les abandons, surtout aux vagues EE3/EE4.</li>
+            <li><strong>Proposer des incitations attrayantes</strong> : ex. : tirages au sort, certificats ou mises en avant d’anciens participants.</li>
+            <li><strong>Optimiser le format mobile</strong> : s’assurer que les e-mails et formulaires soient parfaitement lisibles et utilisables sur smartphone.</li>
+            <li><strong>Mobiliser l’influence des pairs</strong> : intégrer des messages ou vidéos d’anciens élèves ou d’enseignants pour motiver davantage.</li>
           </ol>
         </div>
       </div>
@@ -909,17 +945,7 @@
       </div>
     </div>
 
-    <div class="grid-custom" style="margin-bottom: 20px;">
-      <!-- <div class="chart-box"> -->
-        <!-- <h3>Salaire moyen par région (€)</h3> -->
-        <!-- <div id="container" style="display: flex; align-items: flex-start; gap: 20px;"></div> -->
-          <!-- <div id="salaryChart" style="width: 200px;"></div> -->
-          <!-- <div id="salaryLegend" style="flex-grow: 1; height: 450px;"></div> -->
-          <!-- <div id="salaryChart" class="chart-container"></div> -->
-          <!-- <div id="salaryLegend" class="manual-legend"></div> -->
-        <!-- </div> -->
-      <!-- </div> -->
-
+    <!-- <div class="grid-custom" style="margin-bottom: 20px;">
       <div class="chart-box">
         <h3 style="text-align: center; font-size: 24px;">Salaire moyen par région (€)</h3><br>
         <div id="containerSalary" style="display: flex; align-items: flex-start; gap: 20px;">
@@ -927,19 +953,53 @@
           <div id="salaryChart" style="flex-grow: 1; height: 450px;"></div>
         </div>
       </div>
+    </div> -->
 
+    <div class="grid0" style="margin-bottom: 20px;">
+      <div class="chart-box">
+        <h3 style="text-align: center; font-size: 24px;">Salaire moyen par région (€)</h3><br>
+        <div id="containerSalary" style="display: flex; align-items: flex-start; gap: 20px;">
+          <div id="salaryLegend" style="width: 400px;"></div>
+          <div id="salaryChart" style="flex-grow: 1; height: 500px;"></div>
+        </div>
+      </div>
 
-      <!-- <div class="chart-box"> -->
-        <!-- <h3>Top 3 régions par salaire moyen</h3>
-        <div id="pieChartTopSalaries" class="chart-container" style="height: 450px;"></div>
-        <div id="pieChartTopSalariesLegend" style="margin-top: 10px; display: flex; justify-content: center; flex-direction: column; align-items: center;"></div> -->
-      <!-- </div> -->
-
+      <div class="chart-box">
+        <h3 style="text-align: center; font-size: 24px;">Situation Professionnelle à 6 mois après la certification</h3><br>
+        <div id="pieChartStatut" class="chart-container" style="height: 300px;"></div>
+        <div class="manual-legend2">
+          <!-- <div class="legend-item">
+            <span class="legend-color" style="background-color: #A77A82;"></span>
+            <span class="legend-label">Oui</span>
+          </div> -->
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #67b7dc;"></span>
+            <span class="legend-label2">A un emploi <span style="color: #67b7dc; font-size: 16px"><strong>22.9%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #6794dc;"></span>
+            <span class="legend-label2">Recherche <span style="color: #6794dc; font-size: 16px"><strong>34.9%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #6771dc;"></span>
+            <span class="legend-label2">Poursuit des études <span style="color: #6771dc; font-size: 16px"><strong>39.7%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #8067dc;"></span>
+            <span class="legend-label2">Inactif <span style="color: #8067dc; font-size: 16px"><strong>1.1%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #a367dc;"></span>
+            <span class="legend-label2">Non répondant <span style="color: #a367dc; font-size: 16px"><strong>1.3%</strong></span></span>
+          </div>
+        </div>
+        <!-- <div id="pieChartGenderLegend" style="margin-top: 10px;"></div> -->
+      </div>
     </div>
 
     <div class="grid" style="margin-bottom: 20px;">
       <div class="chart-box">
-        <h3>Statut professionnel</h3>
+        <h3>Statut Professionnel : Situation après la certification</h3>
         <div class="status-grid-rowed">
           <div class="status-row" style="color: #00454D">
             <div class="status-category"></div>
@@ -951,30 +1011,37 @@
           <div class="status-row">
             <div class="status-category">A un emploi</div>
             <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">0%</div>
-            <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">79%</div>
-            <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">83%</div>
-            <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">90%</div>
+            <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">75%</div>
+            <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">70%</div>
+            <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">73%</div>
           </div>
           <div class="status-row">
             <div class="status-category">Recherche</div>
-            <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">0%</div>
-            <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">15%</div>
-            <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">10%</div>
-            <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">4%</div>
+            <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">44%</div>
+            <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">14%</div>
+            <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">9%</div>
+            <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">3%</div>
           </div>
           <div class="status-row">
             <div class="status-category">Poursuit des études</div>
             <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">56%</div>
             <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">3%</div>
             <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">4%</div>
-            <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">4%</div>
+            <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">3%</div>
           </div>
           <div class="status-row">
             <div class="status-category">Inactif</div>
             <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">0%</div>
-            <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">3%</div>
-            <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">3%</div>
+            <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">4%</div>
             <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">2%</div>
+            <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">2%</div>
+          </div>
+          <div class="status-row">
+            <div class="status-category">Non répondant</div>
+            <div class="status-value" style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;">0%</div>
+            <div class="status-value" style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;">4%</div>
+            <div class="status-value" style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;">15%</div>
+            <div class="status-value" style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;">19%</div>
           </div>
         </div>
 
@@ -983,18 +1050,20 @@
         <!-- <div style="padding-top: 30px; margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;"> -->
           <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
           <ul style="padding-left: 20px;">
-            <li><strong>Majorité en emploi :</strong> Dès EE2, la majorité des diplômés ayant répondu sont en poste.</li>
-            <li><strong>Stabilité croissante :</strong> Le nombre de chercheurs d’emploi passe de 20 à 4.</li>
-            <li><strong>Peu de poursuites d'études :</strong> 4 à 5 par enquête seulement.</li>
-            <li><strong>Très faible inactivité :</strong> Les inactifs sont marginaux.</li>
+            <li><strong>Insertion rapide dans l’emploi :</strong> Dès l’ES2, la majorité des répondants sont en emploi (105 à l’ES2, stable à 95 pour les ES3 et ES4).</li>
+            <li><strong>Diminution forte de la recherche d’emploi :</strong> De 140 à l’ES1 à seulement 4 à l’ES4.</li>
+            <li><strong>Très faible poursuite d’études :</strong> Entre 4 et 5 étudiants poursuivent leurs études à chaque enquête.</li>
+            <li><strong>Inactivité marginale :</strong> Cas d’inactivité rares, maximum 5 à l’ES2.</li>
+            <li><strong>Bonne stabilité des réponses :</strong> Légère hausse des non-réponses mais données globalement fiables pour l’analyse.</li>
           </ul>
 
           <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
           <ol style="padding-left: 20px;">
-            <li><strong>Mettre en avant les bons résultats :</strong> “80 % des diplômés en emploi” dans les messages de relance.</li>
-            <li><strong>Ajouter des filtres dynamiques :</strong> dans le tableau de bord par profil.</li>
-            <li><strong>Montrer l’évolution :</strong> Mettre en avant la montée de l’emploi entre EE2 et EE4.</li>
-            <li><strong>Améliorer le suivi des demandeurs :</strong> Services spécifiques pour ceux qui cherchent encore un emploi.</li>
+            <li><strong>Mettre en avant les bons taux d’emploi :</strong> Utiliser des formules comme “Plus de 90 % des répondants en emploi”.</li>
+            <li><strong>Montrer clairement l’évolution :</strong> Visualiser la baisse du nombre de chercheurs d’emploi et la stabilité des emplois entre ES2 et ES4.</li>
+            <li><strong>Tableaux de bord segmentés :</strong> Ajouter des filtres par profil démographique ou académique pour une analyse fine.</li>
+            <li><strong>Accompagner les derniers chercheurs :</strong> Développer des services ciblés pour les rares encore en recherche à l’ES4.</li>
+            <li><strong>Réduire les non-réponses :</strong> Renforcer les relances pour limiter les absences de réponse dans les prochaines vagues.</li>
           </ol>
         </div>
       </div>
@@ -1116,10 +1185,10 @@ am5.ready(function() {
   );
 
   var data = [
-    { stage: "EE1", Opened: 318, Started: 318, Completed: 318 },
-    { stage: "EE2", Opened: 140, Started: 134, Completed: 134 },
-    { stage: "EE3", Opened: 136, Started: 117, Completed: 115 },
-    { stage: "EE4", Opened: 131, Started: 108, Completed: 106 }
+    { stage: "EE1", Sent: 318, Opened: 318, Started: 318, Completed: 318 },
+    { stage: "EE2", Sent: 140, Opened: 134, Started: 134, Completed: 133 },
+    { stage: "EE3", Sent: 136, Opened: 117, Started: 117, Completed: 115 },
+    { stage: "EE4", Sent: 131, Opened: 108, Started: 108, Completed: 104 }
   ];
 
   // Create the legend and add it first (so it appears at the top)
@@ -1235,22 +1304,25 @@ am5.ready(function() {
       }
 
       const rawPercents = {
+        Sent: total ? (row.Sent / total) * 100 : 0,
         Opened: total ? (row.Opened / total) * 100 : 0,
         Started: total ? (row.Started / total) * 100 : 0,
-        Completed: total ? (row.Completed / total) * 100 : 0
+        Completed: total ? (row.Completed / total) * 100 : 0,
       };
 
       // Round down all values
       let rounded = {
+        Sent: Math.floor(rawPercents.Sent),
         Opened: Math.floor(rawPercents.Opened),
         Started: Math.floor(rawPercents.Started),
         Completed: Math.floor(rawPercents.Completed)
       };
 
-      let sum = rounded.Opened + rounded.Started + rounded.Completed;
+      let sum = rounded.Sent + rounded.Opened + rounded.Started + rounded.Completed;
 
       // Distribute remaining percentage to highest remainder
       let remainders = [
+        { key: "Sent", value: rawPercents.Sent - rounded.Sent },
         { key: "Opened", value: rawPercents.Opened - rounded.Opened },
         { key: "Started", value: rawPercents.Started - rounded.Started },
         { key: "Completed", value: rawPercents.Completed - rounded.Completed }
@@ -1266,6 +1338,7 @@ am5.ready(function() {
       }
 
       // Attach to row
+      row.SentPercent = rounded.Sent;
       row.OpenedPercent = rounded.Opened;
       row.StartedPercent = rounded.Started;
       row.CompletedPercent = rounded.Completed;
@@ -1294,7 +1367,7 @@ am5.ready(function() {
     });
 
     // Conditionally add label bullet (skip for "Started" series)
-    if (field !== "Started") {
+    if (field !== "Opened") {
       series.bullets.push(function () {
         return am5.Bullet.new(root, {
           locationY: 1,
@@ -1319,9 +1392,10 @@ am5.ready(function() {
     return series;
   }
 
-  createSeries("Notification ouverte", "Opened", "#8FD2D2");
-  createSeries("Ouverture de l'enquête", "Started", "#4A90E2");
-  createSeries("Complété l'enquête", "Completed", "#0E3F2D");
+  createSeries("Envoyées", "Sent", "#8FD2D2");
+  createSeries("Ouvertes", "Opened", "#4A90E2");
+  // createSeries("Ouverture de l'enquête", "Started", "#4A90E2");
+  createSeries("Complétées", "Completed", "#0E3F2D");
 
   chart.appear(1000, 100);
 
@@ -2274,7 +2348,8 @@ am5.ready(function() {
     rootA.setThemes([am5themes_Animated.new(rootA)]);
 
     var chartA = rootA.container.children.push(am5percent.PieChart.new(rootA, {
-      layout: rootA.verticalLayout
+      layout: rootA.verticalLayout,
+      innerRadius: am5.percent(50),
     }));
 
     var seriesA = chartA.series.push(am5percent.PieSeries.new(rootA, {
@@ -2318,7 +2393,8 @@ am5.ready(function() {
     rootB.setThemes([am5themes_Animated.new(rootB)]);
 
     var chartB = rootB.container.children.push(am5percent.PieChart.new(rootB, {
-      layout: rootB.verticalLayout
+      layout: rootB.verticalLayout,
+      innerRadius: am5.percent(50),
     }));
 
     var seriesB = chartB.series.push(am5percent.PieSeries.new(rootB, {
@@ -2654,7 +2730,8 @@ am5.ready(function () {
   // Create chart
   var chart = root.container.children.push(
     am5percent.PieChart.new(root, {
-      layout: root.verticalLayout
+      layout: root.verticalLayout,
+      innerRadius: am5.percent(50),
     })
   );
 
@@ -2700,7 +2777,8 @@ am5.ready(function() {
 
   var chart2 = root2.container.children.push(
     am5percent.PieChart.new(root2, {
-      layout: root2.verticalLayout
+      layout: root2.verticalLayout,
+      innerRadius: am5.percent(50),
     })
   );
 
@@ -2737,7 +2815,8 @@ am5.ready(function() {
   rootGender.setThemes([am5themes_Animated.new(rootGender)]);
 
   var chartGender = rootGender.container.children.push(am5percent.PieChart.new(rootGender, {
-    layout: rootGender.verticalLayout
+    layout: rootGender.verticalLayout,
+    innerRadius: am5.percent(50),
   }));
 
   var seriesGender = chartGender.series.push(am5percent.PieSeries.new(rootGender, {
@@ -2749,11 +2828,10 @@ am5.ready(function() {
 
   seriesGender.slices.template.setAll({
     cornerRadius: 5,
-    shiftRadius: 8,
+    shiftRadius: 2,
     tooltipText: "{category}: {value} ({valuePercentTotal.formatNumber('#.#')}%)",
     stroke: am5.color("#fff"),
     strokeWidth: 1.5,
-    cornerRadius: 6
   });
 
   seriesGender.data.setAll([
@@ -2779,6 +2857,46 @@ am5.ready(function() {
   });
 
   seriesGender.appear(1000, 100);
+});
+
+
+</script>
+
+<script>
+  am5.ready(function() {
+  var rootGender = am5.Root.new("pieChartStatut");
+  rootGender.setThemes([am5themes_Animated.new(rootGender)]);
+
+  var chartGender = rootGender.container.children.push(am5percent.PieChart.new(rootGender, {
+    layout: rootGender.verticalLayout,
+    innerRadius: am5.percent(50),
+  }));
+
+  var seriesStatut = chartGender.series.push(am5percent.PieSeries.new(rootGender, {
+    valueField: "value",
+    categoryField: "category"
+  }));
+
+  seriesStatut.labels.template.set("forceHidden", true);
+
+  seriesStatut.slices.template.setAll({
+    cornerRadius: 5,
+    shiftRadius: 2,
+    tooltipText: "{category}: {value} ({valuePercentTotal.formatNumber('#.#')}%)",
+    stroke: am5.color("#fff"),
+    strokeWidth: 1.5,
+  });
+
+  seriesStatut.ticks.template.set("visible", false);
+  seriesStatut.data.setAll([
+    { category: "A un emploi", value: 105 },
+    { category: "Recherche", value: 160 },
+    { category: "Poursuit des études", value: 182 },
+    { category: "Inactif", value: 5 },
+    { category: "Non répondant", value: 6 }
+  ]);
+
+  seriesStatut.appear(1000, 100);
 });
 
 
