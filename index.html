@@ -197,7 +197,7 @@
       grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
       gap: 20px;
     } */
-     .grid {
+    .grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr); /* ⬅️ 2 fixed columns */
       gap: 20px;
@@ -207,12 +207,45 @@
         grid-template-columns: 1fr; /* Stack on smaller screens */
       }
     }
+    .grid-custom {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr); /* ⬅️ 4 fixed columns */
+      gap: 20px;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    @media (max-width: 400px) {
+      .grid-custom {
+        grid-template-columns: 1fr; /* Stack on smaller screens */
+      }
+    }
+    .grid0 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr); /* ⬅️ 4 fixed columns */
+      gap: 20px;
+      /* width: 100%;
+      max-width: 500px;
+      margin: 0 auto; */
+    }
+    @media (max-width: 400px) {
+      .grid0 {
+        grid-template-columns: 1fr; /* Stack on smaller screens */
+      }
+    }
+    .grid0 > .chart-box:first-child {
+      grid-column: span 3; /* Span 3 columns */
+    }
+
+    .grid0 > .chart-box:last-child {
+      grid-column: span 1; /* Span 1 column */
+    }
     .grid1 {
       display: grid;
       grid-template-columns: repeat(1, 1fr); /* ⬅️ 4 fixed columns */
       gap: 20px;
       width: 100%;
-      max-width: 500px; /* Or any max width you like */
+      max-width: 920px; /* Or any max width you like */
       margin: 0 auto;
     }
     @media (max-width: 400px) {
@@ -536,6 +569,15 @@
       font-size: 14px;
     }
 
+    #pieChartTopSalariesLegend {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-start;
+      flex-direction: column;
+      align-items: stretch;
+      font-family: Arial, sans-serif;
+    }
+
   </style>
 </head>
 <body>
@@ -851,34 +893,51 @@
       </div>
     </div>
 
+    <div class="grid0" style="margin-bottom: 20px;">
+      <div class="chart-box">
+        <h3 style="text-align: center; font-size: 24px;">Étudiants par région</h3><br>
+        <div id="container" style="display: flex; align-items: flex-start; gap: 20px;">
+          <div id="studentsLegend" style="width: 350px;"></div>
+          <div id="studentsChart" style="flex-grow: 1; height: 450px;"></div>
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <h3 style="text-align: center; font-size: 24px;">Répartition par genre</h3><br>
+        <div id="pieChartGender" class="chart-container" style="height: 450px;"></div>
+        <!-- <div id="pieChartGenderLegend" style="margin-top: 10px;"></div> -->
+      </div>
+    </div>
+
+    <div class="grid-custom" style="margin-bottom: 20px;">
+      <!-- <div class="chart-box"> -->
+        <!-- <h3>Salaire moyen par région (€)</h3> -->
+        <!-- <div id="container" style="display: flex; align-items: flex-start; gap: 20px;"></div> -->
+          <!-- <div id="salaryChart" style="width: 200px;"></div> -->
+          <!-- <div id="salaryLegend" style="flex-grow: 1; height: 450px;"></div> -->
+          <!-- <div id="salaryChart" class="chart-container"></div> -->
+          <!-- <div id="salaryLegend" class="manual-legend"></div> -->
+        <!-- </div> -->
+      <!-- </div> -->
+
+      <div class="chart-box">
+        <h3 style="text-align: center; font-size: 24px;">Salaire moyen par région (€)</h3><br>
+        <div id="containerSalary" style="display: flex; align-items: flex-start; gap: 20px;">
+          <div id="salaryLegend" style="width: 350px;"></div>
+          <div id="salaryChart" style="flex-grow: 1; height: 450px;"></div>
+        </div>
+      </div>
+
+
+      <!-- <div class="chart-box"> -->
+        <!-- <h3>Top 3 régions par salaire moyen</h3>
+        <div id="pieChartTopSalaries" class="chart-container" style="height: 450px;"></div>
+        <div id="pieChartTopSalariesLegend" style="margin-top: 10px; display: flex; justify-content: center; flex-direction: column; align-items: center;"></div> -->
+      <!-- </div> -->
+
+    </div>
+
     <div class="grid" style="margin-bottom: 20px;">
-      <div class="chart-box">
-        <h3>Étudiants par région</h3>
-        <!-- <div class="region-list">
-          <p>Bretagne: 9</p>
-          <p>Normandie: 13</p>
-          <p>Hauts-de-France: 18</p>
-          <p>Grand Est: 30</p>
-          <p>Pays de la Loire: 8</p>
-          <p>Centre-Val de Loire: 2</p>
-          <p>Île-de-France: 47</p>
-          <p>Bourgogne-Franche-Comté: 2</p>
-          <p>Nouvelle-Aquitaine: 31</p>
-          <p>Auvergne-Rhône-Alpes: 21</p>
-          <p>Occitanie: 45</p>
-          <p>Provence-Alpes-Côte d'Azur: 70</p>
-          <p>Corse: 1</p>
-        </div> -->
-        <div id="studentsChart" class="chart-container"></div>
-        <!-- <div id="studentsList"></div> -->
-      </div>
-
-      <div class="chart-box">
-        <h3>Salaire moyen par région (€)</h3>
-        <div id="salaryChart" class="chart-container"></div>
-        <!-- <div id="salaryList"></div> -->
-      </div>
-
       <div class="chart-box">
         <h3>Statut professionnel</h3>
         <div class="status-grid-rowed">
@@ -2296,20 +2355,77 @@ am5.ready(function() {
 <script>
   
 am5.ready(function () {
+
+  // France flag based color
+  // const manualColorMap = {
+  //   // Blues
+  //   "FR-BRE": am5.color(0xA3C9F9), // light sky blue
+  //   "FR-NOR": am5.color(0x7FB4F3), // medium blue
+  //   "FR-HDF": am5.color(0x4F97EA), // strong blue
+  //   "FR-GES": am5.color(0x2D76D3), // deep blue
+
+  //   // Whites / Neutral grays
+  //   "FR-PDL": am5.color(0xF5F5F5), // near-white
+  //   "FR-CVL": am5.color(0xDDDDDD), // very light gray
+  //   "FR-IDF": am5.color(0xCCCCCC), // light gray
+  //   "FR-BFC": am5.color(0xBBBBBB), // medium-light gray
+
+
+  //   // Reds
+  //   "FR-NAQ": am5.color(0xF7A8A8), // light red
+  //   "FR-ARA": am5.color(0xF28585), // medium red
+  //   "FR-OCC": am5.color(0xE35D5D), // stronger red
+  //   "FR-PAC": am5.color(0xD63A3A),  // deep red
+  //   "FR-COR": am5.color(0x8B0000) // sssss
+  // };
+
+  // gradient based on bigger smaller size
   const manualColorMap = {
-    "FR-BRE": am5.color(0xffcccc), // light red
-    "FR-NOR": am5.color(0xffcc99),
-    "FR-HDF": am5.color(0xff9966),
-    "FR-GES": am5.color(0xff6600),
-    "FR-PDL": am5.color(0xccffcc),
-    "FR-CVL": am5.color(0x66ff66),
-    "FR-IDF": am5.color(0x339933),
-    "FR-BFC": am5.color(0x66ccff),
-    "FR-NAQ": am5.color(0x3399ff),
-    "FR-ARA": am5.color(0x0033cc),
-    "FR-OCC": am5.color(0x9999ff),
-    "FR-PAC": am5.color(0xcc99ff),
-    "FR-COR": am5.color(0xffffff)
+    "FR-PAC": am5.color(0x002F6C), // very dark blue (70)
+    "FR-IDF": am5.color(0x174EA6), // dark blue (47)
+    "FR-OCC": am5.color(0x2F66C7), // medium-dark blue (45)
+    "FR-NAQ": am5.color(0x4785E8), // medium blue (31)
+    "FR-GES": am5.color(0x66A2F2), // medium-light blue (30)
+    "FR-ARA": am5.color(0x85B9F5), // lighter blue (21)
+    "FR-HDF": am5.color(0x9FCBFA), // soft light blue (18)
+    "FR-NOR": am5.color(0xB5D9FC), // pale blue (13)
+    "FR-BRE": am5.color(0xCDE6FD), // very pale blue (9)
+    "FR-PDL": am5.color(0xDEEFFD), // near-white blue (8)
+    "FR-CVL": am5.color(0xEDF6FE), // slightly cooler near-white (2)
+    "FR-BFC": am5.color(0xDEEFFD), // slightly warmer near-white (2)
+    "FR-COR": am5.color(0xEDF6FE)  // light gray (1)
+  };
+
+  const manualColorMapSalaries = {
+    "FR-IDF": am5.color(0x002F6C), // darkest blue (highest salary)
+    "FR-PAC": am5.color(0x174EA6), // very dark blue
+    "FR-ARA": am5.color(0x2F66C7), // dark blue
+    "FR-NAQ": am5.color(0x4785E8), // medium blue
+    "FR-GES": am5.color(0x4785E8), // medium blue
+    "FR-OCC": am5.color(0x66A2F2), // light-medium blue
+    "FR-BFC": am5.color(0x66A2F2), // light-medium blue
+    "FR-PDL": am5.color(0x85B9F5), // pale-medium blue
+    "FR-HDF": am5.color(0x9FCBFA), // pale blue
+    "FR-BRE": am5.color(0xB5D9FC), // very pale blue
+    "FR-NOR": am5.color(0xB5D9FC), // very pale blue
+    "FR-COR": am5.color(0xEDF6FE), // no data
+    "FR-CVL": am5.color(0xEDF6FE)  // no data
+  };
+
+  const regionNames = {
+    "FR-BRE": "Bretagne",
+    "FR-NOR": "Normandie",
+    "FR-HDF": "Hauts-de-France",
+    "FR-GES": "Grand Est",
+    "FR-PDL": "Pays de la Loire",
+    "FR-CVL": "Centre-Val de Loire",
+    "FR-IDF": "Île-de-France",
+    "FR-BFC": "Bourgogne-Franche-Comté",
+    "FR-NAQ": "Nouvelle-Aquitaine",
+    "FR-ARA": "Auvergne-Rhône-Alpes",
+    "FR-OCC": "Occitanie",
+    "FR-PAC": "Provence-Alpes-Côte d'Azur",
+    "FR-COR": "Corse"
   };
 
   function createFranceMap(divId, data, labelField) {
@@ -2335,20 +2451,39 @@ am5.ready(function () {
 
     polygonSeries.mapPolygons.template.setAll({
       tooltipText: "{name}: {" + labelField + "}",
-      interactive: true
+      interactive: true,
+      cursorOverStyle: "pointer"
     });
 
-    polygonSeries.set("heatRules", [{
-      target: polygonSeries.mapPolygons.template,
-      dataField: "value",
-      min: am5.color(0xD6EFFF),
-      max: am5.color(0x0068B5),
-      key: "fill"
-    }]);
-
+    // ✨ Enable hover state
     polygonSeries.mapPolygons.template.states.create("hover", {
-      fill: am5.color(0x677935)
+      fill: am5.color(0xffd700) // golden color or whatever you prefer
     });
+
+    // ✨ Allow color binding via data
+    polygonSeries.mapPolygons.template.set("fillField", "fill");
+
+    // polygonSeries.set("heatRules", [{
+    //   target: polygonSeries.mapPolygons.template,
+    //   dataField: "value",
+    //   min: am5.color(0xD6EFFF), // light blue
+    //   max: am5.color(0x0033CC), // dark blue
+    //   key: "fill"
+    // }]);
+
+    polygonSeries.mapPolygons.template.adapters.add("fill", (fill, target) => {
+      const dataItem = target.dataItem;
+      if (dataItem && dataItem.dataContext && dataItem.dataContext.fill) {
+        return dataItem.dataContext.fill;
+      }
+      return fill;
+    });
+
+    // polygonSeries.mapPolygons.template.states.create("hover", {
+    //   fill: am5.color(0xffd700), // e.g., golden hover color for contrast
+    //   duration: 200
+    // });
+
 
     const dataItems = Object.entries(data).map(([id, value]) => {
       let numericValue = typeof value === "string"
@@ -2368,40 +2503,142 @@ am5.ready(function () {
     chart.appear(1000, 100);
   }
 
+  function createFranceMapSalary(divId, data, labelField) {
+    const root = am5.Root.new(divId);
+    root.setThemes([am5themes_Animated.new(root)]);
+
+    const chart = root.container.children.push(
+      am5map.MapChart.new(root, {
+        panX: "none",
+        panY: "none",
+        wheelY: "none",
+        projection: am5map.geoMercator()
+      })
+    );
+
+    const polygonSeries = chart.series.push(
+      am5map.MapPolygonSeries.new(root, {
+        geoJSON: am5geodata_franceLow,
+        valueField: "value",
+        calculateAggregates: true
+      })
+    );
+
+    polygonSeries.mapPolygons.template.setAll({
+      tooltipText: "{name}: {" + labelField + "}",
+      interactive: true,
+      cursorOverStyle: "pointer"
+    });
+
+    // ✨ Enable hover state
+    polygonSeries.mapPolygons.template.states.create("hover", {
+      fill: am5.color(0xffd700) // golden color or whatever you prefer
+    });
+
+    // ✨ Allow color binding via data
+    polygonSeries.mapPolygons.template.set("fillField", "fill");
+
+    // polygonSeries.set("heatRules", [{
+    //   target: polygonSeries.mapPolygons.template,
+    //   dataField: "value",
+    //   min: am5.color(0xD6EFFF), // light blue
+    //   max: am5.color(0x0033CC), // dark blue
+    //   key: "fill"
+    // }]);
+
+    polygonSeries.mapPolygons.template.adapters.add("fill", (fill, target) => {
+      const dataItem = target.dataItem;
+      if (dataItem && dataItem.dataContext && dataItem.dataContext.fill) {
+        return dataItem.dataContext.fill;
+      }
+      return fill;
+    });
+
+    // polygonSeries.mapPolygons.template.states.create("hover", {
+    //   fill: am5.color(0xffd700), // e.g., golden hover color for contrast
+    //   duration: 200
+    // });
+
+
+    const dataItems = Object.entries(data).map(([id, value]) => {
+      let numericValue = typeof value === "string"
+        ? parseInt(value.replace(/[^\d]/g, ""))
+        : value;
+
+      return {
+        id,
+        value: numericValue,
+        [labelField]: value,
+        fill: manualColorMapSalaries[id] || am5.color(0xd6efff) // default if not specified
+      };
+    });
+
+
+    polygonSeries.data.setAll(dataItems);
+    chart.appear(1000, 100);
+  }
+
   const studentsData = {
-    "FR-BRE": 9,   // Bretagne
-    "FR-NOR": 13,  // Normandie
-    "FR-HDF": 18,  // Hauts-de-France
-    "FR-GES": 30,  // Grand Est
-    "FR-PDL": 8,   // Pays de la Loire
-    "FR-CVL": 2,   // Centre-Val de Loire
-    "FR-IDF": 47,  // Île-de-France
-    "FR-BFC": 2,   // Bourgogne-Franche-Comté
-    "FR-NAQ": 31,  // Nouvelle-Aquitaine
-    "FR-ARA": 21,  // Auvergne-Rhône-Alpes
-    "FR-OCC": 45,  // Occitanie
-    "FR-PAC": 70,  // Provence-Alpes-Côte d'Azur
-    "FR-COR": 1    // Corse
+    "FR-PAC": 66, // Provence-Alpes-Côte d'Azur
+    "FR-OCC": 41, // Occitanie
+    "FR-GES": 34, // Grand Est
+    "FR-IDF": 34, // Île-de-France
+    "FR-NOR": 33, // Normandie
+    "FR-ARA": 31, // Auvergne-Rhône-Alpes
+    "FR-HDF": 30, // Hauts-de-France
+    "FR-NAQ": 22, // Nouvelle-Aquitaine
+    "FR-PDL": 14, // Pays de la Loire
+    "FR-BRE": 12, // Bretagne
+    "FR-BFC": 1, // Bourgogne-Franche-Comté
+    "FR-CVL": 0, // Centre-Val de Loire
+    "FR-COR": 0,    // Corse (no data)
   };
 
   const salaryData = {
-    "FR-BRE": '1800 €',   // Bretagne
-    "FR-NOR": '2120 €',   // Normandie
-    "FR-HDF": '2100 €',   // Hauts-de-France
-    "FR-GES": '2500 €',   // Grand Est
-    "FR-PDL": '1800 €',   // Pays de la Loire
-    "FR-CVL": '0 €',   // Centre-Val de Loire (no data)
-    "FR-IDF": '2600 €',   // Île-de-France
-    "FR-BFC": '1900 €',   // Bourgogne-Franche-Comté
-    "FR-NAQ": '2070 €',   // Nouvelle-Aquitaine
-    "FR-ARA": '3150 €',   // Auvergne-Rhône-Alpes
-    "FR-OCC": '1900 €',   // Occitanie
-    "FR-PAC": '2200 €',   // Provence-Alpes-Côte d'Azur
-    "FR-COR": '0 €'    // Corse (no data)
+    "FR-IDF": '3,100 €',   // Île-de-France
+    "FR-PAC": '2,700 €',   // Provence-Alpes-Côte d'Azur
+    "FR-ARA": '2,600 €',   // Auvergne-Rhône-Alpes
+    "FR-NAQ": '2,500 €',   // Nouvelle-Aquitaine
+    "FR-GES": '2,500 €',   // Grand Est
+    "FR-OCC": '2,400 €',   // Occitanie
+    "FR-BFC": '2,400 €',   // Bourgogne-Franche-Comté
+    "FR-PDL": '2,300 €',   // Pays de la Loire
+    "FR-HDF": '2,240 €',   // Hauts-de-France
+    "FR-BRE": '2,200 €',   // Bretagne
+    "FR-NOR": '2,200 €',   // Normandie
+    "FR-COR": 'Données non disponibles',   // Corse
+    "FR-CVL": 'Données non disponibles',   // Centre-Val de Loire
   };
 
+
+  function generateLegend(containerId, data, colorMap, labelFormatter) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = ""; // Clear previous content
+
+    Object.entries(data).forEach(([regionCode, value]) => {
+      const color = colorMap[regionCode] || am5.color(0xd6efff);
+      const item = document.createElement("div");
+      item.className = "legend-item";
+
+      const colorBox = document.createElement("span");
+      colorBox.className = "legend-color";
+      colorBox.style.backgroundColor = color.toCSSHex();
+
+      const label = document.createElement("span");
+      label.className = "legend-label";
+      label.textContent = labelFormatter(regionCode, value);
+
+      item.appendChild(colorBox);
+      item.appendChild(label);
+      container.appendChild(item);
+    });
+  }
+
+  generateLegend("studentsLegend", studentsData, manualColorMap, (code, value) => `${regionNames[code]}: ${value}`);
+  generateLegend("salaryLegend", salaryData, manualColorMapSalaries, (code, value) => `${regionNames[code]}: ${value}`);
+
   createFranceMap("studentsChart", studentsData, "Étudiants");
-  createFranceMap("salaryChart", salaryData, "Salaire (€)");
+  createFranceMapSalary("salaryChart", salaryData, "Salaire (€)");
 });
 
 </script>
@@ -2491,6 +2728,155 @@ am5.ready(function() {
     stroke: am5.color(0xffffff),
     strokeWidth: 2
   });
+});
+</script>
+
+<script>
+  am5.ready(function() {
+  var rootGender = am5.Root.new("pieChartGender");
+  rootGender.setThemes([am5themes_Animated.new(rootGender)]);
+
+  var chartGender = rootGender.container.children.push(am5percent.PieChart.new(rootGender, {
+    layout: rootGender.verticalLayout
+  }));
+
+  var seriesGender = chartGender.series.push(am5percent.PieSeries.new(rootGender, {
+    valueField: "value",
+    categoryField: "category"
+  }));
+
+  seriesGender.labels.template.set("forceHidden", true);
+
+  seriesGender.slices.template.setAll({
+    cornerRadius: 5,
+    shiftRadius: 8,
+    tooltipText: "{category}: {value} ({valuePercentTotal.formatNumber('#.#')}%)",
+    stroke: am5.color("#fff"),
+    strokeWidth: 1.5,
+    cornerRadius: 6
+  });
+
+  seriesGender.data.setAll([
+    { category: "Homme", value: 141 },
+    { category: "Femme", value: 177 }
+  ]);
+
+  // Create legend outside the chart container, as a separate container below
+  var legend = rootGender.container.children.push(am5.Legend.new(rootGender, {
+    centerX: am5.p50,
+    x: am5.p50,
+    layout: rootGender.horizontalLayout,
+    paddingTop: 10,
+  }));
+
+  legend.data.setAll(seriesGender.dataItems);
+
+  legend.labels.template.setAll({
+    text: "{category}: {value}",
+    fontSize: 14,
+    fontWeight: "500",
+    fill: am5.color("#333")
+  });
+
+  seriesGender.appear(1000, 100);
+});
+
+
+</script>
+
+<script>
+am5.ready(function () {
+  // Create root
+  var root = am5.Root.new("pieChartTopSalaries");
+
+  // Set theme
+  root.setThemes([
+    am5themes_Animated.new(root)
+  ]);
+
+  // Create chart
+  var chart = root.container.children.push(
+    am5percent.PieChart.new(root, {
+      layout: root.verticalLayout
+    })
+  );
+
+  // Create series
+  var series = chart.series.push(
+    am5percent.PieSeries.new(root, {
+      valueField: "value",
+      categoryField: "category"
+    })
+  );
+
+  series.labels.template.set("forceHidden", true);
+
+  series.slices.template.setAll({
+    cornerRadius: 5,
+    shiftRadius: 8,
+    tooltipText: "{category}: {value} € ({valuePercentTotal.formatNumber('#.#')}%)",
+    stroke: am5.color("#fff"),
+    strokeWidth: 1.5,
+    cornerRadius: 6
+  });
+
+  // Data for Top 3 Regions by Salary
+  const topSalaryData = [
+    { category: "Île-de-France", value: 3100 },
+    { category: "Provence-Alpes-Côte d'Azur", value: 2700 },
+    { category: "Auvergne-Rhône-Alpes", value: 2600 }
+  ];
+  series.data.setAll(topSalaryData);
+
+  // Create and configure legend
+  const legend = am5.Legend.new(root, {
+    nameField: "category",
+    valueText: "{value} €",
+    layout: am5.VerticalLayout.new(root),
+    centerX: am5.p50,
+    x: am5.p50,
+    width: am5.percent(100),
+    height: am5.percent(100)
+  });
+
+  // Legend appearance improvements
+  legend.labels.template.setAll({
+    fontSize: 14,               // bigger font
+    fontWeight: "600",          // bolder
+    fill: am5.color("#222222"), // darker text for contrast
+    oversizedBehavior: "wrap",
+    paddingTop: 4,
+    paddingBottom: 4,
+  });
+
+  legend.markers.template.setAll({
+    width: 18,   // larger markers
+    height: 18,
+    cornerRadius: 3,
+  });
+
+  legend.items.template.setAll({
+    paddingTop: 6,
+    paddingBottom: 6,
+    gap: 10,
+  });
+
+  // Link legend to data
+  legend.data.setAll(series.dataItems);
+
+  // Move legend to external container
+  const legendContainer = document.getElementById("pieChartTopSalariesLegend");
+  legendContainer.style.maxHeight = "200px";      // limit height
+  legendContainer.style.overflowY = "auto";       // scroll if too tall
+  legendContainer.style.width = "300px";           // fixed width for better layout
+  legendContainer.style.background = "#fafafa";    // subtle background to improve visibility
+  legendContainer.style.border = "1px solid #ddd"; // subtle border
+  legendContainer.style.padding = "10px";          // padding inside
+
+  legendContainer.appendChild(legend.dom);
+
+  // Animate chart
+  series.appear(1000, 100);
 });
 </script>
 
