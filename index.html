@@ -10,6 +10,7 @@
   <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
   <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
   <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/flow.js"></script>
   <script src="https://cdn.amcharts.com/lib/5/radar.js"></script>
   <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
   <script src="https://cdn.amcharts.com/lib/5/plugins/wordCloud.js"></script>
@@ -278,7 +279,7 @@
       grid-template-columns: repeat(1, 1fr); /* ⬅️ 4 fixed columns */
       gap: 20px;
       width: 100%;
-      max-width: 1000px;
+      /* max-width: 1000px; */
       margin: 0 auto;
     }
     @media (max-width: 400px) {
@@ -627,6 +628,10 @@
       font-family: Arial, sans-serif;
     }
 
+    #chartdivSankee {
+      width: 100%;
+      height: 500px;
+    }
   </style>
 </head>
 <body>
@@ -1094,7 +1099,7 @@
 
 
       <div class="chart-box">
-        <h3 style="text-align: center; font-size: 24px;">Situation Professionnelle à 6 mois après la certification</h3><br>
+        <h3>Situation Professionnelle à 6 mois après la certification</h3><br>
         <div id="pieChartStatut" class="chart-container" style="height: 300px;"></div>
         <div class="manual-legend2">
           <!-- <div class="legend-item">
@@ -1126,19 +1131,19 @@
       </div>
     </div>
 
-    <!-- <div class="grid" style="margin-bottom: 20px;">
+    <div class="grid4" style="margin-bottom: 20px;">
 
       <div class="chart-box">
-        <h3>Niveau managérial</h3>
-        <div class="manual-legend">
+        <h3>Évolution du statut professionnel de l’étudiant</h3>
+        <!-- <div class="manual-legend">
           <div class="legend-item">
             <span class="legend-color" style="background-color: #2A9D8F;"></span>
             <span class="legend-label">Ayant un poste de Manager</span>
           </div>
-        </div>
-        <div id="chart4" style="width: 100%; height: 300px;"></div>
+        </div> -->
+        <div id="chartdivSankee"></div>
 
-        <button class="analysis-toggle" onclick="toggleAnalysis('chart4-analysis')">Afficher/Masquer l’analyse</button>
+        <!-- <button class="analysis-toggle" onclick="toggleAnalysis('chart4-analysis')">Afficher/Masquer l’analyse</button>
         <div id="chart4-analysis" class="analysis-content" style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
           <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
           <ul style="padding-left: 20px;">
@@ -1155,10 +1160,10 @@
             <li><strong>Offrir un accompagnement au leadership :</strong> coaching, mentorat ou formations.</li>
             <li><strong>Utiliser dans la communication :</strong> pour démontrer l’impact long terme du diplôme.</li>
           </ol>
-        </div>
+        </div> -->
 
       </div>
-    </div> -->
+    </div>
 
     <div class="grid">
       <div class="chart-box">
@@ -3115,5 +3120,113 @@ am5.ready(function () {
 });
 </script>
 
+<script>
+  /**
+ * ---------------------------------------
+ * This demo was created using amCharts 5.
+ * 
+ * For more information visit:
+ * https://www.amcharts.com/
+ * 
+ * Documentation is available at:
+ * https://www.amcharts.com/docs/v5/
+ * ---------------------------------------
+ */
+
+// Create root element
+// https://www.amcharts.com/docs/v5/getting-started/#Root_element
+var root = am5.Root.new("chartdivSankee");
+
+// Set themes
+// https://www.amcharts.com/docs/v5/concepts/themes/
+root.setThemes([am5themes_Animated.new(root)]);
+
+// Create series
+// https://www.amcharts.com/docs/v5/charts/flow-charts/
+var series = root.container.children.push(
+  am5flow.Sankey.new(root, {
+    sourceIdField: "from",
+    targetIdField: "to",
+    valueField: "value",
+    paddingRight: 200,
+    idField: "id"
+  })
+);
+
+series.links.template.setAll({ fillStyle: "solid", fillOpacity: 0.15 });
+
+// highlight all links with the same id beginning
+series.links.template.events.on("pointerover", function (event) {
+  var dataItem = event.target.dataItem;
+  var id = dataItem.get("id").split("-")[0];
+
+  am5.array.each(series.dataItems, function (dataItem) {
+    if (dataItem.get("id").indexOf(id) != -1) {
+      dataItem.get("link").hover();
+    }
+  });
+});
+
+series.links.template.events.on("pointerout", function (event) {
+  am5.array.each(series.dataItems, function (dataItem) {
+    dataItem.get("link").unhover();
+  });
+});
+
+// Set data
+// https://www.amcharts.com/docs/v5/charts/flow-charts/#Setting_data
+series.data.setAll([
+  { from: "Diplômé", to: "EE1 Recherche", value: 140, id: "A0-0" },
+  { from: "Diplômé", to: "EE1 Poursuit des études", value: 178, id: "A1-0" },
+
+  // ES 1
+  { from: "EE1 Recherche", to: "EE2 Non répondant", value: 6, id: "B0-1" },
+  { from: "EE1 Recherche", to: "EE2 Inactif", value: 5, id: "B1-1" },
+  { from: "EE1 Recherche", to: "EE2 A un emploi", value: 105, id: "B2-1" },
+  { from: "EE1 Recherche", to: "EE2 Recherche", value: 20, id: "B3-1" },
+  { from: "EE1 Recherche", to: "EE2 Poursuit des études", value: 4, id: "B4-1" },
+
+  { from: "EE1 Poursuit des études", to: "EE2 Poursuit des études", value: 178, id: "C0-1" },
+
+  // ES 2
+  { from: "EE2 Non répondant", to: "EE3 Non répondant", value: 6, id: "D0-2" },
+
+  { from: "EE2 Inactif", to: "EE3 Non répondant", value: 2, id: "E0-2" },
+  { from: "EE2 Inactif", to: "EE3 Inactif", value: 3, id: "E1-2" },
+  
+  { from: "EE2 A un emploi", to: "EE3 A un emploi", value: 95, id: "F0-2" },
+  { from: "EE2 A un emploi", to: "EE3 Non répondant", value: 10, id: "F1-2" },
+
+  { from: "EE2 Recherche", to: "EE3 Recherche", value: 12, id: "G0-2" },
+  { from: "EE2 Recherche", to: "EE3 Poursuit des études", value: 5, id: "G1-2" },
+  { from: "EE2 Recherche", to: "EE3 Non répondant", value: 3, id: "G2-2" },
+
+  { from: "EE2 Poursuit des études", to: "EE3 Poursuit des études", value: 182, id: "H0-2" },
+
+  // ES 3
+  { from: "EE3 Non répondant", to: "EE4 Non répondant", value: 21, id: "I0-3" },
+
+  { from: "EE3 Inactif", to: "EE4 Inactif", value: 3, id: "J0-3" },
+
+  { from: "EE3 A un emploi", to: "EE4 A un emploi", value: 95, id: "K0-3" },
+  
+  { from: "EE3 Recherche", to: "EE4 Recherche", value: 4, id: "L0-3" },
+  { from: "EE3 Recherche", to: "EE4 Non répondant", value: 4, id: "L1-3" },
+  { from: "EE3 Recherche", to: "EE4 Poursuit des études", value: 4, id: "L2-3" },
+
+  { from: "EE3 Poursuit des études", to: "EE4 Poursuit des études", value: 187, id: "M0-3" },
+
+  // ES 4
+  // { from: "EE4 Non répondant", to: "End data", value: 25, id: "M0-3" },
+  // { from: "EE4 Inactif", to: "End data", value: 3, id: "M0-3" },
+  // { from: "EE4 A un emploi", to: "End data", value: 95, id: "M0-3" },
+  // { from: "EE4 Recherche", to: "End data", value: 4, id: "M0-3" },
+  // { from: "EE4 Poursuit des études", to: "End data", value: 191, id: "M0-3" },
+
+]);
+
+// Make stuff animate on load
+series.appear(1000, 100);
+</script>
 </body>
 </html>
