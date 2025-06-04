@@ -1228,6 +1228,7 @@ am5.ready(function() {
   // Chart 1: Stacked Column Chart (unchanged)
   // Chart 1: Stacked Column Chart
   var root = am5.Root.new("chart1");
+  root._logo.dispose();
   root.setThemes([am5themes_Animated.new(root)]);
 
   var chart = root.container.children.push(
@@ -1591,6 +1592,7 @@ am5.ready(function() {
   // Chart 3: Type de Contrat (Horizontal Grouped Bar Chart)
 
   var root3 = am5.Root.new("chart3");
+  root3._logo.dispose();
   root3.setThemes([am5themes_Animated.new(root3)]);
 
   var chart3 = root3.container.children.push(am5xy.XYChart.new(root3, {
@@ -1802,6 +1804,8 @@ am5.ready(function() {
 
   function createLineChartManager(containerId, data) {
     const root = am5.Root.new(containerId);
+    root._logo.dispose();
+
     root.setThemes([am5themes_Animated.new(root)]);
 
     const chart = root.container.children.push(
@@ -1887,6 +1891,7 @@ am5.ready(function() {
   // Chart 5: Top 8 fonctions (Grouped Horizontal Bar Chart)
 
   var root5 = am5.Root.new("chart5");
+  root5._logo.dispose();
   root5.setThemes([am5themes_Animated.new(root5)]);
 
   var chart5 = root5.container.children.push(am5xy.XYChart.new(root5, {
@@ -2405,6 +2410,8 @@ am5.ready(function() {
   // Pie Chart A: Total vs Graduated Students
   am5.ready(function() {
     var rootA = am5.Root.new("pieChartA");
+    rootA._logo.dispose();
+
     rootA.setThemes([am5themes_Animated.new(rootA)]);
 
     var chartA = rootA.container.children.push(am5percent.PieChart.new(rootA, {
@@ -2459,6 +2466,7 @@ am5.ready(function() {
 
       function createLineChartManager(containerId, data) {
         const root = am5.Root.new(containerId);
+        root._logo.dispose();
         root.setThemes([am5themes_Animated.new(root)]);
 
         const chart = root.container.children.push(
@@ -2636,6 +2644,7 @@ am5.ready(function () {
 
   function createFranceMap(divId, data, labelField) {
     const root = am5.Root.new(divId);
+    root._logo.dispose();
     root.setThemes([am5themes_Animated.new(root)]);
 
     const chart = root.container.children.push(
@@ -2711,6 +2720,7 @@ am5.ready(function () {
 
   function createFranceMapSalary(divId, data, labelField) {
     const root = am5.Root.new(divId);
+    root._logo.dispose();
     root.setThemes([am5themes_Animated.new(root)]);
 
     const chart = root.container.children.push(
@@ -2853,6 +2863,7 @@ am5.ready(function () {
 // Create root
 am5.ready(function () {
   var root = am5.Root.new("pieChart");
+  root._logo.dispose();
 
   // Set themes
   root.setThemes([am5themes_Animated.new(root)]);
@@ -2904,6 +2915,7 @@ am5.ready(function () {
 <script>
 am5.ready(function() {
   var root2 = am5.Root.new("domainePieChart");
+  root2._logo.dispose();
 
   root2.setThemes([am5themes_Animated.new(root2)]);
 
@@ -2945,6 +2957,7 @@ am5.ready(function() {
 <script>
   am5.ready(function () {
   var rootGender = am5.Root.new("pieChartGender");
+  rootGender._logo.dispose();
   rootGender.setThemes([am5themes_Animated.new(rootGender)]);
 
   var chartGender = rootGender.container.children.push(
@@ -2987,6 +3000,8 @@ am5.ready(function() {
 <script>
   am5.ready(function() {
   var rootGender = am5.Root.new("pieChartStatut");
+  rootGender._logo.dispose();
+
   rootGender.setThemes([am5themes_Animated.new(rootGender)]);
 
   var chartGender = rootGender.container.children.push(am5percent.PieChart.new(rootGender, {
@@ -3121,22 +3136,9 @@ am5.ready(function () {
 </script>
 
 <script>
-  /**
- * ---------------------------------------
- * This demo was created using amCharts 5.
- * 
- * For more information visit:
- * https://www.amcharts.com/
- * 
- * Documentation is available at:
- * https://www.amcharts.com/docs/v5/
- * ---------------------------------------
- */
 
-// Create root element
-// https://www.amcharts.com/docs/v5/getting-started/#Root_element
 var root = am5.Root.new("chartdivSankee");
-
+root._logo.dispose();
 // Set themes
 // https://www.amcharts.com/docs/v5/concepts/themes/
 root.setThemes([am5themes_Animated.new(root)]);
@@ -3225,8 +3227,14 @@ series.data.setAll([
 
 ]);
 
-// Make stuff animate on load
-series.appear(1000, 100);
+  // series.nodes.labels.template.setAll({
+  //   fontSize: 12,
+  //   maxWidth: 150,
+  //   oversizedBehavior: "wrap",
+  //   text: `${ssss}`
+  // });
+
+  series.appear(1000, 100);
 </script>
 </body>
 </html>
