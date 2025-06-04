@@ -273,6 +273,19 @@
         grid-template-columns: 1fr; /* Stack on smaller screens */
       }
     }
+    .grid4 {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr); /* ⬅️ 4 fixed columns */
+      gap: 20px;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    @media (max-width: 400px) {
+      .grid4 {
+        grid-template-columns: 1fr; /* Stack on smaller screens */
+      }
+    }
     .chart-box {
       background: white;
       padding: 15px;
@@ -343,7 +356,7 @@
       gap: 20px;
       padding: 10px 0;
       flex-wrap: wrap;
-      max-width: 400px; /* Controls the total width to maintain 2 items per row */
+      max-width: 800px; /* Controls the total width to maintain 2 items per row */
       margin: 0 auto;   /* Center the legend container itself on the page */
     }
 
@@ -351,7 +364,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      width: 45%;        /* Ensures 2 items fit per row with some gap */
+      width: 30%;        /* Ensures 2 items fit per row with some gap */
       /* margin-bottom: 10px; */
     }
 
@@ -658,7 +671,7 @@
     <div class="grid3" style="margin-bottom: 20px;">
       <div class="chart-box" style="text-align: center; background-color: rgb(226, 246, 250);">
         <h3 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;"><strong>Poursuite d’étude à 6 mois après la certification</strong></h3>
-        <p style="color:#1E9180 ; font-size: 40px;"><strong>40%</strong></p>
+        <p style="color:#1E9180 ; font-size: 40px;"><strong>57%</strong></p>
         <!-- <p style="color:#49928a; padding-bottom: 25px;"><strong>27% (Basé sur EE2)</strong></p> -->
       </div>
 
@@ -694,7 +707,7 @@
     <div class="grid2" style="margin-bottom: 20px;">
       <div class="chart-box" style="text-align: center;">
         <h3 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;"><strong>Postes</strong></h3>
-        <p style="color: #1E9180 "><strong>Postes ciblés après 24 mois :<span style="color:#2C8B7D	;"> 42%  </span></strong></p>
+        <p style="color: #1E9180 "><strong>Postes ciblés après 24 mois :<span style="color:#2C8B7D	;"> 48%  </span></strong></p>
         <table style="margin: 0 auto; text-align: center;"><thead>
           <tr style="font-size: 15px;">
             <th style="padding-left: 15px;">EE1</th>
@@ -705,9 +718,9 @@
         <tbody>
           <tr style="font-size: 13px; color: #159E8E;">
             <td style="padding-left: 15px; font-weight: 700;">0%</td>
-            <td style="padding-left: 15px; font-weight: 700;">43%</td>
-            <td style="padding-left: 15px; font-weight: 700;">46%</td>
-            <td style="padding-left: 15px; font-weight: 700;">42%</td>
+            <td style="padding-left: 15px; font-weight: 700;">54%</td>
+            <td style="padding-left: 15px; font-weight: 700;">56%</td>
+            <td style="padding-left: 15px; font-weight: 700;">48%</td>
           </tr>
         </tbody>
         </table>
@@ -847,7 +860,7 @@
       <div class="chart-box" style="text-align: center;">
         <h3 style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;"><strong>Fourchette salariale moyenne</strong></h3>
         <p style="padding-top: 20px;"><strong>1 600€ – 1 899€</strong></p>
-        <p style="color:#49928a; padding-bottom: 25px;"><strong>38.57%</strong></p>
+        <p style="color:#49928a; padding-bottom: 25px; font-size: 20px;"><strong>39%</strong></p>
       </div>
 
       <div class="chart-box" style="text-align: center;">
@@ -871,7 +884,7 @@
 
       <div class="chart-box">
         <h3>Distribution des enquêtes par vague</h3>
-        <div id="pieChartB" class="chart-container" style="height: 300px;"></div>
+        <div id="chartSent" class="chart-container" style="height: 400px;"></div>
       </div>
 
       <div class="chart-box">
@@ -940,7 +953,15 @@
 
       <div class="chart-box">
         <h3 style="text-align: center; font-size: 24px;">Répartition par genre</h3><br>
-        <div id="pieChartGender" class="chart-container" style="height: 450px;"></div>
+        <div class="legend-item">
+          <span class="legend-color" style="background-color: #67b7dc;"></span>
+          <span class="legend-label">Homme <span style="color: #67b7dc"><strong>44%</strong></span></span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color" style="background-color: #6794dc;"></span>
+          <span class="legend-label">Femme <span style="color: #6794dc"><strong>56%</strong></span></span>
+        </div>
+        <div id="pieChartGender" class="chart-container" style="height: 400px;"></div>
         <!-- <div id="pieChartGenderLegend" style="margin-top: 10px;"></div> -->
       </div>
     </div>
@@ -965,35 +986,38 @@
       </div>
 
       <div class="chart-box">
-        <h3 style="text-align: center; font-size: 24px;">Situation Professionnelle à 6 mois après la certification</h3><br>
-        <div id="pieChartStatut" class="chart-container" style="height: 300px;"></div>
-        <div class="manual-legend2">
+        <h3 style="text-align: center; font-size: 24px;">Niveau managérial</h3>
+        <div class="manual-legend">
           <!-- <div class="legend-item">
             <span class="legend-color" style="background-color: #A77A82;"></span>
             <span class="legend-label">Oui</span>
           </div> -->
-          <div class="legend-item2">
-            <span class="legend-color2" style="background-color: #67b7dc;"></span>
-            <span class="legend-label2">A un emploi <span style="color: #67b7dc; font-size: 16px"><strong>22.9%</strong></span></span>
-          </div>
-          <div class="legend-item2">
-            <span class="legend-color2" style="background-color: #6794dc;"></span>
-            <span class="legend-label2">Recherche <span style="color: #6794dc; font-size: 16px"><strong>34.9%</strong></span></span>
-          </div>
-          <div class="legend-item2">
-            <span class="legend-color2" style="background-color: #6771dc;"></span>
-            <span class="legend-label2">Poursuit des études <span style="color: #6771dc; font-size: 16px"><strong>39.7%</strong></span></span>
-          </div>
-          <div class="legend-item2">
-            <span class="legend-color2" style="background-color: #8067dc;"></span>
-            <span class="legend-label2">Inactif <span style="color: #8067dc; font-size: 16px"><strong>1.1%</strong></span></span>
-          </div>
-          <div class="legend-item2">
-            <span class="legend-color2" style="background-color: #a367dc;"></span>
-            <span class="legend-label2">Non répondant <span style="color: #a367dc; font-size: 16px"><strong>1.3%</strong></span></span>
+          <div class="legend-item">
+            <span class="legend-color" style="background-color: #2A9D8F;"></span>
+            <span class="legend-label">Ayant un poste de Manager</span>
           </div>
         </div>
-        <!-- <div id="pieChartGenderLegend" style="margin-top: 10px;"></div> -->
+        <div id="chart4" style="width: 100%; height: 300px;"></div>
+
+        <button style="margin-top: 140px;" class="analysis-toggle" onclick="toggleAnalysis('chart4-analysis')">Afficher/Masquer l’analyse</button>
+        <div id="chart4-analysis" class="analysis-content" style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
+          <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
+          <ul style="padding-left: 20px;">
+            <li><strong>Nombre croissant de managers :</strong> de 20 à 30 entre EE2 et EE4.</li>
+            <li><strong>Progression constante :</strong> environ +5 à chaque vague.</li>
+            <li><strong>Encore une minorité :</strong> seulement 25 % environ sont managers à EE4.</li>
+            <li><strong>Mobilité ascendante :</strong> le programme semble favoriser l’évolution de carrière.</li>
+          </ul>
+
+          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
+          <ol style="padding-left: 20px;">
+            <li><strong>Partager des parcours inspirants :</strong> anciens élèves devenus managers.</li>
+            <li><strong>Mettre en avant la progression :</strong> sous forme graphique ou comparative.</li>
+            <li><strong>Offrir un accompagnement au leadership :</strong> coaching, mentorat ou formations.</li>
+            <li><strong>Utiliser dans la communication :</strong> pour démontrer l’impact long terme du diplôme.</li>
+          </ol>
+        </div>
+
       </div>
     </div>
 
@@ -1070,12 +1094,43 @@
 
 
       <div class="chart-box">
-        <h3>Niveau managérial</h3>
-        <div class="manual-legend">
+        <h3 style="text-align: center; font-size: 24px;">Situation Professionnelle à 6 mois après la certification</h3><br>
+        <div id="pieChartStatut" class="chart-container" style="height: 300px;"></div>
+        <div class="manual-legend2">
           <!-- <div class="legend-item">
             <span class="legend-color" style="background-color: #A77A82;"></span>
             <span class="legend-label">Oui</span>
           </div> -->
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #67b7dc;"></span>
+            <span class="legend-label2">A un emploi <span style="color: #67b7dc; font-size: 16px"><strong>33%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #6794dc;"></span>
+            <span class="legend-label2">Recherche <span style="color: #6794dc; font-size: 16px"><strong>6%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #6771dc;"></span>
+            <span class="legend-label2">Poursuit des études <span style="color: #6771dc; font-size: 16px"><strong>57%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #8067dc;"></span>
+            <span class="legend-label2">Inactif <span style="color: #8067dc; font-size: 16px"><strong>2%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #a367dc;"></span>
+            <span class="legend-label2">Non répondant <span style="color: #a367dc; font-size: 16px"><strong>2%</strong></span></span>
+          </div>
+        </div>
+        <!-- <div id="pieChartGenderLegend" style="margin-top: 10px;"></div> -->
+      </div>
+    </div>
+
+    <!-- <div class="grid" style="margin-bottom: 20px;">
+
+      <div class="chart-box">
+        <h3>Niveau managérial</h3>
+        <div class="manual-legend">
           <div class="legend-item">
             <span class="legend-color" style="background-color: #2A9D8F;"></span>
             <span class="legend-label">Ayant un poste de Manager</span>
@@ -1103,7 +1158,7 @@
         </div>
 
       </div>
-    </div>
+    </div> -->
 
     <div class="grid">
       <div class="chart-box">
@@ -2388,43 +2443,113 @@ am5.ready(function() {
   });
 
   // Pie Chart B: Number of Surveys Sent
-  am5.ready(function() {
-    var rootB = am5.Root.new("pieChartB");
-    rootB.setThemes([am5themes_Animated.new(rootB)]);
+    am5.ready(function() {
+       // Chart chartSent: Niveau managérial (Line Chart)
+      const chart4DataLine = [
+        { es: "EE1", envoyé: 318,  },
+        { es: "EE2", envoyé: 140, },
+        { es: "EE3", envoyé: 136, },
+        { es: "EE4", envoyé: 131, }
+      ];
 
-    var chartB = rootB.container.children.push(am5percent.PieChart.new(rootB, {
-      layout: rootB.verticalLayout,
-      innerRadius: am5.percent(50),
-    }));
+      function createLineChartManager(containerId, data) {
+        const root = am5.Root.new(containerId);
+        root.setThemes([am5themes_Animated.new(root)]);
 
-    var seriesB = chartB.series.push(am5percent.PieSeries.new(rootB, {
-      valueField: "value",
-      categoryField: "stage"
-    }));
+        const chart = root.container.children.push(
+          am5xy.XYChart.new(root, {
+            panX: false,
+            panY: false,
+            wheelX: "none",
+            wheelY: "none",
+            layout: root.verticalLayout
+          })
+        );
 
-    seriesB.data.setAll([
-      { stage: "EE1", value: 318 },
-      { stage: "EE2", value: 140 },
-      { stage: "EE3", value: 136 },
-      { stage: "EE4", value: 131 }
-    ]);
+        // X Axis (Categories: EE1, EE2...)
+        const xAxis = chart.xAxes.push(
+          am5xy.CategoryAxis.new(root, {
+            categoryField: "es",
+            renderer: am5xy.AxisRendererX.new(root, { minGridDistance: 30 }),
+            tooltip: am5.Tooltip.new(root, {})
+          })
+        );
+        xAxis.data.setAll(data);
 
-      // Format label with integer percentage
-    seriesB.labels.template.setAll({
-      text: "{category}: {value} ({valuePercentTotal.formatNumber('#.#')}%)",
-      fontSize: 14,
-      populateText: true,
-      fontWeight: "500",
-      fill: am5.color("#333")
-    });
+        // Y Axis (Values)
+        const yAxis = chart.yAxes.push(
+          am5xy.ValueAxis.new(root, {
+            renderer: am5xy.AxisRendererY.new(root, {})
+          })
+        );
 
-    seriesB.slices.template.setAll({
-      tooltipText: "{category}: {value} ({valuePercentTotal.formatNumber('#.#')}%)", // Update tooltip to include percentage
-      stroke: am5.color("#fff"),
-      strokeWidth: 1.5,
-      cornerRadius: 6
-    });
-    seriesB.appear(1000, 100);
+        // Line series function
+        function createSeries(field, name, color) {
+          const series = chart.series.push(
+            am5xy.LineSeries.new(root, {
+              name: name,
+              xAxis: xAxis,
+              yAxis: yAxis,
+              valueYField: field,
+              categoryXField: "es",
+              stroke: color,
+              fill: color,
+              tooltip: am5.Tooltip.new(root, {
+                labelText: `envoyé: {valueY}`
+              })
+            })
+          );
+
+          series.strokes.template.setAll({
+            strokeWidth: 3
+          });
+
+          series.bullets.push(() =>
+            am5.Bullet.new(root, {
+              sprite: am5.Circle.new(root, {
+                radius: 5,
+                fill: color,
+                stroke: am5.color(0xffffff),
+                strokeWidth: 2
+              })
+            })
+          );
+
+          // Add labels above each point
+          series.bullets.push(() =>
+            am5.Bullet.new(root, {
+              locationY: 0,
+              sprite: am5.Label.new(root, {
+                populateText: true,
+                text: "{valueY}", // This now works
+                centerY: am5.p100,
+                centerX: am5.p60,
+                dy: 0,
+                fill: color,
+                fontWeight: "500",
+                fontSize: 14
+              })
+            })
+          );
+          series.data.setAll(data);
+        }
+
+        // Add "Oui" and "Non" series
+        createSeries("envoyé", "envoyé", am5.color("#2A9D8F"));
+        // createSeries("Non", "Non", am5.color("#A77A82"));
+
+        chart.set("cursor", am5xy.XYCursor.new(root, {
+          behavior: "none",
+          xAxis: xAxis,
+          yAxis: yAxis
+        }));
+
+        chart.appear(1000, 100);
+      }
+
+      // Render the chart
+      createLineChartManager("chartSent", chart4DataLine);
+
   });
 </script>
 
@@ -2747,15 +2872,16 @@ am5.ready(function () {
   );
 
   // Set data
+  // based on total combination ES 1 - ES 4
   series.data.setAll([
-    { category: "Conseiller commercial", value: 17, color: am5.color(0xFFFBBD) },
-    { category: "Commercial", value: 14, color: am5.color(0x7FB069) },
-    { category: "Responsable des ventes", value: 4, color: am5.color(0xE6AA68) }
+    { category: "Conseiller commercial", value: 64, percentage: 22, color: am5.color(0xFFFBBD) },
+    { category: "Commercial", value: 53, percentage: 18, color: am5.color(0x7FB069) },
+    { category: "Responsable commercial", value: 14, percentage: 5, color: am5.color(0xE6AA68) }
   ]);
 
   // Add labels
   series.labels.template.setAll({
-    text: "{category}: {value}%",
+    text: "{category}: {percentage}%",
     fontSize: 14,
     fill: am5.color(0x00454D)
   });
@@ -2763,7 +2889,8 @@ am5.ready(function () {
   // Customize slices (optional)
   series.slices.template.setAll({
     stroke: am5.color(0xffffff),
-    strokeWidth: 2
+    strokeWidth: 2,
+    tooltipText: "{category}: {percentage}%",
   });
 
 }); // end am5.ready()
@@ -2791,70 +2918,60 @@ am5.ready(function() {
   );
 
   series2.data.setAll([
-    { category: "Immobilier", value: 22, color: am5.color(0x99D17B) },
-    { category: "Commerce", value: 6, color: am5.color(0x95BF8F) },
-    { category: "Assurance", value: 4, color: am5.color(0xB1AE91) }
+    { category: "Immobilier", value: 56, percentage: 19, color: am5.color(0x99D17B) },
+    { category: "Commerce", value: 9, percentage: 3, color: am5.color(0x95BF8F) },
+    { category: "Assurance", value: 6, percentage: 2, color: am5.color(0xB1AE91) }
   ]);
 
   series2.labels.template.setAll({
-    text: "{category}: {value}%",
+    text: "{category}: {percentage}%",
     fontSize: 14,
     fill: am5.color(0x00454D)
   });
 
   series2.slices.template.setAll({
     stroke: am5.color(0xffffff),
-    strokeWidth: 2
+    strokeWidth: 2,
+    tooltipText: "{category}: {percentage}%",
   });
 });
 </script>
 
 <script>
-  am5.ready(function() {
+  am5.ready(function () {
   var rootGender = am5.Root.new("pieChartGender");
   rootGender.setThemes([am5themes_Animated.new(rootGender)]);
 
-  var chartGender = rootGender.container.children.push(am5percent.PieChart.new(rootGender, {
-    layout: rootGender.verticalLayout,
-    innerRadius: am5.percent(50),
-  }));
+  var chartGender = rootGender.container.children.push(
+    am5percent.PieChart.new(rootGender, {
+      layout: rootGender.verticalLayout,
+      innerRadius: am5.percent(50),
+    })
+  );
 
-  var seriesGender = chartGender.series.push(am5percent.PieSeries.new(rootGender, {
-    valueField: "value",
-    categoryField: "category"
-  }));
+  var seriesGender = chartGender.series.push(
+    am5percent.PieSeries.new(rootGender, {
+      valueField: "value",
+      categoryField: "category"
+    })
+  );
 
   seriesGender.labels.template.set("forceHidden", true);
 
   seriesGender.slices.template.setAll({
     cornerRadius: 5,
     shiftRadius: 2,
-    tooltipText: "{category}: {value} ({valuePercentTotal.formatNumber('#.#')}%)",
+    tooltipText: "{category}: {value} ({percentage}%)",
     stroke: am5.color("#fff"),
     strokeWidth: 1.5,
   });
 
-  seriesGender.data.setAll([
-    { category: "Homme", value: 141 },
-    { category: "Femme", value: 177 }
-  ]);
+  const genderData = [
+    { category: "Homme", value: 141, percentage: 44 },
+    { category: "Femme", value: 177, percentage: 56 }
+  ];
 
-  // Create legend outside the chart container, as a separate container below
-  var legend = rootGender.container.children.push(am5.Legend.new(rootGender, {
-    centerX: am5.p50,
-    x: am5.p50,
-    layout: rootGender.horizontalLayout,
-    paddingTop: 10,
-  }));
-
-  legend.data.setAll(seriesGender.dataItems);
-
-  legend.labels.template.setAll({
-    text: "{category}: {value}",
-    fontSize: 14,
-    fontWeight: "500",
-    fill: am5.color("#333")
-  });
+  seriesGender.data.setAll(genderData);
 
   seriesGender.appear(1000, 100);
 });
@@ -2882,18 +2999,18 @@ am5.ready(function() {
   seriesStatut.slices.template.setAll({
     cornerRadius: 5,
     shiftRadius: 2,
-    tooltipText: "{category}: {value} ({valuePercentTotal.formatNumber('#.#')}%)",
+    tooltipText: "{category}: {value} ({percentage}%)",
     stroke: am5.color("#fff"),
     strokeWidth: 1.5,
   });
 
   seriesStatut.ticks.template.set("visible", false);
   seriesStatut.data.setAll([
-    { category: "A un emploi", value: 105 },
-    { category: "Recherche", value: 160 },
-    { category: "Poursuit des études", value: 182 },
-    { category: "Inactif", value: 5 },
-    { category: "Non répondant", value: 6 }
+    { category: "A un emploi", value: 105, percentage: 33 },
+    { category: "Recherche", value: 20, percentage: 6 },
+    { category: "Poursuit des études", value: 182, percentage: 57 },
+    { category: "Inactif", value: 5, percentage: 2 },
+    { category: "Non répondant", value: 6, percentage: 2 }
   ]);
 
   seriesStatut.appear(1000, 100);
