@@ -712,7 +712,7 @@
     <div class="grid2" style="margin-bottom: 20px;">
       <div class="chart-box" style="text-align: center;">
         <h3 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;"><strong>Postes</strong></h3>
-        <p style="color: #1E9180 "><strong>Postes ciblés après 24 mois :<span style="color:#2C8B7D	;"> 48%  </span></strong></p>
+        <p style="color: #1E9180 "><strong>Postes ciblés après 24 mois :<span style="color:#2C8B7D	;"> 75%  </span></strong></p>
         <table style="margin: 0 auto; text-align: center;"><thead>
           <tr style="font-size: 15px;">
             <th style="padding-left: 15px;">EE1</th>
@@ -723,9 +723,9 @@
         <tbody>
           <tr style="font-size: 13px; color: #159E8E;">
             <td style="padding-left: 15px; font-weight: 700;">0%</td>
-            <td style="padding-left: 15px; font-weight: 700;">54%</td>
-            <td style="padding-left: 15px; font-weight: 700;">56%</td>
-            <td style="padding-left: 15px; font-weight: 700;">48%</td>
+            <td style="padding-left: 15px; font-weight: 700;">74%</td>
+            <td style="padding-left: 15px; font-weight: 700;">82%</td>
+            <td style="padding-left: 15px; font-weight: 700;">75%</td>
           </tr>
         </tbody>
         </table>
@@ -778,7 +778,7 @@
         <h3 style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;"><strong>Compétences</strong></h3>
         
         <!-- Optional: Show a placeholder or small summary -->
-        <p style="text-align: center; color: #1E9180; font-weight: 500;"><span><strong>69%</strong></span> des compétences ciblées sont utlisées.</p>
+        <p style="text-align: center; color: #1E9180; font-weight: 500;"><span><strong>60%</strong></span> des compétences ciblées sont utlisées.</p>
         <table style="margin: 0 auto; text-align: center;"><thead>
           <tr style="font-size: 15px;">
             <th style="padding-left: 15px;">EE1</th>
@@ -791,7 +791,7 @@
             <td style="padding-left: 15px; font-weight: 700;">0%</td>
             <td style="padding-left: 15px; font-weight: 700;">54%</td>
             <td style="padding-left: 15px; font-weight: 700;">63%</td>
-            <td style="padding-left: 15px; font-weight: 700;">69%</td>
+            <td style="padding-left: 15px; font-weight: 700;">60%</td>
           </tr>
         </tbody>
         </table>
@@ -2891,9 +2891,11 @@ am5.ready(function () {
   // Set data
   // based on total combination ES 1 - ES 4
   series.data.setAll([
-    { category: "Conseiller commercial", value: 64, percentage: 22, color: am5.color(0xFFFBBD) },
-    { category: "Commercial", value: 53, percentage: 18, color: am5.color(0x7FB069) },
-    { category: "Responsable commercial", value: 14, percentage: 5, color: am5.color(0xE6AA68) }
+    { category: "Commercial", value: 123, percentage: 42, color: am5.color(0xFFE66D) },
+    { category: "Postes non ciblés", value: 68, percentage: 23, color: am5.color(0xFBF0EA) },
+    { category: "Autres postes ciblés", value: 23, percentage: 8, color: am5.color(0xE6AA68) },
+    { category: "Responsable commercial", value: 14, percentage: 5, color: am5.color(0xBFD8A4) },
+    { category: "Conseiller commercial", value: 64, percentage: 22, color: am5.color(0x7FB069) },
   ]);
 
   // Add labels
@@ -2901,6 +2903,12 @@ am5.ready(function () {
     text: "{category}: {percentage}%",
     fontSize: 14,
     fill: am5.color(0x00454D)
+  });
+
+    // Add spacing between slices
+  series.slices.template.setAll({
+    cornerRadius: 5,
+    shiftRadius: 10 // Pull each slice slightly outward
   });
 
   // Customize slices (optional)
@@ -2938,13 +2946,20 @@ am5.ready(function() {
   series2.data.setAll([
     { category: "Immobilier", value: 56, percentage: 19, color: am5.color(0x99D17B) },
     { category: "Commerce", value: 9, percentage: 3, color: am5.color(0x95BF8F) },
-    { category: "Assurance", value: 6, percentage: 2, color: am5.color(0xB1AE91) }
+    { category: "Assurance", value: 6, percentage: 2, color: am5.color(0xB1AE91) },
+    { category: "Autre", value: 223, percentage: 76, color: am5.color(0xFBF0EA) }, 
   ]);
 
   series2.labels.template.setAll({
     text: "{category}: {percentage}%",
     fontSize: 14,
     fill: am5.color(0x00454D)
+  });
+
+  // Add spacing between slices
+  series2.slices.template.setAll({
+    cornerRadius: 5,
+    shiftRadius: 10 // Pull each slice slightly outward
   });
 
   series2.slices.template.setAll({
@@ -2979,7 +2994,7 @@ am5.ready(function() {
 
   seriesGender.slices.template.setAll({
     cornerRadius: 5,
-    shiftRadius: 2,
+    shiftRadius: 8,
     tooltipText: "{category}: {value} ({percentage}%)",
     stroke: am5.color("#fff"),
     strokeWidth: 1.5,
@@ -3019,7 +3034,7 @@ am5.ready(function() {
 
   seriesStatut.slices.template.setAll({
     cornerRadius: 5,
-    shiftRadius: 2,
+    shiftRadius: 8,
     tooltipText: "{category}: {value} ({percentage}%)",
     stroke: am5.color("#fff"),
     strokeWidth: 1.5,
