@@ -382,6 +382,26 @@
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
 
+    .legend-item3 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 40%;        /* Ensures 2 items fit per row with some gap */
+      /* margin-bottom: 10px; */
+    }
+
+    .legend-color3 {
+      width: 14px;
+      height: 14px;
+      border-radius: 2px;
+      display: inline-block;
+    }
+
+    .legend-label3 {
+      font-size: 16px;
+      color: #666666;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
     #chart2.chart-grid-container {
       position: relative;
     }
@@ -899,20 +919,21 @@
         <div id="chart1-analysis" class="analysis-content" style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
           <h4 style="color: #15616D; margin-bottom: 10px;">🔍 Analyse</h4>
           <ul style="padding-left: 20px;">
-            <li><strong>Baisse significative de la participation :</strong> le nombre de réponses passe de 318 à l’EE1 à seulement 104 à l’EE4, montrant un désengagement progressif.</li>
-            <li><strong>Complétion stable chez les engagés :</strong> une fois le questionnaire commencé, les anciens le terminent presque toujours (97 % à l’EE2, 98 % à l’EE3, 96 % à l’EE4).</li>
-            <li><strong>Taux d’ouverture en baisse constante :</strong> les ouvertures d’e-mails chutent de 318 à 108, ce qui peut indiquer une perte d’intérêt ou des problèmes de délivrabilité.</li>
-            <li><strong>Écart net après l’EE1 :</strong> entre EE1 et EE2, toutes les métriques chutent de plus de 50 %, confirmant que l’EE1 est un cas particulier (lié à la remise de diplôme).</li>
+            <li><strong>Chute progressive des envois liée à la logique de ciblage :</strong> le volume d’e-mails diminue mécaniquement à chaque vague (de 318 à 131) car seuls les anciens ayant déclaré ne pas poursuivre leurs études reçoivent les vagues suivantes.</li>
+            <li><strong>Participation élevée chez les répondants éligibles :</strong> malgré la baisse du volume, ceux qui reçoivent le questionnaire restent majoritairement actifs (taux de complétion de 97 % à l’EE2, 98 % à l’EE3, 96 % à l’EE4).</li>
+            <li><strong>Légère baisse de l’ouverture :</strong> bien que les e-mails soient bien délivrés (108 ouvertures pour 131 envois à l’EE4), un léger désengagement apparaît avec le temps.</li>
+            <li><strong>EE1 reste un cas à part :</strong> envoyée à tous les diplômés, cette vague bénéficie d’un contexte très favorable (fin d’études), expliquant son taux maximal de réponse.</li>
           </ul>
 
           <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
           <ol style="padding-left: 20px;">
-            <li><strong>Segmenter les publics selon leur engagement</strong> et envoyer des messages adaptés (ex. : “Vous nous manquez, [Prénom] !” pour les non-répondants).</li>
-            <li><strong>Renforcer les relances</strong> : prévoir 2 à 3 rappels avec des objets personnalisés ou des tons variés.</li>
-            <li><strong>Raccourcir davantage le questionnaire</strong> : viser moins de 3 minutes pour limiter les abandons, surtout aux vagues EE3/EE4.</li>
-            <li><strong>Proposer des incitations attrayantes</strong> : ex. : tirages au sort, certificats ou mises en avant d’anciens participants.</li>
-            <li><strong>Optimiser le format mobile</strong> : s’assurer que les e-mails et formulaires soient parfaitement lisibles et utilisables sur smartphone.</li>
-            <li><strong>Mobiliser l’influence des pairs</strong> : intégrer des messages ou vidéos d’anciens élèves ou d’enseignants pour motiver davantage.</li>
+            <li><strong>Clarifier la logique de suivi aux répondants :</strong> dès l’EE1, expliquer qu’un suivi sera réalisé pour ceux qui ne poursuivent pas d’études, afin d’augmenter la disponibilité aux vagues suivantes.</li>
+            <li><strong>Segmenter finement les messages selon les profils</strong> : personnaliser selon le parcours (ex. : “Comment va votre recherche d’emploi ?” vs. “Vous nous manquez !”).</li>
+            <li><strong>Renforcer les relances ciblées</strong> : planifier 2 à 3 rappels avec des objets d’e-mail variés et des messages dynamiques.</li>
+            <li><strong>Simplifier encore le questionnaire</strong> : viser une durée inférieure à 3 minutes, en particulier pour les vagues EE3/EE4 où l’attention peut baisser.</li>
+            <li><strong>Valoriser la contribution des répondants</strong> : mise en avant dans une newsletter, certificat, ou loterie pour remercier la fidélité des anciens.</li>
+            <li><strong>Optimiser le format mobile</strong> : vérifier que tous les supports (e-mails et formulaires) soient 100 % adaptés aux smartphones.</li>
+            <li><strong>Mobiliser des ambassadeurs</strong> : intégrer des témoignages ou vidéos d’anciens élèves ou enseignants pour renforcer la motivation à répondre.</li>
           </ol>
         </div>
       </div>
@@ -944,85 +965,6 @@
             <li><strong>Segmenter les entreprises :</strong> Pour mieux cibler l'accompagnement par secteur.</li>
           </ol>
         </div>
-      </div>
-    </div>
-
-    <div class="grid0" style="margin-bottom: 20px;">
-      <div class="chart-box">
-        <h3 style="text-align: center; font-size: 24px;">Étudiants par région</h3><br>
-        <div id="container" style="display: flex; align-items: flex-start; gap: 20px;">
-          <div id="studentsLegend" style="width: 350px;"></div>
-          <div id="studentsChart" style="flex-grow: 1; height: 450px;"></div>
-        </div>
-      </div>
-
-      <div class="chart-box">
-        <h3 style="text-align: center; font-size: 24px;">Répartition par genre</h3><br>
-        <div class="legend-item">
-          <span class="legend-color" style="background-color: #67b7dc;"></span>
-          <span class="legend-label">Homme <span style="color: #67b7dc"><strong>44%</strong></span></span>
-        </div>
-        <div class="legend-item">
-          <span class="legend-color" style="background-color: #6794dc;"></span>
-          <span class="legend-label">Femme <span style="color: #6794dc"><strong>56%</strong></span></span>
-        </div>
-        <div id="pieChartGender" class="chart-container" style="height: 400px;"></div>
-        <!-- <div id="pieChartGenderLegend" style="margin-top: 10px;"></div> -->
-      </div>
-    </div>
-
-    <!-- <div class="grid-custom" style="margin-bottom: 20px;">
-      <div class="chart-box">
-        <h3 style="text-align: center; font-size: 24px;">Salaire moyen par région (€)</h3><br>
-        <div id="containerSalary" style="display: flex; align-items: flex-start; gap: 20px;">
-          <div id="salaryLegend" style="width: 350px;"></div>
-          <div id="salaryChart" style="flex-grow: 1; height: 450px;"></div>
-        </div>
-      </div>
-    </div> -->
-
-    <div class="grid0" style="margin-bottom: 20px;">
-      <div class="chart-box">
-        <h3 style="text-align: center; font-size: 24px;">Salaire moyen par région (€)</h3><br>
-        <div id="containerSalary" style="display: flex; align-items: flex-start; gap: 20px;">
-          <div id="salaryLegend" style="width: 400px;"></div>
-          <div id="salaryChart" style="flex-grow: 1; height: 500px;"></div>
-        </div>
-      </div>
-
-      <div class="chart-box">
-        <h3 style="text-align: center; font-size: 24px;">Niveau managérial</h3>
-        <div class="manual-legend">
-          <!-- <div class="legend-item">
-            <span class="legend-color" style="background-color: #A77A82;"></span>
-            <span class="legend-label">Oui</span>
-          </div> -->
-          <div class="legend-item">
-            <span class="legend-color" style="background-color: #2A9D8F;"></span>
-            <span class="legend-label">Ayant un poste de Manager</span>
-          </div>
-        </div>
-        <div id="chart4" style="width: 100%; height: 300px;"></div>
-
-        <button style="margin-top: 140px;" class="analysis-toggle" onclick="toggleAnalysis('chart4-analysis')">Afficher/Masquer l’analyse</button>
-        <div id="chart4-analysis" class="analysis-content" style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
-          <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
-          <ul style="padding-left: 20px;">
-            <li><strong>Nombre croissant de managers :</strong> de 20 à 30 entre EE2 et EE4.</li>
-            <li><strong>Progression constante :</strong> environ +5 à chaque vague.</li>
-            <li><strong>Encore une minorité :</strong> seulement 25 % environ sont managers à EE4.</li>
-            <li><strong>Mobilité ascendante :</strong> le programme semble favoriser l’évolution de carrière.</li>
-          </ul>
-
-          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
-          <ol style="padding-left: 20px;">
-            <li><strong>Partager des parcours inspirants :</strong> anciens élèves devenus managers.</li>
-            <li><strong>Mettre en avant la progression :</strong> sous forme graphique ou comparative.</li>
-            <li><strong>Offrir un accompagnement au leadership :</strong> coaching, mentorat ou formations.</li>
-            <li><strong>Utiliser dans la communication :</strong> pour démontrer l’impact long terme du diplôme.</li>
-          </ol>
-        </div>
-
       </div>
     </div>
 
@@ -1129,6 +1071,48 @@
         </div>
         <!-- <div id="pieChartGenderLegend" style="margin-top: 10px;"></div> -->
       </div>
+      
+      <div class="chart-box">
+        <h3>Poursuivre les études.</h3><br>
+        <div id="pieChartContinueStudy" class="chart-container" style="height: 300px;"></div>
+        <div class="manual-legend2">
+          <!-- <div class="legend-item">
+            <span class="legend-color" style="background-color: #A77A82;"></span>
+            <span class="legend-label">Oui</span>
+          </div> -->
+          <div class="legend-item3">
+            <span class="legend-color3" style="background-color: #67b7dc;"></span>
+            <span class="legend-label3">Poursuit des études <span style="color: #67b7dc; font-size: 16px"><strong>182 (57%)</strong></span></span>
+          </div>
+          <div class="legend-item3">
+            <span class="legend-color3" style="background-color: #6794dc;"></span>
+            <span class="legend-label3">Ne poursuit pas d'études <span style="color: #6794dc; font-size: 16px"><strong>136 (43%)</strong></span></span>
+          </div>
+        
+        </div>
+        <!-- <div id="pieChartGenderLegend" style="margin-top: 10px;"></div> -->
+      </div>
+
+      <div class="chart-box">
+        <h3>Poursuivre les études dans la même école.</h3><br>
+        <div id="pieChartSameSchool" class="chart-container" style="height: 300px;"></div>
+        <div class="manual-legend2">
+          <!-- <div class="legend-item">
+            <span class="legend-color" style="background-color: #A77A82;"></span>
+            <span class="legend-label">Oui</span>
+          </div> -->
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #67b7dc;"></span>
+            <span class="legend-label2">Meme ecole <span style="color: #67b7dc; font-size: 16px"><strong>86 (47%)</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #6794dc;"></span>
+            <span class="legend-label2">Ecole differente <span style="color: #6794dc; font-size: 16px"><strong>97 (53%)</strong></span></span>
+          </div>
+        
+        </div>
+        <!-- <div id="pieChartGenderLegend" style="margin-top: 10px;"></div> -->
+      </div>
     </div>
 
     <div class="grid4" style="margin-bottom: 20px;">
@@ -1162,6 +1146,157 @@
           </ol>
         </div> -->
 
+      </div>
+    </div>
+
+    <div class="grid0" style="margin-bottom: 20px;">
+      <div class="chart-box">
+        <h3 style="text-align: center; font-size: 24px;">Étudiants par région</h3><br>
+        <div id="container" style="display: flex; align-items: flex-start; gap: 20px;">
+          <div id="studentsLegend" style="width: 350px;"></div>
+          <div id="studentsChart" style="flex-grow: 1; height: 450px;"></div>
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <h3 style="text-align: center; font-size: 24px;">Répartition par genre</h3><br>
+        <div class="legend-item">
+          <span class="legend-color" style="background-color: #67b7dc;"></span>
+          <span class="legend-label">Homme <span style="color: #67b7dc"><strong>44%</strong></span></span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color" style="background-color: #6794dc;"></span>
+          <span class="legend-label">Femme <span style="color: #6794dc"><strong>56%</strong></span></span>
+        </div>
+        <div id="pieChartGender" class="chart-container" style="height: 400px;"></div>
+        <!-- <div id="pieChartGenderLegend" style="margin-top: 10px;"></div> -->
+      </div>
+    </div>
+
+    <!-- <div class="grid-custom" style="margin-bottom: 20px;">
+      <div class="chart-box">
+        <h3 style="text-align: center; font-size: 24px;">Salaire moyen par région (€)</h3><br>
+        <div id="containerSalary" style="display: flex; align-items: flex-start; gap: 20px;">
+          <div id="salaryLegend" style="width: 350px;"></div>
+          <div id="salaryChart" style="flex-grow: 1; height: 450px;"></div>
+        </div>
+      </div>
+    </div> -->
+
+    <div class="grid0" style="margin-bottom: 20px;">
+      <div class="chart-box">
+        <h3 style="text-align: center; font-size: 24px;">Salaire moyen par région (€)</h3><br>
+        <div id="containerSalary" style="display: flex; align-items: flex-start; gap: 20px;">
+          <div id="salaryLegend" style="width: 400px;"></div>
+          <div id="salaryChart" style="flex-grow: 1; height: 500px;"></div>
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <h3 style="text-align: center; font-size: 24px;">Niveau managérial</h3>
+        <div class="manual-legend">
+          <!-- <div class="legend-item">
+            <span class="legend-color" style="background-color: #A77A82;"></span>
+            <span class="legend-label">Oui</span>
+          </div> -->
+          <div class="legend-item">
+            <span class="legend-color" style="background-color: #2A9D8F;"></span>
+            <span class="legend-label">Ayant un poste de Manager</span>
+          </div>
+        </div>
+        <div id="chart4" style="width: 100%; height: 300px;"></div>
+
+        <button style="margin-top: 140px;" class="analysis-toggle" onclick="toggleAnalysis('chart4-analysis')">Afficher/Masquer l’analyse</button>
+        <div id="chart4-analysis" class="analysis-content" style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
+          <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
+          <ul style="padding-left: 20px;">
+            <li><strong>Nombre croissant de managers :</strong> de 20 à 30 entre EE2 et EE4.</li>
+            <li><strong>Progression constante :</strong> environ +5 à chaque vague.</li>
+            <li><strong>Encore une minorité :</strong> seulement 25 % environ sont managers à EE4.</li>
+            <li><strong>Mobilité ascendante :</strong> le programme semble favoriser l’évolution de carrière.</li>
+          </ul>
+
+          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
+          <ol style="padding-left: 20px;">
+            <li><strong>Partager des parcours inspirants :</strong> anciens élèves devenus managers.</li>
+            <li><strong>Mettre en avant la progression :</strong> sous forme graphique ou comparative.</li>
+            <li><strong>Offrir un accompagnement au leadership :</strong> coaching, mentorat ou formations.</li>
+            <li><strong>Utiliser dans la communication :</strong> pour démontrer l’impact long terme du diplôme.</li>
+          </ol>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="grid" style="margin-bottom: 20px;">
+      <div class="chart-box">
+        <h3 id="chartSizeTarget-title">Taille de l'entreprise dans les emplois ciblés</h3>
+        <div id="chartSizeTarget" class="chart-container"></div>
+        <div class="manual-legend2">
+          <!-- <div class="legend-item">
+            <span class="legend-color" style="background-color: #A77A82;"></span>
+            <span class="legend-label">Oui</span>
+          </div> -->
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #67b7dc;"></span>
+            <span class="legend-label2" style="font-size: 13px;">Très petite entreprise : 1 à 9 <span style="color: #67b7dc; font-size: 14px"><strong>27%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #6794dc;"></span>
+            <span class="legend-label2" style="font-size: 13px;">Moyenne entreprise : 50 à 499 <span style="color: #6794dc; font-size: 14px"><strong>24%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #6771dc;"></span>
+            <span class="legend-label2" style="font-size: 13px;">Petite entreprise : 10 à 49 <span style="color: #6771dc; font-size: 14px"><strong>17%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #8067dc;"></span>
+            <span class="legend-label2" style="font-size: 13px;">Très grande entreprise : 1000 et + <span style="color: #8067dc; font-size: 14px"><strong>17%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #a367dc;"></span>
+            <span class="legend-label2" style="font-size: 13px;">Grande entreprise : 500 à 999 <span style="color: #a367dc; font-size: 14px"><strong>8%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #a367dc;"></span>
+            <span class="legend-label2" style="font-size: 13px;">Micro entreprise : 0 <span style="color: #a367dc; font-size: 14px"><strong>7%</strong></span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <h3 id="chartSizeNonTarget-title">Taille de l'entreprise dans les emplois non ciblés</h3>
+        <div id="chartSizeNonTarget" class="chart-container"></div>
+        <div class="manual-legend2">
+          <!-- <div class="legend-item">
+            <span class="legend-color" style="background-color: #A77A82;"></span>
+            <span class="legend-label">Oui</span>
+          </div> -->
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #67b7dc;"></span>
+            <span class="legend-label2" style="font-size: 13px;">Très petite entreprise : 1 à 9 <span style="color: #67b7dc; font-size: 14px"><strong>17%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #6794dc;"></span>
+            <span class="legend-label2" style="font-size: 13px;">Moyenne entreprise : 50 à 499 <span style="color: #6794dc; font-size: 14px"><strong>17%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #6771dc;"></span>
+            <span class="legend-label2" style="font-size: 13px;">Petite entreprise : 10 à 49 <span style="color: #6771dc; font-size: 14px"><strong>32%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #8067dc;"></span>
+            <span class="legend-label2" style="font-size: 13px;">Très grande entreprise : 1000 et + <span style="color: #8067dc; font-size: 14px"><strong>14%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #a367dc;"></span>
+            <span class="legend-label2" style="font-size: 13px;">Grande entreprise : 500 à 999 <span style="color: #a367dc; font-size: 14px"><strong>10%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #a367dc;"></span>
+            <span class="legend-label2" style="font-size: 13px;">Micro entreprise : 0 <span style="color: #a367dc; font-size: 14px"><strong>9%</strong></span></span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -3063,6 +3198,206 @@ am5.ready(function() {
 });
 
 
+</script>
+
+<script>
+  /**
+   * ---------------------------------------
+   * This demo was created using amCharts 5.
+   *
+   * For more information visit:
+   * https://www.amcharts.com/
+   *
+   * Documentation is available at:
+   * https://www.amcharts.com/docs/v5/
+   * ---------------------------------------
+   */
+
+  // Create root and chart
+  var root = am5.Root.new("pieChartContinueStudy");
+  root._logo.dispose();
+
+  root.setThemes([
+    am5themes_Animated.new(root)
+  ]);
+
+  var chart = root.container.children.push( 
+    am5percent.SlicedChart.new(root, {
+      layout: root.horizontalLayout
+    }) 
+  );
+
+  // Define data
+  var data = [{
+    category: "Poursuit des études",
+    value: 182,
+    percentage: 57
+  }, {
+    category: "Ne poursuit pas d'études",
+    value: 136,
+    percentage: 43
+  }];
+
+  // Create series
+  var shape = `M38.022,16.348c0,0.807-0.484,1.534-1.229,1.846l-0.771,0.322v4.43c0,0.552-0.447,1-1,1c-0.554,0-1-0.448-1-1v-3.594
+		l-2.312,0.968v5.085c0,0.859-0.554,1.626-1.369,1.896l-10.188,3.386c-0.205,0.068-0.418,0.104-0.632,0.104
+		c-0.192,0-0.389-0.028-0.577-0.085L7.736,27.319c-0.845-0.257-1.423-1.033-1.423-1.915v-5.085l-5.084-2.126
+		C0.486,17.881,0,17.154,0,16.348c0-0.806,0.484-1.534,1.229-1.845L18.24,7.388c0.491-0.206,1.049-0.206,1.543,0l17.01,7.115
+		C37.537,14.813,38.022,15.541,38.022,16.348z`;
+
+  var series = chart.series.push(
+    am5percent.PictorialStackedSeries.new(root, {
+      name: "Series",
+      categoryField: "category",
+      valueField: "value",
+      orientation: "vertical",
+      svgPath: shape,
+    })
+  );
+  series.ticks.template.set("visible", false);
+  series.slices.template.setAll({
+    cornerRadius: 5,
+    shiftRadius: 8,
+    tooltipText: "{category}: {value} ({percentage}%)",
+    stroke: am5.color("#fff"),
+    strokeWidth: 1.5,
+  });
+  series.data.setAll(data);
+
+  series.labels.template.set("visible", false);
+
+</script>
+
+<script>
+  am5.ready(function() {
+  var rootGender = am5.Root.new("chartSizeTarget");
+  rootGender._logo.dispose();
+
+  rootGender.setThemes([am5themes_Animated.new(rootGender)]);
+
+  var chartGender = rootGender.container.children.push(am5percent.PieChart.new(rootGender, {
+    layout: rootGender.verticalLayout,
+    innerRadius: am5.percent(50),
+  }));
+
+  var seriesStatut = chartGender.series.push(am5percent.PieSeries.new(rootGender, {
+    valueField: "value",
+    categoryField: "category"
+  }));
+
+  // seriesStatut.labels.template.set("forceHidden", true);
+
+  seriesStatut.labels.template.setAll({
+    text: "{percentage}%",
+  });
+
+  seriesStatut.slices.template.setAll({
+    cornerRadius: 5,
+    shiftRadius: 8,
+    tooltipText: "{category}: {value} ({percentage}%)",
+    stroke: am5.color("#fff"),
+    strokeWidth: 1.5,
+  });
+
+  // seriesStatut.ticks.template.set("visible", false);
+  seriesStatut.data.setAll([
+    { category: "Très petite entreprise : 1 à 9", value: 60, percentage: 27 },
+    { category: "Moyenne entreprise : 50 à 499", value: 53, percentage: 24 },
+    { category: "Petite entreprise : 10 à 49", value: 38, percentage: 17 },
+    { category: "Très grande entreprise : 1000 et +", value: 39, percentage: 17 },
+    { category: "Grande entreprise : 500 à 999", value: 17, percentage: 8 },
+    { category: "Micro entreprise : 0", value: 16, percentage: 7 },
+  ]);
+
+  seriesStatut.appear(1000, 100);
+});
+</script>
+
+
+<script>
+  am5.ready(function() {
+  var rootGender = am5.Root.new("chartSizeNonTarget");
+  rootGender._logo.dispose();
+
+  rootGender.setThemes([am5themes_Animated.new(rootGender)]);
+
+  var chartGender = rootGender.container.children.push(am5percent.PieChart.new(rootGender, {
+    layout: rootGender.verticalLayout,
+    innerRadius: am5.percent(50),
+  }));
+
+  var seriesStatut = chartGender.series.push(am5percent.PieSeries.new(rootGender, {
+    valueField: "value",
+    categoryField: "category"
+  }));
+
+  // seriesStatut.labels.template.set("forceHidden", true);
+
+  seriesStatut.labels.template.setAll({
+    text: "{percentage}%",
+  });
+
+  seriesStatut.slices.template.setAll({
+    cornerRadius: 5,
+    shiftRadius: 8,
+    tooltipText: "{category}: {value} ({percentage}%)",
+    stroke: am5.color("#fff"),
+    strokeWidth: 1.5,
+  });
+
+  // seriesStatut.ticks.template.set("visible", false);
+  seriesStatut.data.setAll([
+    { category: "Très petite entreprise : 1 à 9", value: 12, percentage: 17 },
+    { category: "Moyenne entreprise : 50 à 499", value: 12, percentage: 17 },
+    { category: "Petite entreprise : 10 à 49", value: 22, percentage: 32 },
+    { category: "Très grande entreprise : 1000 et +", value: 10, percentage: 14 },
+    { category: "Grande entreprise : 500 à 999", value: 7, percentage: 10 },
+    { category: "Micro entreprise : 0", value: 6, percentage: 9 },
+  ]);
+
+  seriesStatut.appear(1000, 100);
+});
+</script>
+
+<script>
+  am5.ready(function() {
+  var rootGender = am5.Root.new("pieChartSameSchool");
+  rootGender._logo.dispose();
+
+  rootGender.setThemes([am5themes_Animated.new(rootGender)]);
+
+  var chartGender = rootGender.container.children.push(am5percent.PieChart.new(rootGender, {
+    layout: rootGender.verticalLayout,
+    innerRadius: am5.percent(50),
+  }));
+
+  var seriesStatut = chartGender.series.push(am5percent.PieSeries.new(rootGender, {
+    valueField: "value",
+    categoryField: "category"
+  }));
+
+  // seriesStatut.labels.template.set("forceHidden", true);
+
+  seriesStatut.labels.template.setAll({
+    text: "{percentage}%",
+  });
+
+  seriesStatut.slices.template.setAll({
+    cornerRadius: 5,
+    shiftRadius: 8,
+    tooltipText: "{category}: {value} ({percentage}%)",
+    stroke: am5.color("#fff"),
+    strokeWidth: 1.5,
+  });
+
+  seriesStatut.ticks.template.set("visible", false);
+  seriesStatut.data.setAll([
+    { category: "Meme ecole", value: 86, percentage: 47 },
+    { category: "Ecole differente", value: 97, percentage: 53 },
+  ]);
+
+  seriesStatut.appear(1000, 100);
+});
 </script>
 
 <script>
