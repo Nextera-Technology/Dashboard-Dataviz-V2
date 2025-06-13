@@ -1785,10 +1785,15 @@ nav a.active {
     <h2 style="color:#15616D; margin-bottom: 20px;">Emploi</h2>
     <div class="grid" style="margin-bottom: 20px;">
       <div class="chart-box" style="position: relative; text-align: center;">
-        <button class="info-button" onclick="openModalJobTargeted()">
-          <!-- Info Icon SVG -->
-          <img src="https://i.imgur.com/QPS2yfQ.png">
-        </button>
+          <div class="button-container">
+            <button class="info-button" onclick="openModalJobTargeted()" title="Information">
+                <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            </button>
+            <button class="info-button primary" onclick="downloadChart()" title="Download">
+                <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png" alt="Download">
+            </button>
+        </div>
+        <br>
         <h3
           style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
           <strong>Emplois ciblés après 6 mois</strong>
