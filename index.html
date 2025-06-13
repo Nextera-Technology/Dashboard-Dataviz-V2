@@ -75,250 +75,262 @@
         transform: translateY(0);
       }
     }
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f7fa;
-}
 
-.sidebar {
-    width: 320px;
-    height: 100vh; /* Full viewport height */
-    background: linear-gradient(135deg, #97cce4 0%, #306e8b 100%);
-    color: white;
-    padding: 20px;
-    overflow-y: auto;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-    position: fixed; /* Make sidebar fixed */
-    top: 0;
-    left: 0;
-    z-index: 1000; /* Ensure it stays on top */
-}
-
-/* Alternative approach - if you want the sidebar to be sticky within a container */
-.sidebar-sticky {
-    width: 320px;
-    background: linear-gradient(135deg, #6db5d6 0%, #764ba2 100%);
-    color: white;
-    padding: 20px;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow-y: auto;
-}
-
-/* If using fixed sidebar, adjust main content margin */
-.main-content {
-    margin-left: 320px; /* Same as sidebar width */
-    padding: 20px;
-}
-
-.logo-container {
-    text-align: center;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
-}
-
-.logo-container img {
-    max-width: 200px;
-    height: auto;
-}
-
-nav {
-    margin-bottom: 30px;
-}
-
-nav a {
-    display: block;
-    color: white;
-    text-decoration: none;
-    padding: 12px 16px;
-    margin-bottom: 8px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    font-weight: 500;
-}
-
-nav a:hover {
-    background: rgba(255,255,255,0.1);
-    transform: translateX(5px);
-}
-
-nav a.active {
-    background: rgba(255,255,255,0.2);
-    border-left: 4px solid #fff;
-}
-
-.filter-section {
-    margin-bottom: 25px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 12px;
-    padding: 20px;
-    backdrop-filter: blur(10px);
-}
-
-.section-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 15px;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.section-title::before {
-    content: "📊";
-    font-size: 18px;
-}
-
-.sections-title::before {
-    content: "📋";
-}
-
-.typeahead-container {
-    position: relative;
-    margin-bottom: 15px;
-}
-
-.typeahead-input {
-    width: 100%;
-    padding: 12px 16px;
-    border: none;
-    border-radius: 8px;
-    background: rgba(255,255,255,0.9);
-    color: #333;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
-
-.typeahead-input:focus {
-    outline: none;
-    background: white;
-    box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
-}
-
-.typeahead-input::placeholder {
-    color: #666;
-}
-
-.checkbox-list {
-    max-height: 200px;
-    overflow-y: auto;
-    border-radius: 8px;
-    background: rgba(255,255,255,0.05);
-}
-
-.checkbox-item {
-    display: flex;
-    align-items: center;
-    padding: 10px 12px;
-    border-radius: 6px;
-    margin-bottom: 4px;
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-
-.checkbox-item:hover {
-    background: rgba(255,255,255,0.1);
-}
-
-.checkbox-item.hidden {
-    display: none;
-}
-
-.checkbox-item input[type="checkbox"] {
-    margin-right: 10px;
-    transform: scale(1.1);
-    accent-color: #4CAF50;
-}
-
-.checkbox-item label {
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 400;
-    flex: 1;
-    color: rgba(255,255,255,0.9);
-}
-
-.clear-filters {
-    background: rgba(255,255,255,0.2);
-    border: none;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12px;
-    margin-top: 10px;
-    transition: all 0.3s ease;
-}
-
-.clear-filters:hover {
-    background: rgba(255,255,255,0.3);
-}
-
-.selected-count {
-    font-size: 12px;
-    color: rgba(255,255,255,0.7);
-    margin-top: 8px;
-}
-
-/* Custom scrollbar */
-.sidebar::-webkit-scrollbar,
-.checkbox-list::-webkit-scrollbar {
-    width: 6px;
-}
-
-.sidebar::-webkit-scrollbar-track,
-.checkbox-list::-webkit-scrollbar-track {
-    background: rgba(255,255,255,0.1);
-    border-radius: 3px;
-}
-
-.sidebar::-webkit-scrollbar-thumb,
-.checkbox-list::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.3);
-    border-radius: 3px;
-}
-
-.sidebar::-webkit-scrollbar-thumb:hover,
-.checkbox-list::-webkit-scrollbar-thumb:hover {
-    background: rgba(255,255,255,0.5);
-}
-
-/* Animation for filtered items */
-.checkbox-item {
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-    .sidebar {
-        width: 280px;
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fa;
     }
-    
+
+    .sidebar {
+      width: 320px;
+      height: 100vh;
+      /* Full viewport height */
+      background: linear-gradient(135deg, #97cce4 0%, #306e8b 100%);
+      color: white;
+      padding: 20px;
+      overflow-y: auto;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      position: fixed;
+      /* Make sidebar fixed */
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      /* Ensure it stays on top */
+    }
+
+    /* Alternative approach - if you want the sidebar to be sticky within a container */
+    .sidebar-sticky {
+      width: 320px;
+      background: linear-gradient(135deg, #6db5d6 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    /* If using fixed sidebar, adjust main content margin */
     .main-content {
-        margin-left: 280px;
+      margin-left: 320px;
+      /* Same as sidebar width */
+      padding: 20px;
     }
-}
 
-@media (max-width: 640px) {
-    .sidebar {
+    .logo-container {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .logo-container img {
+      max-width: 200px;
+      height: auto;
+    }
+
+    nav {
+      margin-bottom: 30px;
+    }
+
+    nav a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    nav a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(5px);
+    }
+
+    nav a.active {
+      background: rgba(255, 255, 255, 0.2);
+      border-left: 4px solid #fff;
+    }
+
+    .filter-section {
+      margin-bottom: 25px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::before {
+      content: "📊";
+      font-size: 18px;
+    }
+
+    .sections-title::before {
+      content: "📋";
+    }
+
+    .typeahead-container {
+      position: relative;
+      margin-bottom: 15px;
+    }
+
+    .typeahead-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #333;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .typeahead-input:focus {
+      outline: none;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+    }
+
+    .typeahead-input::placeholder {
+      color: #666;
+    }
+
+    .checkbox-list {
+      max-height: 200px;
+      overflow-y: auto;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 6px;
+      margin-bottom: 4px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .checkbox-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .checkbox-item.hidden {
+      display: none;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      margin-right: 10px;
+      transform: scale(1.1);
+      accent-color: #4CAF50;
+    }
+
+    .checkbox-item label {
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 400;
+      flex: 1;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .clear-filters {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .clear-filters:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .selected-count {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: 8px;
+    }
+
+    /* Custom scrollbar */
+    .sidebar::-webkit-scrollbar,
+    .checkbox-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track,
+    .checkbox-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb,
+    .checkbox-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 3px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb:hover,
+    .checkbox-list::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Animation for filtered items */
+    .checkbox-item {
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 280px;
+      }
+
+      .main-content {
+        margin-left: 280px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .sidebar {
         width: 100%;
         height: auto;
         position: relative;
-    }
-    
-    .main-content {
+      }
+
+      .main-content {
         margin-left: 0;
+      }
     }
-}
 
 
     .content {
@@ -890,119 +902,119 @@ nav a.active {
       height: 500px;
     }
 
- /* Button container for multiple buttons */
-        .button-container {
-            position: absolute;
-            top: 7px;
-            right: 7px;
-            display: flex;
-            gap: 5px;
-            z-index: 10;
-        }
+    /* Button container for multiple buttons */
+    .button-container {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 5px;
+      z-index: 10;
+    }
 
-        /* Base button styles */
-        .info-button {
-            background: #e8f0ee;
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
+    /* Base button styles */
+    .info-button {
+      background: #e8f0ee;
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
 
-        .info-button:hover {
-            background: #00454D;
-            transform: scale(1.1);
-        }
+    .info-button:hover {
+      background: #00454D;
+      transform: scale(1.1);
+    }
 
-        .info-button img {
-            width: 18px;
-            height: 18px;
-        }
+    .info-button img {
+      width: 18px;
+      height: 18px;
+    }
 
-        /* Different button variations */
-        .info-button.primary {
-            background: #1E9180;
-        }
+    /* Different button variations */
+    .info-button.primary {
+      background: #1E9180;
+    }
 
-        .info-button.primary:hover {
-            background: #00454D;
-        }
+    .info-button.primary:hover {
+      background: #00454D;
+    }
 
-        .info-button.secondary {
-            background: #f0f8ff;
-        }
+    .info-button.secondary {
+      background: #f0f8ff;
+    }
 
-        .info-button.secondary:hover {
-            background: #1E9180;
-        }
+    .info-button.secondary:hover {
+      background: #1E9180;
+    }
 
-        .info-button.danger {
-            background: #ffebee;
-        }
+    .info-button.danger {
+      background: #ffebee;
+    }
 
-        .info-button.danger:hover {
-            background: #d32f2f;
-        }
+    .info-button.danger:hover {
+      background: #d32f2f;
+    }
 
-        /* Alternative: Horizontal layout at the top */
-        .top-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
+    /* Alternative: Horizontal layout at the top */
+    .top-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
 
-        .top-button {
-            background: #1E9180;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+    .top-button {
+      background: #1E9180;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-        .top-button:hover {
-            background: #00454D;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
+    .top-button:hover {
+      background: #00454D;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
 
-        .top-button.outline {
-            background: transparent;
-            color: #1E9180;
-            border: 1px solid #1E9180;
-        }
+    .top-button.outline {
+      background: transparent;
+      color: #1E9180;
+      border: 1px solid #1E9180;
+    }
 
-        .top-button.outline:hover {
-            background: #1E9180;
-            color: white;
-        }
+    .top-button.outline:hover {
+      background: #1E9180;
+      color: white;
+    }
 
-        /* Chart content styles */
-        .chart-content h3 {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            color: #00454D;
-            margin-bottom: 10px;
-        }
+    /* Chart content styles */
+    .chart-content h3 {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: #00454D;
+      margin-bottom: 10px;
+    }
 
-        .chart-content .percentage {
-            color: #1E9180;
-            font-size: 40px;
-            font-weight: bold;
-            margin: 0;
-        }
+    .chart-content .percentage {
+      color: #1E9180;
+      font-size: 40px;
+      font-weight: bold;
+      margin: 0;
+    }
 
     .chart-box .percentage {
       color: #1E9180;
@@ -1187,42 +1199,42 @@ nav a.active {
 
 <body>
 
-    <aside class="sidebar">
-      <div class="logo-container">
-          <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/Nextera%20Logo%20Career%20Insight%20White%20text.png" alt="Nextera Logo">
-      </div>
-      
-      <nav>
-          <a href="#" class="active">Tableau de bord</a>
-      </nav>
+  <aside class="sidebar">
+    <div class="logo-container">
+      <img
+        src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/Nextera%20Logo%20Career%20Insight%20White%20text.png"
+        alt="Nextera Logo">
+    </div>
 
-      <!-- Source Filter Section -->
-      <div class="filter-section">
-          <div class="section-title">Source</div>
-          <div class="typeahead-container">
-              <input type="text" 
-                      class="typeahead-input" 
-                      id="sourceTypeahead" 
-                      placeholder="Rechercher une source..."
-                      autocomplete="off">
-          </div>
-          <div class="checkbox-list" id="sourceCheckboxList">
-              <!-- Source checkboxes will be populated by JavaScript -->
-          </div>
-          <div class="selected-count" id="sourceCount">0 source(s) sélectionnée(s)</div>
-          <button class="clear-filters" onclick="clearSourceFilters()">Effacer les filtres</button>
-      </div>
+    <nav>
+      <a href="#" class="active">Tableau de bord</a>
+    </nav>
 
-      <!-- Sections Filter Section -->
-      <div class="filter-section">
-          <div class="section-title sections-title">Sections</div>
-          <div class="checkbox-list" id="sectionsCheckboxList">
-              <!-- Section checkboxes will be populated by JavaScript -->
-          </div>
-          <div class="selected-count" id="sectionsCount">0 section(s) sélectionnée(s)</div>
-          <button class="clear-filters" onclick="clearSectionFilters()">Effacer les filtres</button>
+    <!-- Source Filter Section -->
+    <div class="filter-section">
+      <div class="section-title">Source</div>
+      <div class="typeahead-container">
+        <input type="text" class="typeahead-input" id="sourceTypeahead" placeholder="Rechercher une source..."
+          autocomplete="off">
       </div>
+      <div class="checkbox-list" id="sourceCheckboxList">
+        <!-- Source checkboxes will be populated by JavaScript -->
+      </div>
+      <div class="selected-count" id="sourceCount">0 source(s) sélectionnée(s)</div>
+      <button class="clear-filters" onclick="clearSourceFilters()">Effacer les filtres</button>
+    </div>
+
+    <!-- Sections Filter Section -->
+    <div class="filter-section">
+      <div class="section-title sections-title">Sections</div>
+      <div class="checkbox-list" id="sectionsCheckboxList">
+        <!-- Section checkboxes will be populated by JavaScript -->
+      </div>
+      <div class="selected-count" id="sectionsCount">0 section(s) sélectionnée(s)</div>
+      <button class="clear-filters" onclick="clearSectionFilters()">Effacer les filtres</button>
+    </div>
   </aside>
+
   <main class="content main-content">
     <header>
       <h1>RDC 2022 - Enquêtes d'Employabilité</h1>
@@ -1237,12 +1249,13 @@ nav a.active {
     <div class="grid3" style="margin-bottom: 20px;">
       <div class="chart-box" style="position: relative; text-align: center; background-color: rgb(226, 246, 250);">
         <div class="button-container">
-            <button class="info-button" onclick="openModal()" title="Information">
-                <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
-            </button>
-            <button class="info-button primary" onclick="downloadChart()" title="Download">
-                <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png" alt="Download">
-            </button>
+          <button class="info-button" onclick="openModal()" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="downloadChart()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
         </div>
         <br>
         <h3
@@ -1252,9 +1265,20 @@ nav a.active {
         <p style="color:#1E9180 ; font-size: 40px;"><strong>57%</strong></p>
       </div>
 
-      <div class="chart-box" style="text-align: center; background-color: rgb(226, 250, 233);">
+      <!-- <div class="chart-box" style="text-align: center; background-color: rgb(226, 250, 233);"> -->
+      <div class="chart-box" style="position: relative; text-align: center; background-color: rgb(226, 250, 233);">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
+        <br>
         <h3
-          style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;">
+          style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin: 10px 0 10px 0;">
           <strong>Domaine de Poursuite d'études</strong>
         </h3>
         <table style="margin: 0 auto; text-align: center;">
@@ -1275,16 +1299,35 @@ nav a.active {
         </table>
       </div>
 
-      <div class="chart-box" style="text-align: center; background-color: rgb(250, 239, 226);">
+      <div class="chart-box" style="position: relative; text-align: center; background-color: rgb(250, 239, 226);">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
+        <br>
         <h3
-          style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;">
+          style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin: 10px 0 10px 0;">
           <strong>Niveau TOP cible BAC+5</strong>
         </h3>
         <p style="color:#1E9180 ; font-size: 40px;"><strong>80%</strong></p>
       </div>
     </div>
     <div class="grid" style="margin-bottom: 20px;">
-      <div class="chart-box">
+      <div class="chart-box" style="position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3>Poursuivre les études.</h3><br>
         <div id="pieChartContinueStudy" class="chart-container" style="height: 300px;"></div>
         <div class="manual-legend2">
@@ -1302,7 +1345,16 @@ nav a.active {
         </div>
       </div>
 
-      <div class="chart-box">
+      <div class="chart-box" style="position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3>Poursuivre les études dans la même école.</h3><br>
         <div id="pieChartSameSchool" class="chart-container" style="height: 300px;"></div>
         <div class="manual-legend2">
@@ -1321,8 +1373,17 @@ nav a.active {
       </div>
     </div>
 
-        <div class="grid" style="margin-bottom: 20px;">
-      <div class="chart-box">
+    <div class="grid" style="margin-bottom: 20px;">
+      <div class="chart-box" style="position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3>Statut Professionnel : Situation après la certification</h3>
         <div class="status-grid-rowed">
           <div class="status-row" style="color: #00454D">
@@ -1373,7 +1434,9 @@ nav a.active {
           onclick="toggleAnalysis('chart2-analysis')">Afficher/Masquer l’analyse</button>
         <div id="chart2-analysis" class="analysis-content"
           style=" margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
-          <h4 style="color: #15616D; margin: 30px 0 10px;"><img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png" style="width: 15px; height: 15px;"> Scope</h4>
+          <h4 style="color: #15616D; margin: 30px 0 10px;"><img
+              src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png"
+              style="width: 15px; height: 15px;"> Scope</h4>
           <p>Ce widget suit l’évolution de la situation des diplômés : emploi, recherche, études et inactivité.
           </p>
           <p>Il s’appuie sur les données des enquêtes ES1 à ES4, et montre :</p>
@@ -1416,7 +1479,16 @@ nav a.active {
       </div>
 
 
-      <div class="chart-box">
+      <div class="chart-box" style="position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3>Situation Professionnelle à 6 mois après la certification</h3><br>
         <div id="pieChartStatut" class="chart-container" style="height: 300px;"></div>
         <div class="manual-legend2">
@@ -1448,12 +1520,22 @@ nav a.active {
         </div>
       </div>
     </div>
-    
+
     <hr style="border: none; border-top: 5px solid #D0E6E6; margin: 30px 0 10px 0;">
 
     <h2 style="color:#15616D; margin-bottom: 20px;">Global</h2>
     <div class="grid2" style="margin-bottom: 20px;">
-      <div class="chart-box" style="text-align: center;">
+      <div class="chart-box" style="text-align: center; position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
+        <br>
         <h3
           style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;">
           <strong>Postes</strong>
@@ -1480,7 +1562,16 @@ nav a.active {
         </table>
       </div>
 
-      <div class="chart-box" style="text-align: center;">
+      <div class="chart-box" style="text-align: center; position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3
           style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
           <strong>Domaines</strong>
@@ -1507,7 +1598,16 @@ nav a.active {
         </table>
       </div>
 
-      <div class="chart-box" style="text-align: center;">
+      <div class="chart-box" style="text-align: center; position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3
           style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
           <strong>Salaires</strong>
@@ -1534,7 +1634,16 @@ nav a.active {
         </table>
       </div>
 
-      <div class="chart-box">
+      <div class="chart-box" style="text-align: center; position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3
           style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
           <strong>Compétences</strong>
@@ -1580,7 +1689,9 @@ nav a.active {
         <div id="chart-final-analysis" class="analysis-content"
           style="display: none; margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
 
-          <h4 style="color: #15616D; margin-bottom: 10px;"><img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png" style="width: 15px; height: 15px;"> Scope</h4>
+          <h4 style="color: #15616D; margin-bottom: 10px;"><img
+              src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png"
+              style="width: 15px; height: 15px;"> Scope</h4>
           <p>Ce widget présente les objectifs professionnels des diplômés 24 mois après la fin de leur formation, en
             mettant l’accent sur les métiers, les secteurs et les salaires visés.</p>
           <p>Il s’appuie sur les données issues des enquêtes ES1 à ES4, notamment :</p>
@@ -1615,7 +1726,16 @@ nav a.active {
     </div>
 
     <div class="grid" style="margin-bottom: 20px;">
-      <div class="chart-box" style="text-align: center;">
+      <div class="chart-box" style="text-align: center; position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3
           style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
           <strong>Fourchette salariale moyenne</strong>
@@ -1624,7 +1744,16 @@ nav a.active {
         <p style="color:#49928a; padding-bottom: 25px; font-size: 20px;"><strong>39%</strong></p>
       </div>
 
-      <div class="chart-box" style="text-align: center;">
+      <div class="chart-box" style="text-align: center; position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3
           style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
           <strong>Taux de satisfaction de la formation</strong>
@@ -1632,7 +1761,16 @@ nav a.active {
         <p style="padding-top: 10px; color:#1E9180 ; font-size: 40px;"><strong>73%</strong></p>
       </div>
 
-      <div class="chart-box">
+      <div class="chart-box" style="text-align: center; position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3>Effectif & Taux de succès à certification</h3>
         <div class="legend-item">
           <span class="legend-color" style="background-color: #8f8f8f;"></span>
@@ -1641,18 +1779,38 @@ nav a.active {
         <div id="pieChartA" class="chart-container" style="height: 300px; margin-top: 30px;"></div>
       </div>
 
-      <div class="chart-box">
+      <div class="chart-box" style="text-align: center; position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3>Distribution des enquêtes par vague</h3>
         <div id="chartSent" class="chart-container" style="height: 400px;"></div>
       </div>
 
-            <div class="chart-box">
+      <div class="chart-box" style="text-align: center; position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3>Ouvert – Commencé – Enquête complétée (EE1–EE4)</h3>
         <div id="chart1" class="chart-container"></div>
         <button class="analysis-toggle" onclick="toggleAnalysis('chart1-analysis')">Afficher/Masquer l’analyse</button>
         <div id="chart1-analysis" class="analysis-content"
           style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
-          <h4 style="color: #15616D; margin-bottom: 10px;"><img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png" style="width: 15px; height: 15px;"> Scope</h4>
+          <h4 style="color: #15616D; margin-bottom: 10px;"><img
+              src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png"
+              style="width: 15px; height: 15px;"> Scope</h4>
           <p>Ce widget suit l’engagement des diplômés aux enquêtes de suivi de l’EE1 à l’EE4.</p>
           <p>Il s’appuie sur les données des enquêtes ES1 à ES4, et montre :</p>
           <ul style="padding-left: 20px;">
@@ -1664,7 +1822,7 @@ nav a.active {
             <li><strong>EE1 est un cas à part,</strong> envoyée à tous les diplômés juste après la fin des études, d’où
               son taux élevé de réponse.</li>
           </ul>
-          
+
           <h4 style="color: #15616D; margin: 20px 0 10px;">🔍 Analyse</h4>
           <ul style="padding-left: 20px;">
             <li><strong>Chute progressive des envois liée à la logique de ciblage :</strong> le volume d’e-mails diminue
@@ -1705,7 +1863,16 @@ nav a.active {
 
     <h2 style="color:#15616D; margin-bottom: 20px;">Compétences</h2>
     <div class="grid" style="margin-bottom: 20px;">
-      <div class="chart-box">
+      <div class="chart-box" style="position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3 id="chartSkillTarget-title">Les 5 principales compétences utilisées dans les emplois ciblés</h3>
         <div id="chartSkillTarget" class="chart-container"></div>
         <div class="manual-legend2">
@@ -1742,7 +1909,16 @@ nav a.active {
         </div>
       </div>
 
-      <div class="chart-box">
+      <div class="chart-box" style="position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3 id="chartSkillNonTarget-title">Les 5 principales compétences utilisées dans les emplois non ciblés</h3>
         <div id="chartSkillNonTarget" class="chart-container"></div>
         <div class="manual-legend2">
@@ -1779,19 +1955,20 @@ nav a.active {
         </div>
       </div>
     </div>
-    
+
     <hr style="border: none; border-top: 5px solid #D0E6E6; margin: 30px 0 10px 0;">
 
     <h2 style="color:#15616D; margin-bottom: 20px;">Emploi</h2>
     <div class="grid" style="margin-bottom: 20px;">
       <div class="chart-box" style="position: relative; text-align: center;">
-          <div class="button-container">
-            <button class="info-button" onclick="openModalJobTargeted()" title="Information">
-                <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
-            </button>
-            <button class="info-button primary" onclick="downloadChart()" title="Download">
-                <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png" alt="Download">
-            </button>
+        <div class="button-container">
+          <button class="info-button" onclick="openModalJobTargeted()" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="downloadChart()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
         </div>
         <br>
         <h3
@@ -1801,7 +1978,16 @@ nav a.active {
         <div id="pieChart" style="width: 100%; height: 270px;"></div>
       </div>
 
-      <div class="chart-box" style="text-align: center;">
+      <div class="chart-box" style="text-align: center; position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3
           style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
           <strong>Les 3 principaux domaines</strong>
@@ -1811,7 +1997,16 @@ nav a.active {
     </div>
 
     <div class="grid" style="margin-bottom: 20px;">
-      <div class="chart-box">
+      <div class="chart-box" style="position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3 id="chartSizeTarget-title">Taille de l'entreprise dans les emplois ciblés</h3>
         <div id="chartSizeTarget" class="chart-container"></div>
         <div class="manual-legend2">
@@ -1848,7 +2043,16 @@ nav a.active {
         </div>
       </div>
 
-      <div class="chart-box">
+      <div class="chart-box" style="position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3 id="chartSizeNonTarget-title">Taille de l'entreprise dans les emplois non ciblés</h3>
         <div id="chartSizeNonTarget" class="chart-container"></div>
         <div class="manual-legend2">
@@ -1887,7 +2091,16 @@ nav a.active {
     </div>
 
     <div class="grid" style="margin-bottom: 20px;">
-      <div class="chart-box">
+      <div class="chart-box" style="position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3 id="chart6-title">Les 8 premières entreprises</h3>
         <div class="tabs">
           <button class="tab-button6" data-tab="EE1">EE1</button>
@@ -1898,7 +2111,9 @@ nav a.active {
         <div id="chart6" class="chart-container"></div>
         <button class="analysis-toggle" onclick="toggleAnalysis('chart6-analysis')">Afficher/Masquer l’analyse</button>
         <div id="chart6-analysis" class="analysis-content">
-          <h4 style="color: #15616D; margin: 30px 0 10px;"><img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png" style="width: 15px; height: 15px;"> Scope</h4>
+          <h4 style="color: #15616D; margin: 30px 0 10px;"><img
+              src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png"
+              style="width: 15px; height: 15px;"> Scope</h4>
           <p>Ce widget présente les principaux employeurs des diplômés selon les réponses aux enquêtes de l’EE1 à l’EE4.
           </p>
           <p>Il s’appuie sur les données des enquêtes ES1 à ES4, et met en avant :</p>
@@ -1910,7 +2125,7 @@ nav a.active {
             <li><strong>Présence régulière,</strong> signe de relations solides ou d’un intérêt récurrent pour les
               profils diplômés.</li>
           </ul>
-          
+
           <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
           <ul style="padding-left: 20px;">
             <li><strong>Décathlon, Orange, Société Générale :</strong> Employeurs récurrents visibles dans toutes les
@@ -1935,21 +2150,32 @@ nav a.active {
         </div>
       </div>
 
-      <div class="chart-box">
-        <h3 style="text-align: center; font-size: 24px;">Niveau managérial</h3>
+      <div class="chart-box" style="position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
+        <h3>Niveau managérial</h3>
         <div class="manual-legend">
           <div class="legend-item">
             <span class="legend-color" style="background-color: #2A9D8F;"></span>
             <span class="legend-label">Ayant un poste de Manager</span>
           </div>
         </div>
-        <div id="chart4" style="width: 100%; height: 300px;"></div>
+        <div id="chart4" style="width: 100%; height: 450px;"></div>
 
-        <button style="margin-top: 140px;" class="analysis-toggle"
+        <button style="margin-top: 40px;" class="analysis-toggle"
           onclick="toggleAnalysis('chart4-analysis')">Afficher/Masquer l’analyse</button>
         <div id="chart4-analysis" class="analysis-content"
           style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
-          <h4 style="color: #15616D; margin: 30px 0 10px;"><img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png" style="width: 15px; height: 15px;"> Scope</h4>
+          <h4 style="color: #15616D; margin: 30px 0 10px;"><img
+              src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png"
+              style="width: 15px; height: 15px;"> Scope</h4>
           <p>Ce widget présente la progression professionnelle des diplômés vers des postes de management au fil du
             temps.
           </p>
@@ -1961,7 +2187,7 @@ nav a.active {
             <li><strong>Mobilité ascendante :</strong> le programme semble favoriser l’évolution de carrière à long
               terme.</li>
           </ul>
-          
+
           <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
           <ul style="padding-left: 20px;">
             <li><strong>Nombre croissant de managers :</strong> de 20 à 30 entre EE2 et EE4.</li>
@@ -1982,16 +2208,20 @@ nav a.active {
       </div>
     </div>
 
-    
+
     <div class="grid">
-      <div class="chart-box">
-        <button id="exportButton" style="background-color: #2A9D8F; color: white; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer;">
-          Export ▼
-        </button>
-        <div id="exportOptions" style="display: none; background: white; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; padding: 5px; box-shadow: 0px 2px 8px rgba(0,0,0,0.1);">
-          <div id="csvExportBtn" style="cursor: pointer; padding: 5px;">📄 Export CSV</div>
-          <div id="pngExportBtn" style="cursor: pointer; padding: 5px;">🖼️ Export PNG</div>
+      <div class="chart-box" style="position: relative;">
+
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
         </div>
+        <br>
         <h3>Type de contrat</h3>
         <div id="chart3" class="chart-container"></div>
         <button class="analysis-toggle" onclick="toggleAnalysis('chart3-analysis')">Afficher/Masquer l’analyse</button>
@@ -2018,7 +2248,17 @@ nav a.active {
 
 
 
-      <div class="chart-box">
+      <div class="chart-box" style="position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
+        <br>
         <h3>Top 8 fonctions</h3>
         <div id="chart5" class="chart-container"></div>
         <button class="analysis-toggle" onclick="toggleAnalysis('chart5-analysis')">Afficher/Masquer l’analyse</button>
@@ -2054,7 +2294,16 @@ nav a.active {
     <h2 style="color:#15616D; margin-bottom: 20px;">Voyage</h2>
     <div class="grid4" style="margin-bottom: 20px;">
 
-      <div class="chart-box">
+      <div class="chart-box" style="position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3>Évolution du statut professionnel de l’étudiant</h3>
         <div id="chartdivSankee"></div>
       </div>
@@ -2064,7 +2313,16 @@ nav a.active {
 
     <h2 style="color:#15616D; margin-bottom: 20px;">Demographique</h2>
     <div class="grid0" style="margin-bottom: 20px;">
-      <div class="chart-box">
+      <div class="chart-box" style="position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3 style="text-align: center; font-size: 24px;">Étudiants par région</h3><br>
         <div id="container" style="display: flex; align-items: flex-start; gap: 20px;">
           <div id="studentsLegend" style="width: 350px;"></div>
@@ -2072,7 +2330,16 @@ nav a.active {
         </div>
       </div>
 
-      <div class="chart-box">
+      <div class="chart-box" style="position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3 style="text-align: center; font-size: 24px;">Répartition par genre</h3><br>
         <div class="legend-item">
           <span class="legend-color" style="background-color: #67b7dc;"></span>
@@ -2087,7 +2354,16 @@ nav a.active {
     </div>
 
     <div class="grid4" style="margin-bottom: 20px;">
-      <div class="chart-box">
+      <div class="chart-box" style="position: relative;">
+        <div class="button-container">
+          <button class="info-button" title="Information">
+            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+          </button>
+          <button class="info-button primary" onclick="exportCSV()" title="Download">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+              alt="Download">
+          </button>
+        </div>
         <h3 style="text-align: center; font-size: 24px;">Salaire moyen par région (€)</h3><br>
         <div id="containerSalary" style="display: flex; align-items: flex-start; gap: 20px;">
           <div id="salaryLegend" style="width: 400px;"></div>
@@ -2138,8 +2414,6 @@ nav a.active {
 
   <!-- Charts Initialization Scripts -->
   <script>
-
-
     am5.ready(function () {
       // Chart 1: Stacked Column Chart
       var root = am5.Root.new("chart1");
@@ -2506,303 +2780,303 @@ nav a.active {
 
       // Chart 3: Type de Contrat (Horizontal Grouped Bar Chart)
 
-     // Global variables to store chart data and root
-    // Global variables to store chart data and root
-// Global variables
-let datasets3Combined = [
-  { type: "CDI", EE1: 0, EE2: 63, EE3: 58, EE4: 64 },
-  { type: "CDD", EE1: 0, EE2: 9, EE3: 11, EE4: 9 },
-  { type: "Intérim", EE1: 0, EE2: 7, EE3: 3, EE4: 0 },
-  { type: "Fonctionnaire", EE1: 0, EE2: 1, EE3: 1, EE4: 1 },
-  { type: "Contractuel", EE1: 0, EE2: 3, EE3: 1, EE4: 1 },
-  { type: "Auto-Entrepreneur", EE1: 0, EE2: 15, EE3: 15, EE4: 10 },
-  { type: "Gérant", EE1: 0, EE2: 3, EE3: 5, EE4: 4 },
-  { type: "Indépendant", EE1: 0, EE2: 2, EE3: 1, EE4: 3 },
-  { type: "Mandataire Social", EE1: 0, EE2: 0, EE3: 0, EE4: 0 },
-  { type: "Autre", EE1: 0, EE2: 2, EE3: 0, EE4: 1 }
-];
+      // Global variables to store chart data and root
+      // Global variables to store chart data and root
+      // Global variables
+      let datasets3Combined = [
+        { type: "CDI", EE1: 0, EE2: 63, EE3: 58, EE4: 64 },
+        { type: "CDD", EE1: 0, EE2: 9, EE3: 11, EE4: 9 },
+        { type: "Intérim", EE1: 0, EE2: 7, EE3: 3, EE4: 0 },
+        { type: "Fonctionnaire", EE1: 0, EE2: 1, EE3: 1, EE4: 1 },
+        { type: "Contractuel", EE1: 0, EE2: 3, EE3: 1, EE4: 1 },
+        { type: "Auto-Entrepreneur", EE1: 0, EE2: 15, EE3: 15, EE4: 10 },
+        { type: "Gérant", EE1: 0, EE2: 3, EE3: 5, EE4: 4 },
+        { type: "Indépendant", EE1: 0, EE2: 2, EE3: 1, EE4: 3 },
+        { type: "Mandataire Social", EE1: 0, EE2: 0, EE3: 0, EE4: 0 },
+        { type: "Autre", EE1: 0, EE2: 2, EE3: 0, EE4: 1 }
+      ];
 
-// let root3, chart3;
+      // let root3, chart3;
 
-// Create the chart
-var root3 = am5.Root.new("chart3");
-root3._logo.dispose();
-root3.setThemes([am5themes_Animated.new(root3)]);
+      // Create the chart
+      var root3 = am5.Root.new("chart3");
+      root3._logo.dispose();
+      root3.setThemes([am5themes_Animated.new(root3)]);
 
-var chart3 = root3.container.children.push(am5xy.XYChart.new(root3, {
-  layout: root3.verticalLayout,
-  paddingTop: 20,
-  paddingBottom: 50,
-  panX: true,
-  panY: true,
-  wheelX: "panX",
-  wheelY: "zoomY",
-  pinchZoomX: true
-}));
+      var chart3 = root3.container.children.push(am5xy.XYChart.new(root3, {
+        layout: root3.verticalLayout,
+        paddingTop: 20,
+        paddingBottom: 50,
+        panX: true,
+        panY: true,
+        wheelX: "panX",
+        wheelY: "zoomY",
+        pinchZoomX: true
+      }));
 
-// Define custom color set
-chart3.get("colors").set("colors", [
-  am5.color("#BCDCDC"), // EE1
-  am5.color("#68B3B3"), // EE2
-  am5.color("#2A8A8A"), // EE3
-  am5.color("#0E4B4B")  // EE4
-]);
+      // Define custom color set
+      chart3.get("colors").set("colors", [
+        am5.color("#BCDCDC"), // EE1
+        am5.color("#68B3B3"), // EE2
+        am5.color("#2A8A8A"), // EE3
+        am5.color("#0E4B4B")  // EE4
+      ]);
 
-chart3.set("scrollbarY", am5.Scrollbar.new(root3, {
-  orientation: "vertical",
-}));
+      chart3.set("scrollbarY", am5.Scrollbar.new(root3, {
+        orientation: "vertical",
+      }));
 
-const top8Chart3 = datasets3Combined
-  .sort((a, b) => (b.EE1 + b.EE2 + b.EE3 + b.EE4) - (a.EE1 + a.EE2 + a.EE3 + a.EE4))
-  .slice(0, 8);
+      const top8Chart3 = datasets3Combined
+        .sort((a, b) => (b.EE1 + b.EE2 + b.EE3 + b.EE4) - (a.EE1 + a.EE2 + a.EE3 + a.EE4))
+        .slice(0, 8);
 
-const categoryBaseColors = {
-  "CDI": "#1D3557",
-  "CDD": "#457B9D",
-  "Intérim": "#A8DADC",
-  "Fonctionnaire": "#F4A261",
-  "Contractuel": "#E76F51",
-  "Auto-Entrepreneur": "#2A9D8F",
-  "Gérant": "#264653",
-  "Indépendant": "#6D597A",
-  "Mandataire Social": "#B5838D",
-  "Autre": "#ADB5BD"
-};
+      const categoryBaseColors = {
+        "CDI": "#1D3557",
+        "CDD": "#457B9D",
+        "Intérim": "#A8DADC",
+        "Fonctionnaire": "#F4A261",
+        "Contractuel": "#E76F51",
+        "Auto-Entrepreneur": "#2A9D8F",
+        "Gérant": "#264653",
+        "Indépendant": "#6D597A",
+        "Mandataire Social": "#B5838D",
+        "Autre": "#ADB5BD"
+      };
 
-function shadeColor(color, percent) {
-  let f = parseInt(color.slice(1), 16),
-    t = percent < 0 ? 0 : 255,
-    p = Math.abs(percent) / 100,
-    R = f >> 16,
-    G = f >> 8 & 0x00FF,
-    B = f & 0x0000FF;
-  return "#" + (
-    0x1000000 +
-    (Math.round((t - R) * p) + R) * 0x10000 +
-    (Math.round((t - G) * p) + G) * 0x100 +
-    (Math.round((t - B) * p) + B)
-  ).toString(16).slice(1);
-}
-
-// Create Y Axis (Categories)
-var yAxis3 = chart3.yAxes.push(
-  am5xy.CategoryAxis.new(root3, {
-    categoryField: "type",
-    renderer: am5xy.AxisRendererY.new(root3, {
-      minGridDistance: 40,
-      inversed: true,
-      cellStartLocation: 0.05,
-      cellEndLocation: 0.95
-    })
-  })
-);
-yAxis3.data.setAll(top8Chart3);
-
-// Create X Axis (Values)
-var xAxis3 = chart3.xAxes.push(
-  am5xy.ValueAxis.new(root3, {
-    min: 0,
-    renderer: am5xy.AxisRendererX.new(root3, {})
-  })
-);
-
-// Function to create a series
-function makeSeries(name, field) {
-  let esIndex = { "EE1": 50, "EE2": 20, "EE3": -20, "EE4": -50 }[name];
-
-  let series = chart3.series.push(
-    am5xy.ColumnSeries.new(root3, {
-      name,
-      xAxis: xAxis3,
-      yAxis: yAxis3,
-      valueXField: field,
-      categoryYField: "type",
-      clustered: true
-    })
-  );
-
-  series.columns.template.setAll({
-    tooltipText: `${name} - {categoryY}: {valueX}`,
-    height: am5.percent(90),
-    width: am5.percent(55),
-    strokeOpacity: 0
-  });
-
-  series.columns.template.adapters.add("fill", function (fill, target) {
-    let category = target.dataItem.dataContext.type;
-    let base = categoryBaseColors[category] || "#999";
-    return am5.color(shadeColor(base, esIndex));
-  });
-
-  series.columns.template.adapters.add("stroke", (stroke, target) => {
-    let category = target.dataItem.dataContext.type;
-    let base = categoryBaseColors[category] || "#999";
-    return am5.color(shadeColor(base, esIndex));
-  });
-
-  series.bullets.push(function () {
-    let label = am5.Label.new(root3, {
-      fontSize: 12,
-      fontFamily: "Segoe UI, Tahoma, Geneva, Verdana, sans-serif",
-      fontWeight: "500",
-      centerY: am5.percent(50),
-      centerX: am5.percent(0),
-      dx: 1
-    });
-
-    label.adapters.add("text", function (text, target) {
-      let value = target.dataItem.get("valueX");
-      return `${value}`;
-    });
-
-    label.adapters.add("fill", function (fill, target) {
-      let category = target.dataItem.dataContext.type;
-      let base = categoryBaseColors[category] || "#999";
-      return am5.color(shadeColor(base, esIndex));
-    });
-
-    return am5.Bullet.new(root3, {
-      locationX: 1,
-      sprite: label
-    });
-  });
-
-  series.data.setAll(top8Chart3);
-
-  series.events.once("datavalidated", function () {
-    am5.array.each(series.dataItems, function (dataItem) {
-      if (dataItem.get("valueX") === 0) {
-        dataItem.set("valueXWorking", 0.5);
+      function shadeColor(color, percent) {
+        let f = parseInt(color.slice(1), 16),
+          t = percent < 0 ? 0 : 255,
+          p = Math.abs(percent) / 100,
+          R = f >> 16,
+          G = f >> 8 & 0x00FF,
+          B = f & 0x0000FF;
+        return "#" + (
+          0x1000000 +
+          (Math.round((t - R) * p) + R) * 0x10000 +
+          (Math.round((t - G) * p) + G) * 0x100 +
+          (Math.round((t - B) * p) + B)
+        ).toString(16).slice(1);
       }
-    });
-  });
-}
 
-// Create grouped bars for EE1–EE4
-makeSeries("EE1", "EE1");
-makeSeries("EE2", "EE2");
-makeSeries("EE3", "EE3");
-makeSeries("EE4", "EE4");
+      // Create Y Axis (Categories)
+      var yAxis3 = chart3.yAxes.push(
+        am5xy.CategoryAxis.new(root3, {
+          categoryField: "type",
+          renderer: am5xy.AxisRendererY.new(root3, {
+            minGridDistance: 40,
+            inversed: true,
+            cellStartLocation: 0.05,
+            cellEndLocation: 0.95
+          })
+        })
+      );
+      yAxis3.data.setAll(top8Chart3);
 
-// Initialize exporting - SIMPLIFIED
-root3.exporting = am5plugins_exporting.Exporting.new(root3, {
-  filePrefix: "chart3",
-  exportingMenu: null
-});
+      // Create X Axis (Values)
+      var xAxis3 = chart3.xAxes.push(
+        am5xy.ValueAxis.new(root3, {
+          min: 0,
+          renderer: am5xy.AxisRendererX.new(root3, {})
+        })
+      );
 
-// EXPORT FUNCTIONS - SIMPLIFIED AND RELIABLE
-function exportCSV() {
-  console.log("Exporting CSV...");
-  
-  // Simple manual CSV export - most reliable method
-  const headers = ["Type", "EE1", "EE2", "EE3", "EE4"];
-  const csvContent = [
-    headers.join(","),
-    ...datasets3Combined.map(row => [
-      `"${row.type}"`,
-      row.EE1,
-      row.EE2,
-      row.EE3,
-      row.EE4
-    ].join(","))
-  ].join("\n");
+      // Function to create a series
+      function makeSeries(name, field) {
+        let esIndex = { "EE1": 50, "EE2": 20, "EE3": -20, "EE4": -50 }[name];
 
-  // Create and download file
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const link = document.createElement("a");
-  
-  if (link.download !== undefined) {
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", "chart3_data.csv");
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    console.log("CSV export completed");
-  } else {
-    alert("CSV export not supported in this browser");
-  }
-}
+        let series = chart3.series.push(
+          am5xy.ColumnSeries.new(root3, {
+            name,
+            xAxis: xAxis3,
+            yAxis: yAxis3,
+            valueXField: field,
+            categoryYField: "type",
+            clustered: true
+          })
+        );
 
-function exportChart() {
-  console.log("Exporting PNG...");
-  
-  if (!root3 || !root3.exporting) {
-    alert("Export functionality not available");
-    return;
-  }
+        series.columns.template.setAll({
+          tooltipText: `${name} - {categoryY}: {valueX}`,
+          height: am5.percent(90),
+          width: am5.percent(55),
+          strokeOpacity: 0
+        });
 
-  // Use amCharts export with error handling
-  root3.exporting.export("png", {
-    quality: 0.9,
-    maintainPixelRatio: true
-  }).then(function(result) {
-    console.log("PNG export successful");
-  }).catch(function(error) {
-    console.error("PNG export failed:", error);
-    
-    // Alternative method - try canvas export
-    setTimeout(function() {
-      try {
-        const canvas = root3.dom.querySelector("canvas");
-        if (canvas) {
-          const link = document.createElement("a");
-          link.download = "chart3.png";
-          link.href = canvas.toDataURL("image/png");
+        series.columns.template.adapters.add("fill", function (fill, target) {
+          let category = target.dataItem.dataContext.type;
+          let base = categoryBaseColors[category] || "#999";
+          return am5.color(shadeColor(base, esIndex));
+        });
+
+        series.columns.template.adapters.add("stroke", (stroke, target) => {
+          let category = target.dataItem.dataContext.type;
+          let base = categoryBaseColors[category] || "#999";
+          return am5.color(shadeColor(base, esIndex));
+        });
+
+        series.bullets.push(function () {
+          let label = am5.Label.new(root3, {
+            fontSize: 12,
+            fontFamily: "Segoe UI, Tahoma, Geneva, Verdana, sans-serif",
+            fontWeight: "500",
+            centerY: am5.percent(50),
+            centerX: am5.percent(0),
+            dx: 1
+          });
+
+          label.adapters.add("text", function (text, target) {
+            let value = target.dataItem.get("valueX");
+            return `${value}`;
+          });
+
+          label.adapters.add("fill", function (fill, target) {
+            let category = target.dataItem.dataContext.type;
+            let base = categoryBaseColors[category] || "#999";
+            return am5.color(shadeColor(base, esIndex));
+          });
+
+          return am5.Bullet.new(root3, {
+            locationX: 1,
+            sprite: label
+          });
+        });
+
+        series.data.setAll(top8Chart3);
+
+        series.events.once("datavalidated", function () {
+          am5.array.each(series.dataItems, function (dataItem) {
+            if (dataItem.get("valueX") === 0) {
+              dataItem.set("valueXWorking", 0.5);
+            }
+          });
+        });
+      }
+
+      // Create grouped bars for EE1–EE4
+      makeSeries("EE1", "EE1");
+      makeSeries("EE2", "EE2");
+      makeSeries("EE3", "EE3");
+      makeSeries("EE4", "EE4");
+
+      // Initialize exporting - SIMPLIFIED
+      root3.exporting = am5plugins_exporting.Exporting.new(root3, {
+        filePrefix: "chart3",
+        exportingMenu: null
+      });
+
+      // EXPORT FUNCTIONS - SIMPLIFIED AND RELIABLE
+      function exportCSV() {
+        console.log("Exporting CSV...");
+
+        // Simple manual CSV export - most reliable method
+        const headers = ["Type", "EE1", "EE2", "EE3", "EE4"];
+        const csvContent = [
+          headers.join(","),
+          ...datasets3Combined.map(row => [
+            `"${row.type}"`,
+            row.EE1,
+            row.EE2,
+            row.EE3,
+            row.EE4
+          ].join(","))
+        ].join("\n");
+
+        // Create and download file
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+
+        if (link.download !== undefined) {
+          const url = URL.createObjectURL(blob);
+          link.setAttribute("href", url);
+          link.setAttribute("download", "chart3_data.csv");
+          link.style.visibility = "hidden";
+          document.body.appendChild(link);
           link.click();
-          console.log("Canvas export successful");
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          console.log("CSV export completed");
         } else {
-          alert("PNG export failed. Canvas not found.");
+          alert("CSV export not supported in this browser");
         }
-      } catch (canvasError) {
-        console.error("Canvas export also failed:", canvasError);
-        alert("PNG export failed: " + error.message);
       }
-    }, 500);
-  });
-}
 
-// Setup dropdown toggle
-document.addEventListener('DOMContentLoaded', function() {
-  const exportButton = document.getElementById("exportButton");
-  const exportOptions = document.getElementById("exportOptions");
-  
-  if (exportButton && exportOptions) {
-    exportButton.addEventListener("click", function(e) {
-      e.preventDefault();
-      const isVisible = exportOptions.style.display === "block";
-      exportOptions.style.display = isVisible ? "none" : "block";
-    });
-    
-    // Close when clicking outside
-    document.addEventListener("click", function(e) {
-      if (!exportButton.contains(e.target) && !exportOptions.contains(e.target)) {
-        exportOptions.style.display = "none";
+      function exportChart() {
+        console.log("Exporting PNG...");
+
+        if (!root3 || !root3.exporting) {
+          alert("Export functionality not available");
+          return;
+        }
+
+        // Use amCharts export with error handling
+        root3.exporting.export("png", {
+          quality: 0.9,
+          maintainPixelRatio: true
+        }).then(function (result) {
+          console.log("PNG export successful");
+        }).catch(function (error) {
+          console.error("PNG export failed:", error);
+
+          // Alternative method - try canvas export
+          setTimeout(function () {
+            try {
+              const canvas = root3.dom.querySelector("canvas");
+              if (canvas) {
+                const link = document.createElement("a");
+                link.download = "chart3.png";
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+                console.log("Canvas export successful");
+              } else {
+                alert("PNG export failed. Canvas not found.");
+              }
+            } catch (canvasError) {
+              console.error("Canvas export also failed:", canvasError);
+              alert("PNG export failed: " + error.message);
+            }
+          }, 500);
+        });
       }
-    });
-  }
-});
 
-// Test function - call this in console to debug
-window.testExport = function() {
-  console.log("=== Export Test ===");
-  console.log("root3 exists:", !!root3);
-  console.log("chart3 exists:", !!chart3);
-  console.log("exporting plugin:", !!root3?.exporting);
-  console.log("am5plugins_exporting:", typeof am5plugins_exporting);
-  console.log("datasets3Combined length:", datasets3Combined.length);
-  
-  // Test CSV export
-  exportCSV();
-};
-        
-// Alternative event listeners (add this at the end of your script)
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('csvExportBtn')?.addEventListener('click', exportCSV);
-  document.getElementById('pngExportBtn')?.addEventListener('click', exportChart);
-});
+      // Setup dropdown toggle
+      document.addEventListener('DOMContentLoaded', function () {
+        const exportButton = document.getElementById("exportButton");
+        const exportOptions = document.getElementById("exportOptions");
+
+        if (exportButton && exportOptions) {
+          exportButton.addEventListener("click", function (e) {
+            e.preventDefault();
+            const isVisible = exportOptions.style.display === "block";
+            exportOptions.style.display = isVisible ? "none" : "block";
+          });
+
+          // Close when clicking outside
+          document.addEventListener("click", function (e) {
+            if (!exportButton.contains(e.target) && !exportOptions.contains(e.target)) {
+              exportOptions.style.display = "none";
+            }
+          });
+        }
+      });
+
+      // Test function - call this in console to debug
+      window.testExport = function () {
+        console.log("=== Export Test ===");
+        console.log("root3 exists:", !!root3);
+        console.log("chart3 exists:", !!chart3);
+        console.log("exporting plugin:", !!root3?.exporting);
+        console.log("am5plugins_exporting:", typeof am5plugins_exporting);
+        console.log("datasets3Combined length:", datasets3Combined.length);
+
+        // Test CSV export
+        exportCSV();
+      };
+
+      // Alternative event listeners (add this at the end of your script)
+      document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('csvExportBtn')?.addEventListener('click', exportCSV);
+        document.getElementById('pngExportBtn')?.addEventListener('click', exportChart);
+      });
       // makeSeries("EE1", "EE1", "#BCDCDC");
       // makeSeries("EE2", "EE2", "#68B3B3");
       // makeSeries("EE3", "EE3", "#2A8A8A");
@@ -3398,6 +3672,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     });
   </script>
+
   <script>
     function toggleAnalysis(id) {
       const section = document.getElementById(id);
@@ -3574,7 +3849,6 @@ document.addEventListener('DOMContentLoaded', function() {
   </script>
 
   <script>
-
     am5.ready(function () {
 
       // France flag based color
@@ -3863,7 +4137,6 @@ document.addEventListener('DOMContentLoaded', function() {
       createFranceMap("studentsChart", studentsData, "Étudiants");
       createFranceMapSalary("salaryChart", salaryData, "Salaire (€)");
     });
-
   </script>
 
   <script>
@@ -4021,8 +4294,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
       seriesGender.appear(1000, 100);
     });
-
-
   </script>
 
   <script>
@@ -4063,23 +4334,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
       seriesStatut.appear(1000, 100);
     });
-
-
   </script>
 
   <script>
-    /**
-     * ---------------------------------------
-     * This demo was created using amCharts 5.
-     *
-     * For more information visit:
-     * https://www.amcharts.com/
-     *
-     * Documentation is available at:
-     * https://www.amcharts.com/docs/v5/
-     * ---------------------------------------
-     */
-
     // Create root and chart
     var root = am5.Root.new("pieChartContinueStudy");
     root._logo.dispose();
@@ -4132,7 +4389,6 @@ document.addEventListener('DOMContentLoaded', function() {
     series.data.setAll(data);
 
     series.labels.template.set("visible", false);
-
   </script>
 
   <script>
@@ -4453,7 +4709,6 @@ document.addEventListener('DOMContentLoaded', function() {
   </script>
 
   <script>
-
     var root = am5.Root.new("chartdivSankee");
     root._logo.dispose();
     // Set themes
@@ -4942,245 +5197,245 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   </script>
 
-   <script>
+  <script>
     // Static data for sources
-const sourceData = [
-    "RDC 2021",
-    "RDC 2022", 
-    "Classe 2022",
-    "Classe Excellence 2022",
-    "RDC 2023",
-    "RDC 2024",
-    "RDC 2025",
-    "CDRH 2022",
-    "CDRH 2023", 
-    "CDRH 2024",
-    "CDRH 2025",
-    "CPEB 2021",
-    "CPEB 2022",
-    "CPEB 2023",
-    "CPEB 2024",
-    "CPEB 2025"
-];
+    const sourceData = [
+      "RDC 2021",
+      "RDC 2022",
+      "Classe 2022",
+      "Classe Excellence 2022",
+      "RDC 2023",
+      "RDC 2024",
+      "RDC 2025",
+      "CDRH 2022",
+      "CDRH 2023",
+      "CDRH 2024",
+      "CDRH 2025",
+      "CPEB 2021",
+      "CPEB 2022",
+      "CPEB 2023",
+      "CPEB 2024",
+      "CPEB 2025"
+    ];
 
-// Static data for sections
-const sectionsData = [
-    "Global",
-    "Origine scolaire / prof.",
-    "Poursuite d'études",
-    "Emploi",
-    "Compétences",
-    "Démographique",
-    "Parcours (journey sankey)"
-];
+    // Static data for sections
+    const sectionsData = [
+      "Global",
+      "Origine scolaire / prof.",
+      "Poursuite d'études",
+      "Emploi",
+      "Compétences",
+      "Démographique",
+      "Parcours (journey sankey)"
+    ];
 
-// Default selections - items that should be checked by default
-const defaultSelectedSources = [
-    "RDC 2022",
-];
+    // Default selections - items that should be checked by default
+    const defaultSelectedSources = [
+      "RDC 2022",
+    ];
 
-const defaultSelectedSections = [
-    "Global",
-    "Poursuite d'études",
-    "Emploi",
-    "Compétences",
-    "Démographique",
-    "Parcours (journey sankey)"
-];
+    const defaultSelectedSections = [
+      "Global",
+      "Poursuite d'études",
+      "Emploi",
+      "Compétences",
+      "Démographique",
+      "Parcours (journey sankey)"
+    ];
 
-// Initialize the sidebar
-function initializeSidebar() {
-    populateSourceCheckboxes();
-    populateSectionCheckboxes();
-    setupTypeahead();
-    setDefaultSelections();
-}
+    // Initialize the sidebar
+    function initializeSidebar() {
+      populateSourceCheckboxes();
+      populateSectionCheckboxes();
+      setupTypeahead();
+      setDefaultSelections();
+    }
 
-// Populate source checkboxes
-function populateSourceCheckboxes() {
-    const container = document.getElementById('sourceCheckboxList');
-    container.innerHTML = '';
-    
-    sourceData.forEach((source, index) => {
+    // Populate source checkboxes
+    function populateSourceCheckboxes() {
+      const container = document.getElementById('sourceCheckboxList');
+      container.innerHTML = '';
+
+      sourceData.forEach((source, index) => {
         const item = createCheckboxItem(source, `source_${index}`, 'source');
         container.appendChild(item);
-    });
-}
+      });
+    }
 
-// Populate section checkboxes
-function populateSectionCheckboxes() {
-    const container = document.getElementById('sectionsCheckboxList');
-    container.innerHTML = '';
-    
-    sectionsData.forEach((section, index) => {
+    // Populate section checkboxes
+    function populateSectionCheckboxes() {
+      const container = document.getElementById('sectionsCheckboxList');
+      container.innerHTML = '';
+
+      sectionsData.forEach((section, index) => {
         const item = createCheckboxItem(section, `section_${index}`, 'section');
         container.appendChild(item);
-    });
-}
+      });
+    }
 
-// Create checkbox item
-function createCheckboxItem(text, id, type) {
-    const div = document.createElement('div');
-    div.className = 'checkbox-item';
-    div.innerHTML = `
+    // Create checkbox item
+    function createCheckboxItem(text, id, type) {
+      const div = document.createElement('div');
+      div.className = 'checkbox-item';
+      div.innerHTML = `
         <input type="checkbox" id="${id}" onchange="updateCount('${type}')">
         <label for="${id}">${text}</label>
     `;
-    return div;
-}
+      return div;
+    }
 
-// Set default selections
-function setDefaultSelections() {
-    // Set default source selections
-    document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]').forEach(checkbox => {
+    // Set default selections
+    function setDefaultSelections() {
+      // Set default source selections
+      document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]').forEach(checkbox => {
         const label = checkbox.nextElementSibling.textContent;
         if (defaultSelectedSources.includes(label)) {
-            checkbox.checked = true;
+          checkbox.checked = true;
         }
-    });
-    
-    // Set default section selections
-    document.querySelectorAll('#sectionsCheckboxList input[type="checkbox"]').forEach(checkbox => {
+      });
+
+      // Set default section selections
+      document.querySelectorAll('#sectionsCheckboxList input[type="checkbox"]').forEach(checkbox => {
         const label = checkbox.nextElementSibling.textContent;
         if (defaultSelectedSections.includes(label)) {
-            checkbox.checked = true;
+          checkbox.checked = true;
         }
-    });
-    
-    // Update counts after setting defaults
-    updateCount('source');
-    updateCount('section');
-}
+      });
 
-// Alternative method: Create checkbox with default checked state
-function createCheckboxItemWithDefault(text, id, type, isDefaultChecked = false) {
-    const div = document.createElement('div');
-    div.className = 'checkbox-item';
-    const checkedAttribute = isDefaultChecked ? 'checked' : '';
-    div.innerHTML = `
+      // Update counts after setting defaults
+      updateCount('source');
+      updateCount('section');
+    }
+
+    // Alternative method: Create checkbox with default checked state
+    function createCheckboxItemWithDefault(text, id, type, isDefaultChecked = false) {
+      const div = document.createElement('div');
+      div.className = 'checkbox-item';
+      const checkedAttribute = isDefaultChecked ? 'checked' : '';
+      div.innerHTML = `
         <input type="checkbox" id="${id}" ${checkedAttribute} onchange="updateCount('${type}')">
         <label for="${id}">${text}</label>
     `;
-    return div;
-}
+      return div;
+    }
 
-// Alternative populate functions using the default checked method
-function populateSourceCheckboxesWithDefaults() {
-    const container = document.getElementById('sourceCheckboxList');
-    container.innerHTML = '';
-    
-    sourceData.forEach((source, index) => {
+    // Alternative populate functions using the default checked method
+    function populateSourceCheckboxesWithDefaults() {
+      const container = document.getElementById('sourceCheckboxList');
+      container.innerHTML = '';
+
+      sourceData.forEach((source, index) => {
         const isDefaultChecked = defaultSelectedSources.includes(source);
         const item = createCheckboxItemWithDefault(source, `source_${index}`, 'source', isDefaultChecked);
         container.appendChild(item);
-    });
-}
+      });
+    }
 
-function populateSectionCheckboxesWithDefaults() {
-    const container = document.getElementById('sectionsCheckboxList');
-    container.innerHTML = '';
-    
-    sectionsData.forEach((section, index) => {
+    function populateSectionCheckboxesWithDefaults() {
+      const container = document.getElementById('sectionsCheckboxList');
+      container.innerHTML = '';
+
+      sectionsData.forEach((section, index) => {
         const isDefaultChecked = defaultSelectedSections.includes(section);
         const item = createCheckboxItemWithDefault(section, `section_${index}`, 'section', isDefaultChecked);
         container.appendChild(item);
-    });
-}
+      });
+    }
 
-// Setup typeahead functionality
-function setupTypeahead() {
-    const input = document.getElementById('sourceTypeahead');
-    input.addEventListener('input', filterSources);
-}
+    // Setup typeahead functionality
+    function setupTypeahead() {
+      const input = document.getElementById('sourceTypeahead');
+      input.addEventListener('input', filterSources);
+    }
 
-// Filter sources based on typeahead input
-function filterSources() {
-    const input = document.getElementById('sourceTypeahead');
-    const filter = input.value.toLowerCase();
-    const items = document.querySelectorAll('#sourceCheckboxList .checkbox-item');
-    
-    items.forEach(item => {
+    // Filter sources based on typeahead input
+    function filterSources() {
+      const input = document.getElementById('sourceTypeahead');
+      const filter = input.value.toLowerCase();
+      const items = document.querySelectorAll('#sourceCheckboxList .checkbox-item');
+
+      items.forEach(item => {
         const label = item.querySelector('label').textContent.toLowerCase();
         if (label.includes(filter)) {
-            item.classList.remove('hidden');
+          item.classList.remove('hidden');
         } else {
-            item.classList.add('hidden');
+          item.classList.add('hidden');
         }
-    });
-}
+      });
+    }
 
-// Update selected count
-function updateCount(type) {
-    const container = type === 'source' ? '#sourceCheckboxList' : '#sectionsCheckboxList';
-    const countElement = type === 'source' ? 'sourceCount' : 'sectionsCount';
-    const checkboxes = document.querySelectorAll(`${container} input[type="checkbox"]:checked`);
-    
-    const count = checkboxes.length;
-    const text = type === 'source' ? 'source(s) sélectionnée(s)' : 'section(s) sélectionnée(s)';
-    document.getElementById(countElement).textContent = `${count} ${text}`;
-}
+    // Update selected count
+    function updateCount(type) {
+      const container = type === 'source' ? '#sourceCheckboxList' : '#sectionsCheckboxList';
+      const countElement = type === 'source' ? 'sourceCount' : 'sectionsCount';
+      const checkboxes = document.querySelectorAll(`${container} input[type="checkbox"]:checked`);
 
-// Clear source filters
-function clearSourceFilters() {
-    document.getElementById('sourceTypeahead').value = '';
-    document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]').forEach(cb => {
+      const count = checkboxes.length;
+      const text = type === 'source' ? 'source(s) sélectionnée(s)' : 'section(s) sélectionnée(s)';
+      document.getElementById(countElement).textContent = `${count} ${text}`;
+    }
+
+    // Clear source filters
+    function clearSourceFilters() {
+      document.getElementById('sourceTypeahead').value = '';
+      document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]').forEach(cb => {
         cb.checked = false;
-    });
-    document.querySelectorAll('#sourceCheckboxList .checkbox-item').forEach(item => {
+      });
+      document.querySelectorAll('#sourceCheckboxList .checkbox-item').forEach(item => {
         item.classList.remove('hidden');
-    });
-    updateCount('source');
-}
+      });
+      updateCount('source');
+    }
 
-// Clear section filters
-function clearSectionFilters() {
-    document.querySelectorAll('#sectionsCheckboxList input[type="checkbox"]').forEach(cb => {
+    // Clear section filters
+    function clearSectionFilters() {
+      document.querySelectorAll('#sectionsCheckboxList input[type="checkbox"]').forEach(cb => {
         cb.checked = false;
-    });
-    updateCount('section');
-}
+      });
+      updateCount('section');
+    }
 
-// Reset to default selections
-function resetToDefaults() {
-    // Clear all selections first
-    document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]').forEach(cb => {
+    // Reset to default selections
+    function resetToDefaults() {
+      // Clear all selections first
+      document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]').forEach(cb => {
         cb.checked = false;
-    });
-    document.querySelectorAll('#sectionsCheckboxList input[type="checkbox"]').forEach(cb => {
+      });
+      document.querySelectorAll('#sectionsCheckboxList input[type="checkbox"]').forEach(cb => {
         cb.checked = false;
-    });
-    
-    // Set defaults
-    setDefaultSelections();
-}
+      });
 
-// Get selected sources
-function getSelectedSources() {
-    const selected = [];
-    document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]:checked').forEach(cb => {
+      // Set defaults
+      setDefaultSelections();
+    }
+
+    // Get selected sources
+    function getSelectedSources() {
+      const selected = [];
+      document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]:checked').forEach(cb => {
         selected.push(cb.nextElementSibling.textContent);
-    });
-    return selected;
-}
+      });
+      return selected;
+    }
 
-// Get selected sections
-function getSelectedSections() {
-    const selected = [];
-    document.querySelectorAll('#sectionsCheckboxList input[type="checkbox"]:checked').forEach(cb => {
+    // Get selected sections
+    function getSelectedSections() {
+      const selected = [];
+      document.querySelectorAll('#sectionsCheckboxList input[type="checkbox"]:checked').forEach(cb => {
         selected.push(cb.nextElementSibling.textContent);
-    });
-    return selected;
-}
+      });
+      return selected;
+    }
 
-// Debug function to see selections
-function logSelections() {
-    console.log('Selected Sources:', getSelectedSources());
-    console.log('Selected Sections:', getSelectedSections());
-}
+    // Debug function to see selections
+    function logSelections() {
+      console.log('Selected Sources:', getSelectedSources());
+      console.log('Selected Sections:', getSelectedSections());
+    }
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', initializeSidebar);
-    </script>
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', initializeSidebar);
+  </script>
 </body>
 
 </html>
