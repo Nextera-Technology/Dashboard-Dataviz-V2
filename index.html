@@ -82,7 +82,7 @@
     }
 
     .sidebar {
-      width: 320px;
+      width: 270px;
       height: 100vh;
       /* Full viewport height */
       background: linear-gradient(135deg, #97cce4 0%, #306e8b 100%);
@@ -100,7 +100,7 @@
 
     /* Alternative approach - if you want the sidebar to be sticky within a container */
     .sidebar-sticky {
-      width: 320px;
+      width: 270px;
       background: linear-gradient(135deg, #6db5d6 0%, #764ba2 100%);
       color: white;
       padding: 20px;
@@ -113,7 +113,7 @@
 
     /* If using fixed sidebar, adjust main content margin */
     .main-content {
-      margin-left: 320px;
+      margin-left: 270px;
       /* Same as sidebar width */
       padding: 20px;
     }
@@ -261,6 +261,10 @@
 
     .clear-filters:hover {
       background: rgba(255, 255, 255, 0.3);
+    }
+
+    .hidden {
+      display: none;
     }
 
     .selected-count {
@@ -914,7 +918,7 @@
 
     /* Base button styles */
     .info-button {
-      background: #e8f0ee;
+      /* background: #e8f0ee; */
       border: none;
       border-radius: 50%;
       width: 32px;
@@ -924,11 +928,11 @@
       align-items: center;
       justify-content: center;
       transition: all 0.3s ease;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
     }
 
     .info-button:hover {
-      background: #00454D;
+      background: #dda681;
       transform: scale(1.1);
     }
 
@@ -939,23 +943,23 @@
 
     /* Different button variations */
     .info-button.primary {
-      background: #1E9180;
+      /* background: #1E9180; */
     }
 
     .info-button.primary:hover {
-      background: #00454D;
+      background: #95cdd4;
     }
 
     .info-button.secondary {
-      background: #f0f8ff;
+      /* background: #f0f8ff; */
     }
 
     .info-button.secondary:hover {
-      background: #1E9180;
+      background: #bbaafa;
     }
 
     .info-button.danger {
-      background: #ffebee;
+      /* background: #ffebee; */
     }
 
     .info-button.danger:hover {
@@ -971,7 +975,7 @@
     }
 
     .top-button {
-      background: #1E9180;
+      /* background: #1E9180; */
       color: white;
       border: none;
       border-radius: 6px;
@@ -1212,9 +1216,9 @@
 
     <!-- Source Filter Section -->
     <div class="filter-section">
-      <div class="section-title">Source</div>
+      <div class="section-title">Certification</div>
       <div class="typeahead-container">
-        <input type="text" class="typeahead-input" id="sourceTypeahead" placeholder="Rechercher une source..."
+        <input type="text" class="typeahead-input" id="sourceTypeahead" placeholder="Rechercher une Certification..."
           autocomplete="off">
       </div>
       <div class="checkbox-list" id="sourceCheckboxList">
@@ -1250,10 +1254,14 @@
       <div class="chart-box" style="position: relative; text-align: center; background-color: rgb(226, 246, 250);">
         <div class="button-container">
           <button class="info-button" onclick="openModal()" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png" alt="Info">
+          </button> 
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
           </button>
-          <button class="info-button primary" onclick="downloadChart()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button secondary" onclick="openModalScope()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -1269,10 +1277,14 @@
       <div class="chart-box" style="position: relative; text-align: center; background-color: rgb(226, 250, 233);">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -1302,10 +1314,14 @@
       <div class="chart-box" style="position: relative; text-align: center; background-color: rgb(250, 239, 226);">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -1321,10 +1337,14 @@
       <div class="chart-box" style="position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -1348,10 +1368,14 @@
       <div class="chart-box" style="position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -1377,10 +1401,14 @@
       <div class="chart-box" style="position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -1482,10 +1510,14 @@
       <div class="chart-box" style="position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -1528,10 +1560,14 @@
       <div class="chart-box" style="text-align: center; position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -1565,10 +1601,14 @@
       <div class="chart-box" style="text-align: center; position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -1601,10 +1641,14 @@
       <div class="chart-box" style="text-align: center; position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -1637,10 +1681,14 @@
       <div class="chart-box" style="text-align: center; position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -1729,10 +1777,14 @@
       <div class="chart-box" style="text-align: center; position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -1747,10 +1799,14 @@
       <div class="chart-box" style="text-align: center; position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -1764,10 +1820,14 @@
       <div class="chart-box" style="text-align: center; position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -1782,10 +1842,14 @@
       <div class="chart-box" style="text-align: center; position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -1796,10 +1860,14 @@
       <div class="chart-box" style="text-align: center; position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -1866,10 +1934,14 @@
       <div class="chart-box" style="position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -1893,7 +1965,8 @@
           </div>
           <div class="legend-item2">
             <span class="legend-color2" style="background-color: #8067dc;"></span>
-            <span class="legend-label2" style="font-size: 13px;">(D) Identification of business development opportunities
+            <span class="legend-label2" style="font-size: 13px;">(D) Identification of business development
+              opportunities
               <span style="color: #8067dc; font-size: 14px"><strong>8%</strong></span></span>
           </div>
           <div class="legend-item2">
@@ -1912,10 +1985,14 @@
       <div class="chart-box" style="position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -1963,10 +2040,14 @@
       <div class="chart-box" style="position: relative; text-align: center;">
         <div class="button-container">
           <button class="info-button" onclick="openModalJobTargeted()" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="downloadChart()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -1981,10 +2062,14 @@
       <div class="chart-box" style="text-align: center; position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -2000,10 +2085,14 @@
       <div class="chart-box" style="position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -2046,10 +2135,14 @@
       <div class="chart-box" style="position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -2094,10 +2187,14 @@
       <div class="chart-box" style="position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -2153,10 +2250,14 @@
       <div class="chart-box" style="position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="openModalScopeManagerial()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -2214,10 +2315,14 @@
 
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -2251,10 +2356,14 @@
       <div class="chart-box" style="position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -2297,10 +2406,14 @@
       <div class="chart-box" style="position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -2316,10 +2429,14 @@
       <div class="chart-box" style="position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -2333,10 +2450,14 @@
       <div class="chart-box" style="position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -2357,10 +2478,14 @@
       <div class="chart-box" style="position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
-            <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="exportCSV()" title="Download">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png"
+          <button class="info-button primary" onclick="downloadChart()" title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+              alt="Download">
+          </button>
+          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
@@ -2384,8 +2509,84 @@
         </button>
 
         <div class="detailed-chart">
-          <h2>Détails des données</h2>
+          <h2>Poursuite d’étude à 6 mois après la certification</h2>
+          <h4 style="color: #15616D; margin: 30px 0 10px; text-align: left;"><img
+              src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png"
+              style="width: 15px; height: 15px;"> Scope</h4>
+          <p style="text-align: left; color:#0E3F2D">Ce widget suit l’évolution de la situation des diplômés : emploi, recherche, études et inactivité.
+          </p>
+          <p style="text-align: left; color:#0E3F2D">Il s’appuie sur les données des enquêtes ES1 à ES4, et montre :</p>
+          <ul style="padding-left: 20px; text-align: left; color:#0E3F2D">
+            <li style="text-align: left; color:#0E3F2D"><strong>Insertion rapide dans l’emploi :</strong> majorité en emploi dès l’ES2 (105 à l’ES2, stable à 95
+              pour les ES3/ES4).</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Forte baisse de la recherche d’emploi :</strong> de 140 à l’ES1 à seulement 4 à l’ES4.</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Poursuite d’études très faible :</strong> entre 4 et 5 étudiants concernés par vague.</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Inactivité marginale :</strong> très peu de cas (maximum 5 à l’ES2).</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Stabilité des réponses :</strong> légère hausse des non-réponses, mais données globalement
+              fiables.</li>
+          </ul>
           <div id="previewContinueStudyBar" class="chart-container"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="infoModalScope" class="modal" onclick="closeModalScope(event)">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <button class="close-button" onclick="closeModalScope()">
+          <!-- Close Icon SVG -->
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+          </svg>
+        </button>
+
+        <div class="detailed-chart">
+          <h2>Poursuite d’étude à 6 mois après la certification</h2>
+          <h4 style="color: #15616D; margin: 30px 0 10px; text-align: left;"><img
+              src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png"
+              style="width: 15px; height: 15px;"> Scope</h4>
+          <p style="text-align: left; color:#0E3F2D">Ce widget suit l’évolution de la situation des diplômés : emploi, recherche, études et inactivité.
+          </p>
+          <p style="text-align: left; color:#0E3F2D">Il s’appuie sur les données des enquêtes ES1 à ES2, et montre :</p>
+          <ul style="padding-left: 20px; text-align: left; color:#0E3F2D; padding-bottom: 30px;">
+            <li style="text-align: left; color:#0E3F2D"><strong>Insertion rapide dans l’emploi :</strong> majorité en emploi dès l’ES2 (105 à l’ES2, stable à 95
+              pour les ES3/ES2).</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Forte baisse de la recherche d’emploi :</strong> de 140 à l’ES1 à seulement 4 à l’ES2.</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Poursuite d’études très faible :</strong> entre 4 et 5 étudiants concernés par vague.</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Inactivité marginale :</strong> très peu de cas (maximum 5 à l’ES2).</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Stabilité des réponses :</strong> légère hausse des non-réponses, mais données globalement
+              fiables.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div id="infoModalScopeManagerial" class="modal" onclick="closeModalScopeManagerial(event)">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <button class="close-button" onclick="closeModalScopeManagerial()">
+          <!-- Close Icon SVG -->
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+          </svg>
+        </button>
+
+        <div class="detailed-chart">
+          <h2>Niveau managérial</h2>
+          <h4 style="color: #15616D; margin: 30px 0 10px; text-align: left;"><img
+              src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png"
+              style="width: 15px; height: 15px;"> Scope</h4>
+          <p style="text-align: left; color:#0E3F2D">Ce widget présente la progression professionnelle des diplômés vers des postes de management au fil du
+            temps.
+          </p>
+          <p style="text-align: left; color:#0E3F2D">Il s’appuie sur les données des enquêtes ES1 à ES4, et montre :</p>
+          <ul style="padding-left: 20px; text-align: left; color:#0E3F2D; padding-bottom: 30px;">
+            <li style="text-align: left; color:#0E3F2D"><strong>Nombre croissant de managers :</strong> de 20 à 30 entre l’EE2 et l’EE4.</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Progression constante :</strong> environ +5 nouveaux managers à chaque vague.</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Encore minoritaire :</strong> environ 25 % seulement sont managers à l’EE4.</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Mobilité ascendante :</strong> le programme semble favoriser l’évolution de carrière à long
+              terme.</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -2401,7 +2602,7 @@
         </button>
 
         <div class="detailed-chart">
-          <h2>Détails des données</h2>
+          <h2>Emplois ciblés après 6 mois</h2>
           <div id="previewJobTargeted" class="chart-container"></div>
         </div>
       </div>
@@ -5177,6 +5378,54 @@
   </script>
 
   <script>
+    function openModalScope() {
+      const modal = document.getElementById('infoModalScope');
+      modal.classList.add('show');
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+
+    function closeModalScope(event) {
+      // Close only if clicking on the modal background or close button
+      if (!event || event.target === document.getElementById('infoModalScope') || event.target.closest('.close-button')) {
+        const modal = document.getElementById('infoModalScope');
+        modal.classList.remove('show');
+        document.body.style.overflow = 'auto'; // Restore scrolling
+      }
+    }
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        closeModalScope();
+      }
+    });
+  </script>
+
+  <script>
+    function openModalScopeManagerial() {
+      const modal = document.getElementById('infoModalScopeManagerial');
+      modal.classList.add('show');
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+
+    function closeModalScopeManagerial(event) {
+      // Close only if clicking on the modal background or close button
+      if (!event || event.target === document.getElementById('infoModalScopeManagerial') || event.target.closest('.close-button')) {
+        const modal = document.getElementById('infoModalScopeManagerial');
+        modal.classList.remove('show');
+        document.body.style.overflow = 'auto'; // Restore scrolling
+      }
+    }
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        closeModalScopeManagerial();
+      }
+    });
+  </script>
+
+  <script>
     function openModalJobTargeted() {
       const modal = document.getElementById('infoModalJobTargeted');
       modal.classList.add('show');
@@ -5234,7 +5483,7 @@
 
     // Default selections - items that should be checked by default
     const defaultSelectedSources = [
-      "RDC 2022",
+      // "RDC 2022",
     ];
 
     const defaultSelectedSections = [
@@ -5254,13 +5503,15 @@
       setDefaultSelections();
     }
 
-    // Populate source checkboxes
+    // Populate source checkboxes - initially hidden (empty list)
     function populateSourceCheckboxes() {
       const container = document.getElementById('sourceCheckboxList');
       container.innerHTML = '';
 
       sourceData.forEach((source, index) => {
         const item = createCheckboxItem(source, `source_${index}`, 'source');
+        // Hide all items initially to show empty list
+        item.classList.add('hidden');
         container.appendChild(item);
       });
     }
@@ -5281,15 +5532,15 @@
       const div = document.createElement('div');
       div.className = 'checkbox-item';
       div.innerHTML = `
-        <input type="checkbox" id="${id}" onchange="updateCount('${type}')">
-        <label for="${id}">${text}</label>
-    `;
+    <input type="checkbox" id="${id}" onchange="updateCount('${type}')">
+    <label for="${id}">${text}</label>
+`;
       return div;
     }
 
     // Set default selections
     function setDefaultSelections() {
-      // Set default source selections
+      // Set default source selections (but keep them hidden initially)
       document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]').forEach(checkbox => {
         const label = checkbox.nextElementSibling.textContent;
         if (defaultSelectedSources.includes(label)) {
@@ -5316,9 +5567,9 @@
       div.className = 'checkbox-item';
       const checkedAttribute = isDefaultChecked ? 'checked' : '';
       div.innerHTML = `
-        <input type="checkbox" id="${id}" ${checkedAttribute} onchange="updateCount('${type}')">
-        <label for="${id}">${text}</label>
-    `;
+    <input type="checkbox" id="${id}" ${checkedAttribute} onchange="updateCount('${type}')">
+    <label for="${id}">${text}</label>
+`;
       return div;
     }
 
@@ -5330,6 +5581,8 @@
       sourceData.forEach((source, index) => {
         const isDefaultChecked = defaultSelectedSources.includes(source);
         const item = createCheckboxItemWithDefault(source, `source_${index}`, 'source', isDefaultChecked);
+        // Hide all items initially
+        item.classList.add('hidden');
         container.appendChild(item);
       });
     }
@@ -5351,12 +5604,21 @@
       input.addEventListener('input', filterSources);
     }
 
-    // Filter sources based on typeahead input
+    // Filter sources - empty list initially, show filtered results only after 2+ characters
     function filterSources() {
       const input = document.getElementById('sourceTypeahead');
       const filter = input.value.toLowerCase();
       const items = document.querySelectorAll('#sourceCheckboxList .checkbox-item');
 
+      // If less than 2 characters, hide all items (keep list empty)
+      if (filter.length < 2) {
+        items.forEach(item => {
+          item.classList.add('hidden');
+        });
+        return;
+      }
+
+      // Show filtered items when 2 or more characters are typed
       items.forEach(item => {
         const label = item.querySelector('label').textContent.toLowerCase();
         if (label.includes(filter)) {
@@ -5378,14 +5640,15 @@
       document.getElementById(countElement).textContent = `${count} ${text}`;
     }
 
-    // Clear source filters
+    // Clear source filters - return to empty state
     function clearSourceFilters() {
       document.getElementById('sourceTypeahead').value = '';
       document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]').forEach(cb => {
         cb.checked = false;
       });
+      // Hide all items when clearing (return to empty state)
       document.querySelectorAll('#sourceCheckboxList .checkbox-item').forEach(item => {
-        item.classList.remove('hidden');
+        item.classList.add('hidden');
       });
       updateCount('source');
     }
@@ -5406,6 +5669,11 @@
       });
       document.querySelectorAll('#sectionsCheckboxList input[type="checkbox"]').forEach(cb => {
         cb.checked = false;
+      });
+
+      // Hide all source items (return to empty state)
+      document.querySelectorAll('#sourceCheckboxList .checkbox-item').forEach(item => {
+        item.classList.add('hidden');
       });
 
       // Set defaults
