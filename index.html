@@ -890,34 +890,119 @@ nav a.active {
       height: 500px;
     }
 
+ /* Button container for multiple buttons */
+        .button-container {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            display: flex;
+            gap: 5px;
+            z-index: 10;
+        }
 
-    .info-button {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      background: #e8f0ee;
-      border: none;
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
+        /* Base button styles */
+        .info-button {
+            background: #e8f0ee;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
 
-    .info-button:hover {
-      background: #00454D;
-      transform: scale(1.1);
-    }
+        .info-button:hover {
+            background: #00454D;
+            transform: scale(1.1);
+        }
 
-    .info-button img {
-      width: 18px;
-      height: 18px;
-      /* fill: white; */
-    }
+        .info-button img {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Different button variations */
+        .info-button.primary {
+            background: #1E9180;
+        }
+
+        .info-button.primary:hover {
+            background: #00454D;
+        }
+
+        .info-button.secondary {
+            background: #f0f8ff;
+        }
+
+        .info-button.secondary:hover {
+            background: #1E9180;
+        }
+
+        .info-button.danger {
+            background: #ffebee;
+        }
+
+        .info-button.danger:hover {
+            background: #d32f2f;
+        }
+
+        /* Alternative: Horizontal layout at the top */
+        .top-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .top-button {
+            background: #1E9180;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .top-button:hover {
+            background: #00454D;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .top-button.outline {
+            background: transparent;
+            color: #1E9180;
+            border: 1px solid #1E9180;
+        }
+
+        .top-button.outline:hover {
+            background: #1E9180;
+            color: white;
+        }
+
+        /* Chart content styles */
+        .chart-content h3 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: #00454D;
+            margin-bottom: 10px;
+        }
+
+        .chart-content .percentage {
+            color: #1E9180;
+            font-size: 40px;
+            font-weight: bold;
+            margin: 0;
+        }
 
     .chart-box .percentage {
       color: #1E9180;
@@ -1151,12 +1236,17 @@ nav a.active {
     <h2 style="color:#15616D; margin-bottom: 20px;">Poursuite d'études</h2>
     <div class="grid3" style="margin-bottom: 20px;">
       <div class="chart-box" style="position: relative; text-align: center; background-color: rgb(226, 246, 250);">
-        <button class="info-button" onclick="openModal()">
-          <!-- Info Icon SVG -->
-          <img src="https://i.imgur.com/QPS2yfQ.png">
-        </button>
+        <div class="button-container">
+            <button class="info-button" onclick="openModal()" title="Information">
+                <img src="https://i.imgur.com/QPS2yfQ.png" alt="Info">
+            </button>
+            <button class="info-button primary" onclick="downloadChart()" title="Download">
+                <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel_732220.png" alt="Download">
+            </button>
+        </div>
+        <br>
         <h3
-          style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;">
+          style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin: 10px 0 10px 0;">
           <strong>Poursuite d’étude à 6 mois après la certification</strong>
         </h3>
         <p style="color:#1E9180 ; font-size: 40px;"><strong>57%</strong></p>
@@ -1283,6 +1373,20 @@ nav a.active {
           onclick="toggleAnalysis('chart2-analysis')">Afficher/Masquer l’analyse</button>
         <div id="chart2-analysis" class="analysis-content"
           style=" margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
+          <h4 style="color: #15616D; margin: 30px 0 10px;"><img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png" style="width: 15px; height: 15px;"> Scope</h4>
+          <p>Ce widget suit l’évolution de la situation des diplômés : emploi, recherche, études et inactivité.
+          </p>
+          <p>Il s’appuie sur les données des enquêtes ES1 à ES4, et montre :</p>
+          <ul style="padding-left: 20px;">
+            <li><strong>Insertion rapide dans l’emploi :</strong> majorité en emploi dès l’ES2 (105 à l’ES2, stable à 95
+              pour les ES3/ES4).</li>
+            <li><strong>Forte baisse de la recherche d’emploi :</strong> de 140 à l’ES1 à seulement 4 à l’ES4.</li>
+            <li><strong>Poursuite d’études très faible :</strong> entre 4 et 5 étudiants concernés par vague.</li>
+            <li><strong>Inactivité marginale :</strong> très peu de cas (maximum 5 à l’ES2).</li>
+            <li><strong>Stabilité des réponses :</strong> légère hausse des non-réponses, mais données globalement
+              fiables.</li>
+          </ul>
+
           <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
           <ul style="padding-left: 20px;">
             <li><strong>Insertion rapide dans l’emploi :</strong> Dès l’ES2, la majorité des répondants sont en emploi
@@ -1308,20 +1412,6 @@ nav a.active {
             <li><strong>Réduire les non-réponses :</strong> Renforcer les relances pour limiter les absences de réponse
               dans les prochaines vagues.</li>
           </ol>
-
-          <h4 style="color: #15616D; margin: 20px 0 0 0;">🎯 Scope</h4>
-          <p>Ce widget suit l’évolution de la situation des diplômés : emploi, recherche, études et inactivité.
-          </p>
-          <p>Il s’appuie sur les données des enquêtes ES1 à ES4, et montre :</p>
-          <ul style="padding-left: 20px;">
-            <li><strong>Insertion rapide dans l’emploi :</strong> majorité en emploi dès l’ES2 (105 à l’ES2, stable à 95
-              pour les ES3/ES4).</li>
-            <li><strong>Forte baisse de la recherche d’emploi :</strong> de 140 à l’ES1 à seulement 4 à l’ES4.</li>
-            <li><strong>Poursuite d’études très faible :</strong> entre 4 et 5 étudiants concernés par vague.</li>
-            <li><strong>Inactivité marginale :</strong> très peu de cas (maximum 5 à l’ES2).</li>
-            <li><strong>Stabilité des réponses :</strong> légère hausse des non-réponses, mais données globalement
-              fiables.</li>
-          </ul>
         </div>
       </div>
 
@@ -1490,7 +1580,20 @@ nav a.active {
         <div id="chart-final-analysis" class="analysis-content"
           style="display: none; margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
 
-          <h4 style="color: #15616D; margin-bottom: 10px;">🔍 Analyse</h4>
+          <h4 style="color: #15616D; margin-bottom: 10px;"><img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png" style="width: 15px; height: 15px;"> Scope</h4>
+          <p>Ce widget présente les objectifs professionnels des diplômés 24 mois après la fin de leur formation, en
+            mettant l’accent sur les métiers, les secteurs et les salaires visés.</p>
+          <p>Il s’appuie sur les données issues des enquêtes ES1 à ES4, notamment :</p>
+          <ul style="padding-left: 20px;">
+            <li><strong>Postes ciblés :</strong> les diplômés visent majoritairement des métiers à forte valeur ajoutée
+              comme chef de projet, analyste data, consultant ou product owner.</li>
+            <li><strong>Secteurs privilégiés :</strong> les domaines IT, finance, conseil et industrie dominent les
+              intentions, en phase avec les tendances du marché.</li>
+            <li><strong>Salaires espérés :</strong> la tranche <strong>1 900€ à 2 199€</strong> est la plus visée à
+              partir de l’EE2, avec un pic de 17 % à l’EE3.</li>
+          </ul>
+
+          <h4 style="color: #15616D; margin: 20px 0 10px;">🔍 Analyse</h4>
           <ul style="padding-left: 20px;">
             <li><strong>Postes visés :</strong> les diplômés ciblent des métiers à forte valeur ajoutée tels que chef de
               projet, analyste data, consultant, ou product owner.</li>
@@ -1507,19 +1610,6 @@ nav a.active {
             <li><span style="color: #2e7d32;"><strong>Renforcer le suivi post-formation</strong></span> (coaching,
               réseau, accompagnement) pour convertir les intentions en opportunités concrètes.</li>
           </ol>
-
-          <h4 style="color: #15616D; margin: 20px 0 0 0;">🎯 Scope</h4>
-          <p>Ce widget présente les objectifs professionnels des diplômés 24 mois après la fin de leur formation, en
-            mettant l’accent sur les métiers, les secteurs et les salaires visés.</p>
-          <p>Il s’appuie sur les données issues des enquêtes ES1 à ES4, notamment :</p>
-          <ul style="padding-left: 20px;">
-            <li><strong>Postes ciblés :</strong> les diplômés visent majoritairement des métiers à forte valeur ajoutée
-              comme chef de projet, analyste data, consultant ou product owner.</li>
-            <li><strong>Secteurs privilégiés :</strong> les domaines IT, finance, conseil et industrie dominent les
-              intentions, en phase avec les tendances du marché.</li>
-            <li><strong>Salaires espérés :</strong> la tranche <strong>1 900€ à 2 199€</strong> est la plus visée à
-              partir de l’EE2, avec un pic de 17 % à l’EE3.</li>
-          </ul>
         </div>
       </div>
     </div>
@@ -1562,7 +1652,20 @@ nav a.active {
         <button class="analysis-toggle" onclick="toggleAnalysis('chart1-analysis')">Afficher/Masquer l’analyse</button>
         <div id="chart1-analysis" class="analysis-content"
           style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
-          <h4 style="color: #15616D; margin-bottom: 10px;">🔍 Analyse</h4>
+          <h4 style="color: #15616D; margin-bottom: 10px;"><img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png" style="width: 15px; height: 15px;"> Scope</h4>
+          <p>Ce widget suit l’engagement des diplômés aux enquêtes de suivi de l’EE1 à l’EE4.</p>
+          <p>Il s’appuie sur les données des enquêtes ES1 à ES4, et montre :</p>
+          <ul style="padding-left: 20px;">
+            <li><strong>Moins d’envois dans le temps,</strong> car seuls les diplômés sans poursuite d’études reçoivent
+              les vagues suivantes.</li>
+            <li><strong>Taux de participation élevés</strong> chez les répondants (97 % à EE2, 98 % à EE3, 96 % à EE4).
+            </li>
+            <li><strong>Légère baisse des ouvertures</strong> malgré une bonne délivrabilité.</li>
+            <li><strong>EE1 est un cas à part,</strong> envoyée à tous les diplômés juste après la fin des études, d’où
+              son taux élevé de réponse.</li>
+          </ul>
+          
+          <h4 style="color: #15616D; margin: 20px 0 10px;">🔍 Analyse</h4>
           <ul style="padding-left: 20px;">
             <li><strong>Chute progressive des envois liée à la logique de ciblage :</strong> le volume d’e-mails diminue
               mécaniquement à chaque vague (de 318 à 131) car seuls les anciens ayant déclaré ne pas poursuivre leurs
@@ -1594,19 +1697,6 @@ nav a.active {
             <li><strong>Mobiliser des ambassadeurs</strong> : intégrer des témoignages ou vidéos d’anciens élèves ou
               enseignants pour renforcer la motivation à répondre.</li>
           </ol>
-
-          <h4 style="color: #15616D; margin: 20px 0 0 0;">🎯 Scope</h4>
-          <p>Ce widget suit l’engagement des diplômés aux enquêtes de suivi de l’EE1 à l’EE4.</p>
-          <p>Il s’appuie sur les données des enquêtes ES1 à ES4, et montre :</p>
-          <ul style="padding-left: 20px;">
-            <li><strong>Moins d’envois dans le temps,</strong> car seuls les diplômés sans poursuite d’études reçoivent
-              les vagues suivantes.</li>
-            <li><strong>Taux de participation élevés</strong> chez les répondants (97 % à EE2, 98 % à EE3, 96 % à EE4).
-            </li>
-            <li><strong>Légère baisse des ouvertures</strong> malgré une bonne délivrabilité.</li>
-            <li><strong>EE1 est un cas à part,</strong> envoyée à tous les diplômés juste après la fin des études, d’où
-              son taux élevé de réponse.</li>
-          </ul>
         </div>
       </div>
     </div>
@@ -1803,6 +1893,19 @@ nav a.active {
         <div id="chart6" class="chart-container"></div>
         <button class="analysis-toggle" onclick="toggleAnalysis('chart6-analysis')">Afficher/Masquer l’analyse</button>
         <div id="chart6-analysis" class="analysis-content">
+          <h4 style="color: #15616D; margin: 30px 0 10px;"><img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png" style="width: 15px; height: 15px;"> Scope</h4>
+          <p>Ce widget présente les principaux employeurs des diplômés selon les réponses aux enquêtes de l’EE1 à l’EE4.
+          </p>
+          <p>Il s’appuie sur les données des enquêtes ES1 à ES4, et met en avant :</p>
+          <ul style="padding-left: 20px;">
+            <li><strong>Employeurs récurrents</strong> comme Decathlon, Orange et Société Générale visibles dans toutes
+              les vagues.</li>
+            <li><strong>Secteurs dominants :</strong> distribution et banque/assurance (ex. : Carrefour, AXA).</li>
+            <li><strong>Catégorie “Autre” importante,</strong> montrant de nombreux recrutements hors du top 8.</li>
+            <li><strong>Présence régulière,</strong> signe de relations solides ou d’un intérêt récurrent pour les
+              profils diplômés.</li>
+          </ul>
+          
           <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
           <ul style="padding-left: 20px;">
             <li><strong>Décathlon, Orange, Société Générale :</strong> Employeurs récurrents visibles dans toutes les
@@ -1824,19 +1927,6 @@ nav a.active {
               institutionnelles.</li>
             <li><strong>Segmenter les entreprises :</strong> Pour mieux cibler l'accompagnement par secteur.</li>
           </ol>
-
-          <h4 style="color: #15616D; margin: 20px 0 0 0;">🎯 Scope</h4>
-          <p>Ce widget présente les principaux employeurs des diplômés selon les réponses aux enquêtes de l’EE1 à l’EE4.
-          </p>
-          <p>Il s’appuie sur les données des enquêtes ES1 à ES4, et met en avant :</p>
-          <ul style="padding-left: 20px;">
-            <li><strong>Employeurs récurrents</strong> comme Decathlon, Orange et Société Générale visibles dans toutes
-              les vagues.</li>
-            <li><strong>Secteurs dominants :</strong> distribution et banque/assurance (ex. : Carrefour, AXA).</li>
-            <li><strong>Catégorie “Autre” importante,</strong> montrant de nombreux recrutements hors du top 8.</li>
-            <li><strong>Présence régulière,</strong> signe de relations solides ou d’un intérêt récurrent pour les
-              profils diplômés.</li>
-          </ul>
         </div>
       </div>
 
@@ -1854,6 +1944,19 @@ nav a.active {
           onclick="toggleAnalysis('chart4-analysis')">Afficher/Masquer l’analyse</button>
         <div id="chart4-analysis" class="analysis-content"
           style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
+          <h4 style="color: #15616D; margin: 30px 0 10px;"><img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png" style="width: 15px; height: 15px;"> Scope</h4>
+          <p>Ce widget présente la progression professionnelle des diplômés vers des postes de management au fil du
+            temps.
+          </p>
+          <p>Il s’appuie sur les données des enquêtes ES1 à ES4, et montre :</p>
+          <ul style="padding-left: 20px;">
+            <li><strong>Nombre croissant de managers :</strong> de 20 à 30 entre l’EE2 et l’EE4.</li>
+            <li><strong>Progression constante :</strong> environ +5 nouveaux managers à chaque vague.</li>
+            <li><strong>Encore minoritaire :</strong> environ 25 % seulement sont managers à l’EE4.</li>
+            <li><strong>Mobilité ascendante :</strong> le programme semble favoriser l’évolution de carrière à long
+              terme.</li>
+          </ul>
+          
           <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
           <ul style="padding-left: 20px;">
             <li><strong>Nombre croissant de managers :</strong> de 20 à 30 entre EE2 et EE4.</li>
@@ -1869,19 +1972,6 @@ nav a.active {
             <li><strong>Offrir un accompagnement au leadership :</strong> coaching, mentorat ou formations.</li>
             <li><strong>Utiliser dans la communication :</strong> pour démontrer l’impact long terme du diplôme.</li>
           </ol>
-
-          <h4 style="color: #15616D; margin: 20px 0 0 0;">🎯 Scope</h4>
-          <p>Ce widget présente la progression professionnelle des diplômés vers des postes de management au fil du
-            temps.
-          </p>
-          <p>Il s’appuie sur les données des enquêtes ES1 à ES4, et montre :</p>
-          <ul style="padding-left: 20px;">
-            <li><strong>Nombre croissant de managers :</strong> de 20 à 30 entre l’EE2 et l’EE4.</li>
-            <li><strong>Progression constante :</strong> environ +5 nouveaux managers à chaque vague.</li>
-            <li><strong>Encore minoritaire :</strong> environ 25 % seulement sont managers à l’EE4.</li>
-            <li><strong>Mobilité ascendante :</strong> le programme semble favoriser l’évolution de carrière à long
-              terme.</li>
-          </ul>
         </div>
 
       </div>
