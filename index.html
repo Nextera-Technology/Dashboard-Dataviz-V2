@@ -19,6 +19,7 @@
   <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
   <script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
   <script src="https://cdn.amcharts.com/lib/5/geodata/franceLow.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/plugins/exporting.js"></script>
 
   <style>
     :root {
@@ -74,107 +75,251 @@
         transform: translateY(0);
       }
     }
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+}
 
-    /* Enhanced Sidebar Styling */
+.sidebar {
+    width: 320px;
+    height: 100vh; /* Full viewport height */
+    background: linear-gradient(135deg, #97cce4 0%, #306e8b 100%);
+    color: white;
+    padding: 20px;
+    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    position: fixed; /* Make sidebar fixed */
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Ensure it stays on top */
+}
+
+/* Alternative approach - if you want the sidebar to be sticky within a container */
+.sidebar-sticky {
+    width: 320px;
+    background: linear-gradient(135deg, #6db5d6 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+/* If using fixed sidebar, adjust main content margin */
+.main-content {
+    margin-left: 320px; /* Same as sidebar width */
+    padding: 20px;
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.logo-container img {
+    max-width: 200px;
+    height: auto;
+}
+
+nav {
+    margin-bottom: 30px;
+}
+
+nav a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+nav a:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateX(5px);
+}
+
+nav a.active {
+    background: rgba(255,255,255,0.2);
+    border-left: 4px solid #fff;
+}
+
+.filter-section {
+    margin-bottom: 25px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title::before {
+    content: "📊";
+    font-size: 18px;
+}
+
+.sections-title::before {
+    content: "📋";
+}
+
+.typeahead-container {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.typeahead-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.9);
+    color: #333;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.typeahead-input:focus {
+    outline: none;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+}
+
+.typeahead-input::placeholder {
+    color: #666;
+}
+
+.checkbox-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.05);
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.checkbox-item:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.checkbox-item.hidden {
+    display: none;
+}
+
+.checkbox-item input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.1);
+    accent-color: #4CAF50;
+}
+
+.checkbox-item label {
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 400;
+    flex: 1;
+    color: rgba(255,255,255,0.9);
+}
+
+.clear-filters {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+
+.clear-filters:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+.selected-count {
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    margin-top: 8px;
+}
+
+/* Custom scrollbar */
+.sidebar::-webkit-scrollbar,
+.checkbox-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track,
+.checkbox-list::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+.checkbox-list::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover,
+.checkbox-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.5);
+}
+
+/* Animation for filtered items */
+.checkbox-item {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
     .sidebar {
-      width: var(--sidebar-width);
-      /* background: linear-gradient(135deg, #F8FDFD 0%, #F0FAFC 100%); */
-      background: #FFFFFF;
-      border-right: 1px solid var(--sidebar-border);
-      color: var(--dark);
-      padding: 0;
-      min-height: 100vh;
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+        width: 280px;
     }
+    
+    .main-content {
+        margin-left: 280px;
+    }
+}
 
-    /* Logo Container */
-    .sidebar .logo-container {
-      padding: 30px 20px;
-      text-align: center;
-      background: linear-gradient(135deg, #ffffff 0%, #f8fdfd 100%);
-      border-bottom: 1px solid #e6f3f3;
-      margin-bottom: 20px;
+@media (max-width: 640px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
     }
+    
+    .main-content {
+        margin-left: 0;
+    }
+}
 
-    .sidebar .logo-container img {
-      width: 160px;
-      height: auto;
-      max-width: 100%;
-      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
-      transition: all 0.3s ease;
-    }
-
-    .sidebar .logo-container img:hover {
-      transform: scale(1.02);
-      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
-    }
-
-    /* Navigation Styling */
-    .sidebar nav {
-      padding: 0 20px;
-    }
-
-    .sidebar nav a {
-      display: block;
-      color: var(--dark);
-      text-decoration: none;
-      margin: 8px 0;
-      font-weight: 500;
-      font-size: 15px;
-      padding: 12px 16px;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .sidebar nav a::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(143, 210, 210, 0.1), transparent);
-      transition: left 0.5s ease;
-    }
-
-    .sidebar nav a:hover::before {
-      left: 100%;
-    }
-
-    .sidebar nav a:hover {
-      background-color: rgba(143, 210, 210, 0.1);
-      transform: translateX(4px);
-      box-shadow: 0 2px 8px rgba(143, 210, 210, 0.2);
-    }
-
-    .sidebar nav a.active {
-      /* background: linear-gradient(135deg, #8FD2D2 0%, #7BCACA 100%); */
-      background: #EBF3F5;
-      /* color: white; */
-      color: #003D46;
-      box-shadow: 0 4px 12px rgba(143, 210, 210, 0.3);
-      transform: translateX(2px);
-    }
-
-    .sidebar nav a.active:hover {
-      /* background: linear-gradient(135deg, #7BCACA 0%, #6BC2C2 100%); */
-      background: #c3d8dd;
-      transform: translateX(6px);
-    }
-
-    /* Add some elegant spacing */
-    .sidebar::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 20px;
-      right: 20px;
-      height: 1px;
-      /* background: var(--dark); */
-      /* background: linear-gradient(90deg, transparent, var(--sidebar-border), transparent); */
-    }
 
     .content {
       flex: 1;
@@ -905,21 +1050,95 @@
         opacity: 1;
       }
     }
+
+
+
+    .export-container {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+
+    .export-button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: white;
+      border: 1px solid #ccc;
+      min-width: 160px;
+      z-index: 1;
+      margin-top: 5px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .dropdown-content button {
+      background: white;
+      border: none;
+      width: 100%;
+      padding: 10px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .dropdown-content button:hover {
+      background-color: #f1f1f1;
+    }
+
+    .show-dropdown .dropdown-content {
+      display: block;
+    }
   </style>
 </head>
 
 <body>
 
-  <aside class="sidebar">
-    <div class="logo-container">
-      <img src="https://i.imgur.com/CNq3MUN.png" alt="Nextera Logo">
-    </div>
-    <nav>
-      <a href="#" class="active">Tableau de bord</a>
-      <!-- Add more navigation items as needed -->
-    </nav>
+    <aside class="sidebar">
+      <div class="logo-container">
+          <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/Nextera%20Logo%20Career%20Insight%20White%20text.png" alt="Nextera Logo">
+      </div>
+      
+      <nav>
+          <a href="#" class="active">Tableau de bord</a>
+      </nav>
+
+      <!-- Source Filter Section -->
+      <div class="filter-section">
+          <div class="section-title">Source</div>
+          <div class="typeahead-container">
+              <input type="text" 
+                      class="typeahead-input" 
+                      id="sourceTypeahead" 
+                      placeholder="Rechercher une source..."
+                      autocomplete="off">
+          </div>
+          <div class="checkbox-list" id="sourceCheckboxList">
+              <!-- Source checkboxes will be populated by JavaScript -->
+          </div>
+          <div class="selected-count" id="sourceCount">0 source(s) sélectionnée(s)</div>
+          <button class="clear-filters" onclick="clearSourceFilters()">Effacer les filtres</button>
+      </div>
+
+      <!-- Sections Filter Section -->
+      <div class="filter-section">
+          <div class="section-title sections-title">Sections</div>
+          <div class="checkbox-list" id="sectionsCheckboxList">
+              <!-- Section checkboxes will be populated by JavaScript -->
+          </div>
+          <div class="selected-count" id="sectionsCount">0 section(s) sélectionnée(s)</div>
+          <button class="clear-filters" onclick="clearSectionFilters()">Effacer les filtres</button>
+      </div>
   </aside>
-  <main class="content">
+  <main class="content main-content">
     <header>
       <h1>RDC 2022 - Enquêtes d'Employabilité</h1>
       <h4>EE1 : Certification &nbsp;| &nbsp;
@@ -929,6 +1148,7 @@
       </h4>
     </header>
 
+    <h2 style="color:#15616D; margin-bottom: 20px;">Poursuite d'études</h2>
     <div class="grid3" style="margin-bottom: 20px;">
       <div class="chart-box" style="position: relative; text-align: center; background-color: rgb(226, 246, 250);">
         <button class="info-button" onclick="openModal()">
@@ -973,9 +1193,175 @@
         <p style="color:#1E9180 ; font-size: 40px;"><strong>80%</strong></p>
       </div>
     </div>
+    <div class="grid" style="margin-bottom: 20px;">
+      <div class="chart-box">
+        <h3>Poursuivre les études.</h3><br>
+        <div id="pieChartContinueStudy" class="chart-container" style="height: 300px;"></div>
+        <div class="manual-legend2">
+          <div class="legend-item3">
+            <span class="legend-color3" style="background-color: #67b7dc;"></span>
+            <span class="legend-label3">Poursuit des études <span style="color: #67b7dc; font-size: 16px"><strong>182
+                  (57%)</strong></span></span>
+          </div>
+          <div class="legend-item3">
+            <span class="legend-color3" style="background-color: #6794dc;"></span>
+            <span class="legend-label3">Ne poursuit pas d'études <span
+                style="color: #6794dc; font-size: 16px"><strong>136 (43%)</strong></span></span>
+          </div>
 
-    <hr style="border: none; border-top: 2px solid #D0E6E6; margin: 30px 0;">
+        </div>
+      </div>
 
+      <div class="chart-box">
+        <h3>Poursuivre les études dans la même école.</h3><br>
+        <div id="pieChartSameSchool" class="chart-container" style="height: 300px;"></div>
+        <div class="manual-legend2">
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #67b7dc;"></span>
+            <span class="legend-label2">Meme ecole <span style="color: #67b7dc; font-size: 16px"><strong>86
+                  (47%)</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #6794dc;"></span>
+            <span class="legend-label2">Ecole differente <span style="color: #6794dc; font-size: 16px"><strong>97
+                  (53%)</strong></span></span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+        <div class="grid" style="margin-bottom: 20px;">
+      <div class="chart-box">
+        <h3>Statut Professionnel : Situation après la certification</h3>
+        <div class="status-grid-rowed">
+          <div class="status-row" style="color: #00454D">
+            <div class="status-category"></div>
+            <div class="status-value-title"><strong>EE1</strong></div>
+            <div class="status-value-title"><strong>EE2</strong></div>
+            <div class="status-value-title"><strong>EE3</strong></div>
+            <div class="status-value-title"><strong>EE4</strong></div>
+          </div>
+          <div class="status-row">
+            <div class="status-category">A un emploi</div>
+            <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">0%</div>
+            <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">75%</div>
+            <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">70%</div>
+            <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">73%</div>
+          </div>
+          <div class="status-row">
+            <div class="status-category">Recherche</div>
+            <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">44%</div>
+            <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">14%</div>
+            <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">9%</div>
+            <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">3%</div>
+          </div>
+          <div class="status-row">
+            <div class="status-category">Poursuit des études</div>
+            <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">56%</div>
+            <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">3%</div>
+            <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">4%</div>
+            <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">3%</div>
+          </div>
+          <div class="status-row">
+            <div class="status-category">Inactif</div>
+            <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">0%</div>
+            <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">4%</div>
+            <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">2%</div>
+            <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">2%</div>
+          </div>
+          <div class="status-row">
+            <div class="status-category">Non répondant</div>
+            <div class="status-value" style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;">0%</div>
+            <div class="status-value" style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;">4%</div>
+            <div class="status-value" style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;">15%</div>
+            <div class="status-value" style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;">19%</div>
+          </div>
+        </div>
+
+        <button style="margin-top: 60px;" class="analysis-toggle"
+          onclick="toggleAnalysis('chart2-analysis')">Afficher/Masquer l’analyse</button>
+        <div id="chart2-analysis" class="analysis-content"
+          style=" margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
+          <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
+          <ul style="padding-left: 20px;">
+            <li><strong>Insertion rapide dans l’emploi :</strong> Dès l’ES2, la majorité des répondants sont en emploi
+              (105 à l’ES2, stable à 95 pour les ES3 et ES4).</li>
+            <li><strong>Diminution forte de la recherche d’emploi :</strong> De 140 à l’ES1 à seulement 4 à l’ES4.</li>
+            <li><strong>Très faible poursuite d’études :</strong> Entre 4 et 5 étudiants poursuivent leurs études à
+              chaque enquête.</li>
+            <li><strong>Inactivité marginale :</strong> Cas d’inactivité rares, maximum 5 à l’ES2.</li>
+            <li><strong>Bonne stabilité des réponses :</strong> Légère hausse des non-réponses mais données globalement
+              fiables pour l’analyse.</li>
+          </ul>
+
+          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
+          <ol style="padding-left: 20px;">
+            <li><strong>Mettre en avant les bons taux d’emploi :</strong> Utiliser des formules comme “Plus de 90 % des
+              répondants en emploi”.</li>
+            <li><strong>Montrer clairement l’évolution :</strong> Visualiser la baisse du nombre de chercheurs d’emploi
+              et la stabilité des emplois entre ES2 et ES4.</li>
+            <li><strong>Tableaux de bord segmentés :</strong> Ajouter des filtres par profil démographique ou académique
+              pour une analyse fine.</li>
+            <li><strong>Accompagner les derniers chercheurs :</strong> Développer des services ciblés pour les rares
+              encore en recherche à l’ES4.</li>
+            <li><strong>Réduire les non-réponses :</strong> Renforcer les relances pour limiter les absences de réponse
+              dans les prochaines vagues.</li>
+          </ol>
+
+          <h4 style="color: #15616D; margin: 20px 0 0 0;">🎯 Scope</h4>
+          <p>Ce widget suit l’évolution de la situation des diplômés : emploi, recherche, études et inactivité.
+          </p>
+          <p>Il s’appuie sur les données des enquêtes ES1 à ES4, et montre :</p>
+          <ul style="padding-left: 20px;">
+            <li><strong>Insertion rapide dans l’emploi :</strong> majorité en emploi dès l’ES2 (105 à l’ES2, stable à 95
+              pour les ES3/ES4).</li>
+            <li><strong>Forte baisse de la recherche d’emploi :</strong> de 140 à l’ES1 à seulement 4 à l’ES4.</li>
+            <li><strong>Poursuite d’études très faible :</strong> entre 4 et 5 étudiants concernés par vague.</li>
+            <li><strong>Inactivité marginale :</strong> très peu de cas (maximum 5 à l’ES2).</li>
+            <li><strong>Stabilité des réponses :</strong> légère hausse des non-réponses, mais données globalement
+              fiables.</li>
+          </ul>
+        </div>
+      </div>
+
+
+      <div class="chart-box">
+        <h3>Situation Professionnelle à 6 mois après la certification</h3><br>
+        <div id="pieChartStatut" class="chart-container" style="height: 300px;"></div>
+        <div class="manual-legend2">
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #67b7dc;"></span>
+            <span class="legend-label2">A un emploi <span
+                style="color: #67b7dc; font-size: 16px"><strong>33%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #6794dc;"></span>
+            <span class="legend-label2">Recherche <span
+                style="color: #6794dc; font-size: 16px"><strong>6%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #6771dc;"></span>
+            <span class="legend-label2">Poursuit des études <span
+                style="color: #6771dc; font-size: 16px"><strong>57%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #8067dc;"></span>
+            <span class="legend-label2">Inactif <span
+                style="color: #8067dc; font-size: 16px"><strong>2%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #a367dc;"></span>
+            <span class="legend-label2">Non répondant <span
+                style="color: #a367dc; font-size: 16px"><strong>2%</strong></span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <hr style="border: none; border-top: 5px solid #D0E6E6; margin: 30px 0 10px 0;">
+
+    <h2 style="color:#15616D; margin-bottom: 20px;">Global</h2>
     <div class="grid2" style="margin-bottom: 20px;">
       <div class="chart-box" style="text-align: center;">
         <h3
@@ -1139,26 +1525,6 @@
     </div>
 
     <div class="grid" style="margin-bottom: 20px;">
-      <div class="chart-box" style="position: relative; text-align: center;">
-        <button class="info-button" onclick="openModalJobTargeted()">
-          <!-- Info Icon SVG -->
-          <img src="https://i.imgur.com/QPS2yfQ.png">
-        </button>
-        <h3
-          style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
-          <strong>Emplois ciblés après 6 mois</strong>
-        </h3>
-        <div id="pieChart" style="width: 100%; height: 270px;"></div>
-      </div>
-
-      <div class="chart-box" style="text-align: center;">
-        <h3
-          style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
-          <strong>Les 3 principaux domaines</strong>
-        </h3>
-        <div id="domainePieChart" style="width: 100%; height: 270px; margin: auto;"></div>
-      </div>
-
       <div class="chart-box" style="text-align: center;">
         <h3
           style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
@@ -1175,11 +1541,7 @@
         </h3>
         <p style="padding-top: 10px; color:#1E9180 ; font-size: 40px;"><strong>73%</strong></p>
       </div>
-    </div>
 
-    <hr style="border: none; border-top: 2px solid #D0E6E6; margin: 30px 0;">
-
-    <div class="grid" style="margin-bottom: 20px;">
       <div class="chart-box">
         <h3>Effectif & Taux de succès à certification</h3>
         <div class="legend-item">
@@ -1194,7 +1556,7 @@
         <div id="chartSent" class="chart-container" style="height: 400px;"></div>
       </div>
 
-      <div class="chart-box">
+            <div class="chart-box">
         <h3>Ouvert – Commencé – Enquête complétée (EE1–EE4)</h3>
         <div id="chart1" class="chart-container"></div>
         <button class="analysis-toggle" onclick="toggleAnalysis('chart1-analysis')">Afficher/Masquer l’analyse</button>
@@ -1247,304 +1609,109 @@
           </ul>
         </div>
       </div>
-
-      <div class="chart-box">
-        <h3 id="chart6-title">Les 8 premières entreprises</h3>
-        <div class="tabs">
-          <button class="tab-button6" data-tab="EE1">EE1</button>
-          <button class="tab-button6 active" data-tab="EE2">EE2</button>
-          <button class="tab-button6" data-tab="EE3">EE3</button>
-          <button class="tab-button6" data-tab="EE4">EE4</button>
-        </div>
-        <div id="chart6" class="chart-container"></div>
-        <button class="analysis-toggle" onclick="toggleAnalysis('chart6-analysis')">Afficher/Masquer l’analyse</button>
-        <div id="chart6-analysis" class="analysis-content">
-          <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
-          <ul style="padding-left: 20px;">
-            <li><strong>Décathlon, Orange, Société Générale :</strong> Employeurs récurrents visibles dans toutes les
-              vagues.</li>
-            <li><strong>Secteurs forts :</strong> Distribution et banque/assurance (Carrefour, AXA, Société Générale).
-            </li>
-            <li><strong>Catégorie “Autre” importante :</strong> Beaucoup de diplômés en dehors du top 8 entreprises.
-            </li>
-            <li><strong>Présence régulière d’employeurs :</strong> Indice de relations fortes ou d’intérêt récurrent
-              pour le profil diplômé.</li>
-          </ul>
-
-          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
-          <ol style="padding-left: 20px;">
-            <li><strong>Renforcer les relations entreprises :</strong> Avec les groupes majeurs (ex : AXA, Orange,
-              Decathlon).</li>
-            <li><strong>Explorer les recruteurs “Autres” :</strong> Mieux comprendre et identifier ces structures.</li>
-            <li><strong>Mettre en valeur les employeurs partenaires :</strong> Dans les communications
-              institutionnelles.</li>
-            <li><strong>Segmenter les entreprises :</strong> Pour mieux cibler l'accompagnement par secteur.</li>
-          </ol>
-
-          <h4 style="color: #15616D; margin: 20px 0 0 0;">🎯 Scope</h4>
-          <p>Ce widget présente les principaux employeurs des diplômés selon les réponses aux enquêtes de l’EE1 à l’EE4.
-          </p>
-          <p>Il s’appuie sur les données des enquêtes ES1 à ES4, et met en avant :</p>
-          <ul style="padding-left: 20px;">
-            <li><strong>Employeurs récurrents</strong> comme Decathlon, Orange et Société Générale visibles dans toutes
-              les vagues.</li>
-            <li><strong>Secteurs dominants :</strong> distribution et banque/assurance (ex. : Carrefour, AXA).</li>
-            <li><strong>Catégorie “Autre” importante,</strong> montrant de nombreux recrutements hors du top 8.</li>
-            <li><strong>Présence régulière,</strong> signe de relations solides ou d’un intérêt récurrent pour les
-              profils diplômés.</li>
-          </ul>
-        </div>
-      </div>
     </div>
 
+    <hr style="border: none; border-top: 5px solid #D0E6E6; margin: 30px 0 10px 0;">
+
+    <h2 style="color:#15616D; margin-bottom: 20px;">Compétences</h2>
     <div class="grid" style="margin-bottom: 20px;">
       <div class="chart-box">
-        <h3>Statut Professionnel : Situation après la certification</h3>
-        <div class="status-grid-rowed">
-          <div class="status-row" style="color: #00454D">
-            <div class="status-category"></div>
-            <div class="status-value-title"><strong>EE1</strong></div>
-            <div class="status-value-title"><strong>EE2</strong></div>
-            <div class="status-value-title"><strong>EE3</strong></div>
-            <div class="status-value-title"><strong>EE4</strong></div>
-          </div>
-          <div class="status-row">
-            <div class="status-category">A un emploi</div>
-            <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">0%</div>
-            <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">75%</div>
-            <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">70%</div>
-            <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">73%</div>
-          </div>
-          <div class="status-row">
-            <div class="status-category">Recherche</div>
-            <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">44%</div>
-            <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">14%</div>
-            <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">9%</div>
-            <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">3%</div>
-          </div>
-          <div class="status-row">
-            <div class="status-category">Poursuit des études</div>
-            <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">56%</div>
-            <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">3%</div>
-            <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">4%</div>
-            <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">3%</div>
-          </div>
-          <div class="status-row">
-            <div class="status-category">Inactif</div>
-            <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">0%</div>
-            <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">4%</div>
-            <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">2%</div>
-            <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">2%</div>
-          </div>
-          <div class="status-row">
-            <div class="status-category">Non répondant</div>
-            <div class="status-value" style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;">0%</div>
-            <div class="status-value" style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;">4%</div>
-            <div class="status-value" style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;">15%</div>
-            <div class="status-value" style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;">19%</div>
-          </div>
-        </div>
-
-        <button style="margin-top: 60px;" class="analysis-toggle"
-          onclick="toggleAnalysis('chart2-analysis')">Afficher/Masquer l’analyse</button>
-        <div id="chart2-analysis" class="analysis-content"
-          style=" margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
-          <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
-          <ul style="padding-left: 20px;">
-            <li><strong>Insertion rapide dans l’emploi :</strong> Dès l’ES2, la majorité des répondants sont en emploi
-              (105 à l’ES2, stable à 95 pour les ES3 et ES4).</li>
-            <li><strong>Diminution forte de la recherche d’emploi :</strong> De 140 à l’ES1 à seulement 4 à l’ES4.</li>
-            <li><strong>Très faible poursuite d’études :</strong> Entre 4 et 5 étudiants poursuivent leurs études à
-              chaque enquête.</li>
-            <li><strong>Inactivité marginale :</strong> Cas d’inactivité rares, maximum 5 à l’ES2.</li>
-            <li><strong>Bonne stabilité des réponses :</strong> Légère hausse des non-réponses mais données globalement
-              fiables pour l’analyse.</li>
-          </ul>
-
-          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
-          <ol style="padding-left: 20px;">
-            <li><strong>Mettre en avant les bons taux d’emploi :</strong> Utiliser des formules comme “Plus de 90 % des
-              répondants en emploi”.</li>
-            <li><strong>Montrer clairement l’évolution :</strong> Visualiser la baisse du nombre de chercheurs d’emploi
-              et la stabilité des emplois entre ES2 et ES4.</li>
-            <li><strong>Tableaux de bord segmentés :</strong> Ajouter des filtres par profil démographique ou académique
-              pour une analyse fine.</li>
-            <li><strong>Accompagner les derniers chercheurs :</strong> Développer des services ciblés pour les rares
-              encore en recherche à l’ES4.</li>
-            <li><strong>Réduire les non-réponses :</strong> Renforcer les relances pour limiter les absences de réponse
-              dans les prochaines vagues.</li>
-          </ol>
-
-          <h4 style="color: #15616D; margin: 20px 0 0 0;">🎯 Scope</h4>
-          <p>Ce widget suit l’évolution de la situation des diplômés : emploi, recherche, études et inactivité.
-          </p>
-          <p>Il s’appuie sur les données des enquêtes ES1 à ES4, et montre :</p>
-          <ul style="padding-left: 20px;">
-            <li><strong>Insertion rapide dans l’emploi :</strong> majorité en emploi dès l’ES2 (105 à l’ES2, stable à 95
-              pour les ES3/ES4).</li>
-            <li><strong>Forte baisse de la recherche d’emploi :</strong> de 140 à l’ES1 à seulement 4 à l’ES4.</li>
-            <li><strong>Poursuite d’études très faible :</strong> entre 4 et 5 étudiants concernés par vague.</li>
-            <li><strong>Inactivité marginale :</strong> très peu de cas (maximum 5 à l’ES2).</li>
-            <li><strong>Stabilité des réponses :</strong> légère hausse des non-réponses, mais données globalement
-              fiables.</li>
-          </ul>
-        </div>
-      </div>
-
-
-      <div class="chart-box">
-        <h3>Situation Professionnelle à 6 mois après la certification</h3><br>
-        <div id="pieChartStatut" class="chart-container" style="height: 300px;"></div>
+        <h3 id="chartSkillTarget-title">Les 5 principales compétences utilisées dans les emplois ciblés</h3>
+        <div id="chartSkillTarget" class="chart-container"></div>
         <div class="manual-legend2">
           <div class="legend-item2">
             <span class="legend-color2" style="background-color: #67b7dc;"></span>
-            <span class="legend-label2">A un emploi <span
-                style="color: #67b7dc; font-size: 16px"><strong>33%</strong></span></span>
+            <span class="legend-label2" style="font-size: 13px;">Participation in the definition of commercial
+              objectives <span style="color: #67b7dc; font-size: 14px"><strong>10%</strong></span></span>
           </div>
           <div class="legend-item2">
             <span class="legend-color2" style="background-color: #6794dc;"></span>
-            <span class="legend-label2">Recherche <span
-                style="color: #6794dc; font-size: 16px"><strong>6%</strong></span></span>
+            <span class="legend-label2" style="font-size: 13px;">Implementation of sales support tools <span
+                style="color: #6794dc; font-size: 14px"><strong>9%</strong></span></span>
           </div>
           <div class="legend-item2">
             <span class="legend-color2" style="background-color: #6771dc;"></span>
-            <span class="legend-label2">Poursuit des études <span
-                style="color: #6771dc; font-size: 16px"><strong>57%</strong></span></span>
+            <span class="legend-label2" style="font-size: 13px;">Analysis of performance indicators <span
+                style="color: #6771dc; font-size: 14px"><strong>9%</strong></span></span>
           </div>
           <div class="legend-item2">
             <span class="legend-color2" style="background-color: #8067dc;"></span>
-            <span class="legend-label2">Inactif <span
-                style="color: #8067dc; font-size: 16px"><strong>2%</strong></span></span>
+            <span class="legend-label2" style="font-size: 13px;">Identification of business development opportunities
+              <span style="color: #8067dc; font-size: 14px"><strong>8%</strong></span></span>
           </div>
           <div class="legend-item2">
             <span class="legend-color2" style="background-color: #a367dc;"></span>
-            <span class="legend-label2">Non répondant <span
-                style="color: #a367dc; font-size: 16px"><strong>2%</strong></span></span>
+            <span class="legend-label2" style="font-size: 13px;">Participation in the development of individual and
+              collective objectives <span style="color: #a367dc; font-size: 14px"><strong>8%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #a367dc;"></span>
+            <span class="legend-label2" style="font-size: 13px;">Autre <span
+                style="color: #a367dc; font-size: 14px"><strong>56%</strong></span></span>
           </div>
         </div>
       </div>
 
       <div class="chart-box">
-        <h3>Poursuivre les études.</h3><br>
-        <div id="pieChartContinueStudy" class="chart-container" style="height: 300px;"></div>
-        <div class="manual-legend2">
-          <div class="legend-item3">
-            <span class="legend-color3" style="background-color: #67b7dc;"></span>
-            <span class="legend-label3">Poursuit des études <span style="color: #67b7dc; font-size: 16px"><strong>182
-                  (57%)</strong></span></span>
-          </div>
-          <div class="legend-item3">
-            <span class="legend-color3" style="background-color: #6794dc;"></span>
-            <span class="legend-label3">Ne poursuit pas d'études <span
-                style="color: #6794dc; font-size: 16px"><strong>136 (43%)</strong></span></span>
-          </div>
-
-        </div>
-      </div>
-
-      <div class="chart-box">
-        <h3>Poursuivre les études dans la même école.</h3><br>
-        <div id="pieChartSameSchool" class="chart-container" style="height: 300px;"></div>
+        <h3 id="chartSkillNonTarget-title">Les 5 principales compétences utilisées dans les emplois non ciblés</h3>
+        <div id="chartSkillNonTarget" class="chart-container"></div>
         <div class="manual-legend2">
           <div class="legend-item2">
             <span class="legend-color2" style="background-color: #67b7dc;"></span>
-            <span class="legend-label2">Meme ecole <span style="color: #67b7dc; font-size: 16px"><strong>86
-                  (47%)</strong></span></span>
+            <span class="legend-label2" style="font-size: 13px;">Participation in the definition of commercial
+              objectives <span style="color: #67b7dc; font-size: 14px"><strong>10%</strong></span></span>
           </div>
           <div class="legend-item2">
             <span class="legend-color2" style="background-color: #6794dc;"></span>
-            <span class="legend-label2">Ecole differente <span style="color: #6794dc; font-size: 16px"><strong>97
-                  (53%)</strong></span></span>
+            <span class="legend-label2" style="font-size: 13px;">Definition of performance indicators for commercial
+              policy <span style="color: #6794dc; font-size: 14px"><strong>9%</strong></span></span>
           </div>
-
-        </div>
-      </div>
-    </div>
-
-    <div class="grid4" style="margin-bottom: 20px;">
-
-      <div class="chart-box">
-        <h3>Évolution du statut professionnel de l’étudiant</h3>
-        <div id="chartdivSankee"></div>
-      </div>
-    </div>
-
-    <div class="grid0" style="margin-bottom: 20px;">
-      <div class="chart-box">
-        <h3 style="text-align: center; font-size: 24px;">Étudiants par région</h3><br>
-        <div id="container" style="display: flex; align-items: flex-start; gap: 20px;">
-          <div id="studentsLegend" style="width: 350px;"></div>
-          <div id="studentsChart" style="flex-grow: 1; height: 450px;"></div>
-        </div>
-      </div>
-
-      <div class="chart-box">
-        <h3 style="text-align: center; font-size: 24px;">Répartition par genre</h3><br>
-        <div class="legend-item">
-          <span class="legend-color" style="background-color: #67b7dc;"></span>
-          <span class="legend-label">Homme <span style="color: #67b7dc"><strong>44%</strong></span></span>
-        </div>
-        <div class="legend-item">
-          <span class="legend-color" style="background-color: #6794dc;"></span>
-          <span class="legend-label">Femme <span style="color: #6794dc"><strong>56%</strong></span></span>
-        </div>
-        <div id="pieChartGender" class="chart-container" style="height: 400px;"></div>
-      </div>
-    </div>
-
-    <div class="grid0" style="margin-bottom: 20px;">
-      <div class="chart-box">
-        <h3 style="text-align: center; font-size: 24px;">Salaire moyen par région (€)</h3><br>
-        <div id="containerSalary" style="display: flex; align-items: flex-start; gap: 20px;">
-          <div id="salaryLegend" style="width: 400px;"></div>
-          <div id="salaryChart" style="flex-grow: 1; height: 500px;"></div>
-        </div>
-      </div>
-
-      <div class="chart-box">
-        <h3 style="text-align: center; font-size: 24px;">Niveau managérial</h3>
-        <div class="manual-legend">
-          <div class="legend-item">
-            <span class="legend-color" style="background-color: #2A9D8F;"></span>
-            <span class="legend-label">Ayant un poste de Manager</span>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #6771dc;"></span>
+            <span class="legend-label2" style="font-size: 13px;">Implementation of sales support tools <span
+                style="color: #6771dc; font-size: 14px"><strong>9%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #8067dc;"></span>
+            <span class="legend-label2" style="font-size: 13px;">Participation in the development of individual and
+              collective objectives <span style="color: #8067dc; font-size: 14px"><strong>9%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #a367dc;"></span>
+            <span class="legend-label2" style="font-size: 13px;">Development of dashboards <span
+                style="color: #a367dc; font-size: 14px"><strong>9%</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #a367dc;"></span>
+            <span class="legend-label2" style="font-size: 13px;">Autre <span
+                style="color: #a367dc; font-size: 14px"><strong>54%</strong></span></span>
           </div>
         </div>
-        <div id="chart4" style="width: 100%; height: 300px;"></div>
+      </div>
+    </div>
+    
+    <hr style="border: none; border-top: 5px solid #D0E6E6; margin: 30px 0 10px 0;">
 
-        <button style="margin-top: 140px;" class="analysis-toggle"
-          onclick="toggleAnalysis('chart4-analysis')">Afficher/Masquer l’analyse</button>
-        <div id="chart4-analysis" class="analysis-content"
-          style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
-          <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
-          <ul style="padding-left: 20px;">
-            <li><strong>Nombre croissant de managers :</strong> de 20 à 30 entre EE2 et EE4.</li>
-            <li><strong>Progression constante :</strong> environ +5 à chaque vague.</li>
-            <li><strong>Encore une minorité :</strong> seulement 25 % environ sont managers à EE4.</li>
-            <li><strong>Mobilité ascendante :</strong> le programme semble favoriser l’évolution de carrière.</li>
-          </ul>
+    <h2 style="color:#15616D; margin-bottom: 20px;">Emploi</h2>
+    <div class="grid" style="margin-bottom: 20px;">
+      <div class="chart-box" style="position: relative; text-align: center;">
+        <button class="info-button" onclick="openModalJobTargeted()">
+          <!-- Info Icon SVG -->
+          <img src="https://i.imgur.com/QPS2yfQ.png">
+        </button>
+        <h3
+          style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
+          <strong>Emplois ciblés après 6 mois</strong>
+        </h3>
+        <div id="pieChart" style="width: 100%; height: 270px;"></div>
+      </div>
 
-          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
-          <ol style="padding-left: 20px;">
-            <li><strong>Partager des parcours inspirants :</strong> anciens élèves devenus managers.</li>
-            <li><strong>Mettre en avant la progression :</strong> sous forme graphique ou comparative.</li>
-            <li><strong>Offrir un accompagnement au leadership :</strong> coaching, mentorat ou formations.</li>
-            <li><strong>Utiliser dans la communication :</strong> pour démontrer l’impact long terme du diplôme.</li>
-          </ol>
-
-          <h4 style="color: #15616D; margin: 20px 0 0 0;">🎯 Scope</h4>
-          <p>Ce widget présente la progression professionnelle des diplômés vers des postes de management au fil du
-            temps.
-          </p>
-          <p>Il s’appuie sur les données des enquêtes ES1 à ES4, et montre :</p>
-          <ul style="padding-left: 20px;">
-            <li><strong>Nombre croissant de managers :</strong> de 20 à 30 entre l’EE2 et l’EE4.</li>
-            <li><strong>Progression constante :</strong> environ +5 nouveaux managers à chaque vague.</li>
-            <li><strong>Encore minoritaire :</strong> environ 25 % seulement sont managers à l’EE4.</li>
-            <li><strong>Mobilité ascendante :</strong> le programme semble favoriser l’évolution de carrière à long
-              terme.</li>
-          </ul>
-        </div>
-
+      <div class="chart-box" style="text-align: center;">
+        <h3
+          style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
+          <strong>Les 3 principaux domaines</strong>
+        </h3>
+        <div id="domainePieChart" style="width: 100%; height: 270px; margin: auto;"></div>
       </div>
     </div>
 
@@ -1626,82 +1793,110 @@
 
     <div class="grid" style="margin-bottom: 20px;">
       <div class="chart-box">
-        <h3 id="chartSkillTarget-title">Les 5 principales compétences utilisées dans les emplois ciblés</h3>
-        <div id="chartSkillTarget" class="chart-container"></div>
-        <div class="manual-legend2">
-          <div class="legend-item2">
-            <span class="legend-color2" style="background-color: #67b7dc;"></span>
-            <span class="legend-label2" style="font-size: 13px;">Participation in the definition of commercial
-              objectives <span style="color: #67b7dc; font-size: 14px"><strong>10%</strong></span></span>
-          </div>
-          <div class="legend-item2">
-            <span class="legend-color2" style="background-color: #6794dc;"></span>
-            <span class="legend-label2" style="font-size: 13px;">Implementation of sales support tools <span
-                style="color: #6794dc; font-size: 14px"><strong>9%</strong></span></span>
-          </div>
-          <div class="legend-item2">
-            <span class="legend-color2" style="background-color: #6771dc;"></span>
-            <span class="legend-label2" style="font-size: 13px;">Analysis of performance indicators <span
-                style="color: #6771dc; font-size: 14px"><strong>9%</strong></span></span>
-          </div>
-          <div class="legend-item2">
-            <span class="legend-color2" style="background-color: #8067dc;"></span>
-            <span class="legend-label2" style="font-size: 13px;">Identification of business development opportunities
-              <span style="color: #8067dc; font-size: 14px"><strong>8%</strong></span></span>
-          </div>
-          <div class="legend-item2">
-            <span class="legend-color2" style="background-color: #a367dc;"></span>
-            <span class="legend-label2" style="font-size: 13px;">Participation in the development of individual and
-              collective objectives <span style="color: #a367dc; font-size: 14px"><strong>8%</strong></span></span>
-          </div>
-          <div class="legend-item2">
-            <span class="legend-color2" style="background-color: #a367dc;"></span>
-            <span class="legend-label2" style="font-size: 13px;">Autre <span
-                style="color: #a367dc; font-size: 14px"><strong>56%</strong></span></span>
-          </div>
+        <h3 id="chart6-title">Les 8 premières entreprises</h3>
+        <div class="tabs">
+          <button class="tab-button6" data-tab="EE1">EE1</button>
+          <button class="tab-button6 active" data-tab="EE2">EE2</button>
+          <button class="tab-button6" data-tab="EE3">EE3</button>
+          <button class="tab-button6" data-tab="EE4">EE4</button>
+        </div>
+        <div id="chart6" class="chart-container"></div>
+        <button class="analysis-toggle" onclick="toggleAnalysis('chart6-analysis')">Afficher/Masquer l’analyse</button>
+        <div id="chart6-analysis" class="analysis-content">
+          <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
+          <ul style="padding-left: 20px;">
+            <li><strong>Décathlon, Orange, Société Générale :</strong> Employeurs récurrents visibles dans toutes les
+              vagues.</li>
+            <li><strong>Secteurs forts :</strong> Distribution et banque/assurance (Carrefour, AXA, Société Générale).
+            </li>
+            <li><strong>Catégorie “Autre” importante :</strong> Beaucoup de diplômés en dehors du top 8 entreprises.
+            </li>
+            <li><strong>Présence régulière d’employeurs :</strong> Indice de relations fortes ou d’intérêt récurrent
+              pour le profil diplômé.</li>
+          </ul>
+
+          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
+          <ol style="padding-left: 20px;">
+            <li><strong>Renforcer les relations entreprises :</strong> Avec les groupes majeurs (ex : AXA, Orange,
+              Decathlon).</li>
+            <li><strong>Explorer les recruteurs “Autres” :</strong> Mieux comprendre et identifier ces structures.</li>
+            <li><strong>Mettre en valeur les employeurs partenaires :</strong> Dans les communications
+              institutionnelles.</li>
+            <li><strong>Segmenter les entreprises :</strong> Pour mieux cibler l'accompagnement par secteur.</li>
+          </ol>
+
+          <h4 style="color: #15616D; margin: 20px 0 0 0;">🎯 Scope</h4>
+          <p>Ce widget présente les principaux employeurs des diplômés selon les réponses aux enquêtes de l’EE1 à l’EE4.
+          </p>
+          <p>Il s’appuie sur les données des enquêtes ES1 à ES4, et met en avant :</p>
+          <ul style="padding-left: 20px;">
+            <li><strong>Employeurs récurrents</strong> comme Decathlon, Orange et Société Générale visibles dans toutes
+              les vagues.</li>
+            <li><strong>Secteurs dominants :</strong> distribution et banque/assurance (ex. : Carrefour, AXA).</li>
+            <li><strong>Catégorie “Autre” importante,</strong> montrant de nombreux recrutements hors du top 8.</li>
+            <li><strong>Présence régulière,</strong> signe de relations solides ou d’un intérêt récurrent pour les
+              profils diplômés.</li>
+          </ul>
         </div>
       </div>
 
       <div class="chart-box">
-        <h3 id="chartSkillNonTarget-title">Les 5 principales compétences utilisées dans les emplois non ciblés</h3>
-        <div id="chartSkillNonTarget" class="chart-container"></div>
-        <div class="manual-legend2">
-          <div class="legend-item2">
-            <span class="legend-color2" style="background-color: #67b7dc;"></span>
-            <span class="legend-label2" style="font-size: 13px;">Participation in the definition of commercial
-              objectives <span style="color: #67b7dc; font-size: 14px"><strong>10%</strong></span></span>
-          </div>
-          <div class="legend-item2">
-            <span class="legend-color2" style="background-color: #6794dc;"></span>
-            <span class="legend-label2" style="font-size: 13px;">Definition of performance indicators for commercial
-              policy <span style="color: #6794dc; font-size: 14px"><strong>9%</strong></span></span>
-          </div>
-          <div class="legend-item2">
-            <span class="legend-color2" style="background-color: #6771dc;"></span>
-            <span class="legend-label2" style="font-size: 13px;">Implementation of sales support tools <span
-                style="color: #6771dc; font-size: 14px"><strong>9%</strong></span></span>
-          </div>
-          <div class="legend-item2">
-            <span class="legend-color2" style="background-color: #8067dc;"></span>
-            <span class="legend-label2" style="font-size: 13px;">Participation in the development of individual and
-              collective objectives <span style="color: #8067dc; font-size: 14px"><strong>9%</strong></span></span>
-          </div>
-          <div class="legend-item2">
-            <span class="legend-color2" style="background-color: #a367dc;"></span>
-            <span class="legend-label2" style="font-size: 13px;">Development of dashboards <span
-                style="color: #a367dc; font-size: 14px"><strong>9%</strong></span></span>
-          </div>
-          <div class="legend-item2">
-            <span class="legend-color2" style="background-color: #a367dc;"></span>
-            <span class="legend-label2" style="font-size: 13px;">Autre <span
-                style="color: #a367dc; font-size: 14px"><strong>54%</strong></span></span>
+        <h3 style="text-align: center; font-size: 24px;">Niveau managérial</h3>
+        <div class="manual-legend">
+          <div class="legend-item">
+            <span class="legend-color" style="background-color: #2A9D8F;"></span>
+            <span class="legend-label">Ayant un poste de Manager</span>
           </div>
         </div>
+        <div id="chart4" style="width: 100%; height: 300px;"></div>
+
+        <button style="margin-top: 140px;" class="analysis-toggle"
+          onclick="toggleAnalysis('chart4-analysis')">Afficher/Masquer l’analyse</button>
+        <div id="chart4-analysis" class="analysis-content"
+          style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
+          <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
+          <ul style="padding-left: 20px;">
+            <li><strong>Nombre croissant de managers :</strong> de 20 à 30 entre EE2 et EE4.</li>
+            <li><strong>Progression constante :</strong> environ +5 à chaque vague.</li>
+            <li><strong>Encore une minorité :</strong> seulement 25 % environ sont managers à EE4.</li>
+            <li><strong>Mobilité ascendante :</strong> le programme semble favoriser l’évolution de carrière.</li>
+          </ul>
+
+          <h4 style="color: #15616D; margin: 20px 0 10px;">🛠️ Recommandations</h4>
+          <ol style="padding-left: 20px;">
+            <li><strong>Partager des parcours inspirants :</strong> anciens élèves devenus managers.</li>
+            <li><strong>Mettre en avant la progression :</strong> sous forme graphique ou comparative.</li>
+            <li><strong>Offrir un accompagnement au leadership :</strong> coaching, mentorat ou formations.</li>
+            <li><strong>Utiliser dans la communication :</strong> pour démontrer l’impact long terme du diplôme.</li>
+          </ol>
+
+          <h4 style="color: #15616D; margin: 20px 0 0 0;">🎯 Scope</h4>
+          <p>Ce widget présente la progression professionnelle des diplômés vers des postes de management au fil du
+            temps.
+          </p>
+          <p>Il s’appuie sur les données des enquêtes ES1 à ES4, et montre :</p>
+          <ul style="padding-left: 20px;">
+            <li><strong>Nombre croissant de managers :</strong> de 20 à 30 entre l’EE2 et l’EE4.</li>
+            <li><strong>Progression constante :</strong> environ +5 nouveaux managers à chaque vague.</li>
+            <li><strong>Encore minoritaire :</strong> environ 25 % seulement sont managers à l’EE4.</li>
+            <li><strong>Mobilité ascendante :</strong> le programme semble favoriser l’évolution de carrière à long
+              terme.</li>
+          </ul>
+        </div>
+
       </div>
     </div>
 
+    
     <div class="grid">
       <div class="chart-box">
+        <button id="exportButton" style="background-color: #2A9D8F; color: white; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer;">
+          Export ▼
+        </button>
+        <div id="exportOptions" style="display: none; background: white; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; padding: 5px; box-shadow: 0px 2px 8px rgba(0,0,0,0.1);">
+          <div id="csvExportBtn" style="cursor: pointer; padding: 5px;">📄 Export CSV</div>
+          <div id="pngExportBtn" style="cursor: pointer; padding: 5px;">🖼️ Export PNG</div>
+        </div>
         <h3>Type de contrat</h3>
         <div id="chart3" class="chart-container"></div>
         <button class="analysis-toggle" onclick="toggleAnalysis('chart3-analysis')">Afficher/Masquer l’analyse</button>
@@ -1757,11 +1952,54 @@
         </div>
 
       </div>
-
-
-
     </div>
 
+    <hr style="border: none; border-top: 5px solid #D0E6E6; margin: 30px 0 10px 0;">
+
+    <h2 style="color:#15616D; margin-bottom: 20px;">Voyage</h2>
+    <div class="grid4" style="margin-bottom: 20px;">
+
+      <div class="chart-box">
+        <h3>Évolution du statut professionnel de l’étudiant</h3>
+        <div id="chartdivSankee"></div>
+      </div>
+    </div>
+
+    <hr style="border: none; border-top: 5px solid #D0E6E6; margin: 30px 0 10px 0;">
+
+    <h2 style="color:#15616D; margin-bottom: 20px;">Demographique</h2>
+    <div class="grid0" style="margin-bottom: 20px;">
+      <div class="chart-box">
+        <h3 style="text-align: center; font-size: 24px;">Étudiants par région</h3><br>
+        <div id="container" style="display: flex; align-items: flex-start; gap: 20px;">
+          <div id="studentsLegend" style="width: 350px;"></div>
+          <div id="studentsChart" style="flex-grow: 1; height: 450px;"></div>
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <h3 style="text-align: center; font-size: 24px;">Répartition par genre</h3><br>
+        <div class="legend-item">
+          <span class="legend-color" style="background-color: #67b7dc;"></span>
+          <span class="legend-label">Homme <span style="color: #67b7dc"><strong>44%</strong></span></span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color" style="background-color: #6794dc;"></span>
+          <span class="legend-label">Femme <span style="color: #6794dc"><strong>56%</strong></span></span>
+        </div>
+        <div id="pieChartGender" class="chart-container" style="height: 400px;"></div>
+      </div>
+    </div>
+
+    <div class="grid4" style="margin-bottom: 20px;">
+      <div class="chart-box">
+        <h3 style="text-align: center; font-size: 24px;">Salaire moyen par région (€)</h3><br>
+        <div id="containerSalary" style="display: flex; align-items: flex-start; gap: 20px;">
+          <div id="salaryLegend" style="width: 400px;"></div>
+          <div id="salaryChart" style="flex-grow: 1; height: 500px;"></div>
+        </div>
+      </div>
+    </div>
 
     <!-- MODAL -->
     <div id="infoModal" class="modal" onclick="closeModal(event)">
@@ -2173,203 +2411,303 @@
 
       // Chart 3: Type de Contrat (Horizontal Grouped Bar Chart)
 
-      var root3 = am5.Root.new("chart3");
-      root3._logo.dispose();
-      root3.setThemes([am5themes_Animated.new(root3)]);
+     // Global variables to store chart data and root
+    // Global variables to store chart data and root
+// Global variables
+let datasets3Combined = [
+  { type: "CDI", EE1: 0, EE2: 63, EE3: 58, EE4: 64 },
+  { type: "CDD", EE1: 0, EE2: 9, EE3: 11, EE4: 9 },
+  { type: "Intérim", EE1: 0, EE2: 7, EE3: 3, EE4: 0 },
+  { type: "Fonctionnaire", EE1: 0, EE2: 1, EE3: 1, EE4: 1 },
+  { type: "Contractuel", EE1: 0, EE2: 3, EE3: 1, EE4: 1 },
+  { type: "Auto-Entrepreneur", EE1: 0, EE2: 15, EE3: 15, EE4: 10 },
+  { type: "Gérant", EE1: 0, EE2: 3, EE3: 5, EE4: 4 },
+  { type: "Indépendant", EE1: 0, EE2: 2, EE3: 1, EE4: 3 },
+  { type: "Mandataire Social", EE1: 0, EE2: 0, EE3: 0, EE4: 0 },
+  { type: "Autre", EE1: 0, EE2: 2, EE3: 0, EE4: 1 }
+];
 
-      var chart3 = root3.container.children.push(am5xy.XYChart.new(root3, {
-        layout: root3.verticalLayout,
-        paddingTop: 20,
-        paddingBottom: 50,
-        panX: true,
-        panY: true,
-        wheelX: "panX",
-        wheelY: "zoomY",
-        pinchZoomX: true
-      }));
+// let root3, chart3;
 
-      // Define custom color set
-      chart3.get("colors").set("colors", [
-        am5.color("#BCDCDC"), // EE1
-        am5.color("#68B3B3"), // EE2
-        am5.color("#2A8A8A"), // EE3
-        am5.color("#0E4B4B")  // EE4
-      ]);
+// Create the chart
+var root3 = am5.Root.new("chart3");
+root3._logo.dispose();
+root3.setThemes([am5themes_Animated.new(root3)]);
 
-      chart3.set("scrollbarY", am5.Scrollbar.new(root3, {
-        orientation: "vertical",
-      }));
+var chart3 = root3.container.children.push(am5xy.XYChart.new(root3, {
+  layout: root3.verticalLayout,
+  paddingTop: 20,
+  paddingBottom: 50,
+  panX: true,
+  panY: true,
+  wheelX: "panX",
+  wheelY: "zoomY",
+  pinchZoomX: true
+}));
 
-      // Combined dataset across EE1–EE4
-      let datasets3Combined = [
-        { type: "CDI", EE1: 0, EE2: 63, EE3: 58, EE4: 64 },
-        { type: "CDD", EE1: 0, EE2: 9, EE3: 11, EE4: 9 },
-        { type: "Intérim", EE1: 0, EE2: 7, EE3: 3, EE4: 0 },
-        { type: "Fonctionnaire", EE1: 0, EE2: 1, EE3: 1, EE4: 1 },
-        { type: "Contractuel", EE1: 0, EE2: 3, EE3: 1, EE4: 1 },
-        { type: "Auto-Entrepreneur", EE1: 0, EE2: 15, EE3: 15, EE4: 10 },
-        { type: "Gérant", EE1: 0, EE2: 3, EE3: 5, EE4: 4 },
-        { type: "Indépendant", EE1: 0, EE2: 2, EE3: 1, EE4: 3 },
-        { type: "Mandataire Social", EE1: 0, EE2: 0, EE3: 0, EE4: 0 },
-        { type: "Autre", EE1: 0, EE2: 2, EE3: 0, EE4: 1 }
-      ];
+// Define custom color set
+chart3.get("colors").set("colors", [
+  am5.color("#BCDCDC"), // EE1
+  am5.color("#68B3B3"), // EE2
+  am5.color("#2A8A8A"), // EE3
+  am5.color("#0E4B4B")  // EE4
+]);
 
-      // Filter out "Autre" category
-      // datasets3Combined = datasets3Combined.filter(item => item.type !== "Autre"); // Exclude "Other" category
+chart3.set("scrollbarY", am5.Scrollbar.new(root3, {
+  orientation: "vertical",
+}));
 
-      const top8Chart3 = datasets3Combined
-        .sort((a, b) => (b.EE1 + b.EE2 + b.EE3 + b.EE4) - (a.EE1 + a.EE2 + a.EE3 + a.EE4))
-        .slice(0, 8);
+const top8Chart3 = datasets3Combined
+  .sort((a, b) => (b.EE1 + b.EE2 + b.EE3 + b.EE4) - (a.EE1 + a.EE2 + a.EE3 + a.EE4))
+  .slice(0, 8);
 
-      const categoryBaseColors = {
-        "CDI": "#1D3557",
-        "CDD": "#457B9D",
-        "Intérim": "#A8DADC",
-        "Fonctionnaire": "#F4A261",
-        "Contractuel": "#E76F51",
-        "Auto-Entrepreneur": "#2A9D8F",
-        "Gérant": "#264653",
-        "Indépendant": "#6D597A",
-        "Mandataire Social": "#B5838D",
-        "Autre": "#ADB5BD"
-      };
+const categoryBaseColors = {
+  "CDI": "#1D3557",
+  "CDD": "#457B9D",
+  "Intérim": "#A8DADC",
+  "Fonctionnaire": "#F4A261",
+  "Contractuel": "#E76F51",
+  "Auto-Entrepreneur": "#2A9D8F",
+  "Gérant": "#264653",
+  "Indépendant": "#6D597A",
+  "Mandataire Social": "#B5838D",
+  "Autre": "#ADB5BD"
+};
 
-      function shadeColor(color, percent) {
-        // Lighten or darken by percent (-20 is darker, +20 is lighter)
-        let f = parseInt(color.slice(1), 16),
-          t = percent < 0 ? 0 : 255,
-          p = Math.abs(percent) / 100,
-          R = f >> 16,
-          G = f >> 8 & 0x00FF,
-          B = f & 0x0000FF;
-        return "#" + (
-          0x1000000 +
-          (Math.round((t - R) * p) + R) * 0x10000 +
-          (Math.round((t - G) * p) + G) * 0x100 +
-          (Math.round((t - B) * p) + B)
-        ).toString(16).slice(1);
+function shadeColor(color, percent) {
+  let f = parseInt(color.slice(1), 16),
+    t = percent < 0 ? 0 : 255,
+    p = Math.abs(percent) / 100,
+    R = f >> 16,
+    G = f >> 8 & 0x00FF,
+    B = f & 0x0000FF;
+  return "#" + (
+    0x1000000 +
+    (Math.round((t - R) * p) + R) * 0x10000 +
+    (Math.round((t - G) * p) + G) * 0x100 +
+    (Math.round((t - B) * p) + B)
+  ).toString(16).slice(1);
+}
+
+// Create Y Axis (Categories)
+var yAxis3 = chart3.yAxes.push(
+  am5xy.CategoryAxis.new(root3, {
+    categoryField: "type",
+    renderer: am5xy.AxisRendererY.new(root3, {
+      minGridDistance: 40,
+      inversed: true,
+      cellStartLocation: 0.05,
+      cellEndLocation: 0.95
+    })
+  })
+);
+yAxis3.data.setAll(top8Chart3);
+
+// Create X Axis (Values)
+var xAxis3 = chart3.xAxes.push(
+  am5xy.ValueAxis.new(root3, {
+    min: 0,
+    renderer: am5xy.AxisRendererX.new(root3, {})
+  })
+);
+
+// Function to create a series
+function makeSeries(name, field) {
+  let esIndex = { "EE1": 50, "EE2": 20, "EE3": -20, "EE4": -50 }[name];
+
+  let series = chart3.series.push(
+    am5xy.ColumnSeries.new(root3, {
+      name,
+      xAxis: xAxis3,
+      yAxis: yAxis3,
+      valueXField: field,
+      categoryYField: "type",
+      clustered: true
+    })
+  );
+
+  series.columns.template.setAll({
+    tooltipText: `${name} - {categoryY}: {valueX}`,
+    height: am5.percent(90),
+    width: am5.percent(55),
+    strokeOpacity: 0
+  });
+
+  series.columns.template.adapters.add("fill", function (fill, target) {
+    let category = target.dataItem.dataContext.type;
+    let base = categoryBaseColors[category] || "#999";
+    return am5.color(shadeColor(base, esIndex));
+  });
+
+  series.columns.template.adapters.add("stroke", (stroke, target) => {
+    let category = target.dataItem.dataContext.type;
+    let base = categoryBaseColors[category] || "#999";
+    return am5.color(shadeColor(base, esIndex));
+  });
+
+  series.bullets.push(function () {
+    let label = am5.Label.new(root3, {
+      fontSize: 12,
+      fontFamily: "Segoe UI, Tahoma, Geneva, Verdana, sans-serif",
+      fontWeight: "500",
+      centerY: am5.percent(50),
+      centerX: am5.percent(0),
+      dx: 1
+    });
+
+    label.adapters.add("text", function (text, target) {
+      let value = target.dataItem.get("valueX");
+      return `${value}`;
+    });
+
+    label.adapters.add("fill", function (fill, target) {
+      let category = target.dataItem.dataContext.type;
+      let base = categoryBaseColors[category] || "#999";
+      return am5.color(shadeColor(base, esIndex));
+    });
+
+    return am5.Bullet.new(root3, {
+      locationX: 1,
+      sprite: label
+    });
+  });
+
+  series.data.setAll(top8Chart3);
+
+  series.events.once("datavalidated", function () {
+    am5.array.each(series.dataItems, function (dataItem) {
+      if (dataItem.get("valueX") === 0) {
+        dataItem.set("valueXWorking", 0.5);
       }
+    });
+  });
+}
 
-      // Create Y Axis (Categories)
-      var yAxis3 = chart3.yAxes.push(
-        am5xy.CategoryAxis.new(root3, {
-          categoryField: "type",
-          renderer: am5xy.AxisRendererY.new(root3, {
-            minGridDistance: 40, // ⬅️ Increase this for more space
-            inversed: true,
-            cellStartLocation: 0.05,
-            cellEndLocation: 0.95
-          })
-        })
-      );
-      yAxis3.data.setAll(top8Chart3);
+// Create grouped bars for EE1–EE4
+makeSeries("EE1", "EE1");
+makeSeries("EE2", "EE2");
+makeSeries("EE3", "EE3");
+makeSeries("EE4", "EE4");
 
-      // yAxis3.get("renderer").labels.template.setAll({
-      //   oversizedBehavior: "wrap",         // or "truncate"
-      //   maxWidth: 120,                      // ⬅️ Give space to long labels
-      //   fontSize: 14,
-      //   fontWeight: "500",
-      //   fill: am5.color("#333")
-      // });
+// Initialize exporting - SIMPLIFIED
+root3.exporting = am5plugins_exporting.Exporting.new(root3, {
+  filePrefix: "chart3",
+  exportingMenu: null
+});
 
-      // Create X Axis (Values)
-      var xAxis3 = chart3.xAxes.push(
-        am5xy.ValueAxis.new(root3, {
-          min: 0,
-          renderer: am5xy.AxisRendererX.new(root3, {})
-        })
-      );
+// EXPORT FUNCTIONS - SIMPLIFIED AND RELIABLE
+function exportCSV() {
+  console.log("Exporting CSV...");
+  
+  // Simple manual CSV export - most reliable method
+  const headers = ["Type", "EE1", "EE2", "EE3", "EE4"];
+  const csvContent = [
+    headers.join(","),
+    ...datasets3Combined.map(row => [
+      `"${row.type}"`,
+      row.EE1,
+      row.EE2,
+      row.EE3,
+      row.EE4
+    ].join(","))
+  ].join("\n");
 
-      // Function to create a series
-      function makeSeries(name, field) {
-        let esIndex = { "EE1": 50, "EE2": 20, "EE3": -20, "EE4": -50 }[name]; // Lighter to darker
+  // Create and download file
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  
+  if (link.download !== undefined) {
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "chart3_data.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    console.log("CSV export completed");
+  } else {
+    alert("CSV export not supported in this browser");
+  }
+}
 
-        let series = chart3.series.push(
-          am5xy.ColumnSeries.new(root3, {
-            name,
-            xAxis: xAxis3,
-            yAxis: yAxis3,
-            valueXField: field,
-            categoryYField: "type",
-            clustered: true
-          })
-        );
+function exportChart() {
+  console.log("Exporting PNG...");
+  
+  if (!root3 || !root3.exporting) {
+    alert("Export functionality not available");
+    return;
+  }
 
-        series.columns.template.setAll({
-          tooltipText: `${name} - {categoryY}: {valueX}`,
-          height: am5.percent(90),
-          width: am5.percent(55),
-          strokeOpacity: 0
-        });
-
-        // Dynamically assign color Basé sur category and series
-        series.columns.template.adapters.add("fill", function (fill, target) {
-          let category = target.dataItem.dataContext.type;
-          let base = categoryBaseColors[category] || "#999";
-          return am5.color(shadeColor(base, esIndex));
-        });
-
-        series.columns.template.adapters.add("stroke", (stroke, target) => {
-          let category = target.dataItem.dataContext.type;
-          let base = categoryBaseColors[category] || "#999";
-          return am5.color(shadeColor(base, esIndex));
-        });
-
-        const esLabelColors = {
-          EE1: "#6D597A",
-          EE2: "#2A9D8F",
-          EE3: "#F4A261",
-          EE4: "#E76F51"
-        };
-
-        // Label bullets (unchanged)
-        series.bullets.push(function () {
-          let label = am5.Label.new(root3, {
-            fontSize: 12,
-            fontFamily: "Segoe UI, Tahoma, Geneva, Verdana, sans-serif",// match your header
-            fontWeight: "500",
-            centerY: am5.percent(50),
-            centerX: am5.percent(0),
-            dx: 1 // space between end of bar and label
-          });
-
-          // Set label text
-          label.adapters.add("text", function (text, target) {
-            let value = target.dataItem.get("valueX");
-            let esLabel = target.dataItem.component.get("name");  // ← gets "EE1", etc.
-            return `${value}`;
-          });
-
-          // Match text color to the fill color of its parent column
-          label.adapters.add("fill", function (fill, target) {
-            let category = target.dataItem.dataContext.type;         // e.g., "CDI"
-            let base = categoryBaseColors[category] || "#999";
-            return am5.color(shadeColor(base, esIndex));             // same function as bar
-          });
-
-          return am5.Bullet.new(root3, {
-            locationX: 1,
-            sprite: label
-          });
-        });
-
-
-        series.data.setAll(top8Chart3);
-
-        series.events.once("datavalidated", function () {
-          am5.array.each(series.dataItems, function (dataItem) {
-            if (dataItem.get("valueX") === 0) {
-              dataItem.set("valueXWorking", 0.5);
-            }
-          });
-        });
+  // Use amCharts export with error handling
+  root3.exporting.export("png", {
+    quality: 0.9,
+    maintainPixelRatio: true
+  }).then(function(result) {
+    console.log("PNG export successful");
+  }).catch(function(error) {
+    console.error("PNG export failed:", error);
+    
+    // Alternative method - try canvas export
+    setTimeout(function() {
+      try {
+        const canvas = root3.dom.querySelector("canvas");
+        if (canvas) {
+          const link = document.createElement("a");
+          link.download = "chart3.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+          console.log("Canvas export successful");
+        } else {
+          alert("PNG export failed. Canvas not found.");
+        }
+      } catch (canvasError) {
+        console.error("Canvas export also failed:", canvasError);
+        alert("PNG export failed: " + error.message);
       }
+    }, 500);
+  });
+}
 
-      // Create grouped bars for EE1–EE4
-      makeSeries("EE1", "EE1");
-      makeSeries("EE2", "EE2");
-      makeSeries("EE3", "EE3");
-      makeSeries("EE4", "EE4");
+// Setup dropdown toggle
+document.addEventListener('DOMContentLoaded', function() {
+  const exportButton = document.getElementById("exportButton");
+  const exportOptions = document.getElementById("exportOptions");
+  
+  if (exportButton && exportOptions) {
+    exportButton.addEventListener("click", function(e) {
+      e.preventDefault();
+      const isVisible = exportOptions.style.display === "block";
+      exportOptions.style.display = isVisible ? "none" : "block";
+    });
+    
+    // Close when clicking outside
+    document.addEventListener("click", function(e) {
+      if (!exportButton.contains(e.target) && !exportOptions.contains(e.target)) {
+        exportOptions.style.display = "none";
+      }
+    });
+  }
+});
+
+// Test function - call this in console to debug
+window.testExport = function() {
+  console.log("=== Export Test ===");
+  console.log("root3 exists:", !!root3);
+  console.log("chart3 exists:", !!chart3);
+  console.log("exporting plugin:", !!root3?.exporting);
+  console.log("am5plugins_exporting:", typeof am5plugins_exporting);
+  console.log("datasets3Combined length:", datasets3Combined.length);
+  
+  // Test CSV export
+  exportCSV();
+};
+        
+// Alternative event listeners (add this at the end of your script)
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('csvExportBtn')?.addEventListener('click', exportCSV);
+  document.getElementById('pngExportBtn')?.addEventListener('click', exportChart);
+});
       // makeSeries("EE1", "EE1", "#BCDCDC");
       // makeSeries("EE2", "EE2", "#68B3B3");
       // makeSeries("EE3", "EE3", "#2A8A8A");
@@ -4508,6 +4846,246 @@
       }
     });
   </script>
+
+   <script>
+    // Static data for sources
+const sourceData = [
+    "RDC 2021",
+    "RDC 2022", 
+    "Classe 2022",
+    "Classe Excellence 2022",
+    "RDC 2023",
+    "RDC 2024",
+    "RDC 2025",
+    "CDRH 2022",
+    "CDRH 2023", 
+    "CDRH 2024",
+    "CDRH 2025",
+    "CPEB 2021",
+    "CPEB 2022",
+    "CPEB 2023",
+    "CPEB 2024",
+    "CPEB 2025"
+];
+
+// Static data for sections
+const sectionsData = [
+    "Global",
+    "Origine scolaire / prof.",
+    "Poursuite d'études",
+    "Emploi",
+    "Compétences",
+    "Démographique",
+    "Parcours (journey sankey)"
+];
+
+// Default selections - items that should be checked by default
+const defaultSelectedSources = [
+    "RDC 2022",
+];
+
+const defaultSelectedSections = [
+    "Global",
+    "Poursuite d'études",
+    "Emploi",
+    "Compétences",
+    "Démographique",
+    "Parcours (journey sankey)"
+];
+
+// Initialize the sidebar
+function initializeSidebar() {
+    populateSourceCheckboxes();
+    populateSectionCheckboxes();
+    setupTypeahead();
+    setDefaultSelections();
+}
+
+// Populate source checkboxes
+function populateSourceCheckboxes() {
+    const container = document.getElementById('sourceCheckboxList');
+    container.innerHTML = '';
+    
+    sourceData.forEach((source, index) => {
+        const item = createCheckboxItem(source, `source_${index}`, 'source');
+        container.appendChild(item);
+    });
+}
+
+// Populate section checkboxes
+function populateSectionCheckboxes() {
+    const container = document.getElementById('sectionsCheckboxList');
+    container.innerHTML = '';
+    
+    sectionsData.forEach((section, index) => {
+        const item = createCheckboxItem(section, `section_${index}`, 'section');
+        container.appendChild(item);
+    });
+}
+
+// Create checkbox item
+function createCheckboxItem(text, id, type) {
+    const div = document.createElement('div');
+    div.className = 'checkbox-item';
+    div.innerHTML = `
+        <input type="checkbox" id="${id}" onchange="updateCount('${type}')">
+        <label for="${id}">${text}</label>
+    `;
+    return div;
+}
+
+// Set default selections
+function setDefaultSelections() {
+    // Set default source selections
+    document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]').forEach(checkbox => {
+        const label = checkbox.nextElementSibling.textContent;
+        if (defaultSelectedSources.includes(label)) {
+            checkbox.checked = true;
+        }
+    });
+    
+    // Set default section selections
+    document.querySelectorAll('#sectionsCheckboxList input[type="checkbox"]').forEach(checkbox => {
+        const label = checkbox.nextElementSibling.textContent;
+        if (defaultSelectedSections.includes(label)) {
+            checkbox.checked = true;
+        }
+    });
+    
+    // Update counts after setting defaults
+    updateCount('source');
+    updateCount('section');
+}
+
+// Alternative method: Create checkbox with default checked state
+function createCheckboxItemWithDefault(text, id, type, isDefaultChecked = false) {
+    const div = document.createElement('div');
+    div.className = 'checkbox-item';
+    const checkedAttribute = isDefaultChecked ? 'checked' : '';
+    div.innerHTML = `
+        <input type="checkbox" id="${id}" ${checkedAttribute} onchange="updateCount('${type}')">
+        <label for="${id}">${text}</label>
+    `;
+    return div;
+}
+
+// Alternative populate functions using the default checked method
+function populateSourceCheckboxesWithDefaults() {
+    const container = document.getElementById('sourceCheckboxList');
+    container.innerHTML = '';
+    
+    sourceData.forEach((source, index) => {
+        const isDefaultChecked = defaultSelectedSources.includes(source);
+        const item = createCheckboxItemWithDefault(source, `source_${index}`, 'source', isDefaultChecked);
+        container.appendChild(item);
+    });
+}
+
+function populateSectionCheckboxesWithDefaults() {
+    const container = document.getElementById('sectionsCheckboxList');
+    container.innerHTML = '';
+    
+    sectionsData.forEach((section, index) => {
+        const isDefaultChecked = defaultSelectedSections.includes(section);
+        const item = createCheckboxItemWithDefault(section, `section_${index}`, 'section', isDefaultChecked);
+        container.appendChild(item);
+    });
+}
+
+// Setup typeahead functionality
+function setupTypeahead() {
+    const input = document.getElementById('sourceTypeahead');
+    input.addEventListener('input', filterSources);
+}
+
+// Filter sources based on typeahead input
+function filterSources() {
+    const input = document.getElementById('sourceTypeahead');
+    const filter = input.value.toLowerCase();
+    const items = document.querySelectorAll('#sourceCheckboxList .checkbox-item');
+    
+    items.forEach(item => {
+        const label = item.querySelector('label').textContent.toLowerCase();
+        if (label.includes(filter)) {
+            item.classList.remove('hidden');
+        } else {
+            item.classList.add('hidden');
+        }
+    });
+}
+
+// Update selected count
+function updateCount(type) {
+    const container = type === 'source' ? '#sourceCheckboxList' : '#sectionsCheckboxList';
+    const countElement = type === 'source' ? 'sourceCount' : 'sectionsCount';
+    const checkboxes = document.querySelectorAll(`${container} input[type="checkbox"]:checked`);
+    
+    const count = checkboxes.length;
+    const text = type === 'source' ? 'source(s) sélectionnée(s)' : 'section(s) sélectionnée(s)';
+    document.getElementById(countElement).textContent = `${count} ${text}`;
+}
+
+// Clear source filters
+function clearSourceFilters() {
+    document.getElementById('sourceTypeahead').value = '';
+    document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+    });
+    document.querySelectorAll('#sourceCheckboxList .checkbox-item').forEach(item => {
+        item.classList.remove('hidden');
+    });
+    updateCount('source');
+}
+
+// Clear section filters
+function clearSectionFilters() {
+    document.querySelectorAll('#sectionsCheckboxList input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+    });
+    updateCount('section');
+}
+
+// Reset to default selections
+function resetToDefaults() {
+    // Clear all selections first
+    document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+    });
+    document.querySelectorAll('#sectionsCheckboxList input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+    });
+    
+    // Set defaults
+    setDefaultSelections();
+}
+
+// Get selected sources
+function getSelectedSources() {
+    const selected = [];
+    document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]:checked').forEach(cb => {
+        selected.push(cb.nextElementSibling.textContent);
+    });
+    return selected;
+}
+
+// Get selected sections
+function getSelectedSections() {
+    const selected = [];
+    document.querySelectorAll('#sectionsCheckboxList input[type="checkbox"]:checked').forEach(cb => {
+        selected.push(cb.nextElementSibling.textContent);
+    });
+    return selected;
+}
+
+// Debug function to see selections
+function logSelections() {
+    console.log('Selected Sources:', getSelectedSources());
+    console.log('Selected Sections:', getSelectedSections());
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeSidebar);
+    </script>
 </body>
 
 </html>
