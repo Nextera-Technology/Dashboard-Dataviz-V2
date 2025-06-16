@@ -1404,12 +1404,12 @@
         <div class="manual-legend2">
           <div class="legend-item2">
             <span class="legend-color2" style="background-color: #67b7dc;"></span>
-            <span class="legend-label2">(A) Meme ecole <span style="color: #67b7dc; font-size: 16px"><strong>86
+            <span class="legend-label2">Meme ecole <span style="color: #67b7dc; font-size: 16px"><strong>86
                   (47%)</strong></span></span>
           </div>
           <div class="legend-item2">
             <span class="legend-color2" style="background-color: #6794dc;"></span>
-            <span class="legend-label2">(B) Ecole differente <span style="color: #6794dc; font-size: 16px"><strong>97
+            <span class="legend-label2">Ecole differente <span style="color: #6794dc; font-size: 16px"><strong>97
                   (53%)</strong></span></span>
           </div>
         </div>
@@ -1590,12 +1590,11 @@
               alt="Download">
           </button>
         </div>
-        <br>
         <h3
-          style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D	; margin-bottom: 10px;">
+          style="text-align: left; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
           <strong>Postes</strong>
         </h3>
-        <p style="color: #1E9180 "><strong>Postes ciblés après 24 mois :<span style="color:#2C8B7D	;"> 75%
+        <p style="color: #1E9180 "><strong>Postes ciblés après 24 mois :<span style="color:#49928a;"> 75%
             </span></strong></p>
         <table style="margin: 0 auto; text-align: center;">
           <thead>
@@ -1616,7 +1615,7 @@
           </tbody>
         </table>
       </div>
-
+      
       <div class="chart-box" style="text-align: center; position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
@@ -1632,7 +1631,7 @@
           </button>
         </div>
         <h3
-          style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
+          style="text-align: left; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
           <strong>Domaines</strong>
         </h3>
         <p style="color: #1E9180 "><strong>Domaines ciblés après 24 mois :<span style="color:#49928a;"> 97%
@@ -1672,7 +1671,7 @@
           </button>
         </div>
         <h3
-          style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
+          style="text-align: left; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
           <strong>Salaires</strong>
         </h3>
         <p style="color: #1E9180"><strong>Salaires ciblés après 24 mois :<span style="color:#49928a;"> 5%
@@ -1712,7 +1711,7 @@
           </button>
         </div>
         <h3
-          style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
+          style="text-align: left; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
           <strong>Compétences</strong>
         </h3>
 
@@ -3958,8 +3957,9 @@
       rootA.setThemes([am5themes_Animated.new(rootA)]);
 
       var chartA = rootA.container.children.push(am5percent.PieChart.new(rootA, {
-        layout: rootA.verticalLayout,
+        layout: rootA.horizontalLayout,
         innerRadius: am5.percent(50),
+        radius: am5.percent(70),
         // paddingLeft: 70
       }));
 
@@ -3977,11 +3977,13 @@
       // Format label with integer percentage
       seriesA.labels.template.setAll({
         text: "{category}: {value} ({valuePercentTotal.formatNumber('#.#')}%)",
-        fontSize: 12,
+        fontSize: 13,
         populateText: true,
+        maxWidth: 100,
+        oversizedBehavior: "wrap",
         fontWeight: "500",
         fill: am5.color("#333"),
-        radius: -20,             // Positive moves outward, negative moves inward
+        // radius: -20,             // Positive moves outward, negative moves inward
         // labelRadius: 30,        // Explicit label distance from center (can use instead of radius)
         // paddingRight: 100
       });
@@ -4587,7 +4589,7 @@
       seriesStatut.labels.template.setAll({
         text: "{category} : {percentage}%",
         fontSize: "14px", // Adjust font size if needed
-        maxWidth: 150, // Set maximum width for labels
+        maxWidth: 125, // Set maximum width for labels
         oversizedBehavior: "wrap", // Wrap long text
         paddingBottom: 20,
       });
