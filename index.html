@@ -83,6 +83,7 @@
 
     .sidebar {
       width: 270px;
+      max-width: 270px;
       height: 100vh;
       /* Full viewport height */
       background: linear-gradient(135deg, #97cce4 0%, #306e8b 100%);
@@ -100,6 +101,7 @@
 
     /* Alternative approach - if you want the sidebar to be sticky within a container */
     .sidebar-sticky {
+      max-width: 270px;
       width: 270px;
       background: linear-gradient(135deg, #6db5d6 0%, #764ba2 100%);
       color: white;
@@ -1198,6 +1200,24 @@
     .show-dropdown .dropdown-content {
       display: block;
     }
+
+
+    /* Alternative Flexbox Layout */
+    .flex-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 30px;
+        margin: 20px 0;
+    }
+
+    .flex-icon {
+        flex-shrink: 0;
+    }
+
+    .flex-text {
+        text-align: center;
+    }
   </style>
 </head>
 
@@ -1211,7 +1231,7 @@
     </div>
 
     <nav>
-      <a href="#" class="active">Tableau de bord</a>
+      <!-- <a href="#" class="active">Tableau de bord</a> -->
     </nav>
 
     <!-- Source Filter Section -->
@@ -1225,7 +1245,7 @@
         <!-- Source checkboxes will be populated by JavaScript -->
       </div>
       <div class="selected-count" id="sourceCount">0 source(s) sélectionnée(s)</div>
-      <button class="clear-filters" onclick="clearSourceFilters()">Effacer les filtres</button>
+      <button class="clear-filters" onclick="clearSourceFilters()">Appliquer les Filtres</button>
     </div>
 
     <!-- Sections Filter Section -->
@@ -1235,7 +1255,7 @@
         <!-- Section checkboxes will be populated by JavaScript -->
       </div>
       <div class="selected-count" id="sectionsCount">0 section(s) sélectionnée(s)</div>
-      <button class="clear-filters" onclick="clearSectionFilters()">Effacer les filtres</button>
+      <button class="clear-filters" onclick="clearSectionFilters()">Appliquer les Filtres</button>
     </div>
   </aside>
 
@@ -1392,7 +1412,6 @@
             <span class="legend-label2">(B) Ecole differente <span style="color: #6794dc; font-size: 16px"><strong>97
                   (53%)</strong></span></span>
           </div>
-
         </div>
       </div>
     </div>
@@ -1407,7 +1426,7 @@
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
               alt="Download">
           </button>
-          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+          <button class="info-button secondary" onclick="toggleAnalysis('chart2-analysis')" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
@@ -1458,8 +1477,8 @@
           </div>
         </div>
 
-        <button style="margin-top: 60px;" class="analysis-toggle"
-          onclick="toggleAnalysis('chart2-analysis')">Afficher/Masquer l’analyse</button>
+        <!-- <button style="margin-top: 60px;" class="analysis-toggle"
+          onclick="toggleAnalysis('chart2-analysis')">Afficher/Masquer l’analyse</button> -->
         <div id="chart2-analysis" class="analysis-content"
           style=" margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
           <h4 style="color: #15616D; margin: 30px 0 10px;"><img
@@ -1523,7 +1542,7 @@
         </div>
         <h3>Situation Professionnelle à 6 mois après la certification</h3><br>
         <div id="pieChartStatut" class="chart-container" style="height: 300px;"></div>
-        <div class="manual-legend2">
+        <!-- <div class="manual-legend2">
           <div class="legend-item2">
             <span class="legend-color2" style="background-color: #67b7dc;"></span>
             <span class="legend-label2">(A) A un emploi <span
@@ -1549,7 +1568,7 @@
             <span class="legend-label2">(E) Non répondant <span
                 style="color: #a367dc; font-size: 16px"><strong>2%</strong></span></span>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -1687,7 +1706,7 @@
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
               alt="Download">
           </button>
-          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+          <button class="info-button secondary" onclick="toggleAnalysis('chart-final-analysis')" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
@@ -1718,8 +1737,8 @@
             </tr>
           </tbody>
         </table>
-        <button class="analysis-toggle" onclick="toggleAnalysis('chart-final-analysis')"
-          style="margin: 10px auto 0 auto; display: block;">Afficher/Masquer l’analyse</button>
+        <!-- <button class="analysis-toggle" onclick="toggleAnalysis('chart-final-analysis')"
+          style="margin: 10px auto 0 auto; display: block;">Afficher/Masquer l’analyse</button> -->
 
         <div id="chart-final-analysis" class="analysis-content"
           style="display: none; margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333; text-align: left;">
@@ -1788,20 +1807,28 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
-        <h3
-          style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
-          <strong>Taux de satisfaction de la formation</strong>
-        </h3>
-        <p style="padding-top: 10px; color:#1E9180 ; font-size: 40px;"><strong>73%</strong></p>
+       <div class="flex-content">
+            <div class="flex-icon">
+                <svg style="fill:#1E9180" height="100" class="thumbs-up-icon" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M320 1344q0-26-19-45t-45-19q-27 0-45.5 19t-18.5 45q0 27 18.5 45.5t45.5 18.5q26 0 45-18.5t19-45.5zm160-512v640q0 26-19 45t-45 19h-288q-26 0-45-19t-19-45v-640q0-26 19-45t45-19h288q26 0 45 19t19 45zm1184 0q0 86-55 149 15 44 15 76 3 76-43 137 17 56 0 117-15 57-54 94 9 112-49 181-64 76-197 78h-129q-66 0-144-15.5t-121.5-29-120.5-39.5q-123-43-158-44-26-1-45-19.5t-19-44.5v-641q0-25 18-43.5t43-20.5q24-2 76-59t101-121q68-87 101-120 18-18 31-48t17.5-48.5 13.5-60.5q7-39 12.5-61t19.5-52 34-50q19-19 45-19 46 0 82.5 10.5t60 26 40 40.5 24 45 12 50 5 45 .5 39q0 38-9.5 76t-19 60-27.5 56q-3 6-10 18t-11 22-8 24h277q78 0 135 57t57 135z" />
+                </svg>
+            </div>
+            <div class="flex-text">
+                <h3 class="title">Taux de satisfaction de la formation</h3>
+                <p class="percentage">73%</p>
+            </div>
+        </div>
+      
       </div>
 
       <div class="chart-box" style="text-align: center; position: relative;">
@@ -1853,14 +1880,14 @@
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
               alt="Download">
           </button>
-          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+          <button class="info-button secondary" onclick="toggleAnalysis('chart1-analysis')" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
         </div>
         <h3>Ouvert – Commencé – Enquête complétée (EE1–EE4)</h3>
         <div id="chart1" class="chart-container"></div>
-        <button class="analysis-toggle" onclick="toggleAnalysis('chart1-analysis')">Afficher/Masquer l’analyse</button>
+        <!-- <button class="analysis-toggle" onclick="toggleAnalysis('chart1-analysis')">Afficher/Masquer l’analyse</button> -->
         <div id="chart1-analysis" class="analysis-content"
           style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
           <h4 style="color: #15616D; margin-bottom: 10px;"><img
@@ -1934,7 +1961,7 @@
         </div>
         <h3 id="chartSkillTarget-title">Les 5 principales compétences utilisées dans les emplois ciblés</h3>
         <div id="chartSkillTarget" class="chart-container"></div>
-        <div class="manual-legend2">
+        <!-- <div class="manual-legend2">
           <div class="legend-item2">
             <span class="legend-color2" style="background-color: #67b7dc;"></span>
             <span class="legend-label2" style="font-size: 13px;">(A) Participation in the definition of commercial
@@ -1966,7 +1993,7 @@
             <span class="legend-label2" style="font-size: 13px;">(F) Autre <span
                 style="color: #a367dc; font-size: 14px"><strong>56%</strong></span></span>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <div class="chart-box" style="position: relative;">
@@ -1985,7 +2012,7 @@
         </div>
         <h3 id="chartSkillNonTarget-title">Les 5 principales compétences utilisées dans les emplois non ciblés</h3>
         <div id="chartSkillNonTarget" class="chart-container"></div>
-        <div class="manual-legend2">
+        <!-- <div class="manual-legend2">
           <div class="legend-item2">
             <span class="legend-color2" style="background-color: #67b7dc;"></span>
             <span class="legend-label2" style="font-size: 13px;">(A) Participation in the definition of commercial
@@ -2016,7 +2043,7 @@
             <span class="legend-label2" style="font-size: 13px;">(F) Autre <span
                 style="color: #a367dc; font-size: 14px"><strong>54%</strong></span></span>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -2024,7 +2051,8 @@
 
     <h2 style="color:#15616D; margin-bottom: 20px;">Emploi</h2>
     <div class="grid" style="margin-bottom: 20px;">
-      <div class="chart-box" style="position: relative; text-align: center;">
+
+      <div class="chart-box" style="position: relative;">
         <div class="button-container">
           <button class="info-button" onclick="openModalJobTargeted()" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
@@ -2038,15 +2066,12 @@
               alt="Download">
           </button>
         </div>
-        <br>
-        <h3
-          style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
-          <strong>Emplois ciblés après 6 mois</strong>
+        <h3><strong>Emplois ciblés après 6 mois</strong>
         </h3>
-        <div id="pieChart" style="width: 100%; height: 270px;"></div>
+        <div id="pieChart" style="width: 100%; height: 270px; margin: auto;"></div>
       </div>
-
-      <div class="chart-box" style="text-align: center; position: relative;">
+      
+      <div class="chart-box" style="position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
@@ -2060,12 +2085,11 @@
               alt="Download">
           </button>
         </div>
-        <h3
-          style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; font-weight: 600; color: #00454D; margin-bottom: 10px;">
-          <strong>Les 3 principaux domaines</strong>
+        <h3><strong>Les 3 principaux domaines</strong>
         </h3>
         <div id="domainePieChart" style="width: 100%; height: 270px; margin: auto;"></div>
       </div>
+
     </div>
 
     <div class="grid" style="margin-bottom: 20px;">
@@ -2085,7 +2109,7 @@
         </div>
         <h3 id="chartSizeTarget-title">Taille de l'entreprise dans les emplois ciblés</h3>
         <div id="chartSizeTarget" class="chart-container"></div>
-        <div class="manual-legend2">
+        <!-- <div class="manual-legend2">
           <div class="legend-item2">
             <span class="legend-color2" style="background-color: #67b7dc;"></span>
             <span class="legend-label2" style="font-size: 13px;">(A) Très petite entreprise : 1 à 9 <span
@@ -2116,7 +2140,7 @@
             <span class="legend-label2" style="font-size: 13px;">(F) Micro entreprise : 0 <span
                 style="color: #a367dc; font-size: 14px"><strong>7%</strong></span></span>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <div class="chart-box" style="position: relative;">
@@ -2135,7 +2159,7 @@
         </div>
         <h3 id="chartSizeNonTarget-title">Taille de l'entreprise dans les emplois non ciblés</h3>
         <div id="chartSizeNonTarget" class="chart-container"></div>
-        <div class="manual-legend2">
+        <!-- <div class="manual-legend2">
           <div class="legend-item2">
             <span class="legend-color2" style="background-color: #67b7dc;"></span>
             <span class="legend-label2" style="font-size: 13px;">(A) Très petite entreprise : 1 à 9 <span
@@ -2166,7 +2190,7 @@
             <span class="legend-label2" style="font-size: 13px;">(F) Micro entreprise : 0 <span
                 style="color: #a367dc; font-size: 14px"><strong>9%</strong></span></span>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -2180,7 +2204,7 @@
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
               alt="Download">
           </button>
-          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+          <button class="info-button secondary" onclick="toggleAnalysis('chart6-analysis')" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
@@ -2193,7 +2217,7 @@
           <button class="tab-button6" data-tab="EE4">EE4</button>
         </div>
         <div id="chart6" class="chart-container"></div>
-        <button class="analysis-toggle" onclick="toggleAnalysis('chart6-analysis')">Afficher/Masquer l’analyse</button>
+        <!-- <button class="analysis-toggle" onclick="toggleAnalysis('chart6-analysis')">Afficher/Masquer l’analyse</button> -->
         <div id="chart6-analysis" class="analysis-content">
           <h4 style="color: #15616D; margin: 30px 0 10px;"><img
               src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png"
@@ -2243,7 +2267,8 @@
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
               alt="Download">
           </button>
-          <button class="info-button secondary" onclick="openModalScopeManagerial()" title="Scope">
+          <!-- <button class="info-button secondary" onclick="openModalScopeManagerial()" title="Scope"> -->
+          <button class="info-button secondary"  onclick="toggleAnalysis('chart4-analysis')" title="Scope"> 
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
@@ -2257,8 +2282,8 @@
         </div>
         <div id="chart4" style="width: 100%; height: 450px;"></div>
 
-        <button style="margin-top: 40px;" class="analysis-toggle"
-          onclick="toggleAnalysis('chart4-analysis')">Afficher/Masquer l’analyse</button>
+        <!-- <button style="margin-top: 40px;" class="analysis-toggle"
+          onclick="toggleAnalysis('chart4-analysis')">Afficher/Masquer l’analyse</button> -->
         <div id="chart4-analysis" class="analysis-content"
           style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
           <h4 style="color: #15616D; margin: 30px 0 10px;"><img
@@ -2308,7 +2333,7 @@
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
               alt="Download">
           </button>
-          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+          <button class="info-button secondary" onclick="toggleAnalysis('chart3-analysis')" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
@@ -2316,7 +2341,7 @@
         <br>
         <h3>Type de contrat</h3>
         <div id="chart3" class="chart-container"></div>
-        <button class="analysis-toggle" onclick="toggleAnalysis('chart3-analysis')">Afficher/Masquer l’analyse</button>
+        <!-- <button class="analysis-toggle" onclick="toggleAnalysis('chart3-analysis')">Afficher/Masquer l’analyse</button> -->
         <div id="chart3-analysis" class="analysis-content"
           style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
           <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
@@ -2349,7 +2374,7 @@
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
               alt="Download">
           </button>
-          <button class="info-button secondary" onclick="downloadChart()" title="Scope">
+          <button class="info-button secondary" onclick="toggleAnalysis('chart5-analysis')" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
@@ -2357,7 +2382,7 @@
         <br>
         <h3>Top 8 fonctions</h3>
         <div id="chart5" class="chart-container"></div>
-        <button class="analysis-toggle" onclick="toggleAnalysis('chart5-analysis')">Afficher/Masquer l’analyse</button>
+        <!-- <button class="analysis-toggle" onclick="toggleAnalysis('chart5-analysis')">Afficher/Masquer l’analyse</button> -->
         <div id="chart5-analysis" class="analysis-content"
           style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #333;">
           <h4 style="color: #15616D; margin: 30px 0 10px;">🔍 Analyse</h4>
@@ -2387,7 +2412,7 @@
 
     <hr style="border: none; border-top: 5px solid #D0E6E6; margin: 30px 0 10px 0;">
 
-    <h2 style="color:#15616D; margin-bottom: 20px;">Voyage</h2>
+    <h2 style="color:#15616D; margin-bottom: 20px;">Parcours</h2>
     <div class="grid4" style="margin-bottom: 20px;">
 
       <div class="chart-box" style="position: relative;">
@@ -2449,15 +2474,25 @@
           </button>
         </div>
         <h3 style="text-align: center; font-size: 24px;">Répartition par genre</h3><br>
-        <div class="legend-item">
+        <!-- <div class="legend-item">
           <span class="legend-color" style="background-color: #67b7dc;"></span>
           <span class="legend-label">Homme <span style="color: #67b7dc"><strong>44%</strong></span></span>
         </div>
         <div class="legend-item">
           <span class="legend-color" style="background-color: #6794dc;"></span>
           <span class="legend-label">Femme <span style="color: #6794dc"><strong>56%</strong></span></span>
-        </div>
+        </div> -->
         <div id="pieChartGender" class="chart-container" style="height: 400px;"></div>
+        <div class="manual-legend2">
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #6794dc;"></span>
+            <span class="legend-label2">Femme <span style="color: #6794dc; font-size: 16px"><strong>(56%)</strong></span></span>
+          </div>
+          <div class="legend-item2">
+            <span class="legend-color2" style="background-color: #67b7dc;"></span>
+            <span class="legend-label2">Homme <span style="color: #67b7dc; font-size: 16px"><strong>(44%)</strong></span></span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -2619,6 +2654,19 @@
 
         <div class="detailed-chart">
           <h2>Emplois ciblés après 6 mois</h2>
+          <h4 style="color: #15616D; margin: 30px 0 10px; text-align: left;"><img
+              src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png"
+              style="width: 15px; height: 15px;"> Scope</h4>
+          <p style="text-align: left; color:#0E3F2D">Ce widget montre la répartition des postes visés ou non visés dans le secteur commercial, selon les premières tendances d’insertion.
+          </p>
+          <p style="text-align: left; color:#0E3F2D">Il s’appuie sur les données des enquêtes ES1 à ES2, et met en avant :</p>
+          <ul style="padding-left: 20px; text-align: left; color:#0E3F2D; padding-bottom: 30px;">
+            <li style="text-align: left; color:#0E3F2D"><strong>Les fonctions commerciales dominent</strong> (40 répondants, 38 %).</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Les postes non ciblés</strong> restent notables (27 répondants, 26 %).</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Autres postes ciblés</strong> plus rares (9 répondants, 9 %).</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Inactivité marginale :</strong> très peu de cas (maximum 5 à l’ES2).</li>
+            <li style="text-align: left; color:#0E3F2D">Postes spécifiques comme “Responsable commercial” (4 répondants, 4 %) et “Conseiller commercial” (24 répondants, 23 %) apparaissent régulièrement.</li>
+          </ul>
           <div id="previewJobTargeted" class="chart-container"></div>
         </div>
       </div>
@@ -4368,9 +4416,10 @@
       // Create chart
       var chart = root.container.children.push(
         am5percent.PieChart.new(root, {
-          layout: root.verticalLayout,
+          layout: root.horizontalLayout,
           innerRadius: am5.percent(50),
-          paddingLeft: 60
+          // paddingLeft: 60
+          radius: am5.percent(75), // Make the chart smaller (70% of container)
         })
       );
 
@@ -4398,12 +4447,15 @@
       // Add labels
       series.labels.template.setAll({
         text: "{category}: {percentage}%",
-        fontSize: 11,
-        fill: am5.color(0x00454D),
-        radius: 3,
+        fontSize: 14,
+        // fill: am5.color(0x00454D),
+        // radius: 3,
+        maxWidth: 150, // Set maximum width for labels
+        oversizedBehavior: "wrap", // Wrap long text
+        paddingBottom: 20,
       });
 
-      series.ticks.template.set("visible", false);
+      // series.ticks.template.set("visible", false);
 
       // Add spacing between slices
       series.slices.template.setAll({
@@ -4430,9 +4482,9 @@
 
       var chart2 = root2.container.children.push(
         am5percent.PieChart.new(root2, {
-          layout: root2.verticalLayout,
+          layout: root2.horizontalLayout,
           innerRadius: am5.percent(50),
-          paddingRight: 30
+          radius: am5.percent(75), // Make the chart smaller (70% of container)
         })
       );
 
@@ -4453,9 +4505,10 @@
 
       series2.labels.template.setAll({
         text: "{category}: {percentage}%",
-        fontSize: 12,
-        fill: am5.color(0x00454D),
-        radius: 5,
+        fontSize: "14px", // Adjust font size if needed
+        maxWidth: 150, // Set maximum width for labels
+        oversizedBehavior: "wrap", // Wrap long text
+        paddingBottom: 20,
       });
 
       // Add spacing between slices
@@ -4480,8 +4533,9 @@
 
       var chartGender = rootGender.container.children.push(
         am5percent.PieChart.new(rootGender, {
-          layout: rootGender.verticalLayout,
+          layout: rootGender.horizontalLayout,
           innerRadius: am5.percent(50),
+          radius: am5.percent(70), // Make the chart smaller (70% of container)
         })
       );
 
@@ -4501,12 +4555,10 @@
         stroke: am5.color("#fff"),
         strokeWidth: 1.5,
       });
-
       const genderData = [
         { category: "Homme", value: 141, percentage: 44 },
         { category: "Femme", value: 177, percentage: 56 }
       ];
-
       seriesGender.data.setAll(genderData);
 
       seriesGender.appear(1000, 100);
@@ -4521,8 +4573,9 @@
       rootGender.setThemes([am5themes_Animated.new(rootGender)]);
 
       var chartGender = rootGender.container.children.push(am5percent.PieChart.new(rootGender, {
-        layout: rootGender.verticalLayout,
+        layout: rootGender.horizontalLayout, // Changed to horizontal layout
         innerRadius: am5.percent(50),
+        radius: am5.percent(65), // Make the chart smaller (70% of container)
       }));
 
       var seriesStatut = chartGender.series.push(am5percent.PieSeries.new(rootGender, {
@@ -4532,7 +4585,19 @@
 
       // seriesStatut.labels.template.set("forceHidden", true);
       seriesStatut.labels.template.setAll({
-        text: "({code}) : {percentage}%",
+        text: "{category} : {percentage}%",
+        fontSize: "14px", // Adjust font size if needed
+        maxWidth: 150, // Set maximum width for labels
+        oversizedBehavior: "wrap", // Wrap long text
+        paddingBottom: 20,
+      });
+
+      // Make label text color match slice color
+      seriesStatut.labels.template.adapters.add("fill", function(fill, target) {
+        if (target.dataItem) {
+          return target.dataItem.get("slice").get("fill");
+        }
+        return fill;
       });
 
       seriesStatut.slices.template.setAll({
@@ -4543,7 +4608,11 @@
         strokeWidth: 1.5,
       });
 
-      seriesStatut.ticks.template.set("visible", false);
+      seriesStatut.ticks.template.setAll({
+        strokeWidth: 2,
+      });
+
+      // seriesStatut.ticks.template.set("visible", false);
       seriesStatut.data.setAll([
         { category: "A un emploi", value: 105, percentage: 33, code: 'A' },
         { category: "Recherche", value: 20, percentage: 6, code: 'B' },
@@ -4551,6 +4620,17 @@
         { category: "Inactif", value: 5, percentage: 2, code: 'D' },
         { category: "Non répondant", value: 6, percentage: 2, code: 'E' }
       ]);
+
+      // Set label colors to match slice colors after data is set
+      seriesStatut.onPrivate("maskRectangle", function() {
+        seriesStatut.dataItems.forEach(function(dataItem) {
+          var label = dataItem.get("label");
+          var slice = dataItem.get("slice");
+          if (label && slice) {
+            label.set("fill", slice.get("fill"));
+          }
+        });
+      });
 
       seriesStatut.appear(1000, 100);
     });
@@ -4619,8 +4699,9 @@
       rootGender.setThemes([am5themes_Animated.new(rootGender)]);
 
       var chartGender = rootGender.container.children.push(am5percent.PieChart.new(rootGender, {
-        layout: rootGender.verticalLayout,
+        layout: rootGender.horizontalLayout,
         innerRadius: am5.percent(50),
+        radius: am5.percent(60), // Make the chart smaller (70% of container)
       }));
 
       var seriesStatut = chartGender.series.push(am5percent.PieSeries.new(rootGender, {
@@ -4631,7 +4712,19 @@
       // seriesStatut.labels.template.set("forceHidden", true);
 
       seriesStatut.labels.template.setAll({
-        text: "({code}) : {percentage}%",
+        text: "{category} : {percentage}%",
+        fontSize: "14px", // Adjust font size if needed
+        maxWidth: 150, // Set maximum width for labels
+        oversizedBehavior: "wrap", // Wrap long text
+        paddingBottom: 20,
+      });
+
+      // Make label text color match slice color
+      seriesStatut.labels.template.adapters.add("fill", function(fill, target) {
+        if (target.dataItem) {
+          return target.dataItem.get("slice").get("fill");
+        }
+        return fill;
       });
 
       seriesStatut.slices.template.setAll({
@@ -4640,6 +4733,10 @@
         tooltipText: "{category}: {value} ({percentage}%)",
         stroke: am5.color("#fff"),
         strokeWidth: 1.5,
+      });
+
+      seriesStatut.ticks.template.setAll({
+        strokeWidth: 2,
       });
 
       // seriesStatut.ticks.template.set("visible", false);
@@ -4651,6 +4748,17 @@
         { category: "Grande entreprise : 500 à 999", value: 17, percentage: 7, code: 'E' },
         { category: "Micro entreprise : 0", value: 16, percentage: 7, code: 'F' },
       ]);
+
+      // Set label colors to match slice colors after data is set
+      seriesStatut.onPrivate("maskRectangle", function() {
+        seriesStatut.dataItems.forEach(function(dataItem) {
+          var label = dataItem.get("label");
+          var slice = dataItem.get("slice");
+          if (label && slice) {
+            label.set("fill", slice.get("fill"));
+          }
+        });
+      });
 
       seriesStatut.appear(1000, 100);
     });
@@ -4664,8 +4772,9 @@
       rootGender.setThemes([am5themes_Animated.new(rootGender)]);
 
       var chartGender = rootGender.container.children.push(am5percent.PieChart.new(rootGender, {
-        layout: rootGender.verticalLayout,
+        layout: rootGender.horizontalLayout,
         innerRadius: am5.percent(50),
+        radius: am5.percent(60), // Make the chart smaller (70% of container)
       }));
 
       var seriesStatut = chartGender.series.push(am5percent.PieSeries.new(rootGender, {
@@ -4676,7 +4785,20 @@
       // seriesStatut.labels.template.set("forceHidden", true);
 
       seriesStatut.labels.template.setAll({
-        text: "({code}) : {percentage}%",
+        text: "{category} : {percentage}%",
+        fontSize: "14px", // Adjust font size if needed
+        maxWidth: 150, // Set maximum width for labels
+        oversizedBehavior: "wrap", // Wrap long text
+        paddingBottom: 20,
+        // radius: am5.percent(110), // Position labels further outside
+      });
+
+      // Make label text color match slice color
+      seriesStatut.labels.template.adapters.add("fill", function(fill, target) {
+        if (target.dataItem) {
+          return target.dataItem.get("slice").get("fill");
+        }
+        return fill;
       });
 
       seriesStatut.slices.template.setAll({
@@ -4685,6 +4807,10 @@
         tooltipText: "{category}: {value} ({percentage}%)",
         stroke: am5.color("#fff"),
         strokeWidth: 1.5,
+      });
+
+      seriesStatut.ticks.template.setAll({
+        strokeWidth: 2,
       });
 
       // seriesStatut.ticks.template.set("visible", false);
@@ -4696,6 +4822,17 @@
         { category: "Grande entreprise : 500 à 999", value: 7, percentage: 10, code: 'E' },
         { category: "Micro entreprise : 0", value: 6, percentage: 9, code: 'F' },
       ]);
+
+      // Set label colors to match slice colors after data is set
+      seriesStatut.onPrivate("maskRectangle", function() {
+        seriesStatut.dataItems.forEach(function(dataItem) {
+          var label = dataItem.get("label");
+          var slice = dataItem.get("slice");
+          if (label && slice) {
+            label.set("fill", slice.get("fill"));
+          }
+        });
+      });
 
       seriesStatut.appear(1000, 100);
     });
@@ -4709,8 +4846,9 @@
       rootGender.setThemes([am5themes_Animated.new(rootGender)]);
 
       var chartGender = rootGender.container.children.push(am5percent.PieChart.new(rootGender, {
-        layout: rootGender.verticalLayout,
+        layout: rootGender.horizontalLayout, // Changed to horizontal layout
         innerRadius: am5.percent(50),
+        radius: am5.percent(60), // Make the chart smaller (70% of container)
       }));
 
       var seriesStatut = chartGender.series.push(am5percent.PieSeries.new(rootGender, {
@@ -4718,10 +4856,22 @@
         categoryField: "category"
       }));
 
-      // seriesStatut.labels.template.set("forceHidden", true);
-
+      // Configure labels to show outside with more space
       seriesStatut.labels.template.setAll({
-        text: "({code}) : {percentage}%",
+        text: "{category} : {percentage}%",
+        fontSize: "13px", // Adjust font size if needed
+        maxWidth: 150, // Set maximum width for labels
+        oversizedBehavior: "wrap", // Wrap long text
+        paddingBottom: 20,
+        // radius: am5.percent(110), // Position labels further outside
+      });
+
+      // Make label text color match slice color
+      seriesStatut.labels.template.adapters.add("fill", function(fill, target) {
+        if (target.dataItem) {
+          return target.dataItem.get("slice").get("fill");
+        }
+        return fill;
       });
 
       seriesStatut.slices.template.setAll({
@@ -4732,7 +4882,10 @@
         strokeWidth: 1.5,
       });
 
-      // seriesStatut.ticks.template.set("visible", false);
+      seriesStatut.ticks.template.setAll({
+        strokeWidth: 2,
+      });
+
       seriesStatut.data.setAll([
         { category: "Participation in the definition of commercial objectives", value: 11, percentage: 10, code: 'A' },
         { category: "Implementation of sales support tools", value: 10, percentage: 9, code: 'B' },
@@ -4741,6 +4894,17 @@
         { category: "Participation in the development of individual and collective objectives", value: 8, percentage: 8, code: 'E' },
         { category: "Autre", value: 59, percentage: 56, code: 'F' },
       ]);
+
+      // Set label colors to match slice colors after data is set
+      seriesStatut.onPrivate("maskRectangle", function() {
+        seriesStatut.dataItems.forEach(function(dataItem) {
+          var label = dataItem.get("label");
+          var slice = dataItem.get("slice");
+          if (label && slice) {
+            label.set("fill", slice.get("fill"));
+          }
+        });
+      });
 
       seriesStatut.appear(1000, 100);
     });
@@ -4754,8 +4918,9 @@
       rootGender.setThemes([am5themes_Animated.new(rootGender)]);
 
       var chartGender = rootGender.container.children.push(am5percent.PieChart.new(rootGender, {
-        layout: rootGender.verticalLayout,
+        layout: rootGender.horizontalLayout, // Changed to horizontal layout
         innerRadius: am5.percent(50),
+        radius: am5.percent(60), // Make the chart smaller (70% of container)
       }));
 
       var seriesStatut = chartGender.series.push(am5percent.PieSeries.new(rootGender, {
@@ -4765,8 +4930,22 @@
 
       // seriesStatut.labels.template.set("forceHidden", true);
 
+      // Configure labels to show outside with more space
       seriesStatut.labels.template.setAll({
-        text: "({code}) : {percentage}%",
+        text: "{category} : {percentage}%",
+        fontSize: "13px", // Adjust font size if needed
+        maxWidth: 150, // Set maximum width for labels
+        oversizedBehavior: "wrap", // Wrap long text
+        paddingBottom: 20,
+        // radius: am5.percent(110), // Position labels further outside
+      });
+
+      // Make label text color match slice color
+      seriesStatut.labels.template.adapters.add("fill", function(fill, target) {
+        if (target.dataItem) {
+          return target.dataItem.get("slice").get("fill");
+        }
+        return fill;
       });
 
       seriesStatut.slices.template.setAll({
@@ -4775,6 +4954,10 @@
         tooltipText: "{category}: {percentage}%",
         stroke: am5.color("#fff"),
         strokeWidth: 1.5,
+      });
+
+      seriesStatut.ticks.template.setAll({
+        strokeWidth: 2,
       });
 
       // seriesStatut.ticks.template.set("visible", false);
@@ -4786,6 +4969,17 @@
         { category: "Development of dashboards", value: 3, percentage: 9, code: 'E' },
         { category: "Autre", value: 21, percentage: 54, code: 'F' },
       ]);
+
+      // Set label colors to match slice colors after data is set
+      seriesStatut.onPrivate("maskRectangle", function() {
+        seriesStatut.dataItems.forEach(function(dataItem) {
+          var label = dataItem.get("label");
+          var slice = dataItem.get("slice");
+          if (label && slice) {
+            label.set("fill", slice.get("fill"));
+          }
+        });
+      });
 
       seriesStatut.appear(1000, 100);
     });
@@ -4799,8 +4993,9 @@
       rootGender.setThemes([am5themes_Animated.new(rootGender)]);
 
       var chartGender = rootGender.container.children.push(am5percent.PieChart.new(rootGender, {
-        layout: rootGender.verticalLayout,
+        layout: rootGender.horizontalLayout,
         innerRadius: am5.percent(50),
+        radius: am5.percent(75), // Make the chart smaller (70% of container)
       }));
 
       var seriesStatut = chartGender.series.push(am5percent.PieSeries.new(rootGender, {
@@ -4808,11 +5003,23 @@
         categoryField: "category"
       }));
 
-      // seriesStatut.labels.template.set("forceHidden", true);
+      seriesStatut.labels.template.set("forceHidden", true);
 
-      seriesStatut.labels.template.setAll({
-        text: "({code}) : {percentage}%",
-      });
+      // seriesStatut.labels.template.setAll({
+      //   text: "{category} : {percentage}%",
+      //   fontSize: "13px", // Adjust font size if needed
+      //   maxWidth: 150, // Set maximum width for labels
+      //   oversizedBehavior: "wrap", // Wrap long text
+      //   paddingBottom: 20,
+      // });
+
+      // // Make label text color match slice color
+      // seriesStatut.labels.template.adapters.add("fill", function(fill, target) {
+      //   if (target.dataItem) {
+      //     return target.dataItem.get("slice").get("fill");
+      //   }
+      //   return fill;
+      // });
 
       seriesStatut.slices.template.setAll({
         cornerRadius: 5,
@@ -4822,11 +5029,26 @@
         strokeWidth: 1.5,
       });
 
-      seriesStatut.ticks.template.set("visible", false);
+      // seriesStatut.ticks.template.setAll({
+      //   strokeWidth: 2,
+      // });
+
+      // seriesStatut.ticks.template.set("visible", false);
       seriesStatut.data.setAll([
         { category: "Meme ecole", value: 86, percentage: 47, code: 'A' },
         { category: "Ecole differente", value: 97, percentage: 53, code: 'B' },
       ]);
+
+      // // Set label colors to match slice colors after data is set
+      // seriesStatut.onPrivate("maskRectangle", function() {
+      //   seriesStatut.dataItems.forEach(function(dataItem) {
+      //     var label = dataItem.get("label");
+      //     var slice = dataItem.get("slice");
+      //     if (label && slice) {
+      //       label.set("fill", slice.get("fill"));
+      //     }
+      //   });
+      // });
 
       seriesStatut.appear(1000, 100);
     });
