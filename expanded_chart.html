@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certification Expanded View</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .presentation-iframe {
+            width: 100%;
+            height: calc(100% + 50px); /* Make iframe taller to push watermark below viewport */
+            border: none;
+            margin-bottom: -50px; /* Pull it up to hide the bottom part */
+        }
+    </style>
+</head>
+<body>
+    <iframe 
+        src="https://docs.google.com/presentation/d/e/2PACX-1vRCpphjqKsPdLhrfOmh1_BRzNNQGq4vy-njcRoHOLrozaYypYZ4azPAnp1uR6QhAhhdmwo5lovbM7Q8/pubembed?start=false&loop=false&delayms=3000&rm=minimal&slide=id.p" 
+        class="presentation-iframe"
+        allowfullscreen="true" 
+        mozallowfullscreen="true" 
+        webkitallowfullscreen="true">
+    </iframe>
+</body>
+</html>
