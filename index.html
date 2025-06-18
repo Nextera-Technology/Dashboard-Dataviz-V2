@@ -76,46 +76,24 @@
       }
     }
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f5f7fa;
-    }
-
     .sidebar {
       width: 240px;
       height: 100vh;
-      /* Full viewport height */
       background: linear-gradient(135deg, #97cce4 0%, #306e8b 100%);
       color: white;
       padding: 20px;
       overflow-y: auto;
       box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
       position: fixed;
-      /* Make sidebar fixed */
       top: 0;
       left: 0;
       z-index: 1000;
-      /* Ensure it stays on top */
     }
 
-    /* Alternative approach - if you want the sidebar to be sticky within a container */
-    .sidebar-sticky {
-      width: 240px;
-      background: linear-gradient(135deg, #6db5d6 0%, #764ba2 100%);
-      color: white;
-      padding: 20px;
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      overflow-y: auto;
-    }
-
-    /* If using fixed sidebar, adjust main content margin */
     .main-content {
       margin-left: 240px;
-      /* Same as sidebar width */
       padding: 20px;
+      flex: 1;
     }
 
     .logo-container {
@@ -128,31 +106,6 @@
     .logo-container img {
       max-width: 200px;
       height: auto;
-    }
-
-    nav {
-      margin-bottom: 30px;
-    }
-
-    nav a {
-      display: block;
-      color: white;
-      text-decoration: none;
-      padding: 12px 16px;
-      margin-bottom: 8px;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-      font-weight: 500;
-    }
-
-    nav a:hover {
-      background: rgba(255, 255, 255, 0.1);
-      transform: translateX(5px);
-    }
-
-    nav a.active {
-      background: rgba(255, 255, 255, 0.2);
-      border-left: 4px solid #fff;
     }
 
     .filter-section {
@@ -209,7 +162,7 @@
     }
 
     .checkbox-list {
-      max-height: 200px;
+      max-height: 300px;
       overflow-y: auto;
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.05);
@@ -223,6 +176,7 @@
       margin-bottom: 4px;
       transition: all 0.2s ease;
       cursor: pointer;
+      position: relative;
     }
 
     .checkbox-item:hover {
@@ -231,6 +185,25 @@
 
     .checkbox-item.hidden {
       display: none;
+    }
+
+    .checkbox-item.select-all {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .checkbox-item.parent-item {
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .checkbox-item.child-item {
+      margin-left: 20px;
+      padding-left: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border-left: 2px solid rgba(255, 255, 255, 0.3);
     }
 
     .checkbox-item input[type="checkbox"] {
@@ -247,6 +220,22 @@
       color: rgba(255, 255, 255, 0.9);
     }
 
+    .expand-toggle {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 3px;
+      transition: all 0.2s ease;
+    }
+
+    .expand-toggle:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
     .clear-filters {
       background: rgba(255, 255, 255, 0.2);
       border: none;
@@ -261,10 +250,6 @@
 
     .clear-filters:hover {
       background: rgba(255, 255, 255, 0.3);
-    }
-
-    .hidden {
-      display: none;
     }
 
     .selected-count {
@@ -314,7 +299,7 @@
     }
 
     /* Responsive design */
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
       .sidebar {
         width: 240px;
       }
@@ -335,7 +320,6 @@
         margin-left: 0;
       }
     }
-
 
     .content {
       flex: 1;
@@ -360,6 +344,7 @@
       color: var(--dark);
     }
 
+    /* 
     .filters {
       display: flex;
       gap: 10px;
@@ -369,7 +354,7 @@
       padding: 6px;
       border-radius: 4px;
       border: 1px solid #ccc;
-    }
+    } */
 
     /* .grid {
       display: grid;
@@ -1202,19 +1187,19 @@
 
     /* Alternative Flexbox Layout */
     .flex-content {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 30px;
-        margin: 20px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+      margin: 20px 0;
     }
 
     .flex-icon {
-        flex-shrink: 0;
+      flex-shrink: 0;
     }
 
     .flex-text {
-        text-align: center;
+      text-align: center;
     }
   </style>
 </head>
@@ -1227,10 +1212,6 @@
         src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/Nextera%20Logo%20Career%20Insight%20White%20text.png"
         alt="Nextera Logo">
     </div>
-
-    <nav>
-      <!-- <a href="#" class="active">Tableau de bord</a> -->
-    </nav>
 
     <!-- Source Filter Section -->
     <div class="filter-section">
@@ -1257,7 +1238,7 @@
     </div>
   </aside>
 
-  <main class="content main-content">
+  <main class="main-content">
     <header>
       <h1>RDC 2022 - Enquêtes d'Employabilité</h1>
       <h4>EE1 : Certification &nbsp;| &nbsp;
@@ -1273,10 +1254,11 @@
         <div class="button-container">
           <button class="info-button" onclick="openModal()" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png" alt="Info">
-          </button> 
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          </button>
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="openModalScope()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -1297,9 +1279,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -1334,9 +1317,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -1357,9 +1341,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -1388,9 +1373,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -1420,9 +1406,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="toggleAnalysis('chart2-analysis')" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -1529,9 +1516,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -1579,9 +1567,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -1613,15 +1602,16 @@
           </tbody>
         </table>
       </div>
-      
+
       <div class="chart-box" style="text-align: center; position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -1659,9 +1649,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -1699,9 +1690,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="toggleAnalysis('chart-final-analysis')" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -1782,9 +1774,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -1814,21 +1807,21 @@
               alt="Download">
           </button>
         </div>
-       <div class="flex-content">
-            <!-- <div class="flex-icon"> -->
-                <!-- <svg style="fill:#1E9180" height="100" class="thumbs-up-icon" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+        <div class="flex-content">
+          <!-- <div class="flex-icon"> -->
+          <!-- <svg style="fill:#1E9180" height="100" class="thumbs-up-icon" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
                     <path d="M320 1344q0-26-19-45t-45-19q-27 0-45.5 19t-18.5 45q0 27 18.5 45.5t45.5 18.5q26 0 45-18.5t19-45.5zm160-512v640q0 26-19 45t-45 19h-288q-26 0-45-19t-19-45v-640q0-26 19-45t45-19h288q26 0 45 19t19 45zm1184 0q0 86-55 149 15 44 15 76 3 76-43 137 17 56 0 117-15 57-54 94 9 112-49 181-64 76-197 78h-129q-66 0-144-15.5t-121.5-29-120.5-39.5q-123-43-158-44-26-1-45-19.5t-19-44.5v-641q0-25 18-43.5t43-20.5q24-2 76-59t101-121q68-87 101-120 18-18 31-48t17.5-48.5 13.5-60.5q7-39 12.5-61t19.5-52 34-50q19-19 45-19 46 0 82.5 10.5t60 26 40 40.5 24 45 12 50 5 45 .5 39q0 38-9.5 76t-19 60-27.5 56q-3 6-10 18t-11 22-8 24h277q78 0 135 57t57 135z" />
                 </svg> -->
-              <div id="pieChartSatisfaction" class="chart-container" style="height: 120px; width: 150px;">
+          <div id="pieChartSatisfaction" class="chart-container" style="height: 120px; width: 150px;">
 
-              </div>
-            <!-- </div> -->
-            <div class="flex-text">
-                <h3 class="title">Taux de satisfaction de la formation</h3>
-                <p class="percentage">73%</p>
-            </div>
+          </div>
+          <!-- </div> -->
+          <div class="flex-text">
+            <h3 class="title">Taux de satisfaction de la formation</h3>
+            <p class="percentage">73%</p>
+          </div>
         </div>
-      
+
       </div>
 
       <div class="chart-box" style="text-align: center; position: relative;">
@@ -1836,9 +1829,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -1858,9 +1852,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -1876,9 +1871,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="toggleAnalysis('chart1-analysis')" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -1950,9 +1946,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -2001,9 +1998,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -2057,9 +2055,10 @@
           <button class="info-button" onclick="openModalJobTargeted()" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="openModalScopeEmploi()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -2070,15 +2069,16 @@
         </h3>
         <div id="pieChart" style="width: 100%; height: 270px; margin: auto;"></div>
       </div>
-      
+
       <div class="chart-box" style="position: relative;">
         <div class="button-container">
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -2098,9 +2098,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -2148,9 +2149,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -2200,9 +2202,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="toggleAnalysis('chart6-analysis')" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -2263,12 +2266,13 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <!-- <button class="info-button secondary" onclick="openModalScopeManagerial()" title="Scope"> -->
-          <button class="info-button secondary"  onclick="toggleAnalysis('chart4-analysis')" title="Scope"> 
+          <button class="info-button secondary" onclick="toggleAnalysis('chart4-analysis')" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
               alt="Download">
           </button>
@@ -2329,9 +2333,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="toggleAnalysis('chart3-analysis')" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -2370,9 +2375,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="toggleAnalysis('chart5-analysis')" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -2420,9 +2426,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -2443,9 +2450,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -2464,9 +2472,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -2486,11 +2495,13 @@
         <div class="manual-legend2">
           <div class="legend-item2">
             <span class="legend-color2" style="background-color: #6794dc;"></span>
-            <span class="legend-label2">Femme <span style="color: #6794dc; font-size: 16px"><strong>(56%)</strong></span></span>
+            <span class="legend-label2">Femme <span
+                style="color: #6794dc; font-size: 16px"><strong>(56%)</strong></span></span>
           </div>
           <div class="legend-item2">
             <span class="legend-color2" style="background-color: #67b7dc;"></span>
-            <span class="legend-label2">Homme <span style="color: #67b7dc; font-size: 16px"><strong>(44%)</strong></span></span>
+            <span class="legend-label2">Homme <span
+                style="color: #67b7dc; font-size: 16px"><strong>(44%)</strong></span></span>
           </div>
         </div>
       </div>
@@ -2502,9 +2513,10 @@
           <button class="info-button" title="Information">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png " alt="Info">
           </button>
-          <button class="info-button primary" onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')" title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
-              alt="Download">
+          <button class="info-button primary"
+            onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
+            title="Export">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download">
           </button>
           <button class="info-button secondary" onclick="downloadChart()" title="Scope">
             <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
@@ -2535,16 +2547,22 @@
           <h4 style="color: #15616D; margin: 30px 0 10px; text-align: left;"><img
               src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png"
               style="width: 15px; height: 15px;"> Scope</h4>
-          <p style="text-align: left; color:#0E3F2D">Ce widget suit l’évolution de la situation des diplômés : emploi, recherche, études et inactivité.
+          <p style="text-align: left; color:#0E3F2D">Ce widget suit l’évolution de la situation des diplômés : emploi,
+            recherche, études et inactivité.
           </p>
           <p style="text-align: left; color:#0E3F2D">Il s’appuie sur les données des enquêtes ES1 à ES4, et montre :</p>
           <ul style="padding-left: 20px; text-align: left; color:#0E3F2D">
-            <li style="text-align: left; color:#0E3F2D"><strong>Insertion rapide dans l’emploi :</strong> majorité en emploi dès l’ES2 (105 à l’ES2, stable à 95
+            <li style="text-align: left; color:#0E3F2D"><strong>Insertion rapide dans l’emploi :</strong> majorité en
+              emploi dès l’ES2 (105 à l’ES2, stable à 95
               pour les ES3/ES4).</li>
-            <li style="text-align: left; color:#0E3F2D"><strong>Forte baisse de la recherche d’emploi :</strong> de 140 à l’ES1 à seulement 4 à l’ES4.</li>
-            <li style="text-align: left; color:#0E3F2D"><strong>Poursuite d’études très faible :</strong> entre 4 et 5 étudiants concernés par vague.</li>
-            <li style="text-align: left; color:#0E3F2D"><strong>Inactivité marginale :</strong> très peu de cas (maximum 5 à l’ES2).</li>
-            <li style="text-align: left; color:#0E3F2D"><strong>Stabilité des réponses :</strong> légère hausse des non-réponses, mais données globalement
+            <li style="text-align: left; color:#0E3F2D"><strong>Forte baisse de la recherche d’emploi :</strong> de 140
+              à l’ES1 à seulement 4 à l’ES4.</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Poursuite d’études très faible :</strong> entre 4 et 5
+              étudiants concernés par vague.</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Inactivité marginale :</strong> très peu de cas (maximum
+              5 à l’ES2).</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Stabilité des réponses :</strong> légère hausse des
+              non-réponses, mais données globalement
               fiables.</li>
           </ul>
           <div id="previewContinueStudyBar" class="chart-container"></div>
@@ -2567,16 +2585,22 @@
           <h4 style="color: #15616D; margin: 30px 0 10px; text-align: left;"><img
               src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png"
               style="width: 15px; height: 15px;"> Scope</h4>
-          <p style="text-align: left; color:#0E3F2D">Ce widget suit l’évolution de la situation des diplômés : emploi, recherche, études et inactivité.
+          <p style="text-align: left; color:#0E3F2D">Ce widget suit l’évolution de la situation des diplômés : emploi,
+            recherche, études et inactivité.
           </p>
           <p style="text-align: left; color:#0E3F2D">Il s’appuie sur les données des enquêtes ES1 à ES2, et montre :</p>
           <ul style="padding-left: 20px; text-align: left; color:#0E3F2D; padding-bottom: 30px;">
-            <li style="text-align: left; color:#0E3F2D"><strong>Insertion rapide dans l’emploi :</strong> majorité en emploi dès l’ES2 (105 à l’ES2, stable à 95
+            <li style="text-align: left; color:#0E3F2D"><strong>Insertion rapide dans l’emploi :</strong> majorité en
+              emploi dès l’ES2 (105 à l’ES2, stable à 95
               pour les ES3/ES2).</li>
-            <li style="text-align: left; color:#0E3F2D"><strong>Forte baisse de la recherche d’emploi :</strong> de 140 à l’ES1 à seulement 4 à l’ES2.</li>
-            <li style="text-align: left; color:#0E3F2D"><strong>Poursuite d’études très faible :</strong> entre 4 et 5 étudiants concernés par vague.</li>
-            <li style="text-align: left; color:#0E3F2D"><strong>Inactivité marginale :</strong> très peu de cas (maximum 5 à l’ES2).</li>
-            <li style="text-align: left; color:#0E3F2D"><strong>Stabilité des réponses :</strong> légère hausse des non-réponses, mais données globalement
+            <li style="text-align: left; color:#0E3F2D"><strong>Forte baisse de la recherche d’emploi :</strong> de 140
+              à l’ES1 à seulement 4 à l’ES2.</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Poursuite d’études très faible :</strong> entre 4 et 5
+              étudiants concernés par vague.</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Inactivité marginale :</strong> très peu de cas (maximum
+              5 à l’ES2).</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Stabilité des réponses :</strong> légère hausse des
+              non-réponses, mais données globalement
               fiables.</li>
           </ul>
         </div>
@@ -2598,15 +2622,20 @@
           <h4 style="color: #15616D; margin: 30px 0 10px; text-align: left;"><img
               src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png"
               style="width: 15px; height: 15px;"> Scope</h4>
-          <p style="text-align: left; color:#0E3F2D">Ce widget présente la progression professionnelle des diplômés vers des postes de management au fil du
+          <p style="text-align: left; color:#0E3F2D">Ce widget présente la progression professionnelle des diplômés vers
+            des postes de management au fil du
             temps.
           </p>
           <p style="text-align: left; color:#0E3F2D">Il s’appuie sur les données des enquêtes ES1 à ES4, et montre :</p>
           <ul style="padding-left: 20px; text-align: left; color:#0E3F2D; padding-bottom: 30px;">
-            <li style="text-align: left; color:#0E3F2D"><strong>Nombre croissant de managers :</strong> de 20 à 30 entre l’EE2 et l’EE4.</li>
-            <li style="text-align: left; color:#0E3F2D"><strong>Progression constante :</strong> environ +5 nouveaux managers à chaque vague.</li>
-            <li style="text-align: left; color:#0E3F2D"><strong>Encore minoritaire :</strong> environ 25 % seulement sont managers à l’EE4.</li>
-            <li style="text-align: left; color:#0E3F2D"><strong>Mobilité ascendante :</strong> le programme semble favoriser l’évolution de carrière à long
+            <li style="text-align: left; color:#0E3F2D"><strong>Nombre croissant de managers :</strong> de 20 à 30 entre
+              l’EE2 et l’EE4.</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Progression constante :</strong> environ +5 nouveaux
+              managers à chaque vague.</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Encore minoritaire :</strong> environ 25 % seulement
+              sont managers à l’EE4.</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Mobilité ascendante :</strong> le programme semble
+              favoriser l’évolution de carrière à long
               terme.</li>
           </ul>
         </div>
@@ -2628,15 +2657,22 @@
           <h4 style="color: #15616D; margin: 30px 0 10px; text-align: left;"><img
               src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png"
               style="width: 15px; height: 15px;"> Scope</h4>
-          <p style="text-align: left; color:#0E3F2D">Ce widget montre la répartition des postes visés ou non visés dans le secteur commercial, selon les premières tendances d’insertion.
+          <p style="text-align: left; color:#0E3F2D">Ce widget montre la répartition des postes visés ou non visés dans
+            le secteur commercial, selon les premières tendances d’insertion.
           </p>
-          <p style="text-align: left; color:#0E3F2D">Il s’appuie sur les données des enquêtes ES1 à ES2, et met en avant :</p>
+          <p style="text-align: left; color:#0E3F2D">Il s’appuie sur les données des enquêtes ES1 à ES2, et met en avant
+            :</p>
           <ul style="padding-left: 20px; text-align: left; color:#0E3F2D; padding-bottom: 30px;">
-            <li style="text-align: left; color:#0E3F2D"><strong>Les fonctions commerciales dominent</strong> (40 répondants, 38 %).</li>
-            <li style="text-align: left; color:#0E3F2D"><strong>Les postes non ciblés</strong> restent notables (27 répondants, 26 %).</li>
-            <li style="text-align: left; color:#0E3F2D"><strong>Autres postes ciblés</strong> plus rares (9 répondants, 9 %).</li>
-            <li style="text-align: left; color:#0E3F2D"><strong>Inactivité marginale :</strong> très peu de cas (maximum 5 à l’ES2).</li>
-            <li style="text-align: left; color:#0E3F2D">Postes spécifiques comme “Responsable commercial” (4 répondants, 4 %) et “Conseiller commercial” (24 répondants, 23 %) apparaissent régulièrement.</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Les fonctions commerciales dominent</strong> (40
+              répondants, 38 %).</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Les postes non ciblés</strong> restent notables (27
+              répondants, 26 %).</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Autres postes ciblés</strong> plus rares (9 répondants,
+              9 %).</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Inactivité marginale :</strong> très peu de cas (maximum
+              5 à l’ES2).</li>
+            <li style="text-align: left; color:#0E3F2D">Postes spécifiques comme “Responsable commercial” (4 répondants,
+              4 %) et “Conseiller commercial” (24 répondants, 23 %) apparaissent régulièrement.</li>
           </ul>
         </div>
       </div>
@@ -2657,15 +2693,22 @@
           <h4 style="color: #15616D; margin: 30px 0 10px; text-align: left;"><img
               src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644238.png"
               style="width: 15px; height: 15px;"> Scope</h4>
-          <p style="text-align: left; color:#0E3F2D">Ce widget montre la répartition des postes visés ou non visés dans le secteur commercial, selon les premières tendances d’insertion.
+          <p style="text-align: left; color:#0E3F2D">Ce widget montre la répartition des postes visés ou non visés dans
+            le secteur commercial, selon les premières tendances d’insertion.
           </p>
-          <p style="text-align: left; color:#0E3F2D">Il s’appuie sur les données des enquêtes ES1 à ES2, et met en avant :</p>
+          <p style="text-align: left; color:#0E3F2D">Il s’appuie sur les données des enquêtes ES1 à ES2, et met en avant
+            :</p>
           <ul style="padding-left: 20px; text-align: left; color:#0E3F2D; padding-bottom: 30px;">
-            <li style="text-align: left; color:#0E3F2D"><strong>Les fonctions commerciales dominent</strong> (40 répondants, 38 %).</li>
-            <li style="text-align: left; color:#0E3F2D"><strong>Les postes non ciblés</strong> restent notables (27 répondants, 26 %).</li>
-            <li style="text-align: left; color:#0E3F2D"><strong>Autres postes ciblés</strong> plus rares (9 répondants, 9 %).</li>
-            <li style="text-align: left; color:#0E3F2D"><strong>Inactivité marginale :</strong> très peu de cas (maximum 5 à l’ES2).</li>
-            <li style="text-align: left; color:#0E3F2D">Postes spécifiques comme “Responsable commercial” (4 répondants, 4 %) et “Conseiller commercial” (24 répondants, 23 %) apparaissent régulièrement.</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Les fonctions commerciales dominent</strong> (40
+              répondants, 38 %).</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Les postes non ciblés</strong> restent notables (27
+              répondants, 26 %).</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Autres postes ciblés</strong> plus rares (9 répondants,
+              9 %).</li>
+            <li style="text-align: left; color:#0E3F2D"><strong>Inactivité marginale :</strong> très peu de cas (maximum
+              5 à l’ES2).</li>
+            <li style="text-align: left; color:#0E3F2D">Postes spécifiques comme “Responsable commercial” (4 répondants,
+              4 %) et “Conseiller commercial” (24 répondants, 23 %) apparaissent régulièrement.</li>
           </ul>
           <div id="previewJobTargeted" class="chart-container"></div>
         </div>
@@ -4596,7 +4639,7 @@
       });
 
       // Make label text color match slice color
-      seriesStatut.labels.template.adapters.add("fill", function(fill, target) {
+      seriesStatut.labels.template.adapters.add("fill", function (fill, target) {
         if (target.dataItem) {
           return target.dataItem.get("slice").get("fill");
         }
@@ -4625,8 +4668,8 @@
       ]);
 
       // Set label colors to match slice colors after data is set
-      seriesStatut.onPrivate("maskRectangle", function() {
-        seriesStatut.dataItems.forEach(function(dataItem) {
+      seriesStatut.onPrivate("maskRectangle", function () {
+        seriesStatut.dataItems.forEach(function (dataItem) {
           var label = dataItem.get("label");
           var slice = dataItem.get("slice");
           if (label && slice) {
@@ -4799,7 +4842,7 @@
       });
 
       // Make label text color match slice color
-      seriesStatut.labels.template.adapters.add("fill", function(fill, target) {
+      seriesStatut.labels.template.adapters.add("fill", function (fill, target) {
         if (target.dataItem) {
           return target.dataItem.get("slice").get("fill");
         }
@@ -4829,8 +4872,8 @@
       ]);
 
       // Set label colors to match slice colors after data is set
-      seriesStatut.onPrivate("maskRectangle", function() {
-        seriesStatut.dataItems.forEach(function(dataItem) {
+      seriesStatut.onPrivate("maskRectangle", function () {
+        seriesStatut.dataItems.forEach(function (dataItem) {
           var label = dataItem.get("label");
           var slice = dataItem.get("slice");
           if (label && slice) {
@@ -4873,7 +4916,7 @@
       });
 
       // Make label text color match slice color
-      seriesStatut.labels.template.adapters.add("fill", function(fill, target) {
+      seriesStatut.labels.template.adapters.add("fill", function (fill, target) {
         if (target.dataItem) {
           return target.dataItem.get("slice").get("fill");
         }
@@ -4903,8 +4946,8 @@
       ]);
 
       // Set label colors to match slice colors after data is set
-      seriesStatut.onPrivate("maskRectangle", function() {
-        seriesStatut.dataItems.forEach(function(dataItem) {
+      seriesStatut.onPrivate("maskRectangle", function () {
+        seriesStatut.dataItems.forEach(function (dataItem) {
           var label = dataItem.get("label");
           var slice = dataItem.get("slice");
           if (label && slice) {
@@ -4946,7 +4989,7 @@
       });
 
       // Make label text color match slice color
-      seriesStatut.labels.template.adapters.add("fill", function(fill, target) {
+      seriesStatut.labels.template.adapters.add("fill", function (fill, target) {
         if (target.dataItem) {
           return target.dataItem.get("slice").get("fill");
         }
@@ -4975,8 +5018,8 @@
       ]);
 
       // Set label colors to match slice colors after data is set
-      seriesStatut.onPrivate("maskRectangle", function() {
-        seriesStatut.dataItems.forEach(function(dataItem) {
+      seriesStatut.onPrivate("maskRectangle", function () {
+        seriesStatut.dataItems.forEach(function (dataItem) {
           var label = dataItem.get("label");
           var slice = dataItem.get("slice");
           if (label && slice) {
@@ -5020,7 +5063,7 @@
       });
 
       // Make label text color match slice color
-      seriesStatut.labels.template.adapters.add("fill", function(fill, target) {
+      seriesStatut.labels.template.adapters.add("fill", function (fill, target) {
         if (target.dataItem) {
           return target.dataItem.get("slice").get("fill");
         }
@@ -5050,8 +5093,8 @@
       ]);
 
       // Set label colors to match slice colors after data is set
-      seriesStatut.onPrivate("maskRectangle", function() {
-        seriesStatut.dataItems.forEach(function(dataItem) {
+      seriesStatut.onPrivate("maskRectangle", function () {
+        seriesStatut.dataItems.forEach(function (dataItem) {
           var label = dataItem.get("label");
           var slice = dataItem.get("slice");
           if (label && slice) {
@@ -5789,27 +5832,29 @@
       }
     });
   </script>
-
   <script>
-    // Static data for sources
-    const sourceData = [
-      "RDC 2021",
-      "RDC 2022",
-      "Classe 2022",
-      "Classe Excellence 2022",
-      "RDC 2023",
-      "RDC 2024",
-      "RDC 2025",
-      "CDRH 2022",
-      "CDRH 2023",
-      "CDRH 2024",
-      "CDRH 2025",
-      "CPEB 2021",
-      "CPEB 2022",
-      "CPEB 2023",
-      "CPEB 2024",
-      "CPEB 2025"
-    ];
+    // Hierarchical data structure for sources
+    const sourceData = {
+      "RDC 2021": [],
+      "RDC 2022": ["Classe 2022", "Classe Excellence 2022"],
+      "RDC 2023": [],
+      "RDC 2024": [],
+      "RDC 2025": [],
+      "Classe 2022": [],
+      "Classe Excellence 2022": [],
+      "CDRH 2022": [],
+      "CDRH 2023": [],
+      "CDRH 2024": [],
+      "CDRH 2025": [],
+      "CPEB 2021": [],
+      "CPEB 2022": [],
+      "CPEB 2023": [],
+      "CPEB 2024": [],
+      "CPEB 2025": []
+    };
+
+    // Flat array for easy filtering
+    const flatSourceData = Object.keys(sourceData);
 
     // Static data for sections
     const sectionsData = [
@@ -5822,11 +5867,8 @@
       "Parcours (journey sankey)"
     ];
 
-    // Default selections - items that should be checked by default
-    const defaultSelectedSources = [
-      // "RDC 2022",
-    ];
-
+    // Default selections
+    const defaultSelectedSources = [];
     const defaultSelectedSections = [
       "Global",
       "Poursuite d'études",
@@ -5836,6 +5878,9 @@
       "Parcours (journey sankey)"
     ];
 
+    // Track expanded parent items
+    let expandedParents = new Set();
+
     // Initialize the sidebar
     function initializeSidebar() {
       populateSourceCheckboxes();
@@ -5844,17 +5889,183 @@
       setDefaultSelections();
     }
 
-    // Populate source checkboxes - initially hidden (empty list)
+    // Populate source checkboxes - hierarchical structure
     function populateSourceCheckboxes() {
       const container = document.getElementById('sourceCheckboxList');
       container.innerHTML = '';
 
-      sourceData.forEach((source, index) => {
-        const item = createCheckboxItem(source, `source_${index}`, 'source');
-        // Hide all items initially to show empty list
-        item.classList.add('hidden');
-        container.appendChild(item);
+      // Add Select All checkbox
+      const selectAllItem = createSelectAllCheckbox();
+      selectAllItem.classList.add('hidden');
+      container.appendChild(selectAllItem);
+
+      // Add parent items
+      Object.keys(sourceData).forEach((source, index) => {
+        if (sourceData[source].length === 0 || !sourceData[source]) {
+          // Simple item without children
+          const item = createCheckboxItem(source, `source_${index}`, 'source', false);
+          item.classList.add('hidden');
+          container.appendChild(item);
+        } else {
+          // Parent item with children
+          const parentItem = createParentCheckboxItem(source, `source_parent_${index}`, 'source');
+          parentItem.classList.add('hidden');
+          container.appendChild(parentItem);
+
+          // Add child items
+          sourceData[source].forEach((child, childIndex) => {
+            const childItem = createChildCheckboxItem(child, `source_child_${index}_${childIndex}`, 'source', source);
+            childItem.classList.add('hidden');
+            container.appendChild(childItem);
+          });
+        }
       });
+    }
+
+    // Create Select All checkbox
+    function createSelectAllCheckbox() {
+      const div = document.createElement('div');
+      div.className = 'checkbox-item select-all';
+      div.innerHTML = `
+              <input type="checkbox" id="source_select_all" onchange="toggleSelectAll()">
+              <label for="source_select_all">Sélectionner tout</label>
+          `;
+      return div;
+    }
+
+    // Create parent checkbox item
+    function createParentCheckboxItem(text, id, type) {
+      const div = document.createElement('div');
+      div.className = 'checkbox-item parent-item';
+      div.innerHTML = `
+              <input type="checkbox" id="${id}" onchange="toggleParent('${text}', '${type}')">
+              <label for="${id}">${text}</label>
+              <button class="expand-toggle" onclick="toggleExpand('${text}')">▼</button>
+          `;
+      return div;
+    }
+
+    // Create child checkbox item
+    function createChildCheckboxItem(text, id, type, parent) {
+      const div = document.createElement('div');
+      div.className = 'checkbox-item child-item';
+      div.dataset.parent = parent;
+      div.innerHTML = `
+              <input type="checkbox" id="${id}" onchange="updateCount('${type}')" checked>
+              <label for="${id}">${text}</label>
+          `;
+      // Initially hide child items
+      div.style.display = 'none';
+      return div;
+    }
+
+    // Create regular checkbox item
+    function createCheckboxItem(text, id, type, isDefaultChecked = false) {
+      const div = document.createElement('div');
+      div.className = 'checkbox-item';
+      const checkedAttribute = isDefaultChecked ? 'checked' : '';
+      div.innerHTML = `
+              <input type="checkbox" id="${id}" ${checkedAttribute} onchange="updateCount('${type}')">
+              <label for="${id}">${text}</label>
+          `;
+      return div;
+    }
+
+    // Toggle parent selection and show/hide children
+    function toggleParent(parentName, type) {
+      const parentCheckbox = document.querySelector(`input[onchange*="toggleParent('${parentName}'"]`);
+      const isChecked = parentCheckbox.checked;
+      const childItems = document.querySelectorAll(`[data-parent="${parentName}"]`);
+
+      if (isChecked) {
+        // Show child items and expand
+        expandedParents.add(parentName);
+        childItems.forEach(item => {
+          item.style.display = 'flex';
+          const checkbox = item.querySelector('input[type="checkbox"]');
+          checkbox.checked = true; // Default all child items to checked
+        });
+        updateExpandIcon(parentName, true);
+      } else {
+        // Hide child items and collapse
+        expandedParents.delete(parentName);
+        childItems.forEach(item => {
+          item.style.display = 'none';
+          const checkbox = item.querySelector('input[type="checkbox"]');
+          checkbox.checked = false;
+        });
+        updateExpandIcon(parentName, false);
+      }
+      updateCount(type);
+    }
+
+    // Toggle expand/collapse of parent items
+    function toggleExpand(parentName) {
+      const childItems = document.querySelectorAll(`[data-parent="${parentName}"]`);
+      const isExpanded = expandedParents.has(parentName);
+      const parentCheckbox = document.querySelector(`input[onchange*="toggleParent('${parentName}'"]`);
+
+      if (isExpanded) {
+        // Collapse
+        expandedParents.delete(parentName);
+        childItems.forEach(item => {
+          item.style.display = 'none';
+        });
+        updateExpandIcon(parentName, false);
+      } else {
+        // Expand only if parent is checked
+        if (parentCheckbox.checked) {
+          expandedParents.add(parentName);
+          childItems.forEach(item => {
+            item.style.display = 'flex';
+          });
+          updateExpandIcon(parentName, true);
+        }
+      }
+    }
+
+    // Update expand icon
+    function updateExpandIcon(parentName, isExpanded) {
+      const parentItem = document.querySelector(`input[onchange*="toggleParent('${parentName}'"]`).closest('.checkbox-item');
+      const expandButton = parentItem.querySelector('.expand-toggle');
+      expandButton.textContent = isExpanded ? '▲' : '▼';
+    }
+
+    // Toggle Select All functionality
+    function toggleSelectAll() {
+      const selectAllCheckbox = document.getElementById('source_select_all');
+      const isChecked = selectAllCheckbox.checked;
+      const allCheckboxes = document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]:not(#source_select_all)');
+      const visibleCheckboxes = document.querySelectorAll('#sourceCheckboxList .checkbox-item:not(.hidden) input[type="checkbox"]:not(#source_select_all)');
+
+      visibleCheckboxes.forEach(checkbox => {
+        checkbox.checked = isChecked;
+
+        // Handle parent-child relationships
+        const item = checkbox.closest('.checkbox-item');
+        if (item.classList.contains('parent-item')) {
+          const parentName = checkbox.closest('.checkbox-item').querySelector('label').textContent;
+          const childItems = document.querySelectorAll(`[data-parent="${parentName}"]`);
+
+          if (isChecked) {
+            expandedParents.add(parentName);
+            childItems.forEach(childItem => {
+              childItem.style.display = 'flex';
+              childItem.querySelector('input[type="checkbox"]').checked = true;
+            });
+            updateExpandIcon(parentName, true);
+          } else {
+            expandedParents.delete(parentName);
+            childItems.forEach(childItem => {
+              childItem.style.display = 'none';
+              childItem.querySelector('input[type="checkbox"]').checked = false;
+            });
+            updateExpandIcon(parentName, false);
+          }
+        }
+      });
+
+      updateCount('source');
     }
 
     // Populate section checkboxes
@@ -5863,80 +6074,17 @@
       container.innerHTML = '';
 
       sectionsData.forEach((section, index) => {
-        const item = createCheckboxItem(section, `section_${index}`, 'section');
+        const isDefaultChecked = defaultSelectedSections.includes(section);
+        const item = createCheckboxItem(section, `section_${index}`, 'section', isDefaultChecked);
         container.appendChild(item);
       });
-    }
-
-    // Create checkbox item
-    function createCheckboxItem(text, id, type) {
-      const div = document.createElement('div');
-      div.className = 'checkbox-item';
-      div.innerHTML = `
-    <input type="checkbox" id="${id}" onchange="updateCount('${type}')">
-    <label for="${id}">${text}</label>
-`;
-      return div;
     }
 
     // Set default selections
     function setDefaultSelections() {
-      // Set default source selections (but keep them hidden initially)
-      document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]').forEach(checkbox => {
-        const label = checkbox.nextElementSibling.textContent;
-        if (defaultSelectedSources.includes(label)) {
-          checkbox.checked = true;
-        }
-      });
-
       // Set default section selections
-      document.querySelectorAll('#sectionsCheckboxList input[type="checkbox"]').forEach(checkbox => {
-        const label = checkbox.nextElementSibling.textContent;
-        if (defaultSelectedSections.includes(label)) {
-          checkbox.checked = true;
-        }
-      });
-
-      // Update counts after setting defaults
-      updateCount('source');
       updateCount('section');
-    }
-
-    // Alternative method: Create checkbox with default checked state
-    function createCheckboxItemWithDefault(text, id, type, isDefaultChecked = false) {
-      const div = document.createElement('div');
-      div.className = 'checkbox-item';
-      const checkedAttribute = isDefaultChecked ? 'checked' : '';
-      div.innerHTML = `
-    <input type="checkbox" id="${id}" ${checkedAttribute} onchange="updateCount('${type}')">
-    <label for="${id}">${text}</label>
-`;
-      return div;
-    }
-
-    // Alternative populate functions using the default checked method
-    function populateSourceCheckboxesWithDefaults() {
-      const container = document.getElementById('sourceCheckboxList');
-      container.innerHTML = '';
-
-      sourceData.forEach((source, index) => {
-        const isDefaultChecked = defaultSelectedSources.includes(source);
-        const item = createCheckboxItemWithDefault(source, `source_${index}`, 'source', isDefaultChecked);
-        // Hide all items initially
-        item.classList.add('hidden');
-        container.appendChild(item);
-      });
-    }
-
-    function populateSectionCheckboxesWithDefaults() {
-      const container = document.getElementById('sectionsCheckboxList');
-      container.innerHTML = '';
-
-      sectionsData.forEach((section, index) => {
-        const isDefaultChecked = defaultSelectedSections.includes(section);
-        const item = createCheckboxItemWithDefault(section, `section_${index}`, 'section', isDefaultChecked);
-        container.appendChild(item);
-      });
+      updateCount('source');
     }
 
     // Setup typeahead functionality
@@ -5945,13 +6093,13 @@
       input.addEventListener('input', filterSources);
     }
 
-    // Filter sources - empty list initially, show filtered results only after 2+ characters
+    // Filter sources - empty list initially, show filtered results after 2+ characters
     function filterSources() {
       const input = document.getElementById('sourceTypeahead');
       const filter = input.value.toLowerCase();
       const items = document.querySelectorAll('#sourceCheckboxList .checkbox-item');
 
-      // If less than 2 characters, hide all items (keep list empty)
+      // If less than 2 characters, hide all items
       if (filter.length < 2) {
         items.forEach(item => {
           item.classList.add('hidden');
@@ -5959,13 +6107,36 @@
         return;
       }
 
+      // Show Select All when filtering
+      const selectAllItem = document.getElementById('source_select_all').closest('.checkbox-item');
+      selectAllItem.classList.remove('hidden');
+
       // Show filtered items when 2 or more characters are typed
       items.forEach(item => {
+        if (item.classList.contains('select-all')) return;
+
         const label = item.querySelector('label').textContent.toLowerCase();
         if (label.includes(filter)) {
           item.classList.remove('hidden');
+
+          // If this is a parent item and it's checked, show its children
+          if (item.classList.contains('parent-item')) {
+            const parentName = item.querySelector('label').textContent;
+            const parentCheckbox = item.querySelector('input[type="checkbox"]');
+            if (parentCheckbox.checked && expandedParents.has(parentName)) {
+              const childItems = document.querySelectorAll(`[data-parent="${parentName}"]`);
+              childItems.forEach(childItem => {
+                childItem.classList.remove('hidden');
+                childItem.style.display = 'flex';
+              });
+            }
+          }
         } else {
           item.classList.add('hidden');
+          // Hide child items if parent is hidden
+          if (item.classList.contains('child-item')) {
+            item.style.display = 'none';
+          }
         }
       });
     }
@@ -5974,23 +6145,28 @@
     function updateCount(type) {
       const container = type === 'source' ? '#sourceCheckboxList' : '#sectionsCheckboxList';
       const countElement = type === 'source' ? 'sourceCount' : 'sectionsCount';
-      const checkboxes = document.querySelectorAll(`${container} input[type="checkbox"]:checked`);
+      const checkboxes = document.querySelectorAll(`${container} input[type="checkbox"]:checked:not(#source_select_all)`);
 
       const count = checkboxes.length;
       const text = type === 'source' ? 'source(s) sélectionnée(s)' : 'section(s) sélectionnée(s)';
       document.getElementById(countElement).textContent = `${count} ${text}`;
     }
 
-    // Clear source filters - return to empty state
+    // Clear source filters
     function clearSourceFilters() {
       document.getElementById('sourceTypeahead').value = '';
       document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]').forEach(cb => {
         cb.checked = false;
       });
-      // Hide all items when clearing (return to empty state)
+      // Hide all child items
+      document.querySelectorAll('#sourceCheckboxList .child-item').forEach(item => {
+        item.style.display = 'none';
+      });
+      // Hide all items when clearing
       document.querySelectorAll('#sourceCheckboxList .checkbox-item').forEach(item => {
         item.classList.add('hidden');
       });
+      expandedParents.clear();
       updateCount('source');
     }
 
@@ -6002,29 +6178,10 @@
       updateCount('section');
     }
 
-    // Reset to default selections
-    function resetToDefaults() {
-      // Clear all selections first
-      document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]').forEach(cb => {
-        cb.checked = false;
-      });
-      document.querySelectorAll('#sectionsCheckboxList input[type="checkbox"]').forEach(cb => {
-        cb.checked = false;
-      });
-
-      // Hide all source items (return to empty state)
-      document.querySelectorAll('#sourceCheckboxList .checkbox-item').forEach(item => {
-        item.classList.add('hidden');
-      });
-
-      // Set defaults
-      setDefaultSelections();
-    }
-
     // Get selected sources
     function getSelectedSources() {
       const selected = [];
-      document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]:checked').forEach(cb => {
+      document.querySelectorAll('#sourceCheckboxList input[type="checkbox"]:checked:not(#source_select_all)').forEach(cb => {
         selected.push(cb.nextElementSibling.textContent);
       });
       return selected;
@@ -6039,7 +6196,7 @@
       return selected;
     }
 
-    // Debug function to see selections
+    // Debug function
     function logSelections() {
       console.log('Selected Sources:', getSelectedSources());
       console.log('Selected Sections:', getSelectedSections());
