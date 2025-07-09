@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,6 +9,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
+import { AuthService, User } from '../../core/auth/auth.service';
 
 declare var am5: any;
 declare var am5xy: any;
@@ -27,7 +32,9 @@ declare var am5geodata_worldLow: any;
         MatInputModule,
         MatSelectModule,
         MatCheckboxModule,
-        MatSlideToggleModule
+        MatSlideToggleModule,
+        MatMenuModule,
+        MatSnackBarModule
     ],
     template: `
         <div class="flex h-screen bg-gray-50 dark:bg-gray-900">
@@ -36,12 +43,26 @@ declare var am5geodata_worldLow: any;
                 <div class="p-6">
                     <!-- Logo -->
                     <div class="text-center mb-8">
-                        <div class="inline-flex items-center justify-center w-12 h-12 bg-white bg-opacity-20 rounded-lg mb-3">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
-                        </div>
+                        <img 
+                            class="mx-auto h-12 w-auto mb-3" 
+                            src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/Nextera%20Logo%20Career%20Insight%20White%20text.png"
+                            alt="Nextera Logo"
+                        />
                         <h1 class="text-xl font-bold">DataViz Dashboard</h1>
+                    </div>
+
+                    <!-- User Info -->
+                    <div class="mb-6 p-4 bg-white bg-opacity-20 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-white bg-opacity-30 rounded-full flex items-center justify-center">
+                                <mat-icon class="text-white">person</mat-icon>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium">{{ currentUser?.name }}</p>
+                                <p class="text-xs opacity-75">{{ currentUser?.email }}</p>
+                                <p class="text-xs opacity-75 capitalize">{{ currentUser?.role }}</p>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Filters -->
@@ -126,9 +147,33 @@ declare var am5geodata_worldLow: any;
             <div class="flex-1 overflow-auto">
                 <div class="p-6">
                     <!-- Header -->
-                    <div class="mb-6">
-                        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Dashboard Overview</h1>
-                        <p class="text-gray-600 dark:text-gray-400">Real-time data visualization and analytics</p>
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Dashboard Overview</h1>
+                            <p class="text-gray-600 dark:text-gray-400">Real-time data visualization and analytics</p>
+                        </div>
+                        
+                        <!-- User Menu -->
+                        <div class="flex items-center space-x-4">
+                            <button 
+                                mat-icon-button 
+                                [matMenuTriggerFor]="userMenu"
+                                class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                            >
+                                <mat-icon>account_circle</mat-icon>
+                            </button>
+                            <mat-menu #userMenu="matMenu">
+                                <div class="px-4 py-2 border-b border-gray-200">
+                                    <p class="text-sm font-medium">{{ currentUser?.name }}</p>
+                                    <p class="text-xs text-gray-500">{{ currentUser?.email }}</p>
+                                    <p class="text-xs text-gray-500 capitalize">{{ currentUser?.role }}</p>
+                                </div>
+                                <button mat-menu-item (click)="logout()">
+                                    <mat-icon>logout</mat-icon>
+                                    <span>Logout</span>
+                                </button>
+                            </mat-menu>
+                        </div>
                     </div>
 
                     <!-- Stats Cards -->
@@ -258,6 +303,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
     searchTerm: string = '';
     selectedDateRange: string = '30';
+    currentUser: User | null = null;
     filters = {
         categories: {
             sales: true,
@@ -273,29 +319,43 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         }
     };
 
-    constructor() {}
+    constructor(
+        private authService: AuthService,
+        private router: Router,
+        private snackBar: MatSnackBar
+    ) {}
 
     ngOnInit(): void {
-        // Initialize component
+        this.currentUser = this.authService.getCurrentUser();
+        if (!this.currentUser) {
+            this.router.navigate(['/auth/login']);
+        }
     }
 
     ngAfterViewInit(): void {
         this.initializeCharts();
     }
 
+    logout(): void {
+        this.authService.logout();
+        this.snackBar.open('Logged out successfully', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top'
+        });
+        this.router.navigate(['/auth/login']);
+    }
+
     onSearchChange(): void {
-        // Handle search changes
         console.log('Search term:', this.searchTerm);
     }
 
     onDateRangeChange(): void {
-        // Handle date range changes
         console.log('Date range:', this.selectedDateRange);
         this.updateCharts();
     }
 
     onFilterChange(): void {
-        // Handle filter changes
         console.log('Filters:', this.filters);
         this.updateCharts();
     }
@@ -489,7 +549,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
 
     private updateCharts(): void {
-        // Update charts based on filters
         console.log('Updating charts with new filters');
     }
 } 
