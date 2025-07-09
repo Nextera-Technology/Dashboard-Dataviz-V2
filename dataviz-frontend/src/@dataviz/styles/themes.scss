@@ -1,0 +1,133 @@
+/* Dataviz Themes */
+
+/* Default Theme */
+.theme-default {
+    --primary-color: #3b82f6;
+    --primary-light: #60a5fa;
+    --primary-dark: #1d4ed8;
+    --accent-color: #10b981;
+    --accent-light: #34d399;
+    --accent-dark: #059669;
+    --warn-color: #ef4444;
+    --warn-light: #f87171;
+    --warn-dark: #dc2626;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9fafb;
+    --border-color: #e5e7eb;
+}
+
+/* Brand Theme */
+.theme-brand {
+    --primary-color: #8FD2D2;
+    --primary-light: #A0E6E6;
+    --primary-dark: #6BC4C4;
+    --accent-color: #15616D;
+    --accent-light: #1A7A8A;
+    --accent-dark: #0E3F2D;
+    --warn-color: #ef4444;
+    --warn-light: #f87171;
+    --warn-dark: #dc2626;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9fafb;
+    --border-color: #e5e7eb;
+}
+
+/* Teal Theme */
+.theme-teal {
+    --primary-color: #14b8a6;
+    --primary-light: #2dd4bf;
+    --primary-dark: #0f766e;
+    --accent-color: #0891b2;
+    --accent-light: #22d3ee;
+    --accent-dark: #0e7490;
+    --warn-color: #ef4444;
+    --warn-light: #f87171;
+    --warn-dark: #dc2626;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9fafb;
+    --border-color: #e5e7eb;
+}
+
+/* Dark Theme */
+.theme-dark {
+    --primary-color: #3b82f6;
+    --primary-light: #60a5fa;
+    --primary-dark: #1d4ed8;
+    --accent-color: #10b981;
+    --accent-light: #34d399;
+    --accent-dark: #059669;
+    --warn-color: #ef4444;
+    --warn-light: #f87171;
+    --warn-dark: #dc2626;
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --bg-primary: #111827;
+    --bg-secondary: #1f2937;
+    --border-color: #374151;
+}
+
+/* Navy Theme */
+.theme-navy {
+    --primary-color: #1e40af;
+    --primary-light: #3b82f6;
+    --primary-dark: #1e3a8a;
+    --accent-color: #7c3aed;
+    --accent-light: #a855f7;
+    --accent-dark: #5b21b6;
+    --warn-color: #ef4444;
+    --warn-light: #f87171;
+    --warn-dark: #dc2626;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9fafb;
+    --border-color: #e5e7eb;
+}
+
+/* Apply theme variables */
+* {
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+}
+
+.text-primary {
+    color: var(--primary-color);
+}
+
+.text-accent {
+    color: var(--accent-color);
+}
+
+.text-warn {
+    color: var(--warn-color);
+}
+
+.bg-primary {
+    background-color: var(--primary-color);
+}
+
+.bg-accent {
+    background-color: var(--accent-color);
+}
+
+.bg-warn {
+    background-color: var(--warn-color);
+}
+
+.border-primary {
+    border-color: var(--primary-color);
+}
+
+.border-accent {
+    border-color: var(--accent-color);
+}
+
+.border-warn {
+    border-color: var(--warn-color);
+} 

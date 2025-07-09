@@ -1,0 +1,126 @@
+/* Vendor styles */
+@import '@angular/material/prebuilt-themes/azure-blue.css';
+
+/* Perfect Scrollbar */
+.ps {
+    position: relative;
+    overflow: hidden;
+}
+
+.ps__rail-x {
+    position: absolute;
+    bottom: 0;
+    height: 15px;
+    z-index: 1;
+}
+
+.ps__rail-y {
+    position: absolute;
+    right: 0;
+    width: 15px;
+    z-index: 1;
+}
+
+.ps__thumb-x {
+    background-color: #aaa;
+    border-radius: 6px;
+    transition: background-color 0.2s linear;
+    height: 6px;
+    bottom: 2px;
+    position: absolute;
+}
+
+.ps__thumb-y {
+    background-color: #aaa;
+    border-radius: 6px;
+    transition: background-color 0.2s linear;
+    width: 6px;
+    right: 2px;
+    position: absolute;
+}
+
+.ps__rail-x:hover,
+.ps__rail-y:hover,
+.ps__rail-x:focus,
+.ps__rail-y:focus,
+.ps__rail-x.ps--clicking,
+.ps__rail-y.ps--clicking {
+    background-color: transparent;
+}
+
+.ps__rail-x:hover > .ps__thumb-x,
+.ps__rail-y:hover > .ps__thumb-y,
+.ps__rail-x:focus > .ps__thumb-x,
+.ps__rail-y:focus > .ps__thumb-y,
+.ps__rail-x.ps--clicking .ps__thumb-x,
+.ps__rail-y.ps--clicking .ps__thumb-y {
+    background-color: #999;
+}
+
+/* AmCharts styles */
+.am5-chart-div {
+    font-family: 'Inter', sans-serif;
+}
+
+.am5-tooltip {
+    background: rgba(0, 0, 0, 0.8) !important;
+    color: white !important;
+    border-radius: 4px !important;
+    padding: 8px 12px !important;
+    font-size: 12px !important;
+}
+
+/* Angular Material overrides */
+.mat-mdc-card {
+    border-radius: 8px !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+}
+
+.mat-mdc-card-header {
+    padding: 16px 24px !important;
+    border-bottom: 1px solid #e5e7eb !important;
+}
+
+.mat-mdc-card-content {
+    padding: 16px 24px !important;
+}
+
+.mat-mdc-button {
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    text-transform: none !important;
+}
+
+.mat-mdc-form-field {
+    width: 100% !important;
+}
+
+.mat-mdc-form-field-subscript-wrapper {
+    display: none !important;
+}
+
+/* Dark mode overrides */
+.dark .mat-mdc-card {
+    background-color: #1f2937 !important;
+    color: white !important;
+}
+
+.dark .mat-mdc-card-header {
+    border-bottom-color: #374151 !important;
+}
+
+.dark .mat-mdc-form-field-label {
+    color: #d1d5db !important;
+}
+
+.dark .mat-mdc-input-element {
+    color: white !important;
+}
+
+.dark .mat-mdc-form-field-outline {
+    color: #6b7280 !important;
+}
+
+.dark .mat-mdc-form-field-outline-thick {
+    color: #3b82f6 !important;
+} 
