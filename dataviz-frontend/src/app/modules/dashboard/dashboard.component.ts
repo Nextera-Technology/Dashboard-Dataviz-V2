@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,6 +28,7 @@ declare var am5geodata_worldLow: any;
   imports: [
     CommonModule,
     FormsModule,
+    RouterModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -105,6 +106,28 @@ declare var am5geodata_worldLow: any;
           </div>
           <div class="selected-count">{{ selectedSectionsCount }} section(s) sélectionnée(s)</div>
           <button class="clear-filters" (click)="applySectionFilters()">Appliquer les Filtres</button>
+        </div>
+
+        <!-- Admin Navigation Section -->
+        <div class="admin-section" *ngIf="isAdminUser()">
+          <div class="section-title admin-title">
+            <span class="section-icon">⚙️</span>
+            Administration
+          </div>
+          <div class="admin-menu">
+            <a routerLink="/admin/users" class="admin-menu-item">
+              <mat-icon>people</mat-icon>
+              <span>User Management</span>
+            </a>
+            <a routerLink="/admin/widgets" class="admin-menu-item">
+              <mat-icon>dashboard</mat-icon>
+              <span>Widget Settings</span>
+            </a>
+            <a routerLink="/admin/sections" class="admin-menu-item">
+              <mat-icon>view_list</mat-icon>
+              <span>Section Settings</span>
+            </a>
+          </div>
         </div>
       </aside>
 
@@ -450,6 +473,63 @@ declare var am5geodata_worldLow: any;
       padding: 0;
     }
 
+    /* Admin Section */
+    .admin-section {
+      margin-bottom: 25px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      border-top: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .admin-title {
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .admin-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .admin-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .admin-menu-item:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(4px);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .admin-menu-item mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    .admin-menu-item span {
+      flex: 1;
+    }
+
     /* Responsive Design */
     @media (max-width: 1024px) {
       .sidebar {
@@ -580,5 +660,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       verticalPosition: 'top'
     });
     this.router.navigate(['/auth/login']);
+  }
+
+  isAdminUser(): boolean {
+    return this.currentUser?.role === 'operator';
   }
 } 
