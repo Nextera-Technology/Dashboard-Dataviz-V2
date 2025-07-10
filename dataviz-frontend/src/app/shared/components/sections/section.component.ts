@@ -4,11 +4,17 @@ import { DashboardSection, DashboardWidget } from '../../services/dashboard.serv
 import { MetricWidgetComponent } from '../widgets/metric-widget.component';
 import { PieChartWidgetComponent } from '../widgets/pie-chart-widget.component';
 import { BarChartWidgetComponent } from '../widgets/bar-chart-widget.component';
+import { ColumnChartWidgetComponent } from '../widgets/column-chart-widget.component';
+import { LineChartWidgetComponent } from '../widgets/line-chart-widget.component';
+import { SankeyChartWidgetComponent } from '../widgets/sankey-chart-widget.component';
+import { TextWidgetComponent } from '../widgets/text-widget.component';
+import { StatusGridWidgetComponent } from '../widgets/status-grid-widget.component';
+import { SimpleTableWidgetComponent } from '../widgets/simple-table-widget.component';
 
 @Component({
   selector: 'app-section',
   standalone: true,
-  imports: [CommonModule, MetricWidgetComponent, PieChartWidgetComponent, BarChartWidgetComponent],
+  imports: [CommonModule, MetricWidgetComponent, PieChartWidgetComponent, BarChartWidgetComponent, ColumnChartWidgetComponent, LineChartWidgetComponent, SankeyChartWidgetComponent, TextWidgetComponent, StatusGridWidgetComponent, SimpleTableWidgetComponent],
   template: `
     <div class="section-container">
       <!-- Section Header -->
@@ -37,10 +43,52 @@ import { BarChartWidgetComponent } from '../widgets/bar-chart-widget.component';
             [widget]="widget"
             class="widget-item">
           </app-bar-chart-widget>
+
+          <!-- Column Chart Widget -->
+          <app-column-chart-widget 
+            *ngIf="widget.type === 'column'"
+            [widget]="widget"
+            class="widget-item">
+          </app-column-chart-widget>
+
+          <!-- Line Chart Widget -->
+          <app-line-chart-widget 
+            *ngIf="widget.type === 'line'"
+            [widget]="widget"
+            class="widget-item">
+          </app-line-chart-widget>
+
+          <!-- Sankey Chart Widget -->
+          <app-sankey-chart-widget 
+            *ngIf="widget.type === 'sankey'"
+            [widget]="widget"
+            class="widget-item">
+          </app-sankey-chart-widget>
+
+          <!-- Text Widget -->
+          <app-text-widget 
+            *ngIf="widget.type === 'text'"
+            [widget]="widget"
+            class="widget-item">
+          </app-text-widget>
+
+          <!-- Status Grid Widget -->
+          <app-status-grid-widget 
+            *ngIf="widget.type === 'status-grid'"
+            [widget]="widget"
+            class="widget-item">
+          </app-status-grid-widget>
+
+          <!-- Simple Table Widget -->
+          <app-simple-table-widget 
+            *ngIf="widget.type === 'simple-table'"
+            [widget]="widget"
+            class="widget-item">
+          </app-simple-table-widget>
           
           <!-- Placeholder for other widget types -->
           <div 
-            *ngIf="widget.type !== 'metric' && widget.type !== 'pie' && widget.type !== 'bar'"
+            *ngIf="widget.type !== 'metric' && widget.type !== 'pie' && widget.type !== 'bar' && widget.type !== 'column' && widget.type !== 'line' && widget.type !== 'sankey' && widget.type !== 'text' && widget.type !== 'status-grid' && widget.type !== 'simple-table'"
             class="widget-placeholder"
             [style.grid-column]="getWidgetSpan(widget.cardSize)">
             <div class="placeholder-content">
