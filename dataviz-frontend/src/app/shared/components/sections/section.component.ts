@@ -10,11 +10,12 @@ import { SankeyChartWidgetComponent } from '../widgets/sankey-chart-widget.compo
 import { TextWidgetComponent } from '../widgets/text-widget.component';
 import { StatusGridWidgetComponent } from '../widgets/status-grid-widget.component';
 import { SimpleTableWidgetComponent } from '../widgets/simple-table-widget.component';
+import { MapWidgetComponent } from '../widgets/map-widget.component';
 
 @Component({
   selector: 'app-section',
   standalone: true,
-  imports: [CommonModule, MetricWidgetComponent, PieChartWidgetComponent, BarChartWidgetComponent, ColumnChartWidgetComponent, LineChartWidgetComponent, SankeyChartWidgetComponent, TextWidgetComponent, StatusGridWidgetComponent, SimpleTableWidgetComponent],
+  imports: [CommonModule, MetricWidgetComponent, PieChartWidgetComponent, BarChartWidgetComponent, ColumnChartWidgetComponent, LineChartWidgetComponent, SankeyChartWidgetComponent, TextWidgetComponent, StatusGridWidgetComponent, SimpleTableWidgetComponent, MapWidgetComponent],
   template: `
     <div class="section-container">
       <!-- Section Header -->
@@ -85,10 +86,17 @@ import { SimpleTableWidgetComponent } from '../widgets/simple-table-widget.compo
             [widget]="widget"
             class="widget-item">
           </app-simple-table-widget>
+
+          <!-- Map Widget -->
+          <app-map-widget 
+            *ngIf="widget.type === 'map'"
+            [widget]="widget"
+            class="widget-item">
+          </app-map-widget>
           
           <!-- Placeholder for other widget types -->
           <div 
-            *ngIf="widget.type !== 'metric' && widget.type !== 'pie' && widget.type !== 'bar' && widget.type !== 'column' && widget.type !== 'line' && widget.type !== 'sankey' && widget.type !== 'text' && widget.type !== 'status-grid' && widget.type !== 'simple-table'"
+            *ngIf="widget.type !== 'metric' && widget.type !== 'pie' && widget.type !== 'bar' && widget.type !== 'column' && widget.type !== 'line' && widget.type !== 'sankey' && widget.type !== 'text' && widget.type !== 'status-grid' && widget.type !== 'simple-table' && widget.type !== 'map'"
             class="widget-placeholder"
             [style.grid-column]="getWidgetSpan(widget.cardSize)">
             <div class="placeholder-content">

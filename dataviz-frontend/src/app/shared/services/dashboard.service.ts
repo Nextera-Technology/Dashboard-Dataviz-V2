@@ -23,7 +23,7 @@ export interface DashboardWidget {
   id: string;
   name: string;
   title: string;
-  type: 'metric' | 'pie' | 'bar' | 'line' | 'column' | 'sankey' | 'table' | 'text' | 'status-grid' | 'simple-table';
+  type: 'metric' | 'pie' | 'bar' | 'line' | 'column' | 'sankey' | 'table' | 'text' | 'status-grid' | 'simple-table' | 'map';
   chartType?: string;
   cardSize: 'small' | 'medium' | 'large';
   visible: boolean;
@@ -408,6 +408,38 @@ export class DashboardService {
                   </ol>
                 `,
                 background: 'rgb(248, 249, 250)'
+              },
+              actions: [
+                { type: 'info', title: 'Information', icon: 'paragraph.png' },
+                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
+                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
+              ]
+            },
+            {
+              id: 'repartition-geographique',
+              name: 'repartition-geographique',
+              title: 'Étudiants par région',
+              type: 'map',
+              chartType: 'france',
+              cardSize: 'large',
+              visible: true,
+              scope: '6',
+              data: {
+                mapData: {
+                  "FR-PAC": 66, // Provence-Alpes-Côte d'Azur
+                  "FR-OCC": 41, // Occitanie
+                  "FR-GES": 34, // Grand Est
+                  "FR-IDF": 34, // Île-de-France
+                  "FR-NOR": 33, // Normandie
+                  "FR-ARA": 31, // Auvergne-Rhône-Alpes
+                  "FR-HDF": 30, // Hauts-de-France
+                  "FR-NAQ": 22, // Nouvelle-Aquitaine
+                  "FR-PDL": 14, // Pays de la Loire
+                  "FR-BRE": 12, // Bretagne
+                  "FR-BFC": 1, // Bourgogne-Franche-Comté
+                  "FR-CVL": 0, // Centre-Val de Loire
+                  "FR-COR": 0, // Corse
+                }
               },
               actions: [
                 { type: 'info', title: 'Information', icon: 'paragraph.png' },
