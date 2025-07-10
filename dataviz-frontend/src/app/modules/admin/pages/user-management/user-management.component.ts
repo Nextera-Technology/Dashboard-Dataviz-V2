@@ -10,17 +10,10 @@ import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { UserFormDialogComponent, UserFormData } from '../../components/user-form-dialog/user-form-dialog.component';
 import { AdminLayoutComponent } from '../../components/admin-layout/admin-layout.component';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: 'operator' | 'visitor';
-  lastLogin?: Date;
-  status: 'active' | 'inactive';
-}
+import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-user-management',
@@ -37,6 +30,7 @@ interface User {
     MatMenuModule,
     MatTooltipModule,
     MatChipsModule,
+    MatSnackBarModule,
     AdminLayoutComponent
   ],
   template: `
@@ -182,7 +176,11 @@ export class UserManagementComponent implements OnInit {
   dataSource = new MatTableDataSource<User>();
   displayedColumns: string[] = ['name', 'email', 'role', 'status', 'lastLogin', 'actions'];
 
-  constructor(private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private authService: AuthService,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnInit(): void {
     this.loadUsers();
@@ -193,14 +191,14 @@ export class UserManagementComponent implements OnInit {
   }
 
   loadUsers(): void {
-    // Mock data - replace with actual API call
-    const users: User[] = [
-      { id: '1', name: 'John Doe', email: 'john@example.com', role: 'operator', status: 'active', lastLogin: new Date() },
-      { id: '2', name: 'Jane Smith', email: 'jane@example.com', role: 'visitor', status: 'active', lastLogin: new Date(Date.now() - 86400000) },
-      { id: '3', name: 'Bob Johnson', email: 'bob@example.com', role: 'visitor', status: 'inactive' },
-      { id: '4', name: 'Alice Brown', email: 'alice@example.com', role: 'operator', status: 'active', lastLogin: new Date(Date.now() - 172800000) }
-    ];
-    this.dataSource.data = users;
+    this.authService.getAllUsers().subscribe({
+      next: (users) => {
+        this.dataSource.data = users;
+      },
+      error: (error) => {
+        this.snackBar.open('Error loading users: ' + error.message, 'Close', { duration: 3000 });
+      }
+    });
   }
 
   openAddDialog(): void {
@@ -230,34 +228,69 @@ export class UserManagementComponent implements OnInit {
   }
 
   addUser(data: UserFormData): void {
-    const newUser: User = {
-      id: Date.now().toString(),
+    const createData: CreateUserData = {
       name: data.name,
       email: data.email,
-      role: data.role,
-      status: 'active'
+      password: 'default123', // In real app, generate or ask for password
+      role: data.role
     };
-    
-    this.dataSource.data = [...this.dataSource.data, newUser];
+
+    this.authService.createUser(createData).subscribe({
+      next: (newUser) => {
+        this.snackBar.open('User created successfully', 'Close', { duration: 3000 });
+        this.loadUsers(); // Reload the list
+      },
+      error: (error) => {
+        this.snackBar.open('Error creating user: ' + error.message, 'Close', { duration: 3000 });
+      }
+    });
   }
 
   updateUser(data: UserFormData): void {
-    const index = this.dataSource.data.findIndex(u => u.id === data.id);
-    if (index !== -1) {
-      this.dataSource.data[index] = { ...this.dataSource.data[index], ...data };
-      this.dataSource.data = [...this.dataSource.data];
-    }
+    const updateData: UpdateUserData = {
+      id: data.id!,
+      name: data.name,
+      email: data.email,
+      role: data.role
+    };
+
+    this.authService.updateUser(updateData).subscribe({
+      next: (updatedUser) => {
+        this.snackBar.open('User updated successfully', 'Close', { duration: 3000 });
+        this.loadUsers(); // Reload the list
+      },
+      error: (error) => {
+        this.snackBar.open('Error updating user: ' + error.message, 'Close', { duration: 3000 });
+      }
+    });
   }
 
   deleteUser(user: User): void {
     if (confirm(`Are you sure you want to delete user "${user.name}"?`)) {
-      this.dataSource.data = this.dataSource.data.filter(u => u.id !== user.id);
+      this.authService.deleteUser(user.id).subscribe({
+        next: (success) => {
+          if (success) {
+            this.snackBar.open('User deleted successfully', 'Close', { duration: 3000 });
+            this.loadUsers(); // Reload the list
+          }
+        },
+        error: (error) => {
+          this.snackBar.open('Error deleting user: ' + error.message, 'Close', { duration: 3000 });
+        }
+      });
     }
   }
 
   toggleUserStatus(user: User): void {
-    user.status = user.status === 'active' ? 'inactive' : 'active';
-    this.dataSource.data = [...this.dataSource.data];
+    this.authService.toggleUserStatus(user.id).subscribe({
+      next: (updatedUser) => {
+        this.snackBar.open(`User ${updatedUser.status === 'active' ? 'activated' : 'deactivated'} successfully`, 'Close', { duration: 3000 });
+        this.loadUsers(); // Reload the list
+      },
+      error: (error) => {
+        this.snackBar.open('Error updating user status: ' + error.message, 'Close', { duration: 3000 });
+      }
+    });
   }
 
   getRoleColor(role: string): string {

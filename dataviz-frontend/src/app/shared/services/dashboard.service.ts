@@ -1,43 +1,45 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { delay, filter } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { delay } from 'rxjs/operators';
 
 export interface DashboardData {
-  id: string;
-  name: string;
   title: string;
   subtitle: string;
-  source: string;
-  sections: DashboardSection[];
+  sections: Section[];
 }
 
-export interface DashboardSection {
+export interface Section {
   id: string;
-  name: string;
   title: string;
   background: string;
-  widgets: DashboardWidget[];
+  visible: boolean;
+  widgets: Widget[];
 }
 
-export interface DashboardWidget {
+export interface Widget {
   id: string;
-  name: string;
   title: string;
-  type: 'metric' | 'pie' | 'bar' | 'line' | 'column' | 'sankey' | 'table' | 'text' | 'status-grid' | 'simple-table' | 'map';
-  chartType?: string;
-  cardSize: 'small' | 'medium' | 'large';
+  type: 'metric' | 'pie' | 'bar' | 'line' | 'column' | 'sankey' | 'table' | 'text' | 'map';
+  size: 'small' | 'medium' | 'large';
+  dataSource: string;
   visible: boolean;
-  scope: string;
-  data: any;
+  section: string;
+  lastUpdated?: Date;
+  data?: any;
   actions?: WidgetAction[];
 }
 
+// Legacy interface names for backward compatibility
+export interface DashboardSection extends Section {}
+export interface DashboardWidget extends Widget {}
+
 export interface WidgetAction {
-  type: 'info' | 'export' | 'scope' | 'download';
+  id: string;
+  type: string;
   title: string;
+  label: string;
   icon: string;
-  url?: string;
-  action?: string;
+  action: string;
 }
 
 export interface FilterData {
@@ -57,680 +59,426 @@ export interface SectionFilter {
   selected: boolean;
 }
 
+// Admin interfaces
+export interface CreateSectionData {
+  title: string;
+  background: string;
+}
+
+export interface UpdateSectionData {
+  id: string;
+  title: string;
+  background: string;
+}
+
+export interface CreateWidgetData {
+  title: string;
+  type: 'metric' | 'pie' | 'bar' | 'line' | 'column' | 'sankey' | 'table' | 'text' | 'map';
+  size: 'small' | 'medium' | 'large';
+  dataSource: string;
+  section: string;
+}
+
+export interface UpdateWidgetData {
+  id: string;
+  title: string;
+  type: 'metric' | 'pie' | 'bar' | 'line' | 'column' | 'sankey' | 'table' | 'text' | 'map';
+  size: 'small' | 'medium' | 'large';
+  dataSource: string;
+  section: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class DashboardService {
-  private dashboardSubject = new BehaviorSubject<DashboardData | null>(null);
-  private filtersSubject = new BehaviorSubject<FilterData | null>(null);
-  
-  public dashboard$ = this.dashboardSubject.asObservable();
-  public filters$ = this.filtersSubject.asObservable();
+  // Mock data storage
+  private dashboardData: DashboardData = {
+    title: 'Career Insight Dashboard',
+    subtitle: 'Data source: Career Survey 2024',
+    sections: [
+      {
+        id: '1',
+        title: 'Overview',
+        background: '#f5f5f5',
+        visible: true,
+        widgets: [
+          {
+            id: '1',
+            title: 'Total Students',
+            type: 'metric',
+            size: 'small',
+            dataSource: 'student-survey',
+            visible: true,
+            section: 'Overview',
+            data: {
+              value: 1250,
+              subtitle: 'Active students',
+              background: '#e8f5e8'
+            }
+          },
+          {
+            id: '2',
+            title: 'Success Rate',
+            type: 'metric',
+            size: 'small',
+            dataSource: 'certification-data',
+            visible: true,
+            section: 'Overview',
+            data: {
+              value: 87,
+              subtitle: 'Certification success',
+              background: '#fff3e0'
+            }
+          },
+          {
+            id: '3',
+            title: 'Employment Rate',
+            type: 'metric',
+            size: 'small',
+            dataSource: 'employment-survey',
+            visible: true,
+            section: 'Overview',
+            data: {
+              value: 92,
+              subtitle: 'Graduates employed',
+              background: '#e3f2fd'
+            }
+          },
+          {
+            id: '4',
+            title: 'Average Salary',
+            type: 'metric',
+            size: 'small',
+            dataSource: 'salary-data',
+            visible: true,
+            section: 'Overview',
+            data: {
+              value: 65000,
+              subtitle: 'Annual average',
+              background: '#f3e5f5'
+            }
+          }
+        ]
+      },
+      {
+        id: '2',
+        title: 'Demographics',
+        background: '#e3f2fd',
+        visible: true,
+        widgets: [
+          {
+            id: '5',
+            title: 'Gender Distribution',
+            type: 'pie',
+            size: 'medium',
+            dataSource: 'demographic-data',
+            visible: true,
+            section: 'Demographics',
+            data: {
+              series: [
+                { name: 'Male', value: 45, color: '#2196F3' },
+                { name: 'Female', value: 55, color: '#FF9800' }
+              ],
+              background: '#ffffff'
+            }
+          },
+          {
+            id: '6',
+            title: 'Students by Region',
+            type: 'map',
+            size: 'large',
+            dataSource: 'geographic-data',
+            visible: true,
+            section: 'Demographics',
+            data: {
+              regions: [
+                { name: 'North America', value: 35, color: '#2196F3' },
+                { name: 'Europe', value: 28, color: '#4CAF50' },
+                { name: 'Asia', value: 22, color: '#FF9800' },
+                { name: 'Other', value: 15, color: '#9C27B0' }
+              ],
+              background: '#ffffff'
+            }
+          }
+        ]
+      },
+      {
+        id: '3',
+        title: 'Employment',
+        background: '#f3e5f5',
+        visible: true,
+        widgets: [
+          {
+            id: '7',
+            title: 'Salary Evolution',
+            type: 'line',
+            size: 'large',
+            dataSource: 'salary-data',
+            visible: true,
+            section: 'Employment',
+            data: {
+              categories: ['2019', '2020', '2021', '2022', '2023', '2024'],
+              series: [
+                {
+                  name: 'Average Salary',
+                  data: [52000, 54000, 58000, 61000, 63000, 65000],
+                  color: '#2196F3'
+                }
+              ],
+              background: '#ffffff'
+            }
+          },
+          {
+            id: '8',
+            title: 'Job Satisfaction',
+            type: 'bar',
+            size: 'medium',
+            dataSource: 'satisfaction-survey',
+            visible: true,
+            section: 'Employment',
+            data: {
+              categories: ['Very Satisfied', 'Satisfied', 'Neutral', 'Dissatisfied'],
+              series: [
+                {
+                  name: 'Satisfaction Level',
+                  data: [35, 45, 15, 5],
+                  color: '#4CAF50'
+                }
+              ],
+              background: '#ffffff'
+            }
+          }
+        ]
+      },
+      {
+        id: '4',
+        title: 'Certifications',
+        background: '#e8f5e8',
+        visible: true,
+        widgets: [
+          {
+            id: '9',
+            title: 'Certification Success',
+            type: 'column',
+            size: 'large',
+            dataSource: 'certification-data',
+            visible: true,
+            section: 'Certifications',
+            data: {
+              categories: ['Web Dev', 'Data Science', 'Mobile Dev', 'Cloud', 'Security'],
+              series: [
+                {
+                  name: 'Success Rate',
+                  data: [92, 88, 85, 90, 87],
+                  color: '#4CAF50'
+                }
+              ],
+              background: '#ffffff'
+            }
+          },
+          {
+            id: '10',
+            title: 'Career Path Flow',
+            type: 'sankey',
+            size: 'medium',
+            dataSource: 'career-path-data',
+            visible: true,
+            section: 'Certifications',
+            data: {
+              links: [
+                { from: 'Web Development', to: 'Frontend', value: 45 },
+                { from: 'Web Development', to: 'Backend', value: 35 },
+                { from: 'Web Development', to: 'Full Stack', value: 20 },
+                { from: 'Data Science', to: 'Analytics', value: 60 },
+                { from: 'Data Science', to: 'ML Engineer', value: 40 },
+                { from: 'Mobile Development', to: 'iOS', value: 50 },
+                { from: 'Mobile Development', to: 'Android', value: 50 }
+              ],
+              background: '#ffffff'
+            }
+          }
+        ]
+      },
+      {
+        id: '5',
+        title: 'Analysis',
+        background: '#fff3e0',
+        visible: true,
+        widgets: [
+          {
+            id: '11',
+            title: 'Market Trends',
+            type: 'text',
+            size: 'large',
+            dataSource: 'market-analysis',
+            visible: true,
+            section: 'Analysis',
+            data: {
+              content: `
+                <h4>Key Insights</h4>
+                <p>The data shows a strong correlation between certification completion and employment success. 
+                Students who complete multiple certifications have a 95% employment rate within 6 months of graduation.</p>
+                
+                <h4>Trends</h4>
+                <ul>
+                  <li>Web Development remains the most popular track</li>
+                  <li>Data Science certifications show the highest salary growth</li>
+                  <li>Mobile development is gaining momentum</li>
+                </ul>
+              `,
+              analysis: `
+                <h4>Recommendations</h4>
+                <p>Focus on expanding Data Science and Mobile Development programs to meet growing market demand.</p>
+              `,
+              background: '#ffffff'
+            }
+          }
+        ]
+      }
+    ]
+  };
 
-  constructor() {
-    this.loadDashboardData();
-    this.loadFilterData();
-  }
+  private filterData: FilterData = {
+    certifications: [
+      { id: '1', name: 'Web Development', selected: true },
+      { id: '2', name: 'Data Science', selected: true },
+      { id: '3', name: 'Mobile Development', selected: false },
+      { id: '4', name: 'Cloud Computing', selected: true },
+      { id: '5', name: 'Cybersecurity', selected: false }
+    ],
+    sections: [
+      { id: '1', name: 'Overview', selected: true },
+      { id: '2', name: 'Demographics', selected: true },
+      { id: '3', name: 'Employment', selected: true }
+    ]
+  };
 
-  // Get dashboard data
+  constructor() {}
+
+  // Dashboard data methods
   getDashboard(): Observable<DashboardData> {
-    return this.dashboard$.pipe(
-      delay(500), // Simulate API delay
-      // Filter out null values
-      filter((dashboard): dashboard is DashboardData => dashboard !== null)
-    );
+    return of(this.dashboardData).pipe(delay(500));
   }
 
-  // Get filters data
   getFilters(): Observable<FilterData> {
-    return this.filters$.pipe(
-      delay(300),
-      // Filter out null values
-      filter((filters): filters is FilterData => filters !== null)
-    );
+    return of(this.filterData).pipe(delay(300));
   }
 
-  // Update widget visibility
-  updateWidgetVisibility(sectionId: string, widgetId: string, visible: boolean): void {
-    const dashboard = this.dashboardSubject.value;
-    if (!dashboard) return;
+  // Section CRUD operations
+  getAllSections(): Observable<Section[]> {
+    return of(this.dashboardData.sections).pipe(delay(500));
+  }
 
-    const section = dashboard.sections.find(s => s.id === sectionId);
+  createSection(sectionData: CreateSectionData): Observable<Section> {
+    const newSection: Section = {
+      id: Date.now().toString(),
+      title: sectionData.title,
+      background: sectionData.background,
+      visible: true,
+      widgets: []
+    };
+    
+    this.dashboardData.sections.push(newSection);
+    return of(newSection).pipe(delay(500));
+  }
+
+  updateSection(sectionData: UpdateSectionData): Observable<Section> {
+    const section = this.dashboardData.sections.find(s => s.id === sectionData.id);
     if (section) {
-      const widget = section.widgets.find(w => w.id === widgetId);
+      section.title = sectionData.title;
+      section.background = sectionData.background;
+      return of(section).pipe(delay(500));
+    }
+    return of(null as any).pipe(delay(500));
+  }
+
+  deleteSection(sectionId: string): Observable<boolean> {
+    const index = this.dashboardData.sections.findIndex(s => s.id === sectionId);
+    if (index !== -1) {
+      this.dashboardData.sections.splice(index, 1);
+      return of(true).pipe(delay(500));
+    }
+    return of(false).pipe(delay(500));
+  }
+
+  toggleSectionVisibility(sectionId: string): Observable<Section> {
+    const section = this.dashboardData.sections.find(s => s.id === sectionId);
+    if (section) {
+      section.visible = !section.visible;
+      return of(section).pipe(delay(500));
+    }
+    return of(null as any).pipe(delay(500));
+  }
+
+  // Widget CRUD operations
+  getAllWidgets(): Observable<Widget[]> {
+    const allWidgets: Widget[] = [];
+    this.dashboardData.sections.forEach(section => {
+      section.widgets.forEach(widget => {
+        allWidgets.push({ ...widget, section: section.title });
+      });
+    });
+    return of(allWidgets).pipe(delay(500));
+  }
+
+  createWidget(widgetData: CreateWidgetData): Observable<Widget> {
+    const newWidget: Widget = {
+      id: Date.now().toString(),
+      title: widgetData.title,
+      type: widgetData.type,
+      size: widgetData.size,
+      dataSource: widgetData.dataSource,
+      visible: true,
+      section: widgetData.section,
+      lastUpdated: new Date()
+    };
+    
+    // Add to the appropriate section
+    const section = this.dashboardData.sections.find(s => s.title === widgetData.section);
+    if (section) {
+      section.widgets.push(newWidget);
+    }
+    
+    return of(newWidget).pipe(delay(500));
+  }
+
+  updateWidget(widgetData: UpdateWidgetData): Observable<Widget> {
+    // Find widget in sections
+    for (const section of this.dashboardData.sections) {
+      const widget = section.widgets.find(w => w.id === widgetData.id);
       if (widget) {
-        widget.visible = visible;
-        this.dashboardSubject.next({ ...dashboard });
+        widget.title = widgetData.title;
+        widget.type = widgetData.type;
+        widget.size = widgetData.size;
+        widget.dataSource = widgetData.dataSource;
+        widget.section = widgetData.section;
+        widget.lastUpdated = new Date();
+        return of(widget).pipe(delay(500));
       }
     }
+    return of(null as any).pipe(delay(500));
   }
 
-  // Update filter selections
-  updateCertificationFilter(certId: string, selected: boolean): void {
-    const filters = this.filtersSubject.value;
-    if (!filters) return;
-
-    const cert = filters.certifications.find(c => c.id === certId);
-    if (cert) {
-      cert.selected = selected;
-      this.filtersSubject.next({ ...filters });
+  deleteWidget(widgetId: string): Observable<boolean> {
+    for (const section of this.dashboardData.sections) {
+      const index = section.widgets.findIndex(w => w.id === widgetId);
+      if (index !== -1) {
+        section.widgets.splice(index, 1);
+        return of(true).pipe(delay(500));
+      }
     }
+    return of(false).pipe(delay(500));
   }
 
-  updateSectionFilter(sectionId: string, selected: boolean): void {
-    const filters = this.filtersSubject.value;
-    if (!filters) return;
-
-    const section = filters.sections.find(s => s.id === sectionId);
-    if (section) {
-      section.selected = selected;
-      this.filtersSubject.next({ ...filters });
+  toggleWidgetVisibility(widgetId: string): Observable<Widget> {
+    for (const section of this.dashboardData.sections) {
+      const widget = section.widgets.find(w => w.id === widgetId);
+      if (widget) {
+        widget.visible = !widget.visible;
+        return of(widget).pipe(delay(500));
+      }
     }
-  }
-
-  private loadDashboardData(): void {
-    const dashboardData: DashboardData = {
-      id: 'rdc-2022',
-      name: 'rdc-2022',
-      title: 'RDC 2022 - Enquêtes d\'Employabilité',
-      subtitle: 'EE1 : Certification | EE2 : Après 6 mois | EE3 : Après 12 mois | EE4 : Après 24 mois',
-      source: 'api/rdc-2022',
-      sections: [
-        {
-          id: 'poursuite-etudes',
-          name: 'poursuite-etudes',
-          title: 'Poursuite d\'études',
-          background: '#ffffff',
-          widgets: [
-            {
-              id: 'poursuite-6-mois',
-              name: 'poursuite-6-mois',
-              title: 'Poursuite d\'étude à 6 mois après la certification',
-              type: 'metric',
-              cardSize: 'small',
-              visible: true,
-              scope: '1',
-              data: {
-                value: 57,
-                subtitle: '57% des diplômés poursuivent leurs études',
-                trend: 5,
-                background: 'rgb(226, 246, 250)'
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            },
-            {
-              id: 'domaine-poursuite',
-              name: 'domaine-poursuite',
-              title: 'Domaine de Poursuite d\'études',
-              type: 'simple-table',
-              cardSize: 'small',
-              visible: true,
-              scope: '2',
-              data: {
-                headers: ['Immobilier', 'Commerce', 'Banque / Assurance'],
-                values: [27, 5, 4],
-                background: 'rgb(226, 250, 233)'
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            },
-            {
-              id: 'niveau-top-bac5',
-              name: 'niveau-top-bac5',
-              title: 'Niveau TOP cible BAC+5',
-              type: 'metric',
-              cardSize: 'small',
-              visible: true,
-              scope: '3',
-              data: {
-                value: 80,
-                subtitle: '80% des diplômés visent un niveau BAC+5',
-                trend: 3,
-                background: 'rgb(250, 239, 226)'
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            },
-            {
-              id: 'poursuivre-etudes-chart',
-              name: 'poursuivre-etudes-chart',
-              title: 'Poursuivre les études',
-              type: 'pie',
-              chartType: 'pie',
-              cardSize: 'medium',
-              visible: true,
-              scope: '4',
-              data: {
-                series: [
-                  { name: 'Poursuit des études', value: 182, percentage: 57, color: '#67b7dc' },
-                  { name: 'Ne poursuit pas d\'études', value: 136, percentage: 43, color: '#6794dc' }
-                ]
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            },
-            {
-              id: 'meme-ecole-chart',
-              name: 'meme-ecole-chart',
-              title: 'Poursuivre les études dans la même école',
-              type: 'pie',
-              chartType: 'pie',
-              cardSize: 'medium',
-              visible: true,
-              scope: '5',
-              data: {
-                series: [
-                  { name: 'Meme ecole', value: 86, percentage: 47, color: '#67b7dc' },
-                  { name: 'Ecole differente', value: 97, percentage: 53, color: '#6794dc' }
-                ]
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            },
-            {
-              id: 'statut-professionnel',
-              name: 'statut-professionnel',
-              title: 'Statut Professionnel : Situation après la certification',
-              type: 'status-grid',
-              cardSize: 'large',
-              visible: true,
-              scope: '6',
-              data: {
-                headers: ['EE1', 'EE2', 'EE3', 'EE4'],
-                rows: [
-                  { label: 'A un emploi', values: [0, 75, 70, 73], color: '#E6F0F9', borderColor: '#457B9D' },
-                  { label: 'Recherche', values: [44, 14, 9, 3], color: '#FAF2E6', borderColor: '#D69B5A' },
-                  { label: 'Poursuit des études', values: [56, 3, 4, 3], color: '#E6F7F4', borderColor: '#2A9D8F' },
-                  { label: 'Inactif', values: [0, 4, 2, 2], color: '#F9E9EC', borderColor: '#A77A82' },
-                  { label: 'Non répondant', values: [0, 4, 15, 19], color: '#e9e9f9', borderColor: '#7d7aa7' }
-                ]
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            },
-            {
-              id: 'situation-professionnelle',
-              name: 'situation-professionnelle',
-              title: 'Situation Professionnelle à 6 mois après la certification',
-              type: 'pie',
-              chartType: 'pie',
-              cardSize: 'medium',
-              visible: true,
-              scope: '7',
-              data: {
-                series: [
-                  { name: 'A un emploi', value: 33, percentage: 33, color: '#67b7dc' },
-                  { name: 'Recherche', value: 6, percentage: 6, color: '#6794dc' },
-                  { name: 'Poursuit des études', value: 57, percentage: 57, color: '#6771dc' },
-                  { name: 'Inactif', value: 2, percentage: 2, color: '#8067dc' },
-                  { name: 'Non répondant', value: 2, percentage: 2, color: '#a367dc' }
-                ]
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            }
-          ]
-        },
-        {
-          id: 'global',
-          name: 'global',
-          title: 'Global',
-          background: '#f8f9fa',
-          widgets: [
-            {
-              id: 'postes-cibles',
-              name: 'postes-cibles',
-              title: 'Postes',
-              type: 'simple-table',
-              cardSize: 'medium',
-              visible: true,
-              scope: '1',
-              data: {
-                subtitle: 'Postes ciblés après 24 mois : 75%',
-                headers: ['EE1', 'EE2', 'EE3', 'EE4'],
-                values: [0, 74, 82, 75]
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            },
-            {
-              id: 'domaines-cibles',
-              name: 'domaines-cibles',
-              title: 'Domaines',
-              type: 'simple-table',
-              cardSize: 'medium',
-              visible: true,
-              scope: '2',
-              data: {
-                subtitle: 'Domaines ciblés après 24 mois : 97%',
-                headers: ['EE1', 'EE2', 'EE3', 'EE4'],
-                values: [0, 71, 85, 97]
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            },
-            {
-              id: 'salaires-cibles',
-              name: 'salaires-cibles',
-              title: 'Salaires',
-              type: 'simple-table',
-              cardSize: 'medium',
-              visible: true,
-              scope: '3',
-              data: {
-                subtitle: 'Salaires ciblés après 24 mois : 5%',
-                headers: ['EE1', 'EE2', 'EE3', 'EE4'],
-                values: [0, 5, 4, 5]
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            },
-            {
-              id: 'satisfaction-formation',
-              name: 'satisfaction-formation',
-              title: 'Taux de satisfaction de la formation',
-              type: 'metric',
-              cardSize: 'medium',
-              visible: true,
-              scope: '4',
-              data: {
-                value: 73,
-                subtitle: '73% de satisfaction',
-                trend: 2,
-                background: 'rgb(226, 246, 250)'
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            },
-            {
-              id: 'analyse-globale',
-              name: 'analyse-globale',
-              title: 'Analyse Globale des Résultats',
-              type: 'text',
-              cardSize: 'large',
-              visible: true,
-              scope: '5',
-              data: {
-                content: `
-                  <p><strong>Résumé des performances :</strong></p>
-                  <p>Les résultats montrent une progression positive dans l'employabilité des diplômés. Le taux de postes ciblés atteint 75% après 24 mois, avec une forte progression entre EE2 et EE4.</p>
-                  
-                  <p><strong>Points clés :</strong></p>
-                  <ul>
-                    <li>Domaine ciblé : 97% de réussite après 24 mois</li>
-                    <li>Satisfaction formation : 73% (en progression)</li>
-                    <li>Salaires ciblés : 5% (zone d'amélioration)</li>
-                  </ul>
-                `,
-                analysis: `
-                  <p><strong>Analyse détaillée :</strong></p>
-                  <p>La formation montre d'excellents résultats en termes de placement dans les domaines ciblés (97%). Cependant, le taux de salaires ciblés reste faible à 5%, indiquant un besoin d'amélioration dans la négociation salariale.</p>
-                  
-                  <p><strong>Recommandations :</strong></p>
-                  <ol>
-                    <li>Renforcer les modules de négociation salariale</li>
-                    <li>Développer des partenariats avec des entreprises offrant des salaires compétitifs</li>
-                    <li>Améliorer le suivi post-formation pour optimiser les placements</li>
-                  </ol>
-                `,
-                background: 'rgb(248, 249, 250)'
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            },
-            {
-              id: 'repartition-geographique',
-              name: 'repartition-geographique',
-              title: 'Étudiants par région',
-              type: 'map',
-              chartType: 'france',
-              cardSize: 'large',
-              visible: true,
-              scope: '6',
-              data: {
-                mapData: {
-                  "FR-PAC": 66, // Provence-Alpes-Côte d'Azur
-                  "FR-OCC": 41, // Occitanie
-                  "FR-GES": 34, // Grand Est
-                  "FR-IDF": 34, // Île-de-France
-                  "FR-NOR": 33, // Normandie
-                  "FR-ARA": 31, // Auvergne-Rhône-Alpes
-                  "FR-HDF": 30, // Hauts-de-France
-                  "FR-NAQ": 22, // Nouvelle-Aquitaine
-                  "FR-PDL": 14, // Pays de la Loire
-                  "FR-BRE": 12, // Bretagne
-                  "FR-BFC": 1, // Bourgogne-Franche-Comté
-                  "FR-CVL": 0, // Centre-Val de Loire
-                  "FR-COR": 0, // Corse
-                }
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            }
-          ]
-        },
-        {
-          id: 'competences',
-          name: 'competences',
-          title: 'Compétences',
-          background: '#ffffff',
-          widgets: [
-            {
-              id: 'competences-cibles',
-              name: 'competences-cibles',
-              title: 'Les 5 principales compétences utilisées dans les emplois ciblés',
-              type: 'bar',
-              chartType: 'bar',
-              cardSize: 'medium',
-              visible: true,
-              scope: '1',
-              data: {
-                series: [
-                  { name: 'Participation in the definition of commercial objectives', value: 10, color: '#67b7dc' },
-                  { name: 'Implementation of sales support tools', value: 9, color: '#6794dc' },
-                  { name: 'Analysis of performance indicators', value: 9, color: '#6771dc' },
-                  { name: 'Identification of business development opportunities', value: 8, color: '#8067dc' },
-                  { name: 'Participation in the development of individual and collective objectives', value: 8, color: '#a367dc' }
-                ]
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            },
-            {
-              id: 'competences-non-cibles',
-              name: 'competences-non-cibles',
-              title: 'Les 5 principales compétences utilisées dans les emplois non ciblés',
-              type: 'bar',
-              chartType: 'bar',
-              cardSize: 'medium',
-              visible: true,
-              scope: '2',
-              data: {
-                series: [
-                  { name: 'Customer relationship management', value: 12, color: '#67b7dc' },
-                  { name: 'Market analysis', value: 11, color: '#6794dc' },
-                  { name: 'Sales techniques', value: 10, color: '#6771dc' },
-                  { name: 'Product knowledge', value: 9, color: '#8067dc' },
-                  { name: 'Negotiation skills', value: 8, color: '#a367dc' }
-                ]
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            }
-          ]
-        },
-        {
-          id: 'emploi',
-          name: 'emploi',
-          title: 'Emploi',
-          background: '#f8f9fa',
-          widgets: [
-            {
-              id: 'effectif-succes',
-              name: 'effectif-succes',
-              title: 'Effectif & Taux de succès à certification',
-              type: 'pie',
-              chartType: 'pie',
-              cardSize: 'medium',
-              visible: true,
-              scope: '1',
-              data: {
-                totalStudents: 383,
-                series: [
-                  { name: 'Réussite', value: 320, percentage: 84, color: '#67b7dc' },
-                  { name: 'Échec', value: 63, percentage: 16, color: '#6794dc' }
-                ]
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            },
-            {
-              id: 'distribution-enquetes',
-              name: 'distribution-enquetes',
-              title: 'Distribution des enquêtes par vague',
-              type: 'bar',
-              chartType: 'bar',
-              cardSize: 'medium',
-              visible: true,
-              scope: '2',
-              data: {
-                series: [
-                  { name: 'EE1', value: 318, color: '#67b7dc' },
-                  { name: 'EE2', value: 182, color: '#6794dc' },
-                  { name: 'EE3', value: 136, color: '#6771dc' },
-                  { name: 'EE4', value: 131, color: '#8067dc' }
-                ]
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            },
-            {
-              id: 'ouverture-completion',
-              name: 'ouverture-completion',
-              title: 'Ouvert – Commencé – Enquête complétée (EE1–EE4)',
-              type: 'column',
-              chartType: 'column',
-              cardSize: 'large',
-              visible: true,
-              scope: '3',
-              data: {
-                categories: ['EE1', 'EE2', 'EE3', 'EE4'],
-                series: [
-                  { name: 'Envoyés', data: [318, 182, 136, 131], color: '#67b7dc' },
-                  { name: 'Ouverts', data: [280, 165, 120, 108], color: '#6794dc' },
-                  { name: 'Complétés', data: [272, 160, 118, 105], color: '#6771dc' }
-                ]
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            }
-          ]
-        },
-        {
-          id: 'parcours',
-          name: 'parcours',
-          title: 'Parcours',
-          background: '#ffffff',
-          widgets: [
-            {
-              id: 'evolution-inscriptions',
-              name: 'evolution-inscriptions',
-              title: 'Évolution des inscriptions par mois',
-              type: 'line',
-              chartType: 'line',
-              cardSize: 'large',
-              visible: true,
-              scope: '1',
-              data: {
-                categories: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
-                series: [
-                  { name: 'Inscriptions', data: [45, 52, 38, 61, 55, 48, 67, 73, 58, 64, 71, 83], color: '#67b7dc' },
-                  { name: 'Certifications', data: [38, 45, 32, 55, 48, 42, 58, 65, 52, 58, 64, 75], color: '#6794dc' }
-                ]
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            },
-            {
-              id: 'parcours-etudiant',
-              name: 'parcours-etudiant',
-              title: 'Parcours étudiant : De l\'inscription à l\'emploi',
-              type: 'sankey',
-              chartType: 'sankey',
-              cardSize: 'large',
-              visible: true,
-              scope: '2',
-              data: {
-                links: [
-                  { from: 'Inscription', to: 'Formation', value: 383 },
-                  { from: 'Formation', to: 'Certification', value: 320 },
-                  { from: 'Formation', to: 'Poursuite études', value: 63 },
-                  { from: 'Certification', to: 'Poursuite études', value: 182 },
-                  { from: 'Certification', to: 'Recherche emploi', value: 136 },
-                  { from: 'Recherche emploi', to: 'Emploi cible', value: 98 },
-                  { from: 'Recherche emploi', to: 'Emploi non-cible', value: 38 }
-                ]
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            }
-          ]
-        },
-        {
-          id: 'demographique',
-          name: 'demographique',
-          title: 'Demographique',
-          background: '#f8f9fa',
-          widgets: [
-            {
-              id: 'repartition-age',
-              name: 'repartition-age',
-              title: 'Répartition par âge',
-              type: 'pie',
-              chartType: 'pie',
-              cardSize: 'medium',
-              visible: true,
-              scope: '1',
-              data: {
-                series: [
-                  { name: '18-25 ans', value: 45, percentage: 45, color: '#67b7dc' },
-                  { name: '26-30 ans', value: 35, percentage: 35, color: '#6794dc' },
-                  { name: '31-35 ans', value: 15, percentage: 15, color: '#6771dc' },
-                  { name: '35+ ans', value: 5, percentage: 5, color: '#8067dc' }
-                ]
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            },
-            {
-              id: 'repartition-genre',
-              name: 'repartition-genre',
-              title: 'Répartition par genre',
-              type: 'pie',
-              chartType: 'pie',
-              cardSize: 'medium',
-              visible: true,
-              scope: '2',
-              data: {
-                series: [
-                  { name: 'Hommes', value: 55, percentage: 55, color: '#67b7dc' },
-                  { name: 'Femmes', value: 45, percentage: 45, color: '#6794dc' }
-                ]
-              },
-              actions: [
-                { type: 'info', title: 'Information', icon: 'paragraph.png' },
-                { type: 'export', title: 'Export', icon: 'excel.png', url: 'https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651' },
-                { type: 'scope', title: 'Scope', icon: 'audience_4644048.png' }
-              ]
-            }
-          ]
-        }
-      ]
-    };
-
-    this.dashboardSubject.next(dashboardData);
-  }
-
-  private loadFilterData(): void {
-    const filterData: FilterData = {
-      certifications: [
-        { id: 'cert-1', name: 'Certification A', selected: false },
-        { id: 'cert-2', name: 'Certification B', selected: false },
-        { id: 'cert-3', name: 'Certification C', selected: false },
-        { id: 'cert-4', name: 'Certification D', selected: false },
-        { id: 'cert-5', name: 'Certification E', selected: false },
-        { id: 'cert-6', name: 'Certification F', selected: false },
-        { id: 'cert-7', name: 'Certification G', selected: false },
-        { id: 'cert-8', name: 'Certification H', selected: false }
-      ],
-      sections: [
-        { id: 'section-1', name: 'Poursuite d\'études', selected: false },
-        { id: 'section-2', name: 'Satisfaction Formation', selected: false },
-        { id: 'section-3', name: 'Compétences', selected: false },
-        { id: 'section-4', name: 'Emploi', selected: false },
-        { id: 'section-5', name: 'Salaires', selected: false },
-        { id: 'section-6', name: 'Domaines', selected: false }
-      ]
-    };
-
-    this.filtersSubject.next(filterData);
-  }
-
-  // Simulate API calls for future backend integration
-  loadDashboardFromAPI(source: string): Observable<DashboardData> {
-    // This would be replaced with actual HTTP calls
-    return this.dashboard$.pipe(
-      delay(1000),
-      filter((dashboard): dashboard is DashboardData => dashboard !== null)
-    );
-  }
-
-  saveDashboardConfig(dashboard: DashboardData): Observable<boolean> {
-    // This would be replaced with actual HTTP calls
-    return of(true).pipe(delay(500));
+    return of(null as any).pipe(delay(500));
   }
 } 

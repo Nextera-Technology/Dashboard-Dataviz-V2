@@ -10,10 +10,12 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { SectionFormDialogComponent, SectionFormData } from '../../components/section-form-dialog/section-form-dialog.component';
 import { AdminLayoutComponent } from '../../components/admin-layout/admin-layout.component';
+import { DashboardService, Section, CreateSectionData, UpdateSectionData } from '../../../../shared/services/dashboard.service';
 
-interface Section {
+interface SectionDisplay {
   id: string;
   title: string;
   background: string;
@@ -36,6 +38,7 @@ interface Section {
     MatSlideToggleModule,
     MatMenuModule,
     MatTooltipModule,
+    MatSnackBarModule,
     AdminLayoutComponent
   ],
   template: `
@@ -172,10 +175,14 @@ interface Section {
 export class SectionSettingsComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   
-  dataSource = new MatTableDataSource<Section>();
+  dataSource = new MatTableDataSource<SectionDisplay>();
   displayedColumns: string[] = ['title', 'background', 'widgetCount', 'visible', 'actions'];
 
-  constructor(private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private dashboardService: DashboardService,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnInit(): void {
     this.loadSections();
@@ -186,14 +193,21 @@ export class SectionSettingsComponent implements OnInit {
   }
 
   loadSections(): void {
-    // Mock data - replace with actual API call
-    const sections: Section[] = [
-      { id: '1', title: 'Overview', background: '#f5f5f5', visible: true, widgetCount: 4 },
-      { id: '2', title: 'Analytics', background: '#e3f2fd', visible: true, widgetCount: 6 },
-      { id: '3', title: 'Performance', background: '#f3e5f5', visible: false, widgetCount: 3 },
-      { id: '4', title: 'Reports', background: '#e8f5e8', visible: true, widgetCount: 2 }
-    ];
-    this.dataSource.data = sections;
+    this.dashboardService.getAllSections().subscribe({
+      next: (sections) => {
+        const displaySections: SectionDisplay[] = sections.map(section => ({
+          id: section.id,
+          title: section.title,
+          background: section.background,
+          visible: section.visible,
+          widgetCount: section.widgets.length
+        }));
+        this.dataSource.data = displaySections;
+      },
+      error: (error) => {
+        this.snackBar.open('Error loading sections: ' + error.message, 'Close', { duration: 3000 });
+      }
+    });
   }
 
   openAddDialog(): void {
@@ -209,7 +223,7 @@ export class SectionSettingsComponent implements OnInit {
     });
   }
 
-  openEditDialog(section: Section): void {
+  openEditDialog(section: SectionDisplay): void {
     const dialogRef = this.dialog.open(SectionFormDialogComponent, {
       width: '500px',
       data: { ...section }
@@ -223,33 +237,65 @@ export class SectionSettingsComponent implements OnInit {
   }
 
   addSection(data: SectionFormData): void {
-    const newSection: Section = {
-      id: Date.now().toString(),
+    const createData: CreateSectionData = {
       title: data.title,
-      background: data.background,
-      visible: true,
-      widgetCount: 0
+      background: data.background
     };
-    
-    this.dataSource.data = [...this.dataSource.data, newSection];
+
+    this.dashboardService.createSection(createData).subscribe({
+      next: (newSection) => {
+        this.snackBar.open('Section created successfully', 'Close', { duration: 3000 });
+        this.loadSections(); // Reload the list
+      },
+      error: (error) => {
+        this.snackBar.open('Error creating section: ' + error.message, 'Close', { duration: 3000 });
+      }
+    });
   }
 
   updateSection(data: SectionFormData): void {
-    const index = this.dataSource.data.findIndex(s => s.id === data.id);
-    if (index !== -1) {
-      this.dataSource.data[index] = { ...this.dataSource.data[index], ...data };
-      this.dataSource.data = [...this.dataSource.data];
-    }
+    const updateData: UpdateSectionData = {
+      id: data.id!,
+      title: data.title,
+      background: data.background
+    };
+
+    this.dashboardService.updateSection(updateData).subscribe({
+      next: (updatedSection) => {
+        this.snackBar.open('Section updated successfully', 'Close', { duration: 3000 });
+        this.loadSections(); // Reload the list
+      },
+      error: (error) => {
+        this.snackBar.open('Error updating section: ' + error.message, 'Close', { duration: 3000 });
+      }
+    });
   }
 
-  deleteSection(section: Section): void {
+  deleteSection(section: SectionDisplay): void {
     if (confirm(`Are you sure you want to delete section "${section.title}"?`)) {
-      this.dataSource.data = this.dataSource.data.filter(s => s.id !== section.id);
+      this.dashboardService.deleteSection(section.id).subscribe({
+        next: (success) => {
+          if (success) {
+            this.snackBar.open('Section deleted successfully', 'Close', { duration: 3000 });
+            this.loadSections(); // Reload the list
+          }
+        },
+        error: (error) => {
+          this.snackBar.open('Error deleting section: ' + error.message, 'Close', { duration: 3000 });
+        }
+      });
     }
   }
 
-  toggleVisibility(section: Section): void {
-    section.visible = !section.visible;
-    this.dataSource.data = [...this.dataSource.data];
+  toggleVisibility(section: SectionDisplay): void {
+    this.dashboardService.toggleSectionVisibility(section.id).subscribe({
+      next: (updatedSection) => {
+        this.snackBar.open(`Section ${updatedSection.visible ? 'shown' : 'hidden'} successfully`, 'Close', { duration: 3000 });
+        this.loadSections(); // Reload the list
+      },
+      error: (error) => {
+        this.snackBar.open('Error updating section visibility: ' + error.message, 'Close', { duration: 3000 });
+      }
+    });
   }
 } 

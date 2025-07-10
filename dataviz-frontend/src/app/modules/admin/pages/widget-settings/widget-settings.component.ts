@@ -15,16 +15,17 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
 import { WidgetFormDialogComponent } from '../../components/widget-form-dialog/widget-form-dialog.component';
 import { AdminLayoutComponent } from '../../components/admin-layout/admin-layout.component';
+import { DashboardService, Widget, CreateWidgetData, UpdateWidgetData } from '../../../../shared/services/dashboard.service';
 
-export interface WidgetConfig {
+interface WidgetDisplay {
   id: string;
   title: string;
-  dataSource: string;
-  size: 'small' | 'medium' | 'large';
-  visible: boolean;
   type: 'metric' | 'pie' | 'bar' | 'line' | 'column' | 'sankey' | 'table' | 'text' | 'map';
+  size: 'small' | 'medium' | 'large';
+  dataSource: string;
   section: string;
-  createdAt: Date;
+  visible: boolean;
+  lastUpdated?: Date;
 }
 
 @Component({
@@ -258,63 +259,21 @@ export interface WidgetConfig {
 })
 export class WidgetSettingsComponent implements OnInit {
   displayedColumns: string[] = ['title', 'type', 'dataSource', 'size', 'section', 'visible', 'actions'];
-  dataSource: MatTableDataSource<WidgetConfig>;
+  dataSource: MatTableDataSource<WidgetDisplay>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  private dummyWidgets: WidgetConfig[] = [
-    {
-      id: '1',
-      title: 'Total Visitors',
-      dataSource: 'analytics_api',
-      size: 'small',
-      visible: true,
-      type: 'metric',
-      section: 'Overview',
-      createdAt: new Date('2024-01-15')
-    },
-    {
-      id: '2',
-      title: 'Traffic Sources',
-      dataSource: 'traffic_api',
-      size: 'medium',
-      visible: true,
-      type: 'pie',
-      section: 'Analytics',
-      createdAt: new Date('2024-01-15')
-    },
-    {
-      id: '3',
-      title: 'Monthly Growth',
-      dataSource: 'growth_api',
-      size: 'large',
-      visible: true,
-      type: 'line',
-      section: 'Performance',
-      createdAt: new Date('2024-02-20')
-    },
-    {
-      id: '4',
-      title: 'Regional Data',
-      dataSource: 'geo_api',
-      size: 'medium',
-      visible: false,
-      type: 'map',
-      section: 'Global',
-      createdAt: new Date('2024-02-20')
-    }
-  ];
-
   constructor(
     private dialog: MatDialog,
+    private dashboardService: DashboardService,
     private snackBar: MatSnackBar
   ) {
-    this.dataSource = new MatTableDataSource(this.dummyWidgets);
+    this.dataSource = new MatTableDataSource<WidgetDisplay>([]);
   }
 
   ngOnInit(): void {
-    // Component initialization
+    this.loadWidgets();
   }
 
   ngAfterViewInit() {
@@ -331,7 +290,28 @@ export class WidgetSettingsComponent implements OnInit {
     }
   }
 
-  openWidgetDialog(widget?: WidgetConfig) {
+  loadWidgets(): void {
+    this.dashboardService.getAllWidgets().subscribe({
+      next: (widgets) => {
+        const displayWidgets: WidgetDisplay[] = widgets.map(widget => ({
+          id: widget.id,
+          title: widget.title,
+          type: widget.type,
+          size: widget.size,
+          dataSource: widget.dataSource,
+          section: widget.section,
+          visible: widget.visible,
+          lastUpdated: widget.lastUpdated
+        }));
+        this.dataSource.data = displayWidgets;
+      },
+      error: (error) => {
+        this.snackBar.open('Error loading widgets: ' + error.message, 'Close', { duration: 3000 });
+      }
+    });
+  }
+
+  openWidgetDialog(widget?: WidgetDisplay) {
     const dialogRef = this.dialog.open(WidgetFormDialogComponent, {
       width: '500px',
       data: widget || {}
@@ -348,54 +328,76 @@ export class WidgetSettingsComponent implements OnInit {
     });
   }
 
-  editWidget(widget: WidgetConfig) {
+  editWidget(widget: WidgetDisplay) {
     this.openWidgetDialog(widget);
   }
 
-  deleteWidget(widget: WidgetConfig) {
+  deleteWidget(widget: WidgetDisplay) {
     if (confirm(`Are you sure you want to delete "${widget.title}"?`)) {
-      this.dummyWidgets = this.dummyWidgets.filter(w => w.id !== widget.id);
-      this.dataSource.data = this.dummyWidgets;
-      this.snackBar.open('Widget deleted successfully', 'Close', { duration: 3000 });
+      this.dashboardService.deleteWidget(widget.id).subscribe({
+        next: (success) => {
+          if (success) {
+            this.snackBar.open('Widget deleted successfully', 'Close', { duration: 3000 });
+            this.loadWidgets(); // Reload the list
+          }
+        },
+        error: (error) => {
+          this.snackBar.open('Error deleting widget: ' + error.message, 'Close', { duration: 3000 });
+        }
+      });
     }
   }
 
-  toggleVisibility(widget: WidgetConfig) {
-    widget.visible = !widget.visible;
-    this.dataSource.data = this.dummyWidgets;
-    this.snackBar.open(`Widget ${widget.visible ? 'shown' : 'hidden'} successfully`, 'Close', { duration: 2000 });
+  toggleVisibility(widget: WidgetDisplay) {
+    this.dashboardService.toggleWidgetVisibility(widget.id).subscribe({
+      next: (updatedWidget) => {
+        this.snackBar.open(`Widget ${updatedWidget.visible ? 'shown' : 'hidden'} successfully`, 'Close', { duration: 2000 });
+        this.loadWidgets(); // Reload the list
+      },
+      error: (error) => {
+        this.snackBar.open('Error updating widget visibility: ' + error.message, 'Close', { duration: 3000 });
+      }
+    });
   }
 
   private addWidgetToList(widgetData: any) {
-    const newWidget: WidgetConfig = {
-      id: Date.now().toString(),
+    const createData: CreateWidgetData = {
       title: widgetData.title,
-      dataSource: widgetData.dataSource,
-      size: widgetData.size,
       type: widgetData.type,
-      section: widgetData.section,
-      visible: true,
-      createdAt: new Date()
+      size: widgetData.size,
+      dataSource: widgetData.dataSource,
+      section: widgetData.section
     };
-    
-    this.dummyWidgets.push(newWidget);
-    this.dataSource.data = this.dummyWidgets;
-    this.snackBar.open('Widget added successfully', 'Close', { duration: 3000 });
+
+    this.dashboardService.createWidget(createData).subscribe({
+      next: (newWidget) => {
+        this.snackBar.open('Widget added successfully', 'Close', { duration: 3000 });
+        this.loadWidgets(); // Reload the list
+      },
+      error: (error) => {
+        this.snackBar.open('Error creating widget: ' + error.message, 'Close', { duration: 3000 });
+      }
+    });
   }
 
-  private editWidgetInList(originalWidget: WidgetConfig, updatedData: any) {
-    const index = this.dummyWidgets.findIndex(w => w.id === originalWidget.id);
-    if (index !== -1) {
-      this.dummyWidgets[index] = {
-        ...originalWidget,
-        title: updatedData.title,
-        dataSource: updatedData.dataSource,
-        size: updatedData.size,
-        type: updatedData.type,
-        section: updatedData.section
-      };
-      this.dataSource.data = this.dummyWidgets;
-      this.snackBar.open('Widget updated successfully', 'Close', { duration: 3000 });
-    }
+  private editWidgetInList(originalWidget: WidgetDisplay, updatedData: any) {
+    const updateData: UpdateWidgetData = {
+      id: originalWidget.id,
+      title: updatedData.title,
+      type: updatedData.type,
+      size: updatedData.size,
+      dataSource: updatedData.dataSource,
+      section: updatedData.section
+    };
+
+    this.dashboardService.updateWidget(updateData).subscribe({
+      next: (updatedWidget) => {
+        this.snackBar.open('Widget updated successfully', 'Close', { duration: 3000 });
+        this.loadWidgets(); // Reload the list
+      },
+      error: (error) => {
+        this.snackBar.open('Error updating widget: ' + error.message, 'Close', { duration: 3000 });
+      }
+    });
   }
 } 

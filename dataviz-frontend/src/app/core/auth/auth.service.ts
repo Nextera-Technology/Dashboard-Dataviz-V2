@@ -3,15 +3,32 @@ import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
 
 export interface User {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  role: 'operator' | 'visitor';
+  status?: 'active' | 'inactive';
+  lastLogin?: Date;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface CreateUserData {
   name: string;
   email: string;
   password: string;
   role: 'operator' | 'visitor';
 }
 
-export interface LoginCredentials {
+export interface UpdateUserData {
+  id: string;
+  name: string;
   email: string;
-  password: string;
+  role: 'operator' | 'visitor';
 }
 
 @Injectable({
@@ -21,25 +38,42 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  // Static dummy users
+  // Static dummy users with IDs
   private readonly dummyUsers: User[] = [
     {
+      id: '1',
       name: 'John Doe',
       email: 'john@example.com',
       password: 'password123',
-      role: 'operator'
+      role: 'operator',
+      status: 'active',
+      lastLogin: new Date()
     },
     {
+      id: '2',
       name: 'Jane Smith',
       email: 'jane@example.com',
       password: 'password123',
-      role: 'visitor'
+      role: 'visitor',
+      status: 'active',
+      lastLogin: new Date(Date.now() - 86400000)
     },
     {
+      id: '3',
       name: 'Admin User',
       email: 'admin@example.com',
       password: 'admin123',
-      role: 'operator'
+      role: 'operator',
+      status: 'active',
+      lastLogin: new Date()
+    },
+    {
+      id: '4',
+      name: 'Bob Johnson',
+      email: 'bob@example.com',
+      password: 'password123',
+      role: 'visitor',
+      status: 'inactive'
     }
   ];
 
@@ -52,7 +86,7 @@ export class AuthService {
    */
   login(credentials: LoginCredentials): Observable<User> {
     const user = this.dummyUsers.find(
-      u => u.email === credentials.email && u.password === credentials.password
+      u => u.email === credentials.email && u.password === credentials.password && u.status === 'active'
     );
 
     if (user) {
@@ -105,6 +139,65 @@ export class AuthService {
   isVisitor(): boolean {
     const user = this.getCurrentUser();
     return user?.role === 'visitor';
+  }
+
+  // CRUD Operations for User Management
+
+  /**
+   * Get all users (for admin)
+   */
+  getAllUsers(): Observable<User[]> {
+    return of(this.dummyUsers).pipe(delay(500));
+  }
+
+  /**
+   * Create new user
+   */
+  createUser(userData: CreateUserData): Observable<User> {
+    const newUser: User = {
+      id: Date.now().toString(),
+      ...userData,
+      status: 'active'
+    };
+    
+    this.dummyUsers.push(newUser);
+    return of(newUser).pipe(delay(500));
+  }
+
+  /**
+   * Update user
+   */
+  updateUser(userData: UpdateUserData): Observable<User> {
+    const index = this.dummyUsers.findIndex(u => u.id === userData.id);
+    if (index !== -1) {
+      this.dummyUsers[index] = { ...this.dummyUsers[index], ...userData };
+      return of(this.dummyUsers[index]).pipe(delay(500));
+    }
+    return throwError(() => new Error('User not found'));
+  }
+
+  /**
+   * Delete user
+   */
+  deleteUser(userId: string): Observable<boolean> {
+    const index = this.dummyUsers.findIndex(u => u.id === userId);
+    if (index !== -1) {
+      this.dummyUsers.splice(index, 1);
+      return of(true).pipe(delay(500));
+    }
+    return throwError(() => new Error('User not found'));
+  }
+
+  /**
+   * Toggle user status
+   */
+  toggleUserStatus(userId: string): Observable<User> {
+    const user = this.dummyUsers.find(u => u.id === userId);
+    if (user) {
+      user.status = user.status === 'active' ? 'inactive' : 'active';
+      return of(user).pipe(delay(500));
+    }
+    return throwError(() => new Error('User not found'));
   }
 
   /**
