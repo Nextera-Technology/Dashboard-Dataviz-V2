@@ -14,6 +14,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AuthService, User } from '../../core/auth/auth.service';
 import { DashboardService, DashboardData, FilterData, CertificationFilter, SectionFilter } from '../../shared/services/dashboard.service';
+import { SectionComponent } from '../../shared/components/sections/section.component';
 
 declare var am5: any;
 declare var am5xy: any;
@@ -35,7 +36,8 @@ declare var am5geodata_worldLow: any;
     MatCheckboxModule,
     MatSlideToggleModule,
     MatMenuModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    SectionComponent
   ],
   template: `
     <div class="dashboard-container">
@@ -139,18 +141,11 @@ declare var am5geodata_worldLow: any;
 
         <!-- Dashboard Content -->
         <div class="dashboard-content">
-          <!-- Placeholder for future widget implementation -->
-          <div class="dashboard-placeholder">
-            <mat-card>
-              <mat-card-content>
-                <h3>Dashboard Content</h3>
-                <p>Dashboard data loaded successfully!</p>
-                <p><strong>Title:</strong> {{ dashboard?.title }}</p>
-                <p><strong>Sections:</strong> {{ dashboard?.sections?.length || 0 }}</p>
-                <p><strong>Total Widgets:</strong> {{ getTotalWidgets() }}</p>
-              </mat-card-content>
-            </mat-card>
-          </div>
+          <!-- Sections -->
+          <app-section 
+            *ngFor="let section of dashboard?.sections; trackBy: trackBySection"
+            [section]="section">
+          </app-section>
         </div>
       </main>
     </div>
@@ -455,26 +450,6 @@ declare var am5geodata_worldLow: any;
       padding: 0;
     }
 
-    .dashboard-placeholder {
-      margin-top: 20px;
-    }
-
-    .dashboard-placeholder mat-card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .dashboard-placeholder h3 {
-      color: #15616D;
-      margin-bottom: 10px;
-    }
-
-    .dashboard-placeholder p {
-      color: #666;
-      margin: 5px 0;
-    }
-
     /* Responsive Design */
     @media (max-width: 1024px) {
       .sidebar {
@@ -558,11 +533,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     // Chart initialization can be added here when needed
   }
 
-  getTotalWidgets(): number {
-    if (!this.dashboard?.sections) return 0;
-    return this.dashboard.sections.reduce((total, section) => {
-      return total + (section.widgets?.length || 0);
-    }, 0);
+  trackBySection(index: number, section: any): string {
+    return section.id;
   }
 
   onCertificationSearch(): void {
