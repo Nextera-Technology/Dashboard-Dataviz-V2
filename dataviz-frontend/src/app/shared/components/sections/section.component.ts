@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { DashboardSection, DashboardWidget } from '../../services/dashboard.service';
 import { MetricWidgetComponent } from '../widgets/metric-widget.component';
 import { PieChartWidgetComponent } from '../widgets/pie-chart-widget.component';
+import { BarChartWidgetComponent } from '../widgets/bar-chart-widget.component';
 
 @Component({
   selector: 'app-section',
   standalone: true,
-  imports: [CommonModule, MetricWidgetComponent, PieChartWidgetComponent],
+  imports: [CommonModule, MetricWidgetComponent, PieChartWidgetComponent, BarChartWidgetComponent],
   template: `
     <div class="section-container">
       <!-- Section Header -->
@@ -29,10 +30,17 @@ import { PieChartWidgetComponent } from '../widgets/pie-chart-widget.component';
             [widget]="widget"
             class="widget-item">
           </app-pie-chart-widget>
+
+          <!-- Bar Chart Widget -->
+          <app-bar-chart-widget 
+            *ngIf="widget.type === 'bar'"
+            [widget]="widget"
+            class="widget-item">
+          </app-bar-chart-widget>
           
           <!-- Placeholder for other widget types -->
           <div 
-            *ngIf="widget.type !== 'metric' && widget.type !== 'pie'"
+            *ngIf="widget.type !== 'metric' && widget.type !== 'pie' && widget.type !== 'bar'"
             class="widget-placeholder"
             [style.grid-column]="getWidgetSpan(widget.cardSize)">
             <div class="placeholder-content">
