@@ -27,19 +27,19 @@ import { AuthService, LoginCredentials } from '../../../core/auth/auth.service';
     MatSnackBarModule
   ],
   template: `
-    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-400 to-blue-600 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-600 to-cyan-800 py-12 px-4 sm:px-6 lg:px-8">
       <div class="max-w-md w-full space-y-8">
         <!-- Logo -->
         <div class="text-center">
           <img 
-            class="mx-auto h-16 w-auto" 
+            class="mx-auto h-32 w-auto" 
             src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/Nextera%20Logo%20Career%20Insight%20White%20text.png"
             alt="Nextera Logo"
           />
           <h2 class="mt-6 text-3xl font-extrabold text-white">
             Sign in to your account
           </h2>
-          <p class="mt-2 text-sm text-blue-100">
+          <p class="mt-2 text-sm text-cyan-100">
             Welcome to DataViz Dashboard
           </p>
         </div>
