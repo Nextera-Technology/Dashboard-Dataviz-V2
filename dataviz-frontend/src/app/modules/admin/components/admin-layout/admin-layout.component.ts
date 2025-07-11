@@ -49,17 +49,13 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
             Administration
           </div>
           <div class="nav-menu">
-            <a routerLink="/admin/users" routerLinkActive="active" class="nav-item">
+            <a routerLink="/admin/dashboard-list" routerLinkActive="active" class="nav-item">
+              <mat-icon>dashboard</mat-icon>
+              <span>Dashboard Builder</span>
+            </a>
+            <a routerLink="/admin/user-management" routerLinkActive="active" class="nav-item">
               <mat-icon>people</mat-icon>
               <span>User Management</span>
-            </a>
-            <a routerLink="/admin/widgets" routerLinkActive="active" class="nav-item">
-              <mat-icon>dashboard</mat-icon>
-              <span>Widget Settings</span>
-            </a>
-            <a routerLink="/admin/sections" routerLinkActive="active" class="nav-item">
-              <mat-icon>view_list</mat-icon>
-              <span>Section Settings</span>
             </a>
           </div>
         </div>

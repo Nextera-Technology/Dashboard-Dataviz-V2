@@ -115,17 +115,13 @@ declare var am5geodata_worldLow: any;
             Administration
           </div>
           <div class="admin-menu">
-            <a routerLink="/admin/users" class="admin-menu-item">
+            <a routerLink="/admin/dashboard-list" class="admin-menu-item">
+              <mat-icon>dashboard</mat-icon>
+              <span>Dashboard Builder</span>
+            </a>
+            <a routerLink="/admin/user-management" class="admin-menu-item">
               <mat-icon>people</mat-icon>
               <span>User Management</span>
-            </a>
-            <a routerLink="/admin/widgets" class="admin-menu-item">
-              <mat-icon>dashboard</mat-icon>
-              <span>Widget Settings</span>
-            </a>
-            <a routerLink="/admin/sections" class="admin-menu-item">
-              <mat-icon>view_list</mat-icon>
-              <span>Section Settings</span>
             </a>
           </div>
         </div>

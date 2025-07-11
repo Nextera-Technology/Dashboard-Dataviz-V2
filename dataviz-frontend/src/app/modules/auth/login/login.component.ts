@@ -49,7 +49,7 @@ import { AuthService, LoginCredentials } from '../../../core/auth/auth.service';
           <mat-card-content class="p-8">
             <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
               <!-- Email Field -->
-              <mat-form-field appearance="outline" class="w-full">
+              <mat-form-field class="w-full">
                 <mat-label>Email address</mat-label>
                 <input 
                   matInput 
@@ -59,7 +59,6 @@ import { AuthService, LoginCredentials } from '../../../core/auth/auth.service';
                   autocomplete="email"
                   [class.error]="hasError('email')"
                 />
-                <mat-icon matSuffix>email</mat-icon>
                 <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
                   Email is required
                 </mat-error>
@@ -69,7 +68,7 @@ import { AuthService, LoginCredentials } from '../../../core/auth/auth.service';
               </mat-form-field>
 
               <!-- Password Field -->
-              <mat-form-field appearance="outline" class="w-full">
+              <mat-form-field class="w-full">
                 <mat-label>Password</mat-label>
                 <input 
                   matInput 
@@ -79,9 +78,17 @@ import { AuthService, LoginCredentials } from '../../../core/auth/auth.service';
                   autocomplete="current-password"
                   [class.error]="hasError('password')"
                 />
-                <mat-icon matSuffix (click)="togglePasswordVisibility()" class="cursor-pointer">
-                  {{ showPassword ? 'visibility_off' : 'visibility' }}
-                </mat-icon>
+                <button 
+                  mat-icon-button 
+                  type="button"
+                  (click)="togglePasswordVisibility()" 
+                  matSuffix
+                  class="cursor-pointer"
+                >
+                  <mat-icon>
+                    {{ showPassword ? 'visibility_off' : 'visibility' }}
+                  </mat-icon>
+                </button>
                 <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
                   Password is required
                 </mat-error>

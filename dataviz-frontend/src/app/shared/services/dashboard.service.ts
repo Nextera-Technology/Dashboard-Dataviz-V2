@@ -88,6 +88,23 @@ export interface UpdateWidgetData {
   section: string;
 }
 
+// Dashboard Builder interfaces
+export interface DashboardListItem {
+  id: string;
+  name: string;
+  title: string;
+  source: string;
+  createdDate: Date;
+  lastModified: Date;
+}
+
+export interface WidgetConfigData {
+  title: string;
+  rows: number;
+  columns: number;
+  type: 'metric' | 'pie' | 'bar' | 'line' | 'column' | 'sankey' | 'table' | 'text' | 'map';
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -355,6 +372,79 @@ export class DashboardService {
   };
 
   constructor() {}
+
+  // Dashboard List methods
+  getDashboardList(): Observable<DashboardListItem[]> {
+    const dashboards: DashboardListItem[] = [
+      {
+        id: '1',
+        name: 'Career Dashboard',
+        title: 'Career Insight Dashboard',
+        source: 'Career Survey 2024',
+        createdDate: new Date('2024-01-15'),
+        lastModified: new Date('2024-03-20')
+      },
+      {
+        id: '2',
+        name: 'Sales Dashboard',
+        title: 'Sales Performance Dashboard',
+        source: 'Sales Analytics 2024',
+        createdDate: new Date('2024-02-01'),
+        lastModified: new Date('2024-03-18')
+      },
+      {
+        id: '3',
+        name: 'Analytics Dashboard',
+        title: 'Business Analytics Dashboard',
+        source: 'Business Intelligence 2024',
+        createdDate: new Date('2024-01-20'),
+        lastModified: new Date('2024-03-15')
+      }
+    ];
+    return of(dashboards).pipe(delay(500));
+  }
+
+  getDashboardById(id: string): Observable<DashboardData> {
+    // For now, always return the main dashboard
+    return this.getDashboard();
+  }
+
+  // Dashboard Builder methods
+  updateWidgetConfig(widgetId: string, config: WidgetConfigData): Observable<Widget> {
+    // Find and update widget in sections
+    for (const section of this.dashboardData.sections) {
+      const widget = section.widgets.find(w => w.id === widgetId);
+      if (widget) {
+        widget.title = config.title;
+        widget.type = config.type;
+        // Convert rows/columns to size
+        const totalSize = config.rows * config.columns;
+        if (totalSize <= 1) widget.size = 'small';
+        else if (totalSize <= 4) widget.size = 'medium';
+        else widget.size = 'large';
+        
+        widget.lastUpdated = new Date();
+        return of(widget).pipe(delay(500));
+      }
+    }
+    return of(null as any).pipe(delay(500));
+  }
+
+  moveWidget(widgetId: string, fromSectionId: string, toSectionId: string): Observable<boolean> {
+    const fromSection = this.dashboardData.sections.find(s => s.id === fromSectionId);
+    const toSection = this.dashboardData.sections.find(s => s.id === toSectionId);
+    
+    if (fromSection && toSection) {
+      const widgetIndex = fromSection.widgets.findIndex(w => w.id === widgetId);
+      if (widgetIndex !== -1) {
+        const widget = fromSection.widgets.splice(widgetIndex, 1)[0];
+        widget.section = toSection.title;
+        toSection.widgets.push(widget);
+        return of(true).pipe(delay(500));
+      }
+    }
+    return of(false).pipe(delay(500));
+  }
 
   // Dashboard data methods
   getDashboard(): Observable<DashboardData> {
