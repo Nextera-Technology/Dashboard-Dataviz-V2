@@ -186,4 +186,94 @@ body {
 
 .status-error {
     @apply w-2 h-2 bg-red-500 rounded-full;
+}
+
+/* Widget Action Button Styles - Shared across all widget components */
+.chart-box .button-container,
+.text-box .button-container,
+.widget-container .button-container {
+    position: absolute !important;
+    top: 10px !important;
+    right: 10px !important;
+    display: flex !important;
+    gap: 5px !important;
+    z-index: 10 !important;
+}
+
+/* Override Angular Material button styles for action buttons */
+.chart-box .info-button,
+.text-box .info-button,
+.widget-container .info-button,
+.chart-box button.info-button,
+.text-box button.info-button,
+.widget-container button.info-button {
+    border: none !important;
+    border-radius: 50% !important;
+    width: 32px !important;
+    height: 32px !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: transparent !important;
+    transition: all 0.3s ease !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    max-width: 32px !important;
+    max-height: 32px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+    font-size: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.chart-box .info-button:hover,
+.text-box .info-button:hover,
+.widget-container .info-button:hover,
+.chart-box button.info-button:hover,
+.text-box button.info-button:hover,
+.widget-container button.info-button:hover {
+    background: #dda681 !important;
+    transform: scale(1.1) !important;
+    box-shadow: none !important;
+}
+
+.chart-box .info-button img,
+.text-box .info-button img,
+.widget-container .info-button img,
+.chart-box button.info-button img,
+.text-box button.info-button img,
+.widget-container button.info-button img {
+    width: 18px !important;
+    height: 18px !important;
+    display: block !important;
+}
+
+.chart-box .info-button.primary:hover,
+.text-box .info-button.primary:hover,
+.widget-container .info-button.primary:hover,
+.chart-box button.info-button.primary:hover,
+.text-box button.info-button.primary:hover,
+.widget-container button.info-button.primary:hover {
+    background: #95cdd4 !important;
+}
+
+.chart-box .info-button.secondary:hover,
+.text-box .info-button.secondary:hover,
+.widget-container .info-button.secondary:hover,
+.chart-box button.info-button.secondary:hover,
+.text-box button.info-button.secondary:hover,
+.widget-container button.info-button.secondary:hover {
+    background: #bbaafa !important;
+}
+
+.chart-box .info-button.danger:hover,
+.text-box .info-button.danger:hover,
+.widget-container .info-button.danger:hover,
+.chart-box button.info-button.danger:hover,
+.text-box button.info-button.danger:hover,
+.widget-container button.info-button.danger:hover {
+    background: #d32f2f !important;
 } 

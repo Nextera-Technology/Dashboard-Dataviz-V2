@@ -134,7 +134,12 @@ export class DashboardService {
               value: 1250,
               subtitle: 'Active students',
               background: '#e8f5e8'
-            }
+            },
+            actions: [
+              { id: '1', type: 'primary', title: 'Info', label: 'Info', icon: 'paragraph.png', action: 'info' },
+              { id: '2', type: 'secondary', title: 'Export', label: 'Export', icon: 'excel.png', action: 'export' },
+              { id: '3', type: 'secondary', title: 'Audience', label: 'Audience', icon: 'audience_4644048.png', action: 'audience' }
+            ]
           },
           {
             id: '2',
@@ -148,7 +153,12 @@ export class DashboardService {
               value: 87,
               subtitle: 'Certification success',
               background: '#fff3e0'
-            }
+            },
+            actions: [
+              { id: '1', type: 'primary', title: 'Info', label: 'Info', icon: 'paragraph.png', action: 'info' },
+              { id: '2', type: 'secondary', title: 'Export', label: 'Export', icon: 'excel.png', action: 'export' },
+              { id: '3', type: 'secondary', title: 'Audience', label: 'Audience', icon: 'audience_4644048.png', action: 'audience' }
+            ]
           },
           {
             id: '3',
@@ -162,7 +172,12 @@ export class DashboardService {
               value: 92,
               subtitle: 'Graduates employed',
               background: '#e3f2fd'
-            }
+            },
+            actions: [
+              { id: '1', type: 'primary', title: 'Info', label: 'Info', icon: 'paragraph.png', action: 'info' },
+              { id: '2', type: 'secondary', title: 'Export', label: 'Export', icon: 'excel.png', action: 'export' },
+              { id: '3', type: 'secondary', title: 'Audience', label: 'Audience', icon: 'audience_4644048.png', action: 'audience' }
+            ]
           },
           {
             id: '4',
@@ -176,7 +191,12 @@ export class DashboardService {
               value: 65000,
               subtitle: 'Annual average',
               background: '#f3e5f5'
-            }
+            },
+            actions: [
+              { id: '1', type: 'primary', title: 'Info', label: 'Info', icon: 'paragraph.png', action: 'info' },
+              { id: '2', type: 'secondary', title: 'Export', label: 'Export', icon: 'excel.png', action: 'export' },
+              { id: '3', type: 'secondary', title: 'Audience', label: 'Audience', icon: 'audience_4644048.png', action: 'audience' }
+            ]
           }
         ]
       },
@@ -200,7 +220,12 @@ export class DashboardService {
                 { name: 'Female', value: 55, color: '#FF9800' }
               ],
               background: '#ffffff'
-            }
+            },
+            actions: [
+              { id: '1', type: 'primary', title: 'Info', label: 'Info', icon: 'paragraph.png', action: 'info' },
+              { id: '2', type: 'secondary', title: 'Export', label: 'Export', icon: 'excel.png', action: 'export' },
+              { id: '3', type: 'secondary', title: 'Audience', label: 'Audience', icon: 'audience_4644048.png', action: 'audience' }
+            ]
           },
           {
             id: '6',
@@ -218,7 +243,12 @@ export class DashboardService {
                 { name: 'Other', value: 15, color: '#9C27B0' }
               ],
               background: '#ffffff'
-            }
+            },
+            actions: [
+              { id: '1', type: 'primary', title: 'Info', label: 'Info', icon: 'paragraph.png', action: 'info' },
+              { id: '2', type: 'secondary', title: 'Export', label: 'Export', icon: 'excel.png', action: 'export' },
+              { id: '3', type: 'secondary', title: 'Audience', label: 'Audience', icon: 'audience_4644048.png', action: 'audience' }
+            ]
           }
         ]
       },
@@ -246,7 +276,12 @@ export class DashboardService {
                 }
               ],
               background: '#ffffff'
-            }
+            },
+            actions: [
+              { id: '1', type: 'primary', title: 'Info', label: 'Info', icon: 'paragraph.png', action: 'info' },
+              { id: '2', type: 'secondary', title: 'Export', label: 'Export', icon: 'excel.png', action: 'export' },
+              { id: '3', type: 'secondary', title: 'Audience', label: 'Audience', icon: 'audience_4644048.png', action: 'audience' }
+            ]
           },
           {
             id: '8',
@@ -266,7 +301,12 @@ export class DashboardService {
                 }
               ],
               background: '#ffffff'
-            }
+            },
+            actions: [
+              { id: '1', type: 'primary', title: 'Info', label: 'Info', icon: 'paragraph.png', action: 'info' },
+              { id: '2', type: 'secondary', title: 'Export', label: 'Export', icon: 'excel.png', action: 'export' },
+              { id: '3', type: 'secondary', title: 'Audience', label: 'Audience', icon: 'audience_4644048.png', action: 'audience' }
+            ]
           }
         ]
       },
@@ -294,7 +334,12 @@ export class DashboardService {
                 }
               ],
               background: '#ffffff'
-            }
+            },
+            actions: [
+              { id: '1', type: 'primary', title: 'Info', label: 'Info', icon: 'paragraph.png', action: 'info' },
+              { id: '2', type: 'secondary', title: 'Export', label: 'Export', icon: 'excel.png', action: 'export' },
+              { id: '3', type: 'secondary', title: 'Audience', label: 'Audience', icon: 'audience_4644048.png', action: 'audience' }
+            ]
           },
           {
             id: '10',
@@ -315,7 +360,12 @@ export class DashboardService {
                 { from: 'Mobile Development', to: 'Android', value: 50 }
               ],
               background: '#ffffff'
-            }
+            },
+            actions: [
+              { id: '1', type: 'primary', title: 'Info', label: 'Info', icon: 'paragraph.png', action: 'info' },
+              { id: '2', type: 'secondary', title: 'Export', label: 'Export', icon: 'excel.png', action: 'export' },
+              { id: '3', type: 'secondary', title: 'Audience', label: 'Audience', icon: 'audience_4644048.png', action: 'audience' }
+            ]
           }
         ]
       },
@@ -351,7 +401,12 @@ export class DashboardService {
                 <p>Focus on expanding Data Science and Mobile Development programs to meet growing market demand.</p>
               `,
               background: '#ffffff'
-            }
+            },
+            actions: [
+              { id: '1', type: 'primary', title: 'Info', label: 'Info', icon: 'paragraph.png', action: 'info' },
+              { id: '2', type: 'secondary', title: 'Export', label: 'Export', icon: 'excel.png', action: 'export' },
+              { id: '3', type: 'secondary', title: 'Audience', label: 'Audience', icon: 'audience_4644048.png', action: 'audience' }
+            ]
           }
         ]
       }

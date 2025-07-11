@@ -1,4 +1,8 @@
 import { Component, Input, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { DashboardWidget, WidgetAction } from '../../services/dashboard.service';
 
 declare const am5: any;
 declare const am5themes_Animated: any;
@@ -7,8 +11,23 @@ declare const am5geodata_franceLow: any;
 
 @Component({
   selector: 'app-map-widget',
+  standalone: true,
+  imports: [CommonModule, MatButtonModule, MatIconModule],
   template: `
-    <div class="widget-container">
+    <div class="widget-container" [style.background-color]="widget.data?.background || '#ffffff'">
+      <!-- Action Buttons -->
+      <div class="button-container" *ngIf="widget.actions && widget.actions.length > 0">
+        <button 
+          *ngFor="let action of widget.actions" 
+          class="info-button"
+          [class]="action.type"
+          [title]="action.title"
+          (click)="onActionClick(action)">
+          <img [src]="getActionIcon(action.icon)" [alt]="action.title">
+        </button>
+      </div>
+
+      <!-- Widget Content -->
       <div class="widget-header">
         <h3>{{ widget.title }}</h3>
       </div>
@@ -19,11 +38,28 @@ declare const am5geodata_franceLow: any;
   `,
   styles: [`
     .widget-container {
+      position: relative;
       background: white;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       padding: 20px;
       height: 100%;
+      transition: all 0.3s ease;
+    }
+
+    .widget-container:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+    }
+
+    /* Action Buttons */
+    .button-container {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 5px;
+      z-index: 10;
     }
     
     .widget-header h3 {
@@ -40,7 +76,7 @@ declare const am5geodata_franceLow: any;
   `]
 })
 export class MapWidgetComponent implements OnInit, OnDestroy, AfterViewInit {
-  @Input() widget: any;
+  @Input() widget!: DashboardWidget;
   
   private root: any;
   private chart: any;
@@ -48,6 +84,22 @@ export class MapWidgetComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor() {
     this.chartId = 'map-chart-' + Math.random().toString(36).substr(2, 9);
+  }
+
+  onActionClick(action: WidgetAction): void {
+    console.log('Action clicked:', action);
+    // Placeholder for future implementation
+  }
+
+  getActionIcon(iconName: string): string {
+    // Return placeholder icon URLs - in real app, these would be actual icons
+    const iconMap: { [key: string]: string } = {
+      'paragraph.png': 'https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png',
+      'excel.png': 'https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png',
+      'audience_4644048.png': 'https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png'
+    };
+    
+    return iconMap[iconName] || `https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/${iconName}`;
   }
 
   ngAfterViewInit(): void {

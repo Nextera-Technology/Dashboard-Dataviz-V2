@@ -64,48 +64,6 @@ declare var am5xy: any;
       transform: translateY(-2px);
     }
 
-    /* Action Buttons */
-    .button-container {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      display: flex;
-      gap: 5px;
-      z-index: 10;
-    }
-
-    .info-button {
-      background: rgba(255, 255, 255, 0.9);
-      border: none;
-      border-radius: 4px;
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      backdrop-filter: blur(10px);
-    }
-
-    .info-button:hover {
-      background: rgba(255, 255, 255, 1);
-      transform: scale(1.1);
-    }
-
-    .info-button.primary {
-      background: rgba(21, 97, 109, 0.9);
-    }
-
-    .info-button.secondary {
-      background: rgba(46, 158, 143, 0.9);
-    }
-
-    .info-button img {
-      width: 16px;
-      height: 16px;
-    }
-
     /* Chart Content */
     .chart-content {
       flex: 1;
