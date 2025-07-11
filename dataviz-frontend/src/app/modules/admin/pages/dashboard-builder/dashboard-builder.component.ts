@@ -13,6 +13,7 @@ import { AdminLayoutComponent } from '../../components/admin-layout/admin-layout
 import { DashboardService, DashboardData, Section, Widget } from '../../../../shared/services/dashboard.service';
 import { WidgetConfigDialogComponent } from '../../components/widget-config-dialog/widget-config-dialog.component';
 import { SectionFormDialogComponent } from '../../components/section-form-dialog/section-form-dialog.component';
+import { ThemeSelectorDialogComponent, ThemeOption } from '../../components/theme-selector-dialog/theme-selector-dialog.component';
 
 @Component({
   selector: 'app-dashboard-builder',
@@ -41,6 +42,10 @@ import { SectionFormDialogComponent } from '../../components/section-form-dialog
             <h1>{{ dashboard?.title || 'Dashboard Builder' }}</h1>
           </div>
           <div class="header-actions">
+            <button mat-button (click)="openThemeSelector()" matTooltip="Dashboard Settings">
+              <mat-icon>settings</mat-icon>
+              Settings
+            </button>
             <button mat-button (click)="addSection()" matTooltip="Add Section">
               <mat-icon>add</mat-icon>
               Add Section
@@ -526,5 +531,36 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
       map: 'map'
     };
     return icons[type] || 'widgets';
+  }
+
+  openThemeSelector(): void {
+    // Get available themes and current theme
+    this.dashboardService.getAvailableThemes().subscribe(themes => {
+      this.dashboardService.getCurrentTheme().subscribe(currentTheme => {
+        const dialogRef = this.dialog.open(ThemeSelectorDialogComponent, {
+          width: '600px',
+          data: {
+            currentTheme: currentTheme,
+            availableThemes: themes
+          }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          if (result && result !== currentTheme) {
+            this.dashboardService.updateTheme(result).subscribe({
+              next: (newTheme) => {
+                if (this.dashboard) {
+                  this.dashboard.theme = newTheme;
+                }
+                this.snackBar.open(`Theme changed to ${newTheme}`, 'Close', { duration: 3000 });
+              },
+              error: (error) => {
+                this.snackBar.open('Error updating theme', 'Close', { duration: 3000 });
+              }
+            });
+          }
+        });
+      });
+    });
   }
 } 

@@ -5,6 +5,7 @@ import { delay } from 'rxjs/operators';
 export interface DashboardData {
   title: string;
   subtitle: string;
+  theme: 'light' | 'dark';
   sections: Section[];
 }
 
@@ -113,6 +114,7 @@ export class DashboardService {
   private dashboardData: DashboardData = {
     title: 'Career Insight Dashboard',
     subtitle: 'Data source: Career Survey 2024',
+    theme: 'light',
     sections: [
       {
         id: '1',
@@ -570,5 +572,23 @@ export class DashboardService {
       }
     }
     return of(null as any).pipe(delay(500));
+  }
+
+  // Theme management methods
+  getCurrentTheme(): Observable<'light' | 'dark'> {
+    return of(this.dashboardData.theme).pipe(delay(300));
+  }
+
+  updateTheme(theme: 'light' | 'dark'): Observable<'light' | 'dark'> {
+    this.dashboardData.theme = theme;
+    return of(theme).pipe(delay(500));
+  }
+
+  getAvailableThemes(): Observable<Array<{value: 'light' | 'dark', label: string, icon: string}>> {
+    const themes = [
+      { value: 'light' as const, label: 'Light Theme', icon: 'light_mode' },
+      { value: 'dark' as const, label: 'Dark Theme', icon: 'dark_mode' }
+    ];
+    return of(themes).pipe(delay(300));
   }
 } 

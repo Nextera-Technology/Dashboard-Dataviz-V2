@@ -32,7 +32,7 @@ export interface UserFormData {
     <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
       <mat-dialog-content>
         <div class="form-row">
-          <mat-form-field appearance="outline" class="full-width">
+          <mat-form-field class="full-width">
             <mat-label>Name</mat-label>
             <input matInput formControlName="name" placeholder="Enter full name">
             <mat-error *ngIf="userForm.get('name')?.hasError('required')">
@@ -42,7 +42,7 @@ export interface UserFormData {
         </div>
 
         <div class="form-row">
-          <mat-form-field appearance="outline" class="full-width">
+          <mat-form-field class="full-width">
             <mat-label>Email</mat-label>
             <input matInput formControlName="email" placeholder="Enter email address" type="email">
             <mat-error *ngIf="userForm.get('email')?.hasError('required')">
@@ -55,7 +55,7 @@ export interface UserFormData {
         </div>
 
         <div class="form-row">
-          <mat-form-field appearance="outline" class="full-width">
+          <mat-form-field class="full-width">
             <mat-label>Role</mat-label>
             <mat-select formControlName="role">
               <mat-option value="admin">Admin</mat-option>
