@@ -12,6 +12,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AdminLayoutComponent } from '../../components/admin-layout/admin-layout.component';
 import { DashboardService, DashboardData, Section, Widget } from '../../../../shared/services/dashboard.service';
 import { WidgetConfigDialogComponent } from '../../components/widget-config-dialog/widget-config-dialog.component';
+import { SectionFormDialogComponent } from '../../components/section-form-dialog/section-form-dialog.component';
 
 @Component({
   selector: 'app-dashboard-builder',
@@ -40,6 +41,10 @@ import { WidgetConfigDialogComponent } from '../../components/widget-config-dial
             <h1>{{ dashboard?.title || 'Dashboard Builder' }}</h1>
           </div>
           <div class="header-actions">
+            <button mat-button (click)="addSection()" matTooltip="Add Section">
+              <mat-icon>add</mat-icon>
+              Add Section
+            </button>
             <button mat-raised-button color="primary" (click)="saveDashboard()">
               <mat-icon>save</mat-icon>
               Save Dashboard
@@ -58,6 +63,25 @@ import { WidgetConfigDialogComponent } from '../../components/widget-config-dial
               [label]="section.title"
               [disabled]="!section.visible">
               
+              <!-- Section Header with Actions -->
+              <div class="section-header">
+                <div class="section-info">
+                  <h3>{{ section.title }}</h3>
+                  <span class="widget-count">{{ section.widgets.length }} widgets</span>
+                </div>
+                <div class="section-actions">
+                  <button mat-icon-button (click)="editSection(section)" matTooltip="Edit Section">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="deleteSection(section)" matTooltip="Delete Section">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="addWidget(section)" matTooltip="Add Widget">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                </div>
+              </div>
+
               <!-- Widget Grid -->
               <div class="widget-grid" 
                    cdkDropList
@@ -152,6 +176,31 @@ import { WidgetConfigDialogComponent } from '../../components/widget-config-dial
     .section-tabs ::ng-deep .mat-mdc-tab-body-wrapper {
       height: calc(100% - 48px);
       overflow: auto;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .section-info h3 {
+      margin: 0;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .widget-count {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .section-actions {
+      display: flex;
+      gap: 8px;
     }
 
     .widget-grid {
@@ -369,6 +418,95 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
 
   saveDashboard(): void {
     this.snackBar.open('Dashboard saved successfully', 'Close', { duration: 3000 });
+  }
+
+  addSection(): void {
+    const dialogRef = this.dialog.open(SectionFormDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'New Section',
+        background: '#f5f5f5',
+        visible: true
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && this.dashboard) {
+        const newSection = {
+          id: Date.now().toString(),
+          title: result.title,
+          background: result.background,
+          visible: result.visible,
+          widgets: []
+        };
+        this.dashboard.sections.push(newSection);
+        this.snackBar.open('Section added successfully', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
+  editSection(section: any): void {
+    const dialogRef = this.dialog.open(SectionFormDialogComponent, {
+      width: '500px',
+      data: {
+        title: section.title,
+        background: section.background
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        section.title = result.title;
+        section.background = result.background;
+        this.snackBar.open('Section updated successfully', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
+  deleteSection(section: Section): void {
+    if (confirm(`Are you sure you want to delete section "${section.title}"? This will also delete all widgets in this section.`)) {
+      if (this.dashboard) {
+        const index = this.dashboard.sections.findIndex(s => s.id === section.id);
+        if (index !== -1) {
+          this.dashboard.sections.splice(index, 1);
+          this.snackBar.open('Section deleted successfully', 'Close', { duration: 3000 });
+        }
+      }
+    }
+  }
+
+  addWidget(section: any): void {
+    const dialogRef = this.dialog.open(WidgetConfigDialogComponent, {
+      width: '500px',
+      data: {
+        title: 'New Widget',
+        type: 'metric',
+        size: 'small'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && this.dashboard) {
+        const totalSize = result.rows * result.columns;
+        const size: 'small' | 'medium' | 'large' = 
+          totalSize <= 1 ? 'small' : 
+          totalSize <= 4 ? 'medium' : 'large';
+
+        const newWidget: Widget = {
+          id: Date.now().toString(),
+          title: result.title,
+          type: result.type,
+          size: size,
+          dataSource: 'default-data',
+          visible: true,
+          section: section.title,
+          lastUpdated: new Date()
+        };
+        
+        section.widgets.push(newWidget);
+        this.snackBar.open('Widget added successfully', 'Close', { duration: 3000 });
+      }
+    });
   }
 
   goBack(): void {
