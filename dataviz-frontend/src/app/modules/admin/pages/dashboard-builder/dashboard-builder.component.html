@@ -1,0 +1,89 @@
+<app-admin-layout>
+    <div class="dashboard-builder">
+        <div class="header">
+            <div class="header-left">
+                <button mat-button (click)="goBack()">
+                    <mat-icon>arrow_back</mat-icon>
+                    Back to Dashboards
+                </button>
+                <h1>{{ dashboard?.title || 'Dashboard Builder' }}</h1>
+            </div>
+            <div class="header-actions">
+                <button mat-button (click)="addSection()" matTooltip="Add Section">
+                    <mat-icon>add</mat-icon>
+                    Add Section
+                </button>
+                <button mat-raised-button color="primary" (click)="saveDashboard()">
+                    <mat-icon>save</mat-icon>
+                    Save Dashboard
+                </button>
+            </div>
+        </div>
+
+        <div class="builder-content">
+            <!-- Section Tabs -->
+            <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)"
+                class="section-tabs">
+                <mat-tab *ngFor="let section of dashboard?.sections; let i = index" [label]="section.title"
+                    [disabled]="!section.visible">
+
+                    <!-- Section Header with Actions -->
+                    <div class="section-header">
+                        <div class="section-info">
+                            <h3>{{ section.title }}</h3>
+                            <span class="widget-count">{{ section.widgets.length }} widgets</span>
+                        </div>
+                        <div class="section-actions">
+                            <button mat-icon-button (click)="editSection(section)" matTooltip="Edit Section">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button mat-icon-button (click)="deleteSection(section)" matTooltip="Delete Section">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                            <button mat-icon-button (click)="addWidget(section)" matTooltip="Add Widget">
+                                <mat-icon>add</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Widget Grid -->
+                    <div class="widget-grid" cdkDropList [cdkDropListData]="section.widgets"
+                        (cdkDropListDropped)="onWidgetDrop($event, i)">
+
+                        <div class="widget-card" *ngFor="let widget of section.widgets" cdkDrag
+                            [class.widget-small]="widget.size === 'small'"
+                            [class.widget-medium]="widget.size === 'medium'"
+                            [class.widget-large]="widget.size === 'large'">
+
+                            <div class="widget-header">
+                                <h3>{{ widget.title }}</h3>
+                                <div class="widget-actions">
+                                    <button mat-icon-button matTooltip="Edit Widget" (click)="editWidget(widget)">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                    <button mat-icon-button matTooltip="Delete Widget" (click)="deleteWidget(widget)">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                    <button mat-icon-button cdkDragHandle matTooltip="Move Widget">
+                                        <mat-icon>drag_indicator</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="widget-content">
+                                <div class="widget-preview">
+                                    <mat-icon>{{ getWidgetIcon(widget.type) }}</mat-icon>
+                                    <span>{{ widget.type | titlecase }} Widget</span>
+                                </div>
+                                <div class="widget-info">
+                                    <span class="widget-size">{{ widget.size | titlecase }}</span>
+                                    <span class="widget-source">{{ widget.dataSource }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
+</app-admin-layout>

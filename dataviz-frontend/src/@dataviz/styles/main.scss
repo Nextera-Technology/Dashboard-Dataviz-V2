@@ -161,16 +161,6 @@ body {
     }
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --text-primary: #f9fafb;
-        --text-secondary: #d1d5db;
-        --bg-primary: #111827;
-        --bg-secondary: #1f2937;
-        --border-color: #374151;
-    }
-}
 
 /* Print styles */
 @media print {
