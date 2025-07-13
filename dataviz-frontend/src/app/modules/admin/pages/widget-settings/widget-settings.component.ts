@@ -13,9 +13,9 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
-import { WidgetFormDialogComponent } from '../../components/widget-form-dialog/widget-form-dialog.component';
 import { AdminLayoutComponent } from '../../components/admin-layout/admin-layout.component';
 import { DashboardService, Widget, CreateWidgetData, UpdateWidgetData } from '../../../../shared/services/dashboard.service';
+import { WidgetSettingDialogComponent } from '../../components/widget-setting-dialog/widget-setting-dialog.component';
 
 interface WidgetDisplay {
   id: string;
@@ -312,7 +312,7 @@ export class WidgetSettingsComponent implements OnInit {
   }
 
   openWidgetDialog(widget?: WidgetDisplay) {
-    const dialogRef = this.dialog.open(WidgetFormDialogComponent, {
+    const dialogRef = this.dialog.open(WidgetSettingDialogComponent, {
       width: '500px',
       data: widget || {}
     });

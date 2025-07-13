@@ -1,87 +1,149 @@
 <app-admin-layout>
-    <div class="dashboard-builder">
-        <div class="header">
-            <div class="header-left">
-                <button mat-button (click)="goBack()">
-                    <mat-icon>arrow_back</mat-icon>
-                    Back to Dashboards
+    <div class="dashboard-builder flex flex-col h-screen bg-gray-50">
+        <div
+            class="header flex flex-col sm:flex-row justify-between items-center px-6 py-5 border-b border-gray-200 bg-white shadow-md z-10 sticky top-0">
+            <div class="header-left flex items-center gap-4 mb-4 sm:mb-0">
+                <button mat-button (click)="goBack()"
+                    class="text-blue-600 hover:text-blue-800 flex items-center px-3 py-2 rounded-md transition-colors duration-200">
+                    <mat-icon class="mr-2">arrow_back</mat-icon>
+                    <span class="font-medium">Back to Dashboards</span>
                 </button>
-                <h1>{{ dashboard?.title || 'Dashboard Builder' }}</h1>
+                <h1 class="text-2xl font-bold text-gray-800">
+                    {{ dashboard?.title || 'Loading Dashboard...' }}
+                </h1>
             </div>
-            <div class="header-actions">
-                <button mat-button (click)="addSection()" matTooltip="Add Section">
+            <div class="header-actions flex gap-4">
+                <button mat-button (click)="addSection()" matTooltip="Add New Section"
+                    class="flex items-center space-x-2 px-5 py-2.5 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors duration-200 shadow-sm hover:shadow-md">
                     <mat-icon>add</mat-icon>
-                    Add Section
+                    <span>Add Section</span>
                 </button>
-                <button mat-raised-button color="primary" (click)="saveDashboard()">
+                <button mat-raised-button color="primary" (click)="saveDashboard()"
+                    class="flex items-center space-x-2 px-7 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
                     <mat-icon>save</mat-icon>
-                    Save Dashboard
+                    <span>Save Dashboard</span>
                 </button>
             </div>
         </div>
 
-        <div class="builder-content">
-            <!-- Section Tabs -->
+        <div class="builder-content flex-1 overflow-hidden">
             <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)"
-                class="section-tabs">
-                <mat-tab *ngFor="let section of dashboard?.sections; let i = index" [label]="section.title"
-                    [disabled]="!section.visible">
-
-                    <!-- Section Header with Actions -->
-                    <div class="section-header">
-                        <div class="section-info">
-                            <h3>{{ section.title }}</h3>
-                            <span class="widget-count">{{ section.widgets.length }} widgets</span>
-                        </div>
-                        <div class="section-actions">
-                            <button mat-icon-button (click)="editSection(section)" matTooltip="Edit Section">
-                                <mat-icon>edit</mat-icon>
-                            </button>
-                            <button mat-icon-button (click)="deleteSection(section)" matTooltip="Delete Section">
-                                <mat-icon>delete</mat-icon>
-                            </button>
-                            <button mat-icon-button (click)="addWidget(section)" matTooltip="Add Widget">
-                                <mat-icon>add</mat-icon>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Widget Grid -->
-                    <div class="widget-grid" cdkDropList [cdkDropListData]="section.widgets"
-                        (cdkDropListDropped)="onWidgetDrop($event, i)">
-
-                        <div class="widget-card" *ngFor="let widget of section.widgets" cdkDrag
-                            [class.widget-small]="widget.size === 'small'"
-                            [class.widget-medium]="widget.size === 'medium'"
-                            [class.widget-large]="widget.size === 'large'">
-
-                            <div class="widget-header">
-                                <h3>{{ widget.title }}</h3>
-                                <div class="widget-actions">
-                                    <button mat-icon-button matTooltip="Edit Widget" (click)="editWidget(widget)">
-                                        <mat-icon>edit</mat-icon>
-                                    </button>
-                                    <button mat-icon-button matTooltip="Delete Widget" (click)="deleteWidget(widget)">
-                                        <mat-icon>delete</mat-icon>
-                                    </button>
-                                    <button mat-icon-button cdkDragHandle matTooltip="Move Widget">
-                                        <mat-icon>drag_indicator</mat-icon>
-                                    </button>
-                                </div>
+                class="section-tabs h-full">
+                <mat-tab *ngFor="let section of dashboard?.sectionIds; let i = index" [label]="section.title">
+                    <ng-template matTabContent>
+                        <div
+                            class="section-header flex justify-between items-center py-5 px-8 bg-white border-b border-gray-200 shadow-sm">
+                            <div class="section-info">
+                                <h3 class="text-xl font-bold text-gray-800">
+                                    {{ section.title }}
+                                </h3>
+                                <span class="text-sm text-gray-500">{{ section.widgetIds.length }} widgets</span>
                             </div>
-
-                            <div class="widget-content">
-                                <div class="widget-preview">
-                                    <mat-icon>{{ getWidgetIcon(widget.type) }}</mat-icon>
-                                    <span>{{ widget.type | titlecase }} Widget</span>
-                                </div>
-                                <div class="widget-info">
-                                    <span class="widget-size">{{ widget.size | titlecase }}</span>
-                                    <span class="widget-source">{{ widget.dataSource }}</span>
-                                </div>
+                            <div class="section-actions flex gap-2">
+                                <button mat-icon-button (click)="editSection(section)" matTooltip="Edit Section"
+                                    class="text-gray-600 hover:text-blue-600 w-10 h-10">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                                <button mat-icon-button (click)="deleteSection(section)" matTooltip="Delete Section"
+                                    class="text-gray-600 hover:text-red-600 w-10 h-10">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                                <button mat-icon-button (click)="addWidget(section)" matTooltip="Add Widget to Section"
+                                    class="text-gray-600 hover:text-green-600 w-10 h-10">
+                                    <mat-icon>add_box</mat-icon>
+                                </button>
                             </div>
                         </div>
-                    </div>
+
+                        <div class="widget-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6 overflow-y-auto"
+                            cdkDropList [cdkDropListData]="section.widgetIds"
+                            (cdkDropListDropped)="onWidgetDrop($event, i)">
+                            <div class="widget-card bg-white rounded-xl shadow-md border border-gray-200 hover:shadow-lg hover:border-blue-400 transition-all duration-300 ease-in-out flex flex-col"
+                                *ngFor="let widget of section.widgetIds" cdkDrag
+                                [class.col-span-1]="widget.columnSize === 1"
+                                [class.col-span-2]="widget.columnSize === 2"
+                                [class.col-span-3]="widget.columnSize === 3"
+                                [class.col-span-4]="widget.columnSize === 4" [class.row-span-1]="widget.rowSize === 1"
+                                [class.row-span-2]="widget.rowSize === 2" [class.row-span-3]="widget.rowSize === 3"
+                                [class.row-span-4]="widget.rowSize === 4">
+                                <div
+                                    class="widget-header flex justify-between items-center p-4 border-b border-gray-100">
+                                    <h3 class="text-base font-semibold text-gray-900 truncate">
+                                        {{ widget.title }}
+                                    </h3>
+                                    <div class="widget-actions flex gap-1">
+                                        <button mat-icon-button matTooltip="Edit Widget" (click)="editWidget(widget)"
+                                            class="text-gray-500 hover:text-blue-600 w-8 h-8">
+                                            <mat-icon>edit</mat-icon>
+                                        </button>
+                                        <button mat-icon-button matTooltip="Delete Widget"
+                                            (click)="deleteWidget(widget)"
+                                            class="text-gray-500 hover:text-red-600 w-8 h-8">
+                                            <mat-icon>delete</mat-icon>
+                                        </button>
+                                        <button mat-icon-button cdkDragHandle matTooltip="Move Widget"
+                                            class="text-gray-500 hover:text-gray-800 cursor-grab w-8 h-8">
+                                            <mat-icon>drag_indicator</mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="widget-content flex-grow flex flex-col justify-between p-4">
+                                    <div
+                                        class="widget-preview flex flex-col items-center justify-center h-28 bg-blue-50 text-blue-700 rounded-lg border border-blue-200 border-dashed mb-3">
+                                        <mat-icon class="text-5xl"
+                                            [svgIcon]="getWidgetIcon(widget.widgetType)"></mat-icon>
+                                        <span class="text-sm font-medium mt-1">{{ widget.widgetType | titlecase }}
+                                            Widget</span>
+                                    </div>
+                                    <div class="widget-info text-sm text-gray-600">
+                                        <span class="widget-size block mb-2">Size: {{ widget.columnSize }}x{{
+                                            widget.rowSize }}</span>
+                                        <div class="widget-source-container"
+                                            *ngIf="getUniqueDataSourceNames(widget).length > 0; else noDataSource">
+                                            <span class="font-medium block mb-1">Data Source:</span>
+                                            <div class="flex flex-wrap gap-1">
+                                                <span *ngFor="
+                            let name of getUniqueDataSourceNames(widget) | slice:0: (isDataSourceExpanded(widget._id!) ? 9999 : initialVisibleDataSourceTags)
+                          " class="px-2 py-0.5 bg-blue-100 h-[24px] text-blue-800 rounded-full text-xs font-medium">
+                                                    {{ name }}
+                                                </span>
+                                                <button
+                                                    *ngIf="getUniqueDataSourceNames(widget).length > initialVisibleDataSourceTags"
+                                                    (click)="toggleDataSourceExpansion(widget._id!)"
+                                                    class="text-blue-600 h-[24px] hover:text-blue-800 text-xs py-0 px-2 min-w-0">
+                                                    {{ isDataSourceExpanded(widget._id!) ? 'Show less...' : 'Show
+                                                    more...' }}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <ng-template #noDataSource>
+                                            <span class="widget-source block mt-1 text-gray-500 text-xs">No data source
+                                                defined.</span>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </mat-tab>
+
+                <mat-tab *ngIf="!dashboard?.sectionIds || dashboard?.sectionIds.length === 0" label="No Sections">
+                    <ng-template matTabContent>
+                        <div class="flex flex-col items-center justify-center h-full p-8 text-gray-600 bg-gray-50">
+                            <mat-icon class="text-8xl text-gray-400 mb-6" svgIcon="mat_solid:dashboard_customize"></mat-icon>
+                            <p class="text-2xl font-bold mb-3">No sections added yet!</p>
+                            <p class="text-center text-lg mb-8 max-w-md">
+                                Start building your custom dashboard by adding a new section.
+                                Sections help you organize your widgets into logical groups.
+                            </p>
+                            <button mat-raised-button color="primary" (click)="addSection()"
+                                class="flex items-center space-x-2 px-8 py-4 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 text-lg">
+                                <mat-icon class="text-2xl">add</mat-icon>
+                                <span>Add Your First Section</span>
+                            </button>
+                        </div>
+                    </ng-template>
                 </mat-tab>
             </mat-tab-group>
         </div>

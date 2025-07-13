@@ -18,35 +18,63 @@ export class DashboardBuilderService {
       RepositoryFactory.createRepository("dashboard-builder");
   }
 
-  async createDashboardBuilder(DashboardBuilderInput: any) {
-    return await this.dashboardBuilderRepository.createDashboardBuilder(DashboardBuilderInput);
+  async createDashboard(DashboardInput: any) {
+    return await this.dashboardBuilderRepository.createDashboard(
+      DashboardInput
+    );
   }
 
-  async deleteDashboardBuilder(id: string) {
-    return await this.dashboardBuilderRepository.deleteDashboardBuilder(id);
+  async deleteDashboard(id: string) {
+    return await this.dashboardBuilderRepository.deleteDashboard(id);
   }
 
-  async updateDashboardBuilder(id: string, DashboardBuilderInput: any) {
-    return await this.dashboardBuilderRepository.updateDashboardBuilder(
+  async updateDashboard(id: string, DashboardInput: any) {
+    return await this.dashboardBuilderRepository.updateDashboard(
       id,
-      DashboardBuilderInput
+      DashboardInput
     );
   }
 
-  async getAllDashboardBuilders(pagination: any, sorting: any, filter: any) {
-    return await this.dashboardBuilderRepository.getAllDashboardBuilders(
-      pagination,
-      sorting,
-      filter
+  async createSection(SectionInput: any) {
+    return await this.dashboardBuilderRepository.createSection(SectionInput);
+  }
+
+  async deleteSection(id: string) {
+    return await this.dashboardBuilderRepository.deleteSection(id);
+  }
+
+  async updateSection(id: string, SectionInput: any) {
+    return await this.dashboardBuilderRepository.updateSection(
+      id,
+      SectionInput
     );
   }
 
-  async getDropdownDashboardBuilders() {
-    return await this.dashboardBuilderRepository.getDropdownDashboardBuilders();
+  async createWidget(WidgetInput: any) {
+    return await this.dashboardBuilderRepository.createWidget(WidgetInput);
   }
 
-  async getOneDashboardBuilder(id: string) {
-    return await this.dashboardBuilderRepository.getOneDashboardBuilder(id);
+  async deleteWidget(id: string) {
+    return await this.dashboardBuilderRepository.deleteWidget(id);
+  }
+
+  async updateWidget(id: string, WidgetInput: any) {
+    return await this.dashboardBuilderRepository.updateWidget(id, WidgetInput);
+  }
+
+  async getAllDashboards(filter: any) {
+    return await this.dashboardBuilderRepository.getAllDashboards(filter);
+  }
+
+  async getOneDashboard(id: string) {
+    return await this.dashboardBuilderRepository.getOneDashboard(id);
+  }
+
+  replaceUnderscoresPipe(value: string | null | undefined): string {
+    if (value === null || value === undefined) {
+      return "";
+    }
+    return value.replace(/_/g, " ");
   }
 }
 

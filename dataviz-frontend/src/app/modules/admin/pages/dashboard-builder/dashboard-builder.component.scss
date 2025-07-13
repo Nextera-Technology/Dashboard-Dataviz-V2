@@ -1,178 +1,52 @@
+// ... (dashboard-builder.component.scss content from previous response, unchanged)
 .dashboard-builder {
-  padding: 0;
+  /* This ensures the entire component takes full viewport height and uses flex for layout */
   height: 100vh;
-  display: flex;
-  flex-direction: column;
+  // Tailwind's flex-col is used directly in HTML
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 0;
-  border-bottom: 1px solid #e0e0e0;
-  background: white;
-  z-index: 10;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.header-left h1 {
-  margin: 0;
-  color: #333;
-  font-size: 24px;
-}
-
-.builder-content {
-  flex: 1;
-  overflow: hidden;
-}
-
+// Angular Material Tabs specific overrides for height calculation
 .section-tabs {
-  height: 100%;
+  height: 100%; // Make the tab group fill its parent (builder-content)
 }
 
 .section-tabs ::ng-deep .mat-mdc-tab-body-wrapper {
-  height: calc(100% - 48px);
-  overflow: auto;
+  // Calculate remaining height for tab content after tab headers
+  height: calc(100% - 48px); /* Adjust 48px if mat-tab-header height changes */
+  overflow: auto; /* Enable scrolling for tab content */
+  display: block; // Ensures flex-1 on content works
 }
 
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 24px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.section-info h3 {
-  margin: 0;
-  font-size: 18px;
-  color: #333;
-}
-
-.widget-count {
-  font-size: 12px;
-  color: #666;
-}
-
-.section-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.widget-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 16px;
-  padding: 24px;
-  min-height: 400px;
-}
-
-.widget-card {
-  background: white;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 16px;
-  transition: all 0.3s ease;
-  cursor: move;
-}
-
-.widget-card:hover {
-  border-color: #2196f3;
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15);
-}
-
+// CDK Drag & Drop styles - these are crucial for visual feedback during drag operations
 .widget-card.cdk-drag-preview {
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  border-color: #2196f3;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); // Stronger shadow for the item being dragged
+  border-color: #2196f3; // Highlight border
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 8px;
+  opacity: 0.9;
+  background: white; // Ensure background is visible
+  display: flex;
+  flex-direction: column;
 }
 
 .widget-card.cdk-drag-placeholder {
-  opacity: 0.3;
-  border: 2px dashed #ccc;
+  opacity: 0.3; // Make the placeholder transparent
+  border: 2px dashed #ccc; // Dashed border for placeholder
+  background: #f0f0f0; // Light background for placeholder
+  border-radius: 8px;
 }
 
 .widget-card.cdk-drag-animating {
-  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1); // Smooth animation when dropping
 }
 
-.widget-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.widget-header h3 {
-  margin: 0;
-  font-size: 16px;
-  color: #333;
-}
-
-.widget-actions {
-  display: flex;
-  gap: 4px;
-}
-
-.widget-content {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.widget-preview {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 24px;
-  background: #f5f5f5;
-  border-radius: 6px;
-  color: #666;
-}
-
-.widget-preview mat-icon {
-  font-size: 32px;
-  width: 32px;
-  height: 32px;
-}
-
-.widget-info {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: #888;
-}
-
-.widget-small {
-  grid-column: span 1;
-  grid-row: span 1;
-}
-
-.widget-medium {
-  grid-column: span 2;
-  grid-row: span 2;
-}
-
-.widget-large {
-  grid-column: span 3;
-  grid-row: span 3;
-}
-
+// Ensure the grid items span correctly for smaller screens if columnSize/rowSize are large
+// This media query is a fallback/override for larger column sizes on small screens
 @media (max-width: 768px) {
-  .widget-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .widget-medium,
-  .widget-large {
-    grid-column: span 1;
-    grid-row: span 1;
+  .widget-card {
+    /* On small screens, force all widgets to span 1 column */
+    @apply col-span-1 !important;
+    @apply row-span-1 !important;
   }
 }

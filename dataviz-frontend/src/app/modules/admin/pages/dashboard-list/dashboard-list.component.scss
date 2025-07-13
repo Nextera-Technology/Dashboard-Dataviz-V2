@@ -1,0 +1,56 @@
+.dashboard-list {
+  padding: 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px; // This will be overridden by Tailwind, but good for fallback
+}
+
+.header h1 {
+  margin: 0;
+  color: #333; // This will be overridden by Tailwind, but good for fallback
+}
+
+.dashboards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px; // This will be overridden by Tailwind, but good for fallback
+}
+
+// Basic card styles for fallback, Tailwind will take precedence
+.dashboard-card {
+  transition: all 0.3s ease;
+  border: 1px solid #e0e0e0;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.source mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+mat-card-actions {
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+  .dashboards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+}

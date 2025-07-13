@@ -1,0 +1,163 @@
+<div class="widget-config-dialog flex flex-col bg-white rounded-lg shadow-2xl border border-gray-300 overflow-hidden">
+    <div class="header flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50">
+        <h2 class="text-xl font-semibold text-gray-800">
+            {{ isEditMode ? 'Edit Widget' : 'Add New Widget' }}
+        </h2>
+        <button mat-icon-button (click)="onCancel()" aria-label="Close dialog">
+            <mat-icon class="text-gray-600 hover:text-gray-800">close</mat-icon>
+        </button>
+    </div>
+
+    <form [formGroup]="widgetForm" (ngSubmit)="onSubmit()" class="flex-grow">
+        <mat-dialog-content class="py-6 px-6 overflow-y-auto">
+            <div class="form-fields grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                <mat-form-field class="col-span-2">
+                    <mat-label>Widget Title</mat-label>
+                    <input matInput formControlName="title" placeholder="e.g., Sales Performance, User Demographics"
+                        class="rounded-md border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+                    <mat-error *ngIf="widgetForm.get('title')?.hasError('required')">
+                        Title is required
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="col-span-2">
+                    <mat-label>Widget Name (Slug)</mat-label>
+                    <input matInput formControlName="name"
+                        placeholder="e.g., sales-performance (auto-generated or custom)"
+                        class="rounded-md border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+                    <mat-error *ngIf="widgetForm.get('name')?.hasError('required')">
+                        Name is required
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="col-span-1">
+                    <mat-label>Chart Type</mat-label>
+                    <mat-select formControlName="chartType">
+                        <mat-option value="card">Card</mat-option>
+                        <mat-option value="PieChart">Pie Chart</mat-option>
+                        <mat-option value="BarChart">Bar Chart</mat-option>
+                        <mat-option value="LineChart">Line Chart</mat-option>
+                        <mat-option value="ColumnChart">Column Chart</mat-option>
+                        <mat-option value="TraceableSankee">Sankey Chart</mat-option>
+                        <mat-option value="Table">Table</mat-option>
+                        <mat-option value="Text">Text</mat-option>
+                        <mat-option value="MapChart">Map Chart</mat-option>
+                        <mat-option value="donut">Donut Chart</mat-option>
+                        <mat-option value="SlicedChart">Sliced Chart</mat-option>
+                        <mat-option value="HorizontalStackedChart">Horizontal Stacked Chart</mat-option>
+                        <mat-option value="VerticalStackedChart">Vertical Stacked Chart</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="widgetForm.get('chartType')?.hasError('required')">
+                        Chart type is required
+                    </mat-error>
+                </mat-form-field>
+
+                <div class="col-span-1 flex items-center pt-2">
+                    <mat-slide-toggle formControlName="visible" color="primary">
+                        Visible on Dashboard
+                    </mat-slide-toggle>
+                </div>
+
+                <mat-form-field class="col-span-2">
+                    <mat-label>Follow-up Stage</mat-label>
+                    <mat-select formControlName="followUpStage">
+                        <mat-option [value]="null">None</mat-option>
+                        <mat-option *ngFor="let stage of followUpStages" [value]="stage">
+                            {{ stage | titlecase | replaceUnderscores }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field class="col-span-1">
+                    <mat-label>Widget Type</mat-label>
+                    <mat-select formControlName="widgetType">
+                        <mat-option *ngFor="let type of widgetTypes" [value]="type.value">
+                            {{ type.label }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="widgetForm.get('widgetType')?.hasError('required')">
+                        Widget type is required
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="col-span-1">
+                    <mat-label>Widget SubType</mat-label>
+                    <mat-select formControlName="widgetSubType"
+                        [disabled]="!filteredSubTypes || filteredSubTypes.length === 0">
+                        <mat-option [value]="null">None</mat-option>
+                        <mat-option *ngFor="let subType of filteredSubTypes" [value]="subType.value">
+                            {{ subType.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field class="col-span-2">
+                    <mat-label>Background Color</mat-label>
+                    <input matInput type="color" formControlName="background"
+                        class="h-10 w-full rounded-md border border-gray-300 cursor-pointer"
+                        [style.background-color]="widgetForm.get('background')?.value" />
+                    <mat-error *ngIf="widgetForm.get('background')?.hasError('required')">
+                        Background color is required
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="col-span-1">
+                    <mat-label>Columns</mat-label>
+                    <mat-select formControlName="columnSize">
+                        <mat-option *ngFor="let i of [].constructor(maxGridSize); let idx = index" [value]="idx + 1">
+                            {{ idx + 1 }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="widgetForm.get('columnSize')?.hasError('required')">
+                        Columns is required
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="col-span-1">
+                    <mat-label>Rows</mat-label>
+                    <mat-select formControlName="rowSize">
+                        <mat-option *ngFor="let i of [].constructor(maxGridSize); let idx = index" [value]="idx + 1">
+                            {{ idx + 1 }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="widgetForm.get('rowSize')?.hasError('required')">
+                        Rows is required
+                    </mat-error>
+                </mat-form-field>
+
+                <div
+                    class="col-span-2 size-preview flex flex-col gap-2 p-2 rounded-md border border-gray-300 bg-gray-50">
+                    <h4 class="text-sm font-semibold text-gray-700">Size Preview</h4>
+                    <div class="grid-preview flex-grow p-2 border border-gray-200 rounded-md bg-white"
+                        [style.grid-template-columns]="'repeat(' + (widgetForm.get('columnSize')?.value || 1) + ', 1fr)'"
+                        [style.grid-template-rows]="'repeat(' + (widgetForm.get('rowSize')?.value || 1) + ', 1fr)'"
+                        [style.width.%]="(widgetForm.get('columnSize')?.value || 1) * 25"
+                        [style.height.px]="(widgetForm.get('rowSize')?.value || 1) * 60"
+                        style="display: grid; overflow: hidden">
+                        <div class="preview-cell border border-white rounded-sm bg-blue-100"
+                            *ngFor="let cell of previewCells">
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">
+                        Current Size:
+                        <span class="font-semibold">{{ widgetForm.get('columnSize')?.value }}x{{
+                            widgetForm.get('rowSize')?.value
+                            }}</span>
+                    </p>
+                </div>
+
+            </div>
+        </mat-dialog-content>
+
+        <mat-dialog-actions align="end" class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+            <button mat-button type="button" (click)="onCancel()"
+                class="px-5 py-2.5 rounded-md text-gray-700 hover:bg-gray-200 transition-colors duration-200 shadow-sm hover:shadow-md">
+                Cancel
+            </button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="widgetForm.invalid"
+                class="px-6 py-2.5 rounded-md shadow-md hover:shadow-lg transition-all duration-300">
+                {{ isEditMode ? 'Save Changes' : 'Add Widget' }}
+            </button>
+        </mat-dialog-actions>
+    </form>
+</div>
