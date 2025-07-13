@@ -1,0 +1,36 @@
+.widget-container {
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+.widget-container:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Action Buttons */
+.button-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 5px;
+  z-index: 10;
+}
+
+.widget-header h3 {
+  text-align: center;
+  font-size: 18px;
+  color: #15616d;
+  margin-bottom: 15px;
+}
+
+.map-chart {
+  width: 100%;
+  height: 400px;
+}

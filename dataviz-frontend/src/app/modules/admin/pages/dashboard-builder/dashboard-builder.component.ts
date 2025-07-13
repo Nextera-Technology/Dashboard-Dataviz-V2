@@ -1,5 +1,12 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChildren,
+  QueryList,
+  ElementRef,
+} from "@angular/core";
+import { CommonModule, DatePipe } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import {
   CdkDragDrop,
@@ -15,13 +22,27 @@ import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { AdminLayoutComponent } from "../../components/admin-layout/admin-layout.component";
+// CORRECTED IMPORT PATH AND COMPONENT NAME:
+import {
+  WidgetFormDialogComponent,
+  WidgetConfigData,
+} from "../../components/widget-form-dialog/widget-form-dialog.component"; // Corrected import path and component name
 import { SectionFormDialogComponent } from "../../components/section-form-dialog/section-form-dialog.component";
 import { DashboardBuilderService } from "./dashboard-builder.service";
-import { WidgetFormDialogComponent } from "../../components/widget-form-dialog/widget-form-dialog.component";
-import { WidgetConfigData } from "app/shared/services/dashboard.service";
-import { DashboardFormDialogComponent } from "../../components/dashboard-form-dialog/dashboard-form-dialog.component";
+import { MetricWidgetComponent } from "app/shared/components/widgets/metric-widget/metric-widget.component";
+import { BarChartWidgetComponent } from "app/shared/components/widgets/bar-chart-widget/bar-chart-widget.component";
+import { ColumnChartWidgetComponent } from "app/shared/components/widgets/column-chart-widget/column-chart-widget.component";
+import { LineChartWidgetComponent } from "app/shared/components/widgets/line-chart-widget/line-chart-widget.component";
+import { PieChartWidgetComponent } from "app/shared/components/widgets/pie-chart-widget/pie-chart-widget.component";
+import { SankeyChartWidgetComponent } from "app/shared/components/widgets/sankey-chart-widget/sankey-chart-widget.component";
+import { MapWidgetComponent } from "app/shared/components/widgets/map-widget/map-widget.component";
+import { SimpleTableWidgetComponent } from "app/shared/components/widgets/simple-table-widget/simple-table-widget.component";
+import { StatusGridWidgetComponent } from "app/shared/components/widgets/status-grid-widget/status-grid-widget.component";
+import { TextWidgetComponent } from "app/shared/components/widgets/text-widget/text-widget.component";
+import { PictorialStackedChartWidgetComponent } from "app/shared/components/widgets/pictorial-fraction-chart/pictorial-fraction-chart.component";
+import { WorldMapWidgetComponent } from "app/shared/components/widgets/world-map-widget/world-map-widget.component";
 
-// Define interfaces for better type safety based on your GraphQL queries and provided data
+// Define interfaces for better type safety based on your GraphQL queries
 interface WidgetData {
   name: string;
   percentage?: number;
@@ -29,38 +50,39 @@ interface WidgetData {
   totalData?: number;
   wave?: number;
   averageSalary?: number;
-  // Add other specific properties found in your widget data if needed
 }
 
 interface Widget {
-  _id?: string; // Optional for new widgets
+  _id?: string;
   chartType?: string;
-  data?: WidgetData[]; // Using the more specific WidgetData interface
+  data?: WidgetData[];
   name?: string;
   title: string;
   visible?: boolean;
   widgetType: string;
-  widgetSubType?: string | null; // widgetSubType can be null based on data
+  widgetSubType?: string | null;
   columnSize: number;
   rowSize: number;
   status?: string;
-  section?: string; // To track which section it belongs to if moving between sections
+  section?: string;
+  background?: string;
+  followUpStage?: string | null;
 }
 
 interface Section {
-  _id?: string; // Optional for new sections
+  _id?: string;
   name?: string;
   background?: string;
   title: string;
-  widgetIds: Widget[]; // Array of widgets within this section
+  widgetIds: Widget[];
   status?: string;
 }
 
 interface Dashboard {
-  _id?: string; // Optional for new dashboards
+  _id?: string;
   name?: string;
-  sectionIds: Section[]; // Array of sections
-  source?: string;
+  sectionIds: Section[];
+  sources?: { certification: string | null; classes: string[] | null }[];
   title: string;
   status?: string;
 }
@@ -79,17 +101,32 @@ interface Dashboard {
     MatTooltipModule,
     MatSnackBarModule,
     AdminLayoutComponent,
+    // Import all atom widget components for dynamic rendering
+    MetricWidgetComponent,
+    BarChartWidgetComponent,
+    ColumnChartWidgetComponent,
+    LineChartWidgetComponent,
+    PieChartWidgetComponent,
+    SankeyChartWidgetComponent,
+    MapWidgetComponent,
+    SimpleTableWidgetComponent,
+    StatusGridWidgetComponent,
+    TextWidgetComponent,
+    PictorialStackedChartWidgetComponent,
+    WorldMapWidgetComponent,
   ],
   templateUrl: "./dashboard-builder.component.html",
   styleUrl: "./dashboard-builder.component.scss",
 })
 export class DashboardBuilderComponent implements OnInit, OnDestroy {
-  dashboard?: Dashboard; // Use the Dashboard interface
+  dashboard?: Dashboard;
+  widgetSectionList = [];
   selectedTabIndex = 0;
 
   // For data source tag expansion
   widgetDataSourceExpansionState: Map<string, boolean> = new Map();
   initialVisibleDataSourceTags = 2; // Number of tags to show initially
+  @ViewChildren("widgetCard") widgetCards!: QueryList<ElementRef>;
 
   constructor(
     private route: ActivatedRoute,
@@ -104,12 +141,11 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
     if (dashboardId) {
       this.loadDashboard(dashboardId);
     } else {
-      // Initialize a new dashboard if no ID is provided (e.g., /admin/dashboard-builder/new)
       this.dashboard = {
         title: "New Dashboard",
         name: "new-dashboard",
         sectionIds: [],
-        source: "Manual",
+        sources: [],
         status: "Draft",
       };
     }
@@ -125,7 +161,7 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
         title: "New Dashboard",
         name: "new-dashboard",
         sectionIds: [],
-        source: "Manual",
+        sources: [],
         status: "Draft",
       };
       return;
@@ -134,10 +170,13 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
       const result = await this.dashboardService.getOneDashboard(id);
       if (result) {
         this.dashboard = result;
+        this.widgetSectionList = [
+          ...this.dashboard?.sectionIds?.[0]?.widgetIds,
+        ];
         console.log("Loaded dashboard:", this.dashboard);
       } else {
         this.snackBar.open("Dashboard not found.", "Close", { duration: 3000 });
-        this.router.navigate(["/admin/dashboard-list"]); // Redirect if not found
+        this.router.navigate(["/admin/dashboard-list"]);
       }
     } catch (error) {
       console.error("Error loading dashboard:", error);
@@ -150,40 +189,80 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
 
   onTabChange(index: number): void {
     this.selectedTabIndex = index;
+    this.widgetSectionList = [
+      ...this.dashboard?.sectionIds?.[index]?.widgetIds,
+    ];
   }
 
   onWidgetDrop(event: CdkDragDrop<Widget[]>, sectionIndex: number): void {
     if (!this.dashboard) return;
+    const dataWidgets = [...this.widgetSectionList];
 
-    if (event.previousContainer === event.container) {
-      // Move within the same section
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-      this.snackBar.open("Widget reordered.", "Close", { duration: 1500 });
-    } else {
-      // Move between sections
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
+    moveItemInArray(dataWidgets, event.previousIndex, event.currentIndex);
 
-      // Update widget's section reference (if needed for backend persistence)
-      const movedWidget = event.container.data[event.currentIndex];
-      const targetSection = this.dashboard.sectionIds[sectionIndex];
-      if (movedWidget && targetSection) {
-        movedWidget.section = targetSection.title; // Or targetSection._id
-        this.snackBar.open("Widget moved to a new section.", "Close", {
-          duration: 1500,
-        });
+    this.widgetSectionList = dataWidgets;
+    this._saveSection();
+  }
+
+  editWidget(widget: Widget): void {
+    if (!this.dashboard || !this.dashboard.sectionIds) {
+      this.snackBar.open(
+        "Cannot edit widget: Dashboard or sections not loaded.",
+        "Close",
+        { duration: 3000 }
+      );
+      return;
+    }
+
+    const parentSection = this.dashboard.sectionIds.find((s) =>
+      s.widgetIds.some((w) => w._id === widget._id)
+    );
+    if (!parentSection) {
+      this.snackBar.open(
+        "Cannot edit widget: Parent section not found.",
+        "Close",
+        { duration: 3000 }
+      );
+      return;
+    }
+
+    // CORRECTED COMPONENT NAME:
+    const dialogRef = this.dialog.open(WidgetFormDialogComponent, {
+      // Changed to WidgetFormDialogComponent
+      width: "600px",
+      data: {
+        dashboard: this.dashboard,
+        section: parentSection,
+        widget: widget,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?._id) {
+        this.loadDashboard(this.dashboard!._id!);
+      }
+    });
+  }
+
+  deleteWidget(widget: Widget): void {
+    if (!this.dashboard || !this.dashboard.sectionIds) return;
+
+    if (confirm(`Are you sure you want to delete "${widget.title}"?`)) {
+      const currentSection = this.dashboard.sectionIds[this.selectedTabIndex];
+      if (currentSection && currentSection.widgetIds) {
+        const index = currentSection.widgetIds.findIndex(
+          (w) => w._id === widget._id
+        );
+        if (index !== -1) {
+          currentSection.widgetIds.splice(index, 1);
+          this.snackBar.open(
+            "Widget deleted locally. Remember to save dashboard.",
+            "Close",
+            { duration: 3000 }
+          );
+        }
       }
     }
-    // Consider calling a save/update function here if drag and drop needs to persist immediately
-    // this.saveDashboard();
   }
 
   async saveDashboard(): Promise<void> {
@@ -196,11 +275,7 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
 
     try {
       let result;
-      // Prepare payload to match backend schema, if needed (e.g., send only IDs for nested objects)
-      // For now, assuming backend can handle the full nested structure for create/update.
       const dashboardToSave = { ...this.dashboard };
-      // If sections/widgets need _id to be removed for creation, handle it here
-      // For example, if new sections/widgets have temporary client-side _id:
       dashboardToSave.sectionIds = dashboardToSave.sectionIds.map(
         (section) => ({
           ...section,
@@ -219,7 +294,6 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
       );
 
       if (this.dashboard._id && this.dashboard._id !== "new") {
-        // Update existing dashboard
         result = await this.dashboardService.updateDashboard(
           this.dashboard._id,
           dashboardToSave
@@ -228,14 +302,13 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
           duration: 3000,
         });
       } else {
-        // Create new dashboard
         result = await this.dashboardService.createDashboard(dashboardToSave);
         if (result?._id) {
-          this.dashboard._id = result._id; // Assign the new ID from backend
+          this.dashboard._id = result._id;
           this.router.navigate([
             "/admin/dashboard-builder",
             this.dashboard._id,
-          ]); // Navigate to the new ID
+          ]);
           this.snackBar.open("Dashboard created successfully!", "Close", {
             duration: 3000,
           });
@@ -253,99 +326,38 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
   }
 
   addSection(): void {
-    // Ensure dashboard is loaded before trying to add a section
-    if (!this.dashboard) {
-      this.snackBar.open("Cannot add section: Dashboard not loaded.", "Close", {
-        duration: 3000,
-      });
-      return;
-    }
-
     const dialogRef = this.dialog.open(SectionFormDialogComponent, {
       width: "450px",
       data: {
-        dashboard: this.dashboard, // Pass the entire dashboard object
-        section: undefined, // No specific section object for 'add' mode
+        dashboard: this.dashboard,
+        title: "New Section",
+        background: "#f5f5f5",
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      // If the dialog closed with a 'true' result, it means the save operation was successful
       if (result?._id) {
-        // Reload the dashboard to reflect the changes persisted by the dialog
         this.loadDashboard(this.dashboard!._id!);
-      } else if (result === false) {
-        // Handle dialog cancellation or failure from within the dialog
-        console.log("Section add cancelled or failed.");
-        this.snackBar.open("Section addition cancelled or failed.", "Close", {
-          duration: 2000,
-        });
       }
     });
   }
 
   editSection(section: Section): void {
-    // Ensure dashboard is loaded before trying to edit a section
-    if (!this.dashboard) {
-      this.snackBar.open(
-        "Cannot edit section: Dashboard not loaded.",
-        "Close",
-        { duration: 3000 }
-      );
-      return;
-    }
-
     const dialogRef = this.dialog.open(SectionFormDialogComponent, {
       width: "450px",
       data: {
-        dashboard: this.dashboard, // Pass the entire dashboard object
-        section: section, // Pass the specific section object to be edited
+        dashboard: this.dashboard,
+        section: section,
+        title: section.title,
+        background: section.background,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      // If the dialog closed with a 'true' result, it means the save operation was successful
       if (result?._id) {
-        // Reload the dashboard to reflect the changes persisted by the dialog
         this.loadDashboard(this.dashboard!._id!);
-      } else if (result === false) {
-        // Handle dialog cancellation or failure from within the dialog
-        console.log("Section edit cancelled or failed.");
-        this.snackBar.open("Section update cancelled or failed.", "Close", {
-          duration: 2000,
-        });
       }
     });
-  }
-
-  async deleteSection(section: Section) {
-    if (
-      confirm(
-        `Are you sure you want to delete section "${section.title}"? This will also delete all widgets in this section.`
-      )
-    ) {
-      if (section && section?._id) {
-        try {
-          // Update existing dashboard with modified sections
-          const result = await this.dashboardService.deleteSection(
-            section?._id
-          );
-          this.snackBar.open("Section removed successfully!", "Close", {
-            duration: 3000,
-          });
-          this.loadDashboard(this.dashboard?._id);
-        } catch (error) {
-          console.error("Error delete section:", error);
-          this.snackBar.open(
-            "Failed to delete section. Please try again.",
-            "Close",
-            {
-              duration: 3000,
-            }
-          );
-        }
-      }
-    }
   }
 
   addWidget(section: Section): void {
@@ -356,90 +368,22 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // CORRECTED COMPONENT NAME:
     const dialogRef = this.dialog.open(WidgetFormDialogComponent, {
-      width: "600px", // Match dialog's min-width
+      // Changed to WidgetFormDialogComponent
+      width: "600px",
       data: {
         dashboard: this.dashboard,
-        section: section, // Pass the section object
-        widget: undefined, // No widget for 'add' mode
+        section: section,
+        widget: undefined,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result?._id) {
-        // If save was successful in the dialog
-        this.loadDashboard(this.dashboard!._id!); // Reload dashboard to reflect changes
-      } else if (result === false) {
-        console.log("Widget add cancelled or failed.");
+        this.loadDashboard(this.dashboard!._id!);
       }
     });
-  }
-  editWidget(widget: Widget): void {
-    if (!this.dashboard || !this.dashboard.sectionIds) {
-      this.snackBar.open(
-        "Cannot edit widget: Dashboard or sections not loaded.",
-        "Close",
-        { duration: 3000 }
-      );
-      return;
-    }
-
-    // Find the parent section of the widget
-    const parentSection = this.dashboard.sectionIds.find((s) =>
-      s.widgetIds.some((w) => w._id === widget._id)
-    );
-    if (!parentSection) {
-      this.snackBar.open(
-        "Cannot edit widget: Parent section not found.",
-        "Close",
-        { duration: 3000 }
-      );
-      return;
-    }
-
-    const dialogRef = this.dialog.open(WidgetFormDialogComponent, {
-      width: "600px", // Match dialog's min-width
-      data: {
-        dashboard: this.dashboard,
-        section: parentSection, // Pass the parent section
-        widget: widget, // Pass the widget being edited
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result?._id) {
-        // If save was successful in the dialog
-        this.loadDashboard(this.dashboard!._id!); // Reload dashboard to reflect changes
-      } else if (result === false) {
-        console.log("Widget edit cancelled or failed.");
-      }
-    });
-  }
-
-  async deleteWidget(widget: Widget) {
-    if (!widget?._id) return;
-
-    if (confirm(`Are you sure you want to delete "${widget.title}"?`)) {
-      if (widget && widget?._id) {
-        try {
-          // Update existing dashboard with modified widget
-          const result = await this.dashboardService.deleteWidget(widget?._id);
-          this.snackBar.open("Widget removed successfully!", "Close", {
-            duration: 3000,
-          });
-          this.loadDashboard(this.dashboard?._id);
-        } catch (error) {
-          console.error("Error delete widget:", error);
-          this.snackBar.open(
-            "Failed to delete widget. Please try again.",
-            "Close",
-            {
-              duration: 3000,
-            }
-          );
-        }
-      }
-    }
   }
 
   goBack(): void {
@@ -469,9 +413,9 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
   }
 
   // Returns the SVG icon string for a given widget type
+
   getWidgetIcon(type: string): string {
     const icons: { [key: string]: string } = {
-      // Mapped to 'mat_solid' namespace based on common Material Design icons
       metric: "mat_solid:analytics",
       pie: "mat_solid:pie_chart",
       bar: "mat_solid:bar_chart",
@@ -481,7 +425,7 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
       table: "mat_solid:table_chart",
       text: "mat_solid:text_fields",
       map: "mat_solid:map",
-      card: "mat_solid:dashboard", // Generic card icon
+      card: "mat_solid:dashboard",
       further_studies: "mat_solid:school",
       domains: "mat_solid:category",
       education_level_target: "mat_solid:trending_up",
@@ -493,46 +437,37 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
       skills: "mat_solid:lightbulb",
       satisfaction: "mat_solid:sentiment_satisfied",
       graduation_success: "mat_solid:grade",
-      survey_distribution: "mat_solid:poll",
       survey_completion: "mat_solid:task_alt",
+      survey_distribution: "mat_solid:poll",
       manager_level: "mat_solid:supervisor_account",
       contract_types: "mat_solid:description",
       companies: "mat_solid:business",
       region: "mat_solid:public",
     };
-    // Convert widgetType to lowercase for consistent lookup
-    return icons[type.toLowerCase()] || "mat_solid:widgets"; // Default to generic widget icon
+    return icons[type.toLowerCase()] || "mat_solid:widgets";
   }
 
-  editDashboard(): void {
-    // Ensure dashboard is loaded before trying to edit a section
-    if (!this.dashboard) {
-      this.snackBar.open(
-        "Cannot edit section: Dashboard not loaded.",
-        "Close",
-        { duration: 3000 }
+  /**
+   * Saves or updates the section by modifying the dashboard object
+   * and calling the dashboard service's update method.
+   */
+  private async _saveSection(): Promise<void> {
+    const formValues = this.dashboard?.sectionIds?.[this.selectedTabIndex];
+    try {
+      const sectionPayload = {
+        widgetIds: this.widgetSectionList?.map((widget) => widget?._id),
+      };
+      // Update existing dashboard with modified sections
+      const result = await this.dashboardService.updateSection(
+        formValues?._id,
+        sectionPayload
       );
-      return;
+    } catch (error) {
+      console.error("Error saving section:", error);
     }
+  }
 
-    const dialogRef = this.dialog.open(DashboardFormDialogComponent, {
-      width: "600px",
-      data: {
-        dashboard: this.dashboard, // Pass the entire dashboard object
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      // If the dialog closed with a 'true' result, it means the save operation was successful
-      if (result?._id) {
-        this.loadDashboard(this.dashboard?._id);
-      } else if (result === false) {
-        // Handle dialog cancellation or failure from within the dialog
-        console.log("Section edit cancelled or failed.");
-        this.snackBar.open("Section update cancelled or failed.", "Close", {
-          duration: 2000,
-        });
-      }
-    });
+  trackById(index: number, item: any): string {
+    return item._id;
   }
 }

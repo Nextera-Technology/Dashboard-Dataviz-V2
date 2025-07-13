@@ -122,7 +122,10 @@ export const gqlGetChartOptions = gql`
   query GetChartOptions {
     getChartOptions {
       data {
-        chartOptions
+        chartOptions {
+          previewChartImage
+          chartType
+        }
         defaultChart
         widgetSubType
         widgetType

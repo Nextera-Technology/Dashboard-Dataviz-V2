@@ -1,0 +1,32 @@
+<div class="widget-container" [class]="'widget-' + widget.cardSize">
+    <div class="widget-header">
+        <h3 class="widget-title">{{ widget.title }}</h3>
+        <div class="widget-actions" *ngIf="widget.actions">
+            <button *ngFor="let action of widget.actions" class="action-button" [class]="'action-' + action.type"
+                [title]="action.title" (click)="handleAction(action)">
+                <img [src]="getIconUrl(action.icon)" [alt]="action.title">
+            </button>
+        </div>
+    </div>
+
+    <div class="status-grid-container">
+        <div class="status-grid-rowed">
+            <!-- Header Row -->
+            <div class="status-row header-row">
+                <div class="status-category"></div>
+                <div *ngFor="let header of data.headers" class="status-value-title">
+                    <strong>{{ header }}</strong>
+                </div>
+            </div>
+
+            <!-- Data Rows -->
+            <div *ngFor="let row of data.rows" class="status-row">
+                <div class="status-category">{{ row.label }}</div>
+                <div *ngFor="let value of row.values; let i = index" class="status-value"
+                    [style.background-color]="row.color" [style.border-left-color]="row.borderColor">
+                    {{ value }}%
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

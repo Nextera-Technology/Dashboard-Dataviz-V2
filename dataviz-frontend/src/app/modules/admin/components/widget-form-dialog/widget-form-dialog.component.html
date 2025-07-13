@@ -42,7 +42,7 @@
 
                 <mat-form-field class="col-span-1">
                     <mat-label>Widget Type</mat-label>
-                    <mat-select formControlName="widgetType" (selectionChange)="onWidgetTypeSelected($event.value)">
+                    <mat-select formControlName="widgetType" (selectionChange)="onWidgetTypeChange($event.value)">
                         <mat-option *ngFor="let type of widgetTypes" [value]="type.value">
                             {{ type.label }}
                         </mat-option>
@@ -65,14 +65,17 @@
 
                 <mat-form-field class="col-span-1">
                     <mat-label>Chart Type</mat-label>
-                    <mat-select formControlName="chartType"
-                        [disabled]="!filteredChartTypes || filteredChartTypes.length === 0">
-                        <mat-option [value]="null">None</mat-option>
-                        <mat-option *ngFor="let chartType of filteredChartTypes" [value]="chartType">
-                            {{ chartType | titlecase | replaceUnderscores }}
-                        </mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="widgetForm.get('chartType')?.hasError('required')">
+                    <div class="mat-form-field-wrapper custom-input-trigger" (click)="openChartTypeSelection()"
+                        [class.disabled-trigger]="!filteredChartTypes || filteredChartTypes.length === 0">
+                        <input matInput
+                            [value]="(widgetForm.get('chartType')?.value | titlecase | replaceUnderscores) || ''"
+                            readonly placeholder="Select Chart Type"
+                            [disabled]="!filteredChartTypes || filteredChartTypes.length === 0"
+                            class="chart-type-display-input" />
+                        <mat-icon matSuffix class="text-gray-600 hover:text-blue-600">edit</mat-icon>
+                    </div>
+                    <mat-error
+                        *ngIf="widgetForm.get('chartType')?.hasError('required') && widgetForm.get('chartType')?.touched">
                         Chart type is required
                     </mat-error>
                 </mat-form-field>

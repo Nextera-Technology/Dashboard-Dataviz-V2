@@ -1,8 +1,17 @@
-import { Component, Input, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { DashboardWidget, WidgetAction } from '../../services/dashboard.service';
+import {
+  Component,
+  Input,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import {
+  DashboardWidget,
+  WidgetAction,
+} from "app/shared/services/dashboard.service";
 
 declare const am5: any;
 declare const am5themes_Animated: any;
@@ -10,96 +19,43 @@ declare const am5map: any;
 declare const am5geodata_franceLow: any;
 
 @Component({
-  selector: 'app-map-widget',
+  selector: "app-map-widget",
   standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule],
-  template: `
-    <div class="widget-container" [style.background-color]="widget.data?.background || '#ffffff'">
-      <!-- Action Buttons -->
-      <div class="button-container" *ngIf="widget.actions && widget.actions.length > 0">
-        <button 
-          *ngFor="let action of widget.actions" 
-          class="info-button"
-          [class]="action.type"
-          [title]="action.title"
-          (click)="onActionClick(action)">
-          <img [src]="getActionIcon(action.icon)" [alt]="action.title">
-        </button>
-      </div>
-
-      <!-- Widget Content -->
-      <div class="widget-header">
-        <h3>{{ widget.title }}</h3>
-      </div>
-      <div class="widget-content">
-        <div [id]="chartId" class="map-chart"></div>
-      </div>
-    </div>
-  `,
-  styles: [`
-    .widget-container {
-      position: relative;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      padding: 20px;
-      height: 100%;
-      transition: all 0.3s ease;
-    }
-
-    .widget-container:hover {
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-      transform: translateY(-2px);
-    }
-
-    /* Action Buttons */
-    .button-container {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      display: flex;
-      gap: 5px;
-      z-index: 10;
-    }
-    
-    .widget-header h3 {
-      text-align: center;
-      font-size: 18px;
-      color: #15616D;
-      margin-bottom: 15px;
-    }
-    
-    .map-chart {
-      width: 100%;
-      height: 400px;
-    }
-  `]
+  templateUrl: "./map-widget.component.html",
+  styleUrl: "./map-widget.component.scss",
 })
 export class MapWidgetComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() widget!: DashboardWidget;
-  
+
   private root: any;
   private chart: any;
   public chartId: string;
 
   constructor() {
-    this.chartId = 'map-chart-' + Math.random().toString(36).substr(2, 9);
+    this.chartId = "map-chart-" + Math.random().toString(36).substr(2, 9);
   }
 
   onActionClick(action: WidgetAction): void {
-    console.log('Action clicked:', action);
+    console.log("Action clicked:", action);
     // Placeholder for future implementation
   }
 
   getActionIcon(iconName: string): string {
     // Return placeholder icon URLs - in real app, these would be actual icons
     const iconMap: { [key: string]: string } = {
-      'paragraph.png': 'https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png',
-      'excel.png': 'https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png',
-      'audience_4644048.png': 'https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png'
+      "paragraph.png":
+        "https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png",
+      "excel.png":
+        "https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png",
+      "audience_4644048.png":
+        "https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png",
     };
-    
-    return iconMap[iconName] || `https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/${iconName}`;
+
+    return (
+      iconMap[iconName] ||
+      `https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/${iconName}`
+    );
   }
 
   ngAfterViewInit(): void {
@@ -117,19 +73,19 @@ export class MapWidgetComponent implements OnInit, OnDestroy, AfterViewInit {
     try {
       const container = document.getElementById(this.chartId);
       if (!container) {
-        console.error('Map container not found:', this.chartId);
+        console.error("Map container not found:", this.chartId);
         return;
       }
 
       // Check if AmCharts is available
-      if (typeof am5 === 'undefined') {
-        console.error('AmCharts not loaded');
+      if (typeof am5 === "undefined") {
+        console.error("AmCharts not loaded");
         return;
       }
 
       // Check if France geodata is available
-      if (typeof am5geodata_franceLow === 'undefined') {
-        console.error('France geodata not loaded');
+      if (typeof am5geodata_franceLow === "undefined") {
+        console.error("France geodata not loaded");
         return;
       }
 
@@ -144,7 +100,7 @@ export class MapWidgetComponent implements OnInit, OnDestroy, AfterViewInit {
           panX: "none",
           panY: "none",
           wheelY: "none",
-          projection: am5map.geoMercator()
+          projection: am5map.geoMercator(),
         })
       );
 
@@ -152,57 +108,61 @@ export class MapWidgetComponent implements OnInit, OnDestroy, AfterViewInit {
       const polygonSeries = this.chart.series.push(
         am5map.MapPolygonSeries.new(this.root, {
           geoJSON: am5geodata_franceLow,
-          valueField: "value",
-          calculateAggregates: true
+          valueField: "count",
+          categoryField: "name",
+          calculateAggregates: true,
         })
       );
 
       // Configure polygon template
       polygonSeries.mapPolygons.template.setAll({
-        tooltipText: "{name}: {value}",
+        tooltipText: "{name}: {count}",
         interactive: true,
-        cursorOverStyle: "pointer"
+        cursorOverStyle: "pointer",
       });
 
       // Enable hover state
       polygonSeries.mapPolygons.template.states.create("hover", {
-        fill: am5.color(0xffd700)
+        fill: am5.color(0xffd700),
       });
 
       // Allow color binding via data
       polygonSeries.mapPolygons.template.set("fillField", "fill");
 
       // Add fill adapter
-      polygonSeries.mapPolygons.template.adapters.add("fill", (fill: any, target: any) => {
-        const dataItem = target.dataItem;
-        if (dataItem && dataItem.dataContext && dataItem.dataContext.fill) {
-          return dataItem.dataContext.fill;
+      polygonSeries.mapPolygons.template.adapters.add(
+        "fill",
+        (fill: any, target: any) => {
+          const dataItem = target.dataItem;
+          if (dataItem && dataItem.dataContext && dataItem.dataContext.fill) {
+            return dataItem.dataContext.fill;
+          }
+          return fill;
         }
-        return fill;
-      });
+      );
 
       // Prepare data
       const mapData = this.widget.data?.mapData || {};
       const dataItems = Object.entries(mapData).map(([id, value]) => {
-        let numericValue = typeof value === "string"
-          ? parseInt(value.replace(/[^\d]/g, ""))
-          : value;
+        let numericValue =
+          typeof value === "string"
+            ? parseInt(value.replace(/[^\d]/g, ""))
+            : value;
 
         return {
           id,
           value: numericValue,
-          fill: this.getColorForRegion(id) || am5.color(0xd6efff)
+          fill: this.getColorForRegion(id) || am5.color(0xd6efff),
         };
       });
 
       // Set data
       polygonSeries.data.setAll(dataItems);
-      
+
       // Animate chart
       this.chart.appear(1000, 100);
-
     } catch (error) {
-      console.error('Error initializing map chart:', error);
+      console.error("Error initializing map chart:", error);
     }
   }
 
@@ -223,7 +183,7 @@ export class MapWidgetComponent implements OnInit, OnDestroy, AfterViewInit {
       "FR-CVL": am5.color(0x6794dc), // Centre-Val de Loire
       "FR-COR": am5.color(0x67b7dc), // Corse
     };
-    
+
     return colorMap[regionId];
   }
 
@@ -232,4 +192,4 @@ export class MapWidgetComponent implements OnInit, OnDestroy, AfterViewInit {
       this.root.dispose();
     }
   }
-} 
+}

@@ -9,6 +9,7 @@ import {
 import {
   MatDialogRef,
   MAT_DIALOG_DATA,
+  MatDialog, // Import MatDialog
   MatDialogModule,
 } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -22,6 +23,13 @@ import { Subscription } from "rxjs";
 import { DashboardBuilderService } from "../../pages/dashboard-builder/dashboard-builder.service";
 import { ReplaceUnderscoresPipe } from "@dataviz/pipes/replace-underscores/replace-underscores.pipe";
 
+// Import the new chart selection dialog and its data interfaces
+import {
+  ChartTypeSelectionDialogComponent,
+  ChartSelectionDialogData,
+  ChartOptionForDialog,
+} from "../chart-type-selection-dialog/chart-type-selection-dialog.component";
+
 // Re-using/extending interfaces from dashboard-builder.component.ts for consistency
 interface WidgetData {
   name: string;
@@ -34,7 +42,7 @@ interface WidgetData {
 
 interface Widget {
   _id?: string;
-  chartType?: string;
+  chartType?: string; // This will store the name string
   data?: WidgetData[];
   name?: string;
   title: string;
@@ -94,11 +102,11 @@ export interface WidgetSubTypeOption {
   label: string;
 }
 
-// New interface for Chart Type options data
+// New interface for Chart Type options data (Updated to match backend S3 format)
 interface ChartTypeOption {
-  chartOptions: string[];
-  defaultChart: string;
-  widgetSubType: string | null; // Can be null if it applies to widgetType directly
+  chartOptions: ChartOptionForDialog[]; // Changed to array of objects
+  defaultChart: string; // This is still the name string
+  widgetSubType: string | null;
   widgetType: string;
 }
 
@@ -128,7 +136,7 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
   currentSection: Section;
   currentWidget?: Widget;
 
-  // private widgetTypeSubscription?: Subscription; // Removed this subscription
+  private widgetTypeSubscription?: Subscription;
   private widgetSubTypeSubscription?: Subscription;
 
   readonly followUpStages = Object.values(EnumSurveyFollowUpStage);
@@ -227,14 +235,16 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
   maxGridSize = 4; // Max for columnSize and rowSize dropdowns
 
   allChartTypeOptions: ChartTypeOption[] = []; // Stores all chart type options from backend
-  filteredChartTypes: string[] = []; // Chart types available for current selection
+  // filteredChartTypes is now an array of ChartOptionForDialog for the dialog
+  filteredChartTypes: ChartOptionForDialog[] = [];
 
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<WidgetFormDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: WidgetConfigData,
     private dashboardService: DashboardBuilderService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog // Inject MatDialog for opening new dialogs
   ) {
     this.dashboard = data.dashboard;
     this.currentSection = data.section;
@@ -243,7 +253,7 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
     this.widgetForm = this.fb.group({
       title: [this.currentWidget?.title || "", Validators.required],
       name: [this.currentWidget?.name || "", Validators.required],
-      chartType: [this.currentWidget?.chartType || null, Validators.required], // Set default to null initially
+      chartType: [this.currentWidget?.chartType || null, Validators.required], // chartType stores the 'name' string
       visible: [
         this.currentWidget?.visible !== undefined
           ? this.currentWidget.visible
@@ -282,19 +292,21 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
     await this.getChartOptions();
 
     // Set up subscriptions for cascading logic
-    // widgetType's change will now be handled directly by (selectionChange) in HTML,
-    // which calls onWidgetTypeSelected()
+    this.widgetTypeSubscription = this.widgetForm
+      .get("widgetType")
+      ?.valueChanges.subscribe(() => this.onWidgetTypeOrSubTypeChange());
+
     this.widgetSubTypeSubscription = this.widgetForm
       .get("widgetSubType")
       ?.valueChanges.subscribe(() => this.onWidgetTypeOrSubTypeChange());
 
     // Initial calls to set up filtered sub-types and chart types
-    // Call onWidgetTypeSelected directly to handle initial setup
-    this.onWidgetTypeSelected(this.widgetForm.get("widgetType")?.value);
+    this.onWidgetTypeChange(this.widgetForm.get("widgetType")?.value);
+    this.onWidgetTypeOrSubTypeChange(); // Call after initial setup and subscriptions
   }
 
   ngOnDestroy(): void {
-    // this.widgetTypeSubscription?.unsubscribe(); // Unsubscribe removed subscription
+    this.widgetTypeSubscription?.unsubscribe();
     this.widgetSubTypeSubscription?.unsubscribe();
   }
 
@@ -303,7 +315,7 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
    * onWidgetTypeOrSubTypeChange for chart type filtering.
    * This is called directly from the HTML (selectionChange).
    */
-  onWidgetTypeSelected(selectedType: string): void {
+  onWidgetTypeChange(selectedType: string): void {
     const selectedWidgetTypeOption = this.widgetTypes.find(
       (type) => type.value === selectedType
     );
@@ -331,11 +343,11 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
     const selectedWidgetType = this.widgetForm.get("widgetType")?.value;
     const selectedWidgetSubType = this.widgetForm.get("widgetSubType")?.value;
 
-    let matchedChartOption: ChartTypeOption | undefined;
+    let matchedChartOptionData: ChartTypeOption | undefined;
 
     // 1. Try to match with both widgetType and widgetSubType
     if (selectedWidgetType && selectedWidgetSubType) {
-      matchedChartOption = this.allChartTypeOptions.find(
+      matchedChartOptionData = this.allChartTypeOptions.find(
         (option) =>
           option.widgetType === selectedWidgetType &&
           option.widgetSubType === selectedWidgetSubType
@@ -344,34 +356,39 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
 
     // 2. If no match with subType, or if widgetSubType is null, try matching only with widgetType
     //    (where chart type data's widgetSubType is explicitly null for that widgetType)
-    if (!matchedChartOption && selectedWidgetType) {
-      matchedChartOption = this.allChartTypeOptions.find(
+    if (!matchedChartOptionData && selectedWidgetType) {
+      matchedChartOptionData = this.allChartTypeOptions.find(
         (option) =>
           option.widgetType === selectedWidgetType &&
           option.widgetSubType === null // Look for chart options that apply to the main widgetType
       );
     }
 
-    this.filteredChartTypes = matchedChartOption?.chartOptions || [];
+    // Update filteredChartTypes for the dialog
+    this.filteredChartTypes = matchedChartOptionData?.chartOptions || [];
 
     // Set default chart or null if no options
     const currentChartType = this.widgetForm.get("chartType")?.value;
-    if (
-      matchedChartOption?.defaultChart &&
-      this.filteredChartTypes.includes(matchedChartOption.defaultChart)
+    if (!currentChartType &&
+      matchedChartOptionData?.defaultChart &&
+      this.filteredChartTypes.some(
+        (c) => c.chartType === matchedChartOptionData.defaultChart
+      )
     ) {
       this.widgetForm
         .get("chartType")
-        ?.setValue(matchedChartOption.defaultChart);
+        ?.setValue(matchedChartOptionData.defaultChart);
     } else if (
       currentChartType &&
-      !this.filteredChartTypes.includes(currentChartType)
+      !this.filteredChartTypes.some((c) => c.chartType === currentChartType)
     ) {
       // If current chart type is no longer valid for the new selection, reset it
       this.widgetForm.get("chartType")?.setValue(null);
     } else if (!currentChartType && this.filteredChartTypes.length > 0) {
       // If no chart type is selected and options are available, select the first one
-      this.widgetForm.get("chartType")?.setValue(this.filteredChartTypes[0]);
+      this.widgetForm
+        .get("chartType")
+        ?.setValue(this.filteredChartTypes[0].chartType);
     } else if (this.filteredChartTypes.length === 0) {
       // If no chart types are available, set to null
       this.widgetForm.get("chartType")?.setValue(null);
@@ -380,13 +397,13 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
 
   async getChartOptions(): Promise<void> {
     try {
-      // Assuming dashboardService.getChartOptions() returns an object with a 'data' array
       const result = await this.dashboardService.getChartOptions();
       if (result?.data?.length) {
         this.allChartTypeOptions = result.data.map((item: any) => ({
+          // chartOptions now contains objects { name, s3_file_name }
           chartOptions: item.chartOptions,
           defaultChart: item.defaultChart,
-          widgetSubType: item.widgetSubType || null, // Ensure null if not present
+          widgetSubType: item.widgetSubType || null,
           widgetType: item.widgetType,
         }));
         console.log("Loaded all chart type options:", this.allChartTypeOptions);
@@ -397,6 +414,39 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
         duration: 3000,
       });
     }
+  }
+
+  /**
+   * Opens the chart type selection dialog.
+   */
+  openChartTypeSelection(): void {
+    if (!this.filteredChartTypes || this.filteredChartTypes.length === 0) {
+      this.snackBar.open(
+        "No chart types available for current widget configuration.",
+        "Close",
+        { duration: 3000 }
+      );
+      return;
+    }
+
+    const dialogRef = this.dialog.open<
+      ChartTypeSelectionDialogComponent,
+      ChartSelectionDialogData,
+      string // Dialog returns the selected chart's name string
+    >(ChartTypeSelectionDialogComponent, {
+      width: "800px", // Adjust width as needed for the grid
+      data: {
+        chartOptions: this.filteredChartTypes,
+        selectedChartTypeName: this.widgetForm.get("chartType")?.value, // Pass currently selected name for highlight
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((selectedChartName) => {
+      if (selectedChartName) {
+        // If a chart was selected (not null/undefined)
+        this.widgetForm.get("chartType")?.setValue(selectedChartName);
+      }
+    });
   }
 
   /**
@@ -417,9 +467,9 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
     try {
       if (this.isEditMode && this.currentWidget?._id) {
         const widgetPayload = {
-            ...formValues,
-            dashboardId: this.dashboard?._id,
-            sectionId: this.currentSection?._id
+          ...formValues,
+          dashboardId: this.dashboard?._id,
+          sectionId: this.currentSection?._id,
         };
         // Update existing dashboard with modified sections
         const result = await this.dashboardService.updateWidget(
@@ -433,11 +483,11 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
       } else {
         // Add new section
         const widgetPayload = {
-            ...formValues,
-            dashboardId: this.dashboard?._id,
-            sectionId: this.currentSection?._id
+          ...formValues,
+          dashboardId: this.dashboard?._id,
+          sectionId: this.currentSection?._id,
         };
-        
+
         // Update existing dashboard with modified sections
         const result = await this.dashboardService.createWidget(widgetPayload);
         this.snackBar.open("Widget changes saved successfully!", "Close", {
@@ -491,46 +541,46 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
     widgetType: string | null | undefined
   ): string {
     const icons: { [key: string]: string } = {
-      // Mapped to 'material-solid' namespace based on common Material Design icons
+      // Mapped to 'mat_solid' namespace based on common Material Design icons
       // Chart Types (converted to lowercase for consistent lookup)
-      card: "material-solid:dashboard",
-      pie_chart: "material-solid:pie_chart",
-      radial_bar_chart: "material-solid:data_usage", // Example mapping
-      animated_gauge: "material-solid:speed", // Example mapping
-      yes_no_gauge: "material-solid:check_circle_outline", // Example mapping
-      barchart: "material-solid:bar_chart",
-      linechart: "material-solid:show_chart",
-      columnchart: "material-solid:stacked_bar_chart",
-      traceablesankee: "material-solid:account_tree",
-      table: "material-solid:table_chart",
-      text: "material-solid:text_fields",
-      mapchart: "material-solid:map",
-      donut: "material-solid:donut_large",
-      slicedchart: "material-solid:pie_chart_outline",
-      horizontalstackedchart: "material-solid:stacked_bar_chart",
-      verticalstackedchart: "material-solid:bar_chart",
+      card: "mat_solid:dashboard",
+      pie_chart: "mat_solid:pie_chart",
+      radial_bar_chart: "mat_solid:data_usage", // Example mapping
+      animated_gauge: "mat_solid:speed", // Example mapping
+      yes_no_gauge: "mat_solid:check_circle_outline", // Example mapping
+      barchart: "mat_solid:bar_chart",
+      linechart: "mat_solid:show_chart",
+      columnchart: "mat_solid:stacked_bar_chart",
+      traceablesankee: "mat_solid:account_tree",
+      table: "mat_solid:table_chart",
+      text: "mat_solid:text_fields",
+      mapchart: "mat_solid:map",
+      donut: "mat_solid:donut_large",
+      slicedchart: "mat_solid:pie_chart_outline",
+      horizontalstackedchart: "mat_solid:stacked_bar_chart",
+      verticalstackedchart: "mat_solid:bar_chart",
 
       // Widget Types (fallback if chartType specific icon is not found, converted to lowercase)
-      metric: "material-solid:analytics",
-      further_studies: "material-solid:school",
-      domains: "material-solid:category",
-      education_level_target: "material-solid:trending_up",
-      same_different_school: "material-solid:compare_arrows",
-      status_by_wave: "material-solid:timeline",
-      professional_situation: "material-solid:work",
-      positions_functions: "material-solid:people",
-      salaries: "material-solid:attach_money",
-      skills: "material-solid:lightbulb",
-      satisfaction: "material-solid:sentiment_satisfied",
-      graduation_success: "material-solid:grade",
-      survey_completion: "material-solid:task_alt",
-      survey_distribution: "material-solid:poll",
-      manager_level: "material-solid:supervisor_account",
-      contract_types: "material-solid:description",
-      companies: "material-solid:business",
-      region: "material-solid:public",
-      gender: "material-solid:wc",
-      flow: "material-solid:device_hub",
+      metric: "mat_solid:analytics",
+      further_studies: "mat_solid:school",
+      domains: "mat_solid:category",
+      education_level_target: "mat_solid:trending_up",
+      same_different_school: "mat_solid:compare_arrows",
+      status_by_wave: "mat_solid:timeline",
+      professional_situation: "mat_solid:work",
+      positions_functions: "mat_solid:people",
+      salaries: "mat_solid:attach_money",
+      skills: "mat_solid:lightbulb",
+      satisfaction: "mat_solid:sentiment_satisfied",
+      graduation_success: "mat_solid:grade",
+      survey_completion: "mat_solid:task_alt",
+      survey_distribution: "mat_solid:poll",
+      manager_level: "mat_solid:supervisor_account",
+      contract_types: "mat_solid:description",
+      companies: "mat_solid:business",
+      region: "mat_solid:public",
+      gender: "mat_solid:wc",
+      flow: "mat_solid:device_hub",
     };
 
     const typeToUse = (chartType || widgetType || "").toLowerCase(); // Prioritize chartType, then widgetType
@@ -538,6 +588,6 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
     // Replace underscores in chartType for lookup if necessary
     const cleanedType = typeToUse.replace(/_/g, "");
 
-    return icons[cleanedType] || icons[typeToUse] || "material-solid:widgets"; // Default to generic widget icon
+    return icons[cleanedType] || icons[typeToUse] || "mat_solid:widgets"; // Default to generic widget icon
   }
 }

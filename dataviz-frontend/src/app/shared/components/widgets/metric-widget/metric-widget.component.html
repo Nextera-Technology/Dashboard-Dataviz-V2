@@ -1,0 +1,22 @@
+<div class="metric-widget flex flex-col items-center justify-center h-full p-4 rounded-lg text-gray-800"
+    [style.background-color]="widget?.background || '#ffffff'">
+    <ng-container *ngIf="hasData && mainMetric">
+        <h3 class="text-xl font-semibold mb-2 text-center">{{ widget.title }}</h3>
+        <p class="text-5xl font-bold text-blue-600 mb-2">
+            <ng-container *ngIf="mainMetric.percentage !== undefined && mainMetric.percentage !== null">{{
+                mainMetric.percentage }}%</ng-container>
+            <ng-container
+                *ngIf="(mainMetric.percentage === undefined || mainMetric.percentage === null) && mainMetric.value !== undefined">{{
+                mainMetric.value }}</ng-container>
+            <ng-container
+                *ngIf="(mainMetric.percentage === undefined || mainMetric.percentage === null) && mainMetric.value === undefined">N/A</ng-container>
+        </p>
+        <p class="text-lg text-gray-700 text-center" *ngIf="mainMetric.name">{{ mainMetric.name }}</p>
+        <p class="text-sm text-gray-500" *ngIf="mainMetric.totalData !== undefined && mainMetric.value !== undefined">
+            ({{ mainMetric.value }} / {{ mainMetric.totalData }})</p>
+    </ng-container>
+    <ng-container *ngIf="!hasData">
+        <p class="text-lg font-medium text-gray-500">No Data Available</p>
+        <mat-icon class="text-5xl text-gray-400 mt-2">info</mat-icon>
+    </ng-container>
+</div>

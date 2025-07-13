@@ -1,0 +1,6 @@
+/* src/app/components/widgets/metric-widget/metric-widget.component.scss */
+.metric-widget {
+  height: 100%; // Ensure it fills its parent container
+  width: 100%;
+  box-sizing: border-box; // Include padding and border in the element's total width and height
+}

@@ -1,14 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardSection, DashboardWidget } from '../../services/dashboard.service';
-import { MetricWidgetComponent } from '../widgets/metric-widget.component';
-import { PieChartWidgetComponent } from '../widgets/pie-chart-widget.component';
-import { BarChartWidgetComponent } from '../widgets/bar-chart-widget.component';
-import { ColumnChartWidgetComponent } from '../widgets/column-chart-widget.component';
-import { LineChartWidgetComponent } from '../widgets/line-chart-widget.component';
-import { SankeyChartWidgetComponent } from '../widgets/sankey-chart-widget.component';
-import { TextWidgetComponent } from '../widgets/text-widget.component';
-import { MapWidgetComponent } from '../widgets/map-widget.component';
+import { MetricWidgetComponent } from '../widgets/metric-widget/metric-widget.component';
+import { PieChartWidgetComponent } from '../widgets/pie-chart-widget/pie-chart-widget.component';
+import { BarChartWidgetComponent } from '../widgets/bar-chart-widget/bar-chart-widget.component';
+import { ColumnChartWidgetComponent } from '../widgets/column-chart-widget/column-chart-widget.component';
+import { LineChartWidgetComponent } from '../widgets/line-chart-widget/line-chart-widget.component';
+import { SankeyChartWidgetComponent } from '../widgets/sankey-chart-widget/sankey-chart-widget.component';
+import { TextWidgetComponent } from '../widgets/text-widget/text-widget.component';
+import { MapWidgetComponent } from '../widgets/map-widget/map-widget.component';
 
 @Component({
   selector: 'app-section',

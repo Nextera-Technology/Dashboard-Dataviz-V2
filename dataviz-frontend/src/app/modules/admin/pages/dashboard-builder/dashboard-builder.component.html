@@ -1,27 +1,26 @@
 <app-admin-layout>
-    <div class="dashboard-builder flex flex-col h-screen bg-gray-50">
+    <div class="dashboard-builder flex flex-col h-screen bg-gray-100">
         <div
-            class="header flex flex-col sm:flex-row justify-between items-center px-6 py-5 border-b border-gray-200 bg-white shadow-md z-10 sticky top-0">
+            class="header flex flex-col sm:flex-row justify-between items-center px-6 py-5 border-b border-gray-200 bg-white shadow-sm z-10 sticky top-0">
             <div class="header-left flex items-center gap-4 mb-4 sm:mb-0">
-                <button mat-button (click)="goBack()"
-                    class="text-blue-600 hover:text-blue-800 flex items-center px-3 py-2 rounded-md transition-colors duration-200">
-                    <mat-icon class="mr-2">arrow_back</mat-icon>
-                    <span class="font-medium">Back to Dashboards</span>
+                <button mat-button (click)="goBack()" class="text-blue-600 hover:text-blue-800">
+                    <mat-icon>arrow_back</mat-icon>
+                    <span class="ml-2">Back to Dashboards</span>
                 </button>
-                <h1 class="text-2xl font-bold text-gray-800">
+                <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">
                     {{ dashboard?.title || 'Loading Dashboard...' }}
                 </h1>
             </div>
-            <div class="header-actions flex gap-4">
+            <div class="header-actions flex gap-3">
                 <button mat-button (click)="addSection()" matTooltip="Add New Section"
-                    class="flex items-center space-x-2 px-5 py-2.5 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors duration-200 shadow-sm hover:shadow-md">
+                    class="flex items-center space-x-1 px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors duration-200">
                     <mat-icon>add</mat-icon>
                     <span>Add Section</span>
                 </button>
-                <button mat-raised-button color="primary" (click)="editDashboard()"
-                    class="flex items-center space-x-2 px-7 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
-                    <mat-icon>edit</mat-icon>
-                    <span>Edit Dashboard</span>
+                <button mat-raised-button color="primary" (click)="saveDashboard()"
+                    class="flex items-center space-x-2 px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+                    <mat-icon>save</mat-icon>
+                    <span>Save Dashboard</span>
                 </button>
             </div>
         </div>
@@ -29,72 +28,112 @@
         <div class="builder-content flex-1 overflow-hidden">
             <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)"
                 class="section-tabs h-full">
-                <mat-tab *ngFor="let section of dashboard?.sectionIds; let i = index" [label]="section.title">
+                <mat-tab *ngFor="let section of dashboard?.sectionIds; trackBy: trackById; let i = index"
+                    [label]="section.title">
                     <ng-template matTabContent>
                         <div
-                            class="section-header flex justify-between items-center py-5 px-8 bg-white border-b border-gray-200 shadow-sm">
+                            class="section-header flex justify-between items-center py-4 px-6 bg-white border-b border-gray-200 shadow-sm">
                             <div class="section-info">
-                                <h3 class="text-xl font-bold text-gray-800">
+                                <h3 class="text-xl font-semibold text-gray-800">
                                     {{ section.title }}
                                 </h3>
-                                <span class="text-sm text-gray-500">{{ section.widgetIds.length }} widgets</span>
+                                <span class="text-sm text-gray-500">{{ section?.widgetIds.length }} widgets</span>
                             </div>
                             <div class="section-actions flex gap-2">
                                 <button mat-icon-button (click)="editSection(section)" matTooltip="Edit Section"
-                                    class="text-gray-600 hover:text-blue-600 w-10 h-10">
+                                    class="text-gray-600 hover:text-blue-600">
                                     <mat-icon>edit</mat-icon>
                                 </button>
                                 <button mat-icon-button (click)="deleteSection(section)" matTooltip="Delete Section"
-                                    class="text-gray-600 hover:text-red-600 w-10 h-10">
+                                    class="text-gray-600 hover:text-red-600">
                                     <mat-icon>delete</mat-icon>
                                 </button>
                                 <button mat-icon-button (click)="addWidget(section)" matTooltip="Add Widget to Section"
-                                    class="text-gray-600 hover:text-green-600 w-10 h-10">
+                                    class="text-gray-600 hover:text-green-600">
                                     <mat-icon>add_box</mat-icon>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="widget-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6 overflow-y-auto"
-                            cdkDropList [cdkDropListData]="section.widgetIds"
+                        <div class="widget-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 p-6 overflow-y-auto"
+                            cdkDropList [cdkDropListData]="section?.widgetIds"
                             (cdkDropListDropped)="onWidgetDrop($event, i)">
-                            <div class="widget-card bg-white rounded-xl shadow-md border border-gray-200 hover:shadow-lg hover:border-blue-400 transition-all duration-300 ease-in-out flex flex-col"
-                                *ngFor="let widget of section.widgetIds" cdkDrag
+                            <div class="widget-card bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-400 transition-all duration-300 ease-in-out cursor-grab flex flex-col"
+                                *ngFor="let widget of section?.widgetIds; trackBy: trackById" cdkDrag
                                 [class.col-span-1]="widget.columnSize === 1"
                                 [class.col-span-2]="widget.columnSize === 2"
                                 [class.col-span-3]="widget.columnSize === 3"
                                 [class.col-span-4]="widget.columnSize === 4" [class.row-span-1]="widget.rowSize === 1"
                                 [class.row-span-2]="widget.rowSize === 2" [class.row-span-3]="widget.rowSize === 3"
-                                [class.row-span-4]="widget.rowSize === 4">
+                                [class.row-span-4]="widget.rowSize === 4" #widgetCard>
+                                <ng-template cdkDragPreview>
+                                    <div
+                                        class="simplified-widget-preview bg-blue-500 text-white p-3 rounded-lg shadow-lg flex items-center justify-center">
+                                        <mat-icon>drag_indicator</mat-icon>
+                                        <span class="ml-2 text-sm font-medium">{{ widget.title }}</span>
+                                    </div>
+                                </ng-template>
+
+                                <ng-template cdkDragPlaceholder>
+                                    <div
+                                        class="widget-placeholder border-2 border-dashed border-gray-400 rounded-lg bg-gray-100 opacity-50 flex items-center justify-center">
+                                    </div>
+                                </ng-template>
+
                                 <div
                                     class="widget-header flex justify-between items-center p-4 border-b border-gray-100">
-                                    <h3 class="text-base font-semibold text-gray-900 truncate">
-                                        {{ widget.title }}
-                                    </h3>
+                                    <h3 class="text-base font-medium text-gray-900 truncate">{{ widget.title }}</h3>
                                     <div class="widget-actions flex gap-1">
                                         <button mat-icon-button matTooltip="Edit Widget" (click)="editWidget(widget)"
-                                            class="text-gray-500 hover:text-blue-600 w-8 h-8">
+                                            class="text-gray-500 hover:text-blue-600">
                                             <mat-icon>edit</mat-icon>
                                         </button>
                                         <button mat-icon-button matTooltip="Delete Widget"
-                                            (click)="deleteWidget(widget)"
-                                            class="text-gray-500 hover:text-red-600 w-8 h-8">
+                                            (click)="deleteWidget(widget)" class="text-gray-500 hover:text-red-600">
                                             <mat-icon>delete</mat-icon>
                                         </button>
                                         <button mat-icon-button cdkDragHandle matTooltip="Move Widget"
-                                            class="text-gray-500 hover:text-gray-800 cursor-grab w-8 h-8">
+                                            class="text-gray-500 hover:text-gray-800 cursor-grab">
                                             <mat-icon>drag_indicator</mat-icon>
                                         </button>
                                     </div>
                                 </div>
 
                                 <div class="widget-content flex-grow flex flex-col justify-between p-4">
-                                    <div
-                                        class="widget-preview flex flex-col items-center justify-center h-28 bg-blue-50 text-blue-700 rounded-lg border border-blue-200 border-dashed mb-3">
-                                        <mat-icon class="text-5xl"
-                                            [svgIcon]="getWidgetIcon(widget.widgetType)"></mat-icon>
-                                        <span class="text-sm font-medium mt-1">{{ widget.widgetType | titlecase }}
-                                            Widget</span>
+                                    <div class="mb-4">
+                                        <ng-container [ngSwitch]="widget.chartType">
+                                            <app-metric-widget *ngSwitchCase="'CARD'" [widget]="widget"
+                                                [data]="widget.data"></app-metric-widget>
+                                            <app-bar-chart-widget *ngSwitchCase="'CLUSTERED_BAR_CHART'"
+                                                [widget]="widget" [data]="widget.data"></app-bar-chart-widget>
+                                            <app-column-chart-widget *ngSwitchCase="'ColumnChart'" [widget]="widget"
+                                                [data]="widget.data"></app-column-chart-widget>
+                                            <app-line-chart-widget *ngSwitchCase="'LINE_CHART_WITH_DATA_LABELS'"
+                                                [widget]="widget" [data]="widget.data"></app-line-chart-widget>
+                                            <app-pie-chart-widget *ngSwitchCase="'PIE_CHART_BROKEN_DOWN_SLICES'"
+                                                [widget]="widget" [data]="widget.data"></app-pie-chart-widget>
+                                            <app-sankey-chart-widget *ngSwitchCase="'TRACEABLE_SANKEY_DIAGRAM'"
+                                                [widget]="widget" [data]="widget.data"></app-sankey-chart-widget>
+                                            <app-map-widget *ngSwitchCase="'CLUSTERED_COLUMN_CHART'" [widget]="widget"
+                                                [data]="widget.data"></app-map-widget>
+                                            <app-simple-table-widget *ngSwitchCase="'Table'" [widget]="widget"
+                                                [data]="widget.data"></app-simple-table-widget>
+                                            <app-text-widget *ngSwitchCase="'Text'" [widget]="widget"
+                                                [data]="widget.data"></app-text-widget>
+                                            <app-pictorial-fraction-chart *ngSwitchCase="'PICTORIAL_FRACTION_CHART'"
+                                                [widget]="widget" [data]="widget.data"></app-pictorial-fraction-chart>
+                                            <app-status-grid-widget *ngSwitchCase="'StatusGrid'" [widget]="widget"
+                                                [data]="widget.data"></app-status-grid-widget>
+                                            <app-world-map-widget *ngSwitchCase="'DRILL_DOWN_MAP'" [widget]="widget"
+                                                [data]="widget.data"></app-world-map-widget>
+                                            <div *ngSwitchDefault
+                                                class="flex flex-col items-center justify-center h-full text-gray-500 bg-gray-50 p-4 rounded-lg">
+                                                <mat-icon class="text-6xl text-gray-400"
+                                                    svgIcon="mat_solid:widgets">widgets</mat-icon>
+                                                <p class="text-lg font-medium mt-2">No Chart or Data</p>
+                                                <p class="text-sm text-center">Configure widget type or add data.</p>
+                                            </div>
+                                        </ng-container>
                                     </div>
                                     <div class="widget-info text-sm text-gray-600">
                                         <span class="widget-size block mb-2">Size: {{ widget.columnSize }}x{{
@@ -130,16 +169,13 @@
 
                 <mat-tab *ngIf="!dashboard?.sectionIds || dashboard?.sectionIds.length === 0" label="No Sections">
                     <ng-template matTabContent>
-                        <div class="flex flex-col items-center justify-center h-full p-8 text-gray-600 bg-gray-50">
-                            <mat-icon class="text-8xl text-gray-400 mb-6" svgIcon="mat_solid:dashboard_customize"></mat-icon>
-                            <p class="text-2xl font-bold mb-3">No sections added yet!</p>
-                            <p class="text-center text-lg mb-8 max-w-md">
-                                Start building your custom dashboard by adding a new section.
-                                Sections help you organize your widgets into logical groups.
-                            </p>
+                        <div class="flex flex-col items-center justify-center h-full p-8 text-gray-600">
+                            <mat-icon class="text-6xl text-gray-400 mb-4" svgIcon="mat_solid:tab_unselected"></mat-icon>
+                            <p class="text-lg font-medium mb-2">No sections added yet!</p>
+                            <p class="text-center mb-6">Start building your dashboard by adding a new section.</p>
                             <button mat-raised-button color="primary" (click)="addSection()"
                                 class="flex items-center space-x-2 px-8 py-4 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 text-lg">
-                                <mat-icon class="text-2xl">add</mat-icon>
+                                <mat-icon class="text-2xl" svgIcon="mat_solid:add"></mat-icon>
                                 <span>Add Your First Section</span>
                             </button>
                         </div>

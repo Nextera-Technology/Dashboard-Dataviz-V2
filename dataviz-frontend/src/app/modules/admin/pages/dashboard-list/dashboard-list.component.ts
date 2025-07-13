@@ -44,7 +44,6 @@ interface Dashboard {
     MatChipsModule,
     MatTooltipModule,
     AdminLayoutComponent,
-    DatePipe,
   ],
   templateUrl: "./dashboard-list.component.html",
   styleUrl: "./dashboard-list.component.scss",
