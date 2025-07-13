@@ -23,6 +23,7 @@ export const gqlGetAllDashboardTable = gql`
             visible
             widgetType
             widgetSubType
+            followUpStage
             columnSize
             rowSize
             background
@@ -30,7 +31,10 @@ export const gqlGetAllDashboardTable = gql`
           }
           status
         }
-        source
+        sources {
+          certification
+          classes
+        }
         title
         status
       }
@@ -57,6 +61,7 @@ export const gqlGetAllDashboard = gql`
             title
             visible
             widgetType
+            followUpStage
             widgetSubType
             columnSize
             rowSize
@@ -65,7 +70,10 @@ export const gqlGetAllDashboard = gql`
           }
           status
         }
-        source
+        sources {
+          certification
+          classes
+        }
         title
         status
       }
@@ -93,15 +101,32 @@ export const gqlGetOneDashboard = gql`
           widgetType
           widgetSubType
           columnSize
+          followUpStage
           rowSize
           background
           status
         }
         status
       }
-      source
+      sources {
+        certification
+        classes
+      }
       title
       status
+    }
+  }
+`;
+
+export const gqlGetChartOptions = gql`
+  query GetChartOptions {
+    getChartOptions {
+      data {
+        chartOptions
+        defaultChart
+        widgetSubType
+        widgetType
+      }
     }
   }
 `;

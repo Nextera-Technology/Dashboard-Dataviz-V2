@@ -1,40 +1,90 @@
 <app-admin-layout>
-    <div class="dashboard-list p-6 sm:p-8 md:p-10">
-        <div class="header flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 sm:gap-0">
-            <h1 class="text-3xl font-bold text-gray-800">Dashboard Builder</h1>
-            <button mat-raised-button color="primary" (click)="createNewDashboard()"
-                class="flex items-center space-x-2 px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
-                <mat-icon>add</mat-icon>
-                <span>Create New Dashboard</span>
-            </button>
-        </div>
+  <div class="dashboard-list p-6 sm:p-8 md:p-10">
+    <div
+      class="header flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 sm:gap-0"
+    >
+      <h1 class="text-3xl font-bold text-gray-800">Dashboard Builder</h1>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="createNewDashboard()"
+        class="flex items-center space-x-2 px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+      >
+        <mat-icon>add</mat-icon>
+        <span>Create New Dashboard</span>
+      </button>
+    </div>
 
-        <div class="dashboards-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <div *ngFor="let dashboard of dashboards"
-                class="dashboard-card bg-white rounded-lg shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 ease-in-out flex flex-col justify-between">
-                <div class="p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-1">
-                        {{ dashboard.title }}
-                    </h2>
-                    <p class="text-sm text-gray-600 mb-4">{{ dashboard.name }}</p>
+    <div
+      class="dashboards-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+    >
+      <div
+        *ngFor="let dashboard of dashboards"
+        class="dashboard-card bg-white rounded-lg shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 ease-in-out cursor-pointer flex flex-col justify-between"
+      >
+        <div class="p-6" (click)="openDashboard(dashboard)">
+          <h2 class="text-xl font-semibold text-gray-900 mb-1">
+            {{ dashboard.title }}
+          </h2>
+          <p class="text-sm text-gray-600 mb-4">{{ dashboard.name }}</p>
 
-                    <div class="dashboard-info border-t border-gray-200 pt-4">
-                        <p class="source flex items-center text-gray-700 text-sm mb-2">
-                            <mat-icon svgIcon="mat_solid:source" class="mr-2 text-base"></mat-icon>
-                            Data Source:
-                            <span class="font-medium ml-1">{{ dashboard.source }}</span>
-                        </p>
-                    </div>
+          <div class="dashboard-info border-t border-gray-200 pt-4">
+            <div class="sources-section mb-2">
+              <p class="text-gray-700 text-sm font-medium mb-1" *ngIf="dashboard.sources && dashboard.sources.length > 0">
+                Sources:
+              </p>
+              <div *ngIf="dashboard.sources && dashboard.sources.length > 0; else noSources">
+                <div *ngFor="let sourceEntry of dashboard.sources | slice:0: (isSourcesExpanded(dashboard._id!) ? (dashboard.sources.length) : initialVisibleSources)" class="flex flex-col mb-1">
+                  <div class="flex items-center text-gray-800 text-sm">
+                    <mat-icon svgIcon="mat_solid:folder_open" class="mr-1 text-base"></mat-icon>
+                    <span class="font-semibold">{{ sourceEntry.certification }}</span>
+                  </div>
+                  <div class="classes-tags flex flex-wrap gap-1 mt-1 ml-5">
+                    <span
+                      *ngFor="let cls of sourceEntry.classes"
+                      class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs font-medium"
+                    >
+                      {{ cls }}
+                    </span>
+                    <span
+                      *ngIf="!sourceEntry.classes || sourceEntry.classes.length === 0"
+                      class="text-xs text-gray-500"
+                    >No classes</span>
+                  </div>
                 </div>
+                
+                <button
+                  mat-button
+                  (click)="toggleSourcesExpansion(dashboard._id!); $event.stopPropagation();"
+                  *ngIf="dashboard.sources.length > initialVisibleSources"
+                  class="text-gray-600 flex gap-4 relative items-center hover:text-gray-800 transition-colors duration-200 mt-2"
+                  [matTooltip]="isSourcesExpanded(dashboard._id!) ? 'Show less sources' : 'Show more sources'"
+                >
+                  <mat-icon>{{ isSourcesExpanded(dashboard._id!) ? 'expand_less' : 'expand_more' }}</mat-icon>
+                  <span class="text-base">{{ isSourcesExpanded(dashboard._id!) ? 'Expand less...' : 'Expand more...' }}</span>
+                </button>
+              </div>
+              <ng-template #noSources>
+                <p class="text-sm text-gray-500">No sources defined.</p>
+              </ng-template>
+            </div>
 
-                <div
-                    class="mat-card-actions flex justify-end items-center p-4 border-t border-gray-100 bg-gray-50 rounded-b-lg">
-                    <button mat-button color="primary" (click)="openDashboard(dashboard)">
-                        <mat-icon>edit</mat-icon>
-                        Edit
-                    </button>
-                </div>
             </div>
         </div>
+
+        <div
+          class="mat-card-actions flex justify-end items-center p-4 border-t border-gray-100 bg-gray-50 rounded-b-lg"
+        >
+          <button mat-button color="primary" (click)="openDashboard(dashboard)">
+            <mat-icon svgIcon="mat_solid:remove_red_eye"></mat-icon>
+            View
+          </button>
+          <button mat-button color="primary" (click)="editDashboard(dashboard, $event)">
+            <mat-icon>edit</mat-icon>
+            Edit
+          </button>
+          </div>
+      </div>
     </div>
+  </div>
 </app-admin-layout>

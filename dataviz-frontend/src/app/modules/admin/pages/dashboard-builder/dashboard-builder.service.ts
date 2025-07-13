@@ -70,6 +70,10 @@ export class DashboardBuilderService {
     return await this.dashboardBuilderRepository.getOneDashboard(id);
   }
 
+  async getChartOptions() {
+    return await this.dashboardBuilderRepository.getChartOptions();
+  }
+
   replaceUnderscoresPipe(value: string | null | undefined): string {
     if (value === null || value === undefined) {
       return "";

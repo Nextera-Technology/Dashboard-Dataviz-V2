@@ -5,8 +5,9 @@
  */
 
 import { DashboardBuilderRepository } from "@dataviz/repositories/dashboard-builder/dashboard-builder.repository";
+import { UsersRepository } from "./users/users.repository";
 
-type RepositoryType = "dashboard-builder";
+type RepositoryType = "dashboard-builder" | "user";
 
 export class RepositoryFactory {
   /**
@@ -15,10 +16,12 @@ export class RepositoryFactory {
    * @param [config] - Optional configuration for the repository.
    * @returns { ProductRepository } - The repository instance.
    */
-  static createRepository(type: RepositoryType, config?: any) {
+  static createRepository(type: RepositoryType | UsersRepository, config?: any) {
     switch (type) {
       case "dashboard-builder":
         return new DashboardBuilderRepository();
+      case "user":
+        return new UsersRepository();
       default:
         throw new Error(`Unknown repository type: ${type}`);
     }

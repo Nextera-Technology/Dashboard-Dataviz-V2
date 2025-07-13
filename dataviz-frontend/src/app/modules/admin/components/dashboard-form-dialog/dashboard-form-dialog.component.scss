@@ -1,0 +1,31 @@
+.dashboard-form-dialog {
+  min-width: 450px;
+  max-width: 90vw;
+  max-height: 90vh;
+}
+
+/* Angular Material specific overrides for full width inputs */
+mat-form-field {
+  width: 100%;
+}
+
+/* Ensure the input itself takes full width within mat-form-field */
+.mat-mdc-form-field-infix {
+  width: auto !important;
+}
+
+.sources-section {
+  .source-item {
+    position: relative; // For absolute positioning of delete button
+    @media (min-width: 640px) {
+      // sm breakpoint
+      flex-direction: row;
+      align-items: center;
+      .absolute {
+        // Adjust delete button positioning on larger screens
+        position: static;
+        margin-left: auto; // Push to the right
+      }
+    }
+  }
+}

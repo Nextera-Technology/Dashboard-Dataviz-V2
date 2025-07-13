@@ -32,7 +32,7 @@ export const gqlCreateSection = gql`
   }
 `;
 
-export const gqldeleteSection = gql`
+export const gqlDeleteSection = gql`
   mutation DeleteSection($id: String!) {
     deleteSection(_id: $id) {
       _id

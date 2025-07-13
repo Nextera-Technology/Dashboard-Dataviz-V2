@@ -10,7 +10,7 @@ import {
   gqlDeleteDashboard,
   gqlUpdateDashboard,
   gqlCreateSection,
-  gqldeleteSection,
+  gqlDeleteSection,
   gqlUpdateSection,
   gqlCreateWidget,
   gqlUpdateWidget,
@@ -18,6 +18,7 @@ import {
 } from "@dataviz/graphql/mutations/dashboard-builder/dashboard-builder.mutation";
 import {
   gqlGetAllDashboard,
+  gqlGetChartOptions,
   gqlGetOneDashboard,
 } from "@dataviz/graphql/queries/dashboard-builder/dashboard-builder.query";
 
@@ -152,7 +153,7 @@ export class DashboardBuilderRepository {
     if (!id) {
       throw new Error("Section ID is required for deletion");
     }
-    const mutation = gqldeleteSection;
+    const mutation = gqlDeleteSection;
     const variables = { id };
 
     try {
@@ -325,6 +326,27 @@ export class DashboardBuilderRepository {
     try {
       const queryResult = await this._client.GraphqlQuery(query, variables);
       return queryResult.getOneDashboard;
+    } catch (error) {
+      throw {
+        message: "Failed to get one Dashboard.",
+        originalError: error,
+        queryOrMutation: query,
+        input: JSON.stringify(variables),
+      };
+    }
+  }
+
+  /**
+   * Get one Dashboard by ID using GraphQL.
+   * @param The ID of the Dashboard to retrieve.
+   * @returns {Promise<any>} - The query result.
+   */
+  async getChartOptions() {
+    const query = gqlGetChartOptions;
+    const variables = {};
+    try {
+      const queryResult = await this._client.GraphqlQuery(query, variables);
+      return queryResult.getChartOptions;
     } catch (error) {
       throw {
         message: "Failed to get one Dashboard.",

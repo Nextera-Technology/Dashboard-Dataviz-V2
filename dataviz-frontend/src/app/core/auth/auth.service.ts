@@ -1,14 +1,15 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { delay, tap } from 'rxjs/operators';
+import { Injectable } from "@angular/core";
+import { RepositoryFactory } from "@dataviz/repositories/repository.factory";
+import { BehaviorSubject, Observable, of, throwError } from "rxjs";
+import { delay, tap } from "rxjs/operators";
 
 export interface User {
   id: string;
   name: string;
   email: string;
   password: string;
-  role: 'operator' | 'visitor';
-  status?: 'active' | 'inactive';
+  role: "operator" | "visitor";
+  status?: "active" | "inactive";
   lastLogin?: Date;
 }
 
@@ -21,18 +22,18 @@ export interface CreateUserData {
   name: string;
   email: string;
   password: string;
-  role: 'operator' | 'visitor';
+  role: "operator" | "visitor";
 }
 
 export interface UpdateUserData {
   id: string;
   name: string;
   email: string;
-  role: 'operator' | 'visitor';
+  role: "operator" | "visitor";
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -41,44 +42,65 @@ export class AuthService {
   // Static dummy users with IDs
   private readonly dummyUsers: User[] = [
     {
-      id: '1',
-      name: 'John Doe',
-      email: 'john@example.com',
-      password: 'password123',
-      role: 'operator',
-      status: 'active',
-      lastLogin: new Date()
+      id: "1",
+      name: "John Doe",
+      email: "john@example.com",
+      password: "password123",
+      role: "operator",
+      status: "active",
+      lastLogin: new Date(),
     },
     {
-      id: '2',
-      name: 'Jane Smith',
-      email: 'jane@example.com',
-      password: 'password123',
-      role: 'visitor',
-      status: 'active',
-      lastLogin: new Date(Date.now() - 86400000)
+      id: "2",
+      name: "Jane Smith",
+      email: "jane@example.com",
+      password: "password123",
+      role: "visitor",
+      status: "active",
+      lastLogin: new Date(Date.now() - 86400000),
     },
     {
-      id: '3',
-      name: 'Admin User',
-      email: 'admin@example.com',
-      password: 'admin123',
-      role: 'operator',
-      status: 'active',
-      lastLogin: new Date()
+      id: "3",
+      name: "Admin User",
+      email: "admin@example.com",
+      password: "admin123",
+      role: "operator",
+      status: "active",
+      lastLogin: new Date(),
     },
     {
-      id: '4',
-      name: 'Bob Johnson',
-      email: 'bob@example.com',
-      password: 'password123',
-      role: 'visitor',
-      status: 'inactive'
-    }
+      id: "4",
+      name: "Bob Johnson",
+      email: "bob@example.com",
+      password: "password123",
+      role: "visitor",
+      status: "inactive",
+    },
   ];
+  private userRepository;
 
   constructor() {
+    this.userRepository = RepositoryFactory.createRepository("user");
     this.loadUserFromSession();
+  }
+
+  async userLogin(email, password) {
+    try {
+      const result = await this.userRepository?.loginUser(email, password);
+      if (result?.user?._id) {
+        const userData = result?.user;
+        userData['role'] = 'operator'
+        userData['status'] = 'active'
+        this.currentUserSubject.next(userData);
+        sessionStorage.setItem("currentUser", JSON.stringify(userData));
+        localStorage.setItem("currentUser", JSON.stringify(userData));
+      }
+      sessionStorage.setItem("token", JSON.stringify(result?.accessToken));
+      localStorage.setItem("token", JSON.stringify(result?.accessToken));
+      return result;
+    } catch (error) {
+      console.error("Error loading user from session:", error);
+    }
   }
 
   /**
@@ -86,20 +108,23 @@ export class AuthService {
    */
   login(credentials: LoginCredentials): Observable<User> {
     const user = this.dummyUsers.find(
-      u => u.email === credentials.email && u.password === credentials.password && u.status === 'active'
+      (u) =>
+        u.email === credentials.email &&
+        u.password === credentials.password &&
+        u.status === "active"
     );
 
     if (user) {
       // Simulate API delay
       return of(user).pipe(
         delay(1000),
-        tap(user => {
+        tap((user) => {
           this.setCurrentUser(user);
         })
       );
     } else {
       // Return an error observable instead of throwing
-      return throwError(() => new Error('Invalid email or password'));
+      return throwError(() => new Error("Invalid email or password"));
     }
   }
 
@@ -108,7 +133,7 @@ export class AuthService {
    */
   logout(): void {
     this.currentUserSubject.next(null);
-    sessionStorage.removeItem('currentUser');
+    sessionStorage.removeItem("currentUser");
   }
 
   /**
@@ -130,7 +155,7 @@ export class AuthService {
    */
   isOperator(): boolean {
     const user = this.getCurrentUser();
-    return user?.role === 'operator';
+    return user?.role === "operator";
   }
 
   /**
@@ -138,7 +163,7 @@ export class AuthService {
    */
   isVisitor(): boolean {
     const user = this.getCurrentUser();
-    return user?.role === 'visitor';
+    return user?.role === "visitor";
   }
 
   // CRUD Operations for User Management
@@ -157,9 +182,9 @@ export class AuthService {
     const newUser: User = {
       id: Date.now().toString(),
       ...userData,
-      status: 'active'
+      status: "active",
     };
-    
+
     this.dummyUsers.push(newUser);
     return of(newUser).pipe(delay(500));
   }
@@ -168,36 +193,36 @@ export class AuthService {
    * Update user
    */
   updateUser(userData: UpdateUserData): Observable<User> {
-    const index = this.dummyUsers.findIndex(u => u.id === userData.id);
+    const index = this.dummyUsers.findIndex((u) => u.id === userData.id);
     if (index !== -1) {
       this.dummyUsers[index] = { ...this.dummyUsers[index], ...userData };
       return of(this.dummyUsers[index]).pipe(delay(500));
     }
-    return throwError(() => new Error('User not found'));
+    return throwError(() => new Error("User not found"));
   }
 
   /**
    * Delete user
    */
   deleteUser(userId: string): Observable<boolean> {
-    const index = this.dummyUsers.findIndex(u => u.id === userId);
+    const index = this.dummyUsers.findIndex((u) => u.id === userId);
     if (index !== -1) {
       this.dummyUsers.splice(index, 1);
       return of(true).pipe(delay(500));
     }
-    return throwError(() => new Error('User not found'));
+    return throwError(() => new Error("User not found"));
   }
 
   /**
    * Toggle user status
    */
   toggleUserStatus(userId: string): Observable<User> {
-    const user = this.dummyUsers.find(u => u.id === userId);
+    const user = this.dummyUsers.find((u) => u.id === userId);
     if (user) {
-      user.status = user.status === 'active' ? 'inactive' : 'active';
+      user.status = user.status === "active" ? "inactive" : "active";
       return of(user).pipe(delay(500));
     }
-    return throwError(() => new Error('User not found'));
+    return throwError(() => new Error("User not found"));
   }
 
   /**
@@ -205,22 +230,22 @@ export class AuthService {
    */
   private setCurrentUser(user: User): void {
     this.currentUserSubject.next(user);
-    sessionStorage.setItem('currentUser', JSON.stringify(user));
+    sessionStorage.setItem("currentUser", JSON.stringify(user));
   }
 
   /**
    * Load user from session storage on app initialization
    */
   private loadUserFromSession(): void {
-    const userStr = sessionStorage.getItem('currentUser');
+    const userStr = sessionStorage.getItem("currentUser");
     if (userStr) {
       try {
         const user = JSON.parse(userStr) as User;
         this.currentUserSubject.next(user);
       } catch (error) {
-        console.error('Error loading user from session:', error);
-        sessionStorage.removeItem('currentUser');
+        console.error("Error loading user from session:", error);
+        sessionStorage.removeItem("currentUser");
       }
     }
   }
-} 
+}

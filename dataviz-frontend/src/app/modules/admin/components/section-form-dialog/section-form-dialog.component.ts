@@ -40,14 +40,14 @@ interface Section {
   name?: string;
   background?: string;
   title: string;
-  widgetIds: Widget[];
+  widgetIds?: Widget[];
   status?: string;
 }
 
 interface Dashboard {
   _id?: string;
   name?: string;
-  sectionIds: Section[];
+  sectionIds?: Section[];
   source?: string;
   title: string;
   status?: string;
@@ -123,65 +123,36 @@ export class SectionFormDialogComponent implements OnInit {
    */
   private async _saveSection(): Promise<void> {
     const formValues = this.sectionForm.value;
-    // Create a deep copy of the dashboard to avoid modifying the original input data directly
-    const dashboardToUpdate: Dashboard = JSON.parse(
-      JSON.stringify(this.dashboard)
-    );
-
     try {
       if (this.isEditMode && this.currentSection?._id) {
-        // Find and update the existing section
-        const sectionIndex = dashboardToUpdate.sectionIds.findIndex(
-          (s) => s._id === this.currentSection!._id
-        );
-        if (sectionIndex !== -1) {
-          dashboardToUpdate.sectionIds[sectionIndex] = {
-            ...dashboardToUpdate.sectionIds[sectionIndex],
-            title: formValues.title,
-            name: formValues.name,
-            background: formValues.background,
-          };
-        } else {
-          throw new Error("Section not found in dashboard for update.");
-        }
-      } else {
-        // Add new section
-        const newSection: Section = {
-          _id: "temp_" + Date.now().toString(), // Temporary client-side ID for new section
+        const sectionPayload = {
           title: formValues.title,
           name: formValues.name,
           background: formValues.background,
-          widgetIds: [], // New sections start with no widgets
-          status: "ACTIVE", // Default status for new sections
         };
-        dashboardToUpdate.sectionIds.push(newSection);
-      }
-
-      // Check if the dashboard itself needs to be created or updated
-      if (dashboardToUpdate._id && dashboardToUpdate._id !== "new") {
         // Update existing dashboard with modified sections
-        await this.dashboardService.updateDashboard(
-          dashboardToUpdate._id,
-          dashboardToUpdate
+        const result = await this.dashboardService.updateSection(
+          this.currentSection?._id,
+          sectionPayload
         );
         this.snackBar.open("Section changes saved successfully!", "Close", {
           duration: 3000,
         });
-        this.dialogRef.close(true); // Indicate success
+        this.dialogRef.close(result); // Indicate success
       } else {
-        // This scenario implies creating a new dashboard that *includes* this section.
-        // The dashboard-builder.component is typically responsible for the *initial* creation of a new dashboard.
-        // If this dialog is opened for a *new* dashboard (dashboard._id is 'new'),
-        // the dialog can't create the dashboard directly with only section data.
-        // It must return the section data for the parent to integrate into the new dashboard object
-        // before the parent calls createDashboardBuilder for the first time.
-        // Given the requirement, we will assume this dialog is always opened for an EXISTING dashboard.
-        this.snackBar.open(
-          "Dashboard ID missing. Cannot save section directly.",
-          "Close",
-          { duration: 3000 }
-        );
-        this.dialogRef.close(false); // Indicate failure
+        // Add new section
+        const newSection = {
+          title: formValues.title,
+          name: formValues.name,
+          dashboardId: this.dashboard?._id,
+          background: formValues.background,
+        };
+        // Update existing dashboard with modified sections
+        const result = await this.dashboardService.createSection(newSection);
+        this.snackBar.open("Section changes saved successfully!", "Close", {
+          duration: 3000,
+        });
+        this.dialogRef.close(result); // Indicate success
       }
     } catch (error) {
       console.error("Error saving section:", error);

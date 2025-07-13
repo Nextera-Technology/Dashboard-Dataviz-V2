@@ -6,7 +6,7 @@ export const environment = {
     fileUrl: '',
     siteKey: '',
     timezoneDiff: 1,
-    tokenKey: 'NEXTERA_TOKEN',
+    tokenKey: 'token',
     userProfileKey: 'NEXTERA_USER_PROFILE',
     masterPassword: '',
     masterEmail: '',

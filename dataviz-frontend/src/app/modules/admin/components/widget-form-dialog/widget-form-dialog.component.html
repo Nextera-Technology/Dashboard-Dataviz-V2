@@ -30,34 +30,6 @@
                     </mat-error>
                 </mat-form-field>
 
-                <mat-form-field class="col-span-1">
-                    <mat-label>Chart Type</mat-label>
-                    <mat-select formControlName="chartType">
-                        <mat-option value="card">Card</mat-option>
-                        <mat-option value="PieChart">Pie Chart</mat-option>
-                        <mat-option value="BarChart">Bar Chart</mat-option>
-                        <mat-option value="LineChart">Line Chart</mat-option>
-                        <mat-option value="ColumnChart">Column Chart</mat-option>
-                        <mat-option value="TraceableSankee">Sankey Chart</mat-option>
-                        <mat-option value="Table">Table</mat-option>
-                        <mat-option value="Text">Text</mat-option>
-                        <mat-option value="MapChart">Map Chart</mat-option>
-                        <mat-option value="donut">Donut Chart</mat-option>
-                        <mat-option value="SlicedChart">Sliced Chart</mat-option>
-                        <mat-option value="HorizontalStackedChart">Horizontal Stacked Chart</mat-option>
-                        <mat-option value="VerticalStackedChart">Vertical Stacked Chart</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="widgetForm.get('chartType')?.hasError('required')">
-                        Chart type is required
-                    </mat-error>
-                </mat-form-field>
-
-                <div class="col-span-1 flex items-center pt-2">
-                    <mat-slide-toggle formControlName="visible" color="primary">
-                        Visible on Dashboard
-                    </mat-slide-toggle>
-                </div>
-
                 <mat-form-field class="col-span-2">
                     <mat-label>Follow-up Stage</mat-label>
                     <mat-select formControlName="followUpStage">
@@ -70,7 +42,7 @@
 
                 <mat-form-field class="col-span-1">
                     <mat-label>Widget Type</mat-label>
-                    <mat-select formControlName="widgetType">
+                    <mat-select formControlName="widgetType" (selectionChange)="onWidgetTypeSelected($event.value)">
                         <mat-option *ngFor="let type of widgetTypes" [value]="type.value">
                             {{ type.label }}
                         </mat-option>
@@ -90,6 +62,26 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
+
+                <mat-form-field class="col-span-1">
+                    <mat-label>Chart Type</mat-label>
+                    <mat-select formControlName="chartType"
+                        [disabled]="!filteredChartTypes || filteredChartTypes.length === 0">
+                        <mat-option [value]="null">None</mat-option>
+                        <mat-option *ngFor="let chartType of filteredChartTypes" [value]="chartType">
+                            {{ chartType | titlecase | replaceUnderscores }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="widgetForm.get('chartType')?.hasError('required')">
+                        Chart type is required
+                    </mat-error>
+                </mat-form-field>
+
+                <div class="col-span-1 flex items-center pt-2">
+                    <mat-slide-toggle formControlName="visible" color="primary">
+                        Visible on Dashboard
+                    </mat-slide-toggle>
+                </div>
 
                 <mat-form-field class="col-span-2">
                     <mat-label>Background Color</mat-label>

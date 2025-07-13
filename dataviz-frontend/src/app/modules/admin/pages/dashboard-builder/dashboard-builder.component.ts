@@ -19,6 +19,7 @@ import { SectionFormDialogComponent } from "../../components/section-form-dialog
 import { DashboardBuilderService } from "./dashboard-builder.service";
 import { WidgetFormDialogComponent } from "../../components/widget-form-dialog/widget-form-dialog.component";
 import { WidgetConfigData } from "app/shared/services/dashboard.service";
+import { DashboardFormDialogComponent } from "../../components/dashboard-form-dialog/dashboard-form-dialog.component";
 
 // Define interfaces for better type safety based on your GraphQL queries and provided data
 interface WidgetData {
@@ -184,68 +185,6 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
     // Consider calling a save/update function here if drag and drop needs to persist immediately
     // this.saveDashboard();
   }
-  editWidget(widget: Widget): void {
-    if (!this.dashboard || !this.dashboard.sectionIds) {
-      this.snackBar.open(
-        "Cannot edit widget: Dashboard or sections not loaded.",
-        "Close",
-        { duration: 3000 }
-      );
-      return;
-    }
-
-    // Find the parent section of the widget
-    const parentSection = this.dashboard.sectionIds.find((s) =>
-      s.widgetIds.some((w) => w._id === widget._id)
-    );
-    if (!parentSection) {
-      this.snackBar.open(
-        "Cannot edit widget: Parent section not found.",
-        "Close",
-        { duration: 3000 }
-      );
-      return;
-    }
-
-    const dialogRef = this.dialog.open(WidgetFormDialogComponent, {
-      width: "600px", // Match dialog's min-width
-      data: {
-        dashboard: this.dashboard,
-        section: parentSection, // Pass the parent section
-        widget: widget, // Pass the widget being edited
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === true) {
-        // If save was successful in the dialog
-        this.loadDashboard(this.dashboard!._id!); // Reload dashboard to reflect changes
-      } else if (result === false) {
-        console.log("Widget edit cancelled or failed.");
-      }
-    });
-  }
-
-  deleteWidget(widget: Widget): void {
-    if (!this.dashboard || !this.dashboard.sectionIds) return;
-
-    if (confirm(`Are you sure you want to delete "${widget.title}"?`)) {
-      const currentSection = this.dashboard.sectionIds[this.selectedTabIndex];
-      if (currentSection && currentSection.widgetIds) {
-        const index = currentSection.widgetIds.findIndex(
-          (w) => w._id === widget._id
-        );
-        if (index !== -1) {
-          currentSection.widgetIds.splice(index, 1);
-          this.snackBar.open(
-            "Widget deleted locally. Remember to save dashboard.",
-            "Close",
-            { duration: 3000 }
-          );
-        }
-      }
-    }
-  }
 
   async saveDashboard(): Promise<void> {
     if (!this.dashboard) {
@@ -332,7 +271,7 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       // If the dialog closed with a 'true' result, it means the save operation was successful
-      if (result === true) {
+      if (result?._id) {
         // Reload the dashboard to reflect the changes persisted by the dialog
         this.loadDashboard(this.dashboard!._id!);
       } else if (result === false) {
@@ -366,7 +305,7 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       // If the dialog closed with a 'true' result, it means the save operation was successful
-      if (result === true) {
+      if (result?._id) {
         // Reload the dashboard to reflect the changes persisted by the dialog
         this.loadDashboard(this.dashboard!._id!);
       } else if (result === false) {
@@ -379,26 +318,26 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteSection(section: Section): void {
+  async deleteSection(section: Section) {
     if (
       confirm(
         `Are you sure you want to delete section "${section.title}"? This will also delete all widgets in this section.`
       )
     ) {
-      if (this.dashboard && this.dashboard.sectionIds) {
-        const index = this.dashboard.sectionIds.findIndex(
-          (s) => s._id === section._id || s.title === section.title // Use _id if available, fallback to title for new sections
-        );
-        if (index !== -1) {
-          this.dashboard.sectionIds.splice(index, 1);
-          if (this.selectedTabIndex >= this.dashboard.sectionIds.length) {
-            this.selectedTabIndex = Math.max(
-              0,
-              this.dashboard.sectionIds.length - 1
-            );
-          }
+      if (section && section?._id) {
+        try {
+          // Update existing dashboard with modified sections
+          const result = await this.dashboardService.deleteSection(
+            section?._id
+          );
+          this.snackBar.open("Section removed successfully!", "Close", {
+            duration: 3000,
+          });
+          this.loadDashboard(this.dashboard?._id);
+        } catch (error) {
+          console.error("Error delete section:", error);
           this.snackBar.open(
-            "Section deleted locally. Remember to save dashboard.",
+            "Failed to delete section. Please try again.",
             "Close",
             {
               duration: 3000,
@@ -427,13 +366,80 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result === true) {
+      if (result?._id) {
         // If save was successful in the dialog
         this.loadDashboard(this.dashboard!._id!); // Reload dashboard to reflect changes
       } else if (result === false) {
         console.log("Widget add cancelled or failed.");
       }
     });
+  }
+  editWidget(widget: Widget): void {
+    if (!this.dashboard || !this.dashboard.sectionIds) {
+      this.snackBar.open(
+        "Cannot edit widget: Dashboard or sections not loaded.",
+        "Close",
+        { duration: 3000 }
+      );
+      return;
+    }
+
+    // Find the parent section of the widget
+    const parentSection = this.dashboard.sectionIds.find((s) =>
+      s.widgetIds.some((w) => w._id === widget._id)
+    );
+    if (!parentSection) {
+      this.snackBar.open(
+        "Cannot edit widget: Parent section not found.",
+        "Close",
+        { duration: 3000 }
+      );
+      return;
+    }
+
+    const dialogRef = this.dialog.open(WidgetFormDialogComponent, {
+      width: "600px", // Match dialog's min-width
+      data: {
+        dashboard: this.dashboard,
+        section: parentSection, // Pass the parent section
+        widget: widget, // Pass the widget being edited
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?._id) {
+        // If save was successful in the dialog
+        this.loadDashboard(this.dashboard!._id!); // Reload dashboard to reflect changes
+      } else if (result === false) {
+        console.log("Widget edit cancelled or failed.");
+      }
+    });
+  }
+
+  async deleteWidget(widget: Widget) {
+    if (!widget?._id) return;
+
+    if (confirm(`Are you sure you want to delete "${widget.title}"?`)) {
+      if (widget && widget?._id) {
+        try {
+          // Update existing dashboard with modified widget
+          const result = await this.dashboardService.deleteWidget(widget?._id);
+          this.snackBar.open("Widget removed successfully!", "Close", {
+            duration: 3000,
+          });
+          this.loadDashboard(this.dashboard?._id);
+        } catch (error) {
+          console.error("Error delete widget:", error);
+          this.snackBar.open(
+            "Failed to delete widget. Please try again.",
+            "Close",
+            {
+              duration: 3000,
+            }
+          );
+        }
+      }
+    }
   }
 
   goBack(): void {
@@ -496,5 +502,37 @@ export class DashboardBuilderComponent implements OnInit, OnDestroy {
     };
     // Convert widgetType to lowercase for consistent lookup
     return icons[type.toLowerCase()] || "mat_solid:widgets"; // Default to generic widget icon
+  }
+
+  editDashboard(): void {
+    // Ensure dashboard is loaded before trying to edit a section
+    if (!this.dashboard) {
+      this.snackBar.open(
+        "Cannot edit section: Dashboard not loaded.",
+        "Close",
+        { duration: 3000 }
+      );
+      return;
+    }
+
+    const dialogRef = this.dialog.open(DashboardFormDialogComponent, {
+      width: "600px",
+      data: {
+        dashboard: this.dashboard, // Pass the entire dashboard object
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      // If the dialog closed with a 'true' result, it means the save operation was successful
+      if (result?._id) {
+        this.loadDashboard(this.dashboard?._id);
+      } else if (result === false) {
+        // Handle dialog cancellation or failure from within the dialog
+        console.log("Section edit cancelled or failed.");
+        this.snackBar.open("Section update cancelled or failed.", "Close", {
+          duration: 2000,
+        });
+      }
+    });
   }
 }
