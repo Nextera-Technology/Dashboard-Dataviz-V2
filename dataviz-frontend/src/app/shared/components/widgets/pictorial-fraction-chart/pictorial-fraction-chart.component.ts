@@ -50,7 +50,6 @@ export class PictorialStackedChartWidgetComponent
 
   ngAfterViewInit(): void {
     this.zone.runOutsideAngular(() => {
-      debugger
       if (!this.data || this.data.length === 0) {
         console.warn(
           "PictorialStackedChartWidget: No data provided.",
