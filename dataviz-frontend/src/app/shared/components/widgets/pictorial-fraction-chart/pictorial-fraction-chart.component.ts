@@ -50,6 +50,7 @@ export class PictorialStackedChartWidgetComponent
 
   ngAfterViewInit(): void {
     this.zone.runOutsideAngular(() => {
+      debugger
       if (!this.data || this.data.length === 0) {
         console.warn(
           "PictorialStackedChartWidget: No data provided.",
@@ -58,7 +59,7 @@ export class PictorialStackedChartWidgetComponent
         return;
       }
       const root = am5.Root.new(
-        `pictorial-stacked-chart-div-${this.widget._id}`
+      `pictorial-stacked-chart-div-${this.widget._id}`
       );
 
       root.setThemes([am5themes_Animated.new(root)]);

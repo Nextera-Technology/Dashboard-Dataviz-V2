@@ -1,0 +1,114 @@
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo-container">
+            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/Nextera%20Logo%20Career%20Insight%20White%20text.png"
+                alt="Nextera Logo" />
+        </div>
+
+        <!-- User Info -->
+        <div class="user-info">
+            <div class="user-avatar">
+                <mat-icon>person</mat-icon>
+            </div>
+            <div class="user-details">
+                <p class="user-name">{{ currentUser?.name }}</p>
+                <p class="user-email">{{ currentUser?.email }}</p>
+                <p class="user-role">{{ currentUser?.role | titlecase }}</p>
+            </div>
+        </div>
+
+        <!-- Certification Filter Section -->
+        <div class="filter-section">
+            <div class="section-title">
+                <span class="section-icon">📊</span>
+                Certification
+            </div>
+            <div class="typeahead-container">
+                <input type="text" class="typeahead-input" placeholder="Rechercher une Certification..."
+                    [(ngModel)]="certificationSearch" (input)="onCertificationSearch()" />
+            </div>
+            <div class="checkbox-list">
+                <div class="checkbox-item select-all">
+                    <input type="checkbox" id="cert_select_all" (change)="toggleCertificationSelectAll()">
+                    <label for="cert_select_all">Sélectionner tout</label>
+                </div>
+                <div class="checkbox-item" *ngFor="let cert of filteredCertifications">
+                    <input type="checkbox" [id]="'cert_' + cert.id" [(ngModel)]="cert.selected">
+                    <label [for]="'cert_' + cert.id">{{ cert.name }}</label>
+                </div>
+            </div>
+            <div class="selected-count">{{ selectedCertificationsCount }} certification(s) sélectionnée(s)</div>
+            <button class="clear-filters" (click)="applyCertificationFilters()">Appliquer les Filtres</button>
+        </div>
+
+        <!-- Sections Filter Section -->
+        <div class="filter-section">
+            <div class="section-title sections-title">
+                <span class="section-icon">📋</span>
+                Sections
+            </div>
+            <div class="checkbox-list">
+                <div class="checkbox-item" *ngFor="let section of sections">
+                    <input type="checkbox" [id]="'section_' + section.id" [(ngModel)]="section.selected">
+                    <label [for]="'section_' + section.id">{{ section.name }}</label>
+                </div>
+            </div>
+            <div class="selected-count">{{ selectedSectionsCount }} section(s) sélectionnée(s)</div>
+            <button class="clear-filters" (click)="applySectionFilters()">Appliquer les Filtres</button>
+        </div>
+
+        <!-- Admin Navigation Section -->
+        <div class="admin-section" *ngIf="isAdminUser()">
+            <div class="section-title admin-title">
+                <span class="section-icon">⚙️</span>
+                Administration
+            </div>
+            <div class="admin-menu">
+                <a routerLink="/admin/dashboard-list" class="admin-menu-item">
+                    <mat-icon>dashboard</mat-icon>
+                    <span>Dashboard Builder</span>
+                </a>
+                <a routerLink="/admin/user-management" class="admin-menu-item">
+                    <mat-icon>people</mat-icon>
+                    <span>User Management</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header>
+            <div class="header-content">
+                <h1>{{ dashboard?.title || 'Dashboard' }}</h1>
+                <h4>{{ dashboard?.subtitle || 'Data source' }}</h4>
+            </div>
+
+            <!-- User Menu -->
+            <div class="user-menu">
+                <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-menu-button">
+                    <mat-icon>account_circle</mat-icon>
+                </button>
+                <mat-menu #userMenu="matMenu">
+                    <div class="menu-header">
+                        <p class="menu-name">{{ currentUser?.name }}</p>
+                        <p class="menu-email">{{ currentUser?.email }}</p>
+                        <p class="menu-role">{{ currentUser?.role | titlecase }}</p>
+                    </div>
+                    <button mat-menu-item (click)="logout()">
+                        <mat-icon>logout</mat-icon>
+                        <span>Logout</span>
+                    </button>
+                </mat-menu>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Sections -->
+            <app-section *ngFor="let section of dashboard?.sectionIds; trackBy: trackBySection" [section]="section">
+            </app-section>
+        </div>
+    </main>
+</div>

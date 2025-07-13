@@ -68,17 +68,17 @@ export class SankeyChartWidgetComponent implements OnInit, OnDestroy {
 
     // Only set links data
     this.chart.data.setAll(this.data);
-    this.chart.nodes.template.setAll({
-      paddingTop: 1,
-      paddingBottom: 1,
-    });
 
     // Style nodes and links
-    this.chart.nodes.template.setAll({
-      fill: am5.color("#67b7dc"),
-      stroke: am5.color("#15616D"),
-      strokeWidth: 2,
-    });
+    if (this.chart?.nodes?.template) {
+      this.chart.nodes.template.setAll({
+        fill: am5.color("#67b7dc"),
+        stroke: am5.color("#15616D"),
+        strokeWidth: 2,
+        paddingTop: 1,
+        paddingBottom: 1,
+      });
+    }
 
     this.chart.links.template.setAll({
       fill: am5.color("#67b7dc"),
