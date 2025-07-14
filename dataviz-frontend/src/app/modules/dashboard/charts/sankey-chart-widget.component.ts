@@ -50,7 +50,7 @@ declare var am5flow: any;
         <div #chartContainer class="chart-container"></div>
 
         <!-- Manual Legend (if needed) -->
-        <div class="manual-legend" *ngIf="widget.data">
+        <!-- <div class="manual-legend" *ngIf="widget.data">
           <div *ngFor="let item of widget.data" class="legend-item">
             <span
               class="legend-color"
@@ -62,7 +62,7 @@ declare var am5flow: any;
               </span>
             </span>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   `,
@@ -179,6 +179,7 @@ export class SankeyChartWidgetComponent implements OnInit, OnDestroy {
 
   private createChart(): void {
     this.root = am5.Root.new(this.chartContainer.nativeElement);
+    this.root._logo.dispose();
     this.root.setThemes([am5.Theme.new(this.root)]);
 
     this.chart = this.root.container.children.push(

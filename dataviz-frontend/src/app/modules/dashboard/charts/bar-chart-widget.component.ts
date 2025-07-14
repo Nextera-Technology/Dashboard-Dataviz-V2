@@ -37,7 +37,7 @@ declare var am5xy: any;
         <div #chartContainer class="chart-container"></div>
         
         <!-- Manual Legend (if needed) -->
-        <div class="manual-legend" *ngIf="widget.data">
+        <!-- <div class="manual-legend" *ngIf="widget.data">
           <div 
             *ngFor="let item of widget.data" 
             class="legend-item">
@@ -49,7 +49,7 @@ declare var am5xy: any;
               </span>
             </span>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   `,

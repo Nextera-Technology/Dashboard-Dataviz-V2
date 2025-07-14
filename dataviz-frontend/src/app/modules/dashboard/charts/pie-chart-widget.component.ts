@@ -43,11 +43,14 @@ declare var am5percent: any;
 
       <div class="chart-content">
         <h3 class="chart-title">{{ widget.title }}</h3>
-
+<br>
         <div #chartContainer class="chart-container"></div>
 
         <!-- Manual Legend -->
-        <div class="manual-legend" *ngIf="data">
+        <div class="chart-legend" >
+          Total Data Used : {{ data && data.length && data[0].totalData ?? data[0].totalData || 0 }}
+        </div>
+        <!-- <div class="manual-legend" *ngIf="data">
           <div *ngFor="let item of data" class="legend-item">
             <span class="legend-color"></span>
             <span class="legend-label">
@@ -57,7 +60,7 @@ declare var am5percent: any;
               </span>
             </span>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   `,
@@ -87,6 +90,21 @@ declare var am5percent: any;
         flex-direction: column;
       }
 
+      .chart-legend {
+        position: absolute;
+        top: 10px;
+        left: 14px;
+        z-index: 2;
+        background: rgba(255,255,255,0.85);
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #15616d;
+        pointer-events: none;
+        text-align: left;
+      }
+
       .chart-title {
         font-family: 'Inter';
         font-size: 18px;
@@ -97,9 +115,10 @@ declare var am5percent: any;
       }
 
       .chart-container {
-        height: 300px;
+        height: 350px;
         width: 100%;
-        margin-bottom: 15px;
+        // margin-bottom: 15px;
+        // margin-top: 15px
         /* Ensure the container has enough space for the chart and legend */
       }
 
@@ -207,6 +226,7 @@ export class PieChartWidgetComponent implements OnInit, OnDestroy {
   private createChart(): void {
     // Create root element
     this.root = am5.Root.new(this.chartContainer.nativeElement);
+    this.root._logo.dispose();
 
     // Set themes
     this.root.setThemes([am5.Theme.new(this.root)]);
@@ -214,9 +234,9 @@ export class PieChartWidgetComponent implements OnInit, OnDestroy {
     // Create chart
     this.chart = this.root.container.children.push(
       am5percent.PieChart.new(this.root, {
-        layout: this.root.verticalLayout, // Use vertical layout for chart and legend
+        layout: this.root.horizontalLayout, // Use vertical layout for chart and legend
         innerRadius: am5.percent(50),
-        radius: am5.percent(75), // Make the chart smaller (70% of container)
+        radius: am5.percent(60), // Make the chart smaller (70% of container)
       })
     );
 
@@ -243,18 +263,21 @@ export class PieChartWidgetComponent implements OnInit, OnDestroy {
 
     this.series.data.setAll(data);
     this.series.labels.template.setAll({
-      text: "{valuePercentTotal.formatNumber('#.0')}%",
-      fontSize: 14,
-      maxWidth: 150, // Set maximum width for labels
+      text: "{name}: {value} {percentage}%",
+      fontSize: "12px", // Adjust font size if needed
+      maxWidth: 125, // Set maximum width for labels
       oversizedBehavior: "wrap", // Wrap long text
-      paddingBottom: 20,
+      paddingBottom: 15,
+      paddingRight: 10
     });
 
     // Configure series appearance
     this.series.slices.template.setAll({
-      tooltipText: "{name}: {valuePercentTotal.formatNumber('#.0')}%",
+      tooltipText:  "{name}: {count} {percentage}%",
       stroke: am5.color(0xffffff),
-      strokeWidth: 2,
+      strokeWidth: 1.5,
+      cornerRadius: 5,
+      shiftRadius: 8,
     });
 
     // Set colors

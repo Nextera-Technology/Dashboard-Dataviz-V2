@@ -55,15 +55,16 @@ interface Widget {
           <img [src]="getActionIcon('audience_4644048.png')" alt="Audience" />
         </button>
       </div>
-
       <!-- Widget Content -->
       <div class="chart-content">
         <h3 class="chart-title">{{ widget.title }}</h3>
-
         <!-- Chart Container -->
         <div #chartContainer class="chart-container"></div>
-
         <!-- Manual Legend -->
+        <div class="chart-legend" >
+          Total Student : {{ data && data.length && data[0].totalData ?? data[0].totalData || 0 }}
+        </div>
+
         <div class="manual-legend" *ngIf="data">
           <div *ngFor="let item of data" class="legend-item">
             <span class="legend-color"></span>
@@ -90,6 +91,21 @@ interface Widget {
         min-height: 300px;
         display: flex;
         flex-direction: column;
+      }
+
+      .chart-legend {
+        position: absolute;
+        top: 10px;
+        left: 14px;
+        z-index: 2;
+        background: rgba(255,255,255,0.85);
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #15616d;
+        pointer-events: none;
+        text-align: left;
       }
 
       .chart-box:hover {
@@ -197,7 +213,8 @@ export class PictorialStackedChartWidgetComponent
         return;
       }
       const root = am5.Root.new(this.chartContainer.nativeElement);
-
+      root._logo.dispose();
+      
       root.setThemes([am5themes_Animated.new(root)]);
 
       const chart = root.container.children.push(
@@ -222,8 +239,20 @@ export class PictorialStackedChartWidgetComponent
       );
 
       series.labelsContainer.set("width", 100);
-      series.ticks.template.set("location", 0.6);
+      // series.ticks.template.set("location", 0.6);
 
+      series.ticks.template.set("visible", false);
+      series.slices.template.setAll({
+        cornerRadiusTL: 5,
+        tooltipText: "{name}: {value} ({percentage}%)",
+        stroke: am5.color("#fff"),
+        strokeWidth: 1.5,
+      });
+      
+      series.labels.template.setAll({
+        text: "{name}: {value} {percentage}%",
+      });
+      
       series.data.setAll(this.data);
 
       series.appear(1000, 100);

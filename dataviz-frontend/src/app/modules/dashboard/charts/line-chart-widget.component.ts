@@ -50,7 +50,7 @@ declare var am5xy: any;
         <div #chartContainer class="chart-container"></div>
 
         <!-- Manual Legend (if needed) -->
-        <div class="manual-legend" *ngIf="widget.data">
+        <!-- <div class="manual-legend" *ngIf="widget.data">
           <div *ngFor="let series of widget.data" class="legend-item">
             <span class="legend-label">
               {{ series.name }}
@@ -59,7 +59,7 @@ declare var am5xy: any;
               </span>
             </span>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   `,
@@ -178,81 +178,109 @@ export class LineChartWidgetComponent implements OnInit, OnDestroy {
   }
 
   private createChart(): void {
+    if (this.root) {
+      this.root.dispose(); // ✅ Clean up before creating a new chart
+    }
     this.root = am5.Root.new(this.chartContainer.nativeElement);
+    this.root._logo.dispose();
     this.root.setThemes([am5.Theme.new(this.root)]);
 
     this.chart = this.root.container.children.push(
       am5xy.XYChart.new(this.root, {
+        panX: false,
+        panY: false,
+        wheelX: "none",
+        wheelY: "none",
         layout: this.root.verticalLayout,
       })
     );
 
-    // X Axis (time/categories)
+    // X Axis
     this.xAxis = this.chart.xAxes.push(
       am5xy.CategoryAxis.new(this.root, {
         categoryField: "name",
         renderer: am5xy.AxisRendererX.new(this.root, { minGridDistance: 30 }),
+        tooltip: am5.Tooltip.new(this.root, {})
       })
     );
 
-    // Y Axis (values)
+    // Y Axis
     this.yAxis = this.chart.yAxes.push(
       am5xy.ValueAxis.new(this.root, {
-        categoryField: "name",
-        renderer: am5xy.AxisRendererY.new(this.root, {}),
+        renderer: am5xy.AxisRendererY.new(this.root, {})
       })
     );
+
     this.xAxis.data.setAll(this.widget.data);
     this.yAxis.data.setAll(this.widget.data);
 
-    // Create series for each data series
     this.series = this.chart.series.push(
       am5xy.LineSeries.new(this.root, {
         name: this.widget.title,
         xAxis: this.xAxis,
         yAxis: this.yAxis,
-        valueYField: "count", // Assuming 'value' field
+        valueYField: "count",
         categoryXField: "name",
         stroke: am5.color("#67b7dc"),
         fill: am5.color("#67b7dc"),
         strokeWidth: 3,
         fillOpacity: 0.1,
+        tooltip: am5.Tooltip.new(this.root, {
+          // labelText: "Envoyé: {valueY}"
+          labelText: "{valueY}"
+        })
       })
     );
 
-    this.series.data.setAll(this.data);
+    this.series.strokes.template.setAll({
+      strokeWidth: 3
+    });
 
-    // Configure appearance
     this.series.bullets.push(() => {
       return am5.Bullet.new(this.root, {
         sprite: am5.Circle.new(this.root, {
           radius: 5,
-          valueXField: "count",
-          categoryYField: "name",
           fill: am5.color("#67b7dc"),
-          stroke: am5.color("#67b7dc"),
+          stroke: am5.color("#15616D"),
           strokeWidth: 2,
         }),
       });
     });
 
-    // Add tooltip
-    this.series.columns.template.set("tooltipText", "{name}: {count}");
-
-    // Add legend
-    const legend = this.chart.children.push(
-      am5.Legend.new(this.root, {
-        centerX: am5.percent(50),
-        x: am5.percent(50),
-        centerY: am5.percent(100),
-        y: am5.percent(100),
-        layout: this.root.horizontalLayout,
+    this.series.bullets.push(() =>
+      am5.Bullet.new(this.root, {
+        sprite: am5.Label.new(this.root, {
+          populateText: true, // ✅ important!
+          text: "{valueY}",
+          centerY: am5.percent(100),
+          centerX: am5.percent(50),
+          dy: -5,
+          fontSize: 14,
+          fill: am5.color(0x000000),
+        }),
       })
     );
+    this.chart.set("cursor", am5xy.XYCursor.new(this.root, {
+      behavior: "none",
+      xAxis: this.xAxis,
+      yAxis: this.yAxis,
+    }));    
+    
+    this.series.data.setAll(this.data);
 
-    legend.data.setAll(this.series);
+    // Legend
+    // const legend = this.chart.children.push(
+    //   am5.Legend.new(this.root, {
+    //     centerX: am5.percent(50),
+    //     x: am5.percent(50),
+    //     centerY: am5.percent(100),
+    //     y: am5.percent(100),
+    //     layout: this.root.horizontalLayout,
+    //   })
+    // );
 
-    // Animate
+    // legend.data.setAll([this.series]);
+
     this.series.appear(1000);
     this.chart.appear(1000, 100);
   }
