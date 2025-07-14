@@ -112,17 +112,18 @@ export class PieChartWidgetComponent
 
         const chart = root.container.children.push(
           am5percent.PieChart.new(root, {
-            startAngle: 180,
-            endAngle: 360,
-            layout: root.verticalLayout,
+            // startAngle: 180,
+            // endAngle: 360,
+            layout: root.horizontalLayout,
             innerRadius: am5.percent(50),
+            radius: am5.percent(60)
           })
         );
 
         const series = chart.series.push(
           am5percent.PieSeries.new(root, {
-            startAngle: 180,
-            endAngle: 360,
+            // startAngle: 180,
+            // endAngle: 360,
             valueField: "count",
             categoryField: "name",
             alignLabels: false,
@@ -131,10 +132,20 @@ export class PieChartWidgetComponent
 
         series.slices.template.setAll({
           cornerRadius: 5,
+          shiftRadius: 8,
           tooltipText:
-            "{name}: {valuePercentTotal.formatNumber('#.#')}% ({count})",
+            "{name}: {count} {percentage}%",
         });
 
+        // Format label with integer percentage
+        series.labels.template.setAll({
+          text: "{name}: {count} {percentage}%",
+          fontSize: "12px", // Adjust font size if needed
+          maxWidth: 125, // Set maximum width for labels
+          oversizedBehavior: "wrap", // Wrap long text
+          paddingBottom: 20,
+        });
+        
         series.data.setAll(this.data);
         series.appear(1000, 100);
 

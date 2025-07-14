@@ -88,7 +88,7 @@ declare var am5percent: any;
       }
 
       .chart-title {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-family: 'Inter';
         font-size: 18px;
         font-weight: 600;
         color: #00454d;

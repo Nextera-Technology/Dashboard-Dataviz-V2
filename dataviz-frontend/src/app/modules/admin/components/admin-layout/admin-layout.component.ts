@@ -111,7 +111,7 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
     .admin-layout {
       display: flex;
       min-height: 100vh;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter';
       background: #F5F8FA;
     }
 

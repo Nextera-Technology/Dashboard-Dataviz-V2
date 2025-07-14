@@ -73,7 +73,7 @@ import { DashboardWidget, WidgetAction } from 'app/shared/services/dashboard.ser
     }
 
     .text-title {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter';
       font-size: 18px;
       font-weight: 600;
       color: #00454D;
@@ -82,7 +82,7 @@ import { DashboardWidget, WidgetAction } from 'app/shared/services/dashboard.ser
     }
 
     .text-body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter';
       font-size: 14px;
       line-height: 1.6;
       color: #333;

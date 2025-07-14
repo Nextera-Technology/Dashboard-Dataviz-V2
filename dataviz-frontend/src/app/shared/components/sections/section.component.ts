@@ -397,7 +397,7 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
       }
 
       .chart-title {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-family: "Inter";
         font-size: 18px;
         font-weight: 600;
         color: #00454d;
@@ -443,8 +443,9 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
 
       .widgets-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(4, 1fr); /* Always 4 columns per row */
         gap: 1.5rem;
+        align-items: stretch; /* Make all widgets stretch to same height */
       }
 
       .widget {
@@ -456,7 +457,10 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
           transform 0.2s ease,
           box-shadow 0.2s ease;
         width: 100%;
-        display: block;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        min-height: 350px; /* Ensures equal min height for all widgets */
       }
 
       .widget:hover {
@@ -476,11 +480,15 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
         grid-column: span 3;
       }
 
+      @media (max-width: 1024px) {
+        .widgets-grid {
+          grid-template-columns: 1fr 1fr; /* 2 columns on tablets */
+        }
+      }
       @media (max-width: 768px) {
         .widgets-grid {
-          grid-template-columns: 1fr;
+          grid-template-columns: 1fr; /* 1 column on mobile */
         }
-
         .widget-medium,
         .widget-large {
           grid-column: span 1;
