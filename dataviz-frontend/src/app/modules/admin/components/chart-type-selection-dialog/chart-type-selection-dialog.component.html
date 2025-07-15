@@ -1,0 +1,34 @@
+<div class="chart-selection-dialog flex flex-col bg-white rounded-lg shadow-2xl border border-gray-300 overflow-hidden">
+    <div class="header flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50">
+        <h2 class="text-xl font-semibold text-gray-800">Select Chart Type</h2>
+        <button mat-icon-button (click)="onCancel()" aria-label="Close dialog">
+            <mat-icon class="text-gray-600 hover:text-gray-800">close</mat-icon>
+        </button>
+    </div>
+
+    <mat-dialog-content class="py-6 px-6 overflow-y-auto flex-grow">
+        <div *ngIf="data.chartOptions && data.chartOptions.length > 0; else noChartOptions"
+            class="chart-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div *ngFor="let chartOption of data.chartOptions" (click)="onSelect(chartOption)" [ngClass]="{
+             'border-blue-600 ring-2 ring-blue-500': data.selectedChartTypeName === chartOption.chartType,
+             'hover:border-blue-400 hover:shadow-md': data.selectedChartTypeName !== chartOption.chartType
+           }" class="chart-box flex flex-col items-center p-3 border border-gray-200 rounded-lg cursor-pointer transition-all duration-200 bg-white shadow-sm"
+                matTooltip="{{ chartOption.chartType | titlecase }}" aria-label="Select {{ chartOption.chartType }}">
+                <img [src]="chartOption.previewChartImage" [alt]="chartOption.chartType + ' Chart Preview'"
+                    class="w-full h-24 object-contain mb-2 min-h-[77px] rounded-md bg-gray-50 p-1"
+                    onerror="this.onerror=null;this.src='https://via.placeholder.com/100x80?text=No+Image';" />
+                <span class="text-sm font-medium text-gray-700 text-center line-clamp-2">
+                    {{ chartOption.chartType | titlecase | replaceUnderscores }}
+                </span>
+            </div>
+        </div>
+        <ng-template #noChartOptions>
+            <div class="flex flex-col items-center justify-center h-full p-8 text-gray-600">
+                <mat-icon class="text-6xl text-gray-400 mb-4">bar_chart</mat-icon>
+                <p class="text-lg font-medium mb-2">No chart types available for this selection.</p>
+                <p class="text-center">Please adjust Widget Type or SubType.</p>
+            </div>
+        </ng-template>
+    </mat-dialog-content>
+
+</div>

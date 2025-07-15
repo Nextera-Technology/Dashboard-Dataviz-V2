@@ -1,0 +1,10 @@
+<div class="sankey-chart-widget h-full w-full" [style.background-color]="widget?.background || '#ffffff'">
+    <div [id]="'sankey-chart-div-' + widget._id" class="chart-container h-full w-full"></div>
+    <ng-container *ngIf="!data || data.length === 0">
+        <div
+            class="no-data-overlay flex flex-col items-center justify-center absolute inset-0 text-gray-500 bg-white bg-opacity-75 z-10">
+            <mat-icon class="text-5xl text-gray-400">account_tree</mat-icon>
+            <p class="text-lg font-medium mt-2">No Data Available</p>
+        </div>
+    </ng-container>
+</div>

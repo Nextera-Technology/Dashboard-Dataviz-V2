@@ -1,0 +1,27 @@
+.chart-selection-dialog {
+  min-width: 600px; // A bit wider to accommodate 5 columns nicely
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex; // Ensure flex for header/content/footer layout
+  flex-direction: column;
+
+  .mat-mdc-dialog-content {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex-grow: 1; // Allows content to take available space
+  }
+
+  .chart-grid {
+    // Tailwind grid classes handle most of this
+  }
+
+  .chart-box {
+    text-align: center;
+    img {
+      max-width: 100%;
+      height: auto; // Maintain aspect ratio
+      display: block; // Remove extra space below image
+      margin: 0 auto;
+    }
+  }
+}

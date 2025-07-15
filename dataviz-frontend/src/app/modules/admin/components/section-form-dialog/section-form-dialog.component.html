@@ -1,0 +1,55 @@
+<div class="section-form-dialog flex flex-col bg-white shadow-2xl border border-gray-300 overflow-hidden">
+  <div class="header flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50">
+    <h2 class="text-xl font-semibold text-gray-800">
+      {{ isEditMode ? 'Edit Section' : 'Add New Section' }}
+    </h2>
+    <button mat-icon-button (click)="onCancel()" aria-label="Close dialog">
+      <mat-icon class="text-gray-600 hover:text-gray-800">close</mat-icon>
+    </button>
+  </div>
+
+  <form [formGroup]="sectionForm" (ngSubmit)="onSubmit()" class="flex-grow">
+    <mat-dialog-content class="py-6 px-6">
+      <div class="form-fields flex flex-col gap-5">
+        <mat-form-field class="w-full">
+          <mat-label>Section Title</mat-label>
+          <input matInput formControlName="title" placeholder="e.g., Key Metrics, Performance Overview"
+            class="rounded-md border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+          <mat-error *ngIf="sectionForm.get('title')?.hasError('required')">
+            Title is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="w-full">
+          <mat-label>Section Name (Slug)</mat-label>
+          <input matInput formControlName="name" placeholder="e.g., key-metrics (auto-generated or custom)"
+            class="rounded-md border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+          <mat-error *ngIf="sectionForm.get('name')?.hasError('required')">
+            Name is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="w-full">
+          <mat-label>Background Color</mat-label>
+          <input matInput type="color" formControlName="background"
+            class="h-10 w-full rounded-md border border-gray-300 cursor-pointer"
+            [style.background-color]="sectionForm.get('background')?.value" />
+          <mat-error *ngIf="sectionForm.get('background')?.hasError('required')">
+            Background color is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+      <button mat-button type="button" (click)="onCancel()"
+        class="px-5 py-2.5 rounded-md text-gray-700 hover:bg-gray-200 transition-colors duration-200 shadow-sm hover:shadow-md">
+        Cancel
+      </button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="sectionForm.invalid"
+        class="px-6 py-2.5 rounded-md shadow-md hover:shadow-lg transition-all duration-300">
+        {{ isEditMode ? 'Save Changes' : 'Add Section' }}
+      </button>
+    </mat-dialog-actions>
+  </form>
+</div>

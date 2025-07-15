@@ -1,19 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { Component, OnInit } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from "@angular/forms";
+import { Router } from "@angular/router";
+import { MatCardModule } from "@angular/material/card";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 
-import { AuthService, LoginCredentials } from '../../../core/auth/auth.service';
+import { AuthService, LoginCredentials } from "../../../core/auth/auth.service";
 
 @Component({
-  selector: 'app-login',
+  selector: "app-login",
   standalone: true,
   imports: [
     CommonModule,
@@ -24,36 +29,40 @@ import { AuthService, LoginCredentials } from '../../../core/auth/auth.service';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
   ],
   template: `
-    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-600 to-cyan-800 py-12 px-4 sm:px-6 lg:px-8">
+    <div
+      class="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-600 to-cyan-800 py-12 px-4 sm:px-6 lg:px-8"
+    >
       <div class="max-w-md w-full space-y-8">
         <!-- Logo -->
         <div class="text-center">
-          <img 
-            class="mx-auto h-32 w-auto" 
+          <img
+            class="mx-auto h-32 w-auto"
             src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/Nextera%20Logo%20Career%20Insight%20White%20text.png"
             alt="Nextera Logo"
           />
           <h2 class="mt-6 text-3xl font-extrabold text-white">
             Sign in to your account
           </h2>
-          <p class="mt-2 text-sm text-cyan-100">
-            Welcome to DataViz Dashboard
-          </p>
+          <p class="mt-2 text-sm text-cyan-100">Welcome to DataViz Dashboard</p>
         </div>
 
         <!-- Login Form -->
         <mat-card class="bg-white shadow-xl">
           <mat-card-content class="p-8">
-            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+            <form
+              [formGroup]="loginForm"
+              (ngSubmit)="onSubmit()"
+              class="space-y-6"
+            >
               <!-- Email Field -->
               <mat-form-field class="w-full">
                 <mat-label>Email address</mat-label>
-                <input 
-                  matInput 
-                  type="email" 
+                <input
+                  matInput
+                  type="email"
                   formControlName="email"
                   placeholder="Enter your email"
                   autocomplete="email"
@@ -70,32 +79,37 @@ import { AuthService, LoginCredentials } from '../../../core/auth/auth.service';
               <!-- Password Field -->
               <mat-form-field class="w-full">
                 <mat-label>Password</mat-label>
-                <input 
-                  matInput 
+                <input
+                  matInput
                   [type]="showPassword ? 'text' : 'password'"
                   formControlName="password"
                   placeholder="Enter your password"
                   autocomplete="current-password"
                   [class.error]="hasError('password')"
                 />
-                <button 
-                  mat-icon-button 
+                <button
+                  mat-icon-button
                   type="button"
-                  (click)="togglePasswordVisibility()" 
+                  (click)="togglePasswordVisibility()"
                   matSuffix
                   class="cursor-pointer"
                 >
                   <mat-icon>
-                    {{ showPassword ? 'visibility_off' : 'visibility' }}
+                    {{ showPassword ? "visibility_off" : "visibility" }}
                   </mat-icon>
                 </button>
-                <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                <mat-error
+                  *ngIf="loginForm.get('password')?.hasError('required')"
+                >
                   Password is required
                 </mat-error>
               </mat-form-field>
 
               <!-- Error Message -->
-              <div *ngIf="errorMessage" class="p-3 bg-red-50 border border-red-200 rounded-lg">
+              <div
+                *ngIf="errorMessage"
+                class="p-3 bg-red-50 border border-red-200 rounded-lg"
+              >
                 <div class="flex items-center">
                   <mat-icon class="text-red-500 mr-2">error</mat-icon>
                   <span class="text-sm text-red-700">{{ errorMessage }}</span>
@@ -110,33 +124,27 @@ import { AuthService, LoginCredentials } from '../../../core/auth/auth.service';
                 [disabled]="loginForm.invalid || isLoading"
                 class="w-full h-12 text-lg"
               >
-                <mat-spinner *ngIf="isLoading" diameter="20" class="mr-2"></mat-spinner>
+                <mat-spinner
+                  *ngIf="isLoading"
+                  diameter="20"
+                  class="mr-2"
+                ></mat-spinner>
                 <span *ngIf="!isLoading">Sign in</span>
                 <span *ngIf="isLoading">Signing in...</span>
               </button>
             </form>
-
-            <!-- Demo Credentials -->
-            <div class="mt-6 p-4 bg-gray-50 rounded-lg">
-              <h4 class="text-sm font-medium text-gray-700 mb-2">Demo Credentials:</h4>
-              <div class="space-y-1 text-xs text-gray-600">
-                <div><strong>Operator:</strong> john&#64;example.com / password123</div>
-                <div><strong>Visitor:</strong> jane&#64;example.com / password123</div>
-                <div><strong>Admin:</strong> admin&#64;example.com / admin123</div>
-              </div>
-            </div>
           </mat-card-content>
         </mat-card>
       </div>
     </div>
   `,
-  styles: []
+  styles: [],
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   isLoading = false;
   showPassword = false;
-  errorMessage = '';
+  errorMessage = "";
 
   constructor(
     private fb: FormBuilder,
@@ -145,51 +153,51 @@ export class LoginComponent implements OnInit {
     private snackBar: MatSnackBar
   ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]]
+      email: ["", [Validators.required, Validators.email]],
+      password: ["", [Validators.required]],
     });
   }
 
   ngOnInit(): void {
     // Check if user is already logged in
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(["/dashboard"]);
     }
 
     // Clear error message when form changes
     this.loginForm.valueChanges.subscribe(() => {
-      this.errorMessage = '';
+      this.errorMessage = "";
     });
   }
 
-  onSubmit(): void {
+  async onSubmit() {
     if (this.loginForm.valid) {
       this.isLoading = true;
-      this.errorMessage = '';
+      this.errorMessage = "";
       const credentials: LoginCredentials = this.loginForm.value;
 
-      this.authService.login(credentials).subscribe({
-        next: (user) => {
-          this.isLoading = false;
-          this.snackBar.open(`Welcome back, ${user.name}!`, 'Close', {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top'
-          });
-          this.router.navigate(['/dashboard']);
-        },
-        error: (error) => {
-          this.isLoading = false;
-          this.errorMessage = error.message || 'Login failed. Please check your credentials and try again.';
-          
-          // Show snackbar for additional feedback
-          this.snackBar.open(this.errorMessage, 'Close', {
-            duration: 5000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top'
-          });
-        }
-      });
+      try {
+        const user = await this.authService.userLogin(credentials?.email, credentials?.password);
+        this.isLoading = false;
+        this.snackBar.open(`Welcome back, ${user.lastName} ${user.firstName}!`, "Close", {
+          duration: 3000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
+        });
+        this.router.navigate(["/dashboard"]);
+      } catch (error) {
+        this.isLoading = false;
+        this.errorMessage =
+          error.message ||
+          "Login failed. Please check your credentials and try again.";
+
+        // Show snackbar for additional feedback
+        this.snackBar.open(this.errorMessage, "Close", {
+          duration: 5000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
+        });
+      }
     } else {
       // Mark all fields as touched to show validation errors
       this.markFormGroupTouched();
@@ -206,9 +214,9 @@ export class LoginComponent implements OnInit {
   }
 
   private markFormGroupTouched(): void {
-    Object.keys(this.loginForm.controls).forEach(key => {
+    Object.keys(this.loginForm.controls).forEach((key) => {
       const control = this.loginForm.get(key);
       control?.markAsTouched();
     });
   }
-} 
+}

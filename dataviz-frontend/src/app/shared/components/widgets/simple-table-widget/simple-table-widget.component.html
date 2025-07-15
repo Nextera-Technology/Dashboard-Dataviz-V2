@@ -1,0 +1,30 @@
+<div class="widget-container" [class]="'widget-' + widget.cardSize" [style.background-color]="data.background">
+    <div class="widget-header">
+        <h3 class="widget-title">{{ widget.title }}</h3>
+        <div class="widget-actions" *ngIf="widget.actions">
+            <button *ngFor="let action of widget.actions" class="action-button" [class]="'action-' + action.type"
+                [title]="action.title" (click)="handleAction(action)">
+                <img [src]="getIconUrl(action.icon)" [alt]="action.title">
+            </button>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <p *ngIf="data.subtitle" class="table-subtitle">{{ data.subtitle }}</p>
+
+        <table class="simple-table">
+            <thead>
+                <tr>
+                    <th *ngFor="let header of data.headers">{{ header }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td *ngFor="let value of data.values" class="table-value">
+                        <strong>{{ value }}%</strong>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

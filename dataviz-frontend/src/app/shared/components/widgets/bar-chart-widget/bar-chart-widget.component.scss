@@ -1,0 +1,7 @@
+/* src/app/components/widgets/bar-chart-widget/bar-chart-widget.component.scss */
+.bar-chart-widget {
+  height: 100%;
+  width: 100%;
+  position: relative; // For no-data-overlay
+  box-sizing: border-box; // Include padding and border in the element's total width and height
+}

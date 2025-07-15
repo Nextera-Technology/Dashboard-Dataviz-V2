@@ -1,0 +1,124 @@
+.widget-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  position: relative;
+  height: 100%;
+}
+
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.widget-title {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #00454d;
+  margin: 0;
+  flex: 1;
+}
+
+.widget-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.action-button {
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.action-button:hover {
+  transform: scale(1.1);
+}
+
+.action-button img {
+  width: 18px;
+  height: 18px;
+}
+
+.action-info:hover {
+  background: #dda681;
+}
+
+.action-export:hover {
+  background: #95cdd4;
+}
+
+.action-scope:hover {
+  background: #bbaafa;
+}
+
+.status-grid-container {
+  margin-top: 20px;
+}
+
+.status-grid-rowed {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.status-row {
+  display: grid;
+  grid-template-columns: 200px repeat(4, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.status-category {
+  font-weight: bold;
+  font-size: 15px;
+  color: #15616d;
+}
+
+.status-value {
+  padding: 10px;
+  text-align: center;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  font-weight: 500;
+  border-left: 4px solid;
+}
+
+.status-value-title {
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.header-row {
+  color: #00454d;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .status-row {
+    grid-template-columns: 150px repeat(4, 1fr);
+    gap: 5px;
+  }
+
+  .status-category {
+    font-size: 13px;
+  }
+
+  .status-value {
+    font-size: 12px;
+    padding: 8px;
+  }
+}

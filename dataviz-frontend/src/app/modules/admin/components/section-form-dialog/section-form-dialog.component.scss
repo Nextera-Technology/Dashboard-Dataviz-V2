@@ -1,0 +1,31 @@
+.section-form-dialog {
+  min-width: 450px; /* Adjusted slightly for better form field presentation */
+  max-width: 90vw; /* Ensure it's responsive on smaller screens */
+  max-height: 90vh; /* Prevent it from overflowing viewport height */
+}
+
+// Keep this if you need specific styling for the input type="color" that Tailwind doesn't easily cover
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 4px; /* Match Material Design input styling */
+}
+input[type="color"]::-moz-color-swatch-wrapper {
+  padding: 0;
+}
+input[type="color"]::-moz-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
+
+/* Angular Material specific overrides for full width inputs */
+mat-form-field {
+  width: 100%;
+}
+
+/* Ensure the input itself takes full width within mat-form-field */
+.mat-mdc-form-field-infix {
+  width: auto !important;
+}

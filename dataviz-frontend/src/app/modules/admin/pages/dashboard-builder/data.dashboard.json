@@ -1,0 +1,1416 @@
+{
+  "_id": "687312a54c2b50a307e716a2",
+  "name": "Default - Dashboard",
+  "sectionIds": [
+    {
+      "name": "Poursuite d'études",
+      "_id": "68731fee3433d1653a458be1",
+      "background": "#ffff",
+      "title": "Poursuite d'études",
+      "widgetIds": [
+        {
+          "_id": "687320133433d1653a458be7",
+          "chartType": "card",
+          "data": [
+            {
+              "name": "Study Rate",
+              "percentage": 58,
+              "count": 183,
+              "totalData": 318
+            }
+          ],
+          "name": "Poursuite d’étude à 6 mois après la certification",
+          "title": "Poursuite d’étude à 6 mois après la certification",
+          "visible": true,
+          "widgetType": "FURTHER_STUDIES",
+          "widgetSubType": "STUDY_RATE",
+          "columnSize": 1,
+          "rowSize": 1,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "687320713433d1653a458bec",
+          "chartType": "card",
+          "data": [
+            {
+              "name": "Immobilier",
+              "count": 17,
+              "percentage": 16,
+              "totalData": 104
+            },
+            {
+              "name": "IMMOBILIER",
+              "count": 5,
+              "percentage": 5,
+              "totalData": 104
+            },
+            {
+              "name": "Commerce",
+              "count": 4,
+              "percentage": 4,
+              "totalData": 104
+            }
+          ],
+          "name": "Domaine de Poursuite d'études",
+          "title": "Domaine de Poursuite d'études",
+          "visible": true,
+          "widgetType": "DOMAINS",
+          "widgetSubType": "DOMAIN_PERCENTAGE",
+          "columnSize": 1,
+          "rowSize": 1,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "687321063433d1653a458bf1",
+          "chartType": "card",
+          "data": [
+            {
+              "name": "Target Level BAC+5",
+              "count": 143,
+              "percentage": 80,
+              "totalData": 179
+            }
+          ],
+          "name": "Niveau TOP cible BAC+5",
+          "title": "Niveau TOP cible BAC+5",
+          "visible": true,
+          "widgetType": "EDUCATION_LEVEL_TARGET",
+          "widgetSubType": null,
+          "columnSize": 1,
+          "rowSize": 1,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "687322ab3433d1653a458bff",
+          "chartType": "PieChart",
+          "data": [
+            {
+              "name": "Continue Study",
+              "count": 183,
+              "percentage": 58,
+              "totalData": 318
+            },
+            {
+              "name": "Not Continue Study",
+              "count": 135,
+              "percentage": 42,
+              "totalData": 318
+            }
+          ],
+          "name": "Poursuivre les études.",
+          "title": "Poursuivre les études.",
+          "visible": true,
+          "widgetType": "FURTHER_STUDIES",
+          "widgetSubType": "STUDY_COMPARISON",
+          "columnSize": 2,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "687325130b583066c043a6d9",
+          "chartType": "donut",
+          "data": [
+            {
+              "name": "Même école",
+              "count": 70,
+              "percentage": 38,
+              "totalData": 183
+            },
+            {
+              "name": "École différente",
+              "count": 113,
+              "percentage": 62,
+              "totalData": 183
+            }
+          ],
+          "name": "Poursuivre les études dans la même école.",
+          "title": "Poursuivre les études dans la même école.",
+          "visible": true,
+          "widgetType": "SAME_DIFFERENT_SCHOOL",
+          "widgetSubType": null,
+          "columnSize": 2,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "687325870b583066c043a6e0",
+          "chartType": "card",
+          "data": [
+            {
+              "wave": 1,
+              "name": "En recherche d'emploi",
+              "count": 139,
+              "percentage": 36,
+              "totalData": 383
+            },
+            {
+              "wave": 1,
+              "name": "En poursuite d'études (formation initiale ou alternance)",
+              "count": 179,
+              "percentage": 47,
+              "totalData": 383
+            },
+            {
+              "wave": 2,
+              "name": "En activité professionnelle",
+              "count": 105,
+              "percentage": 75,
+              "totalData": 140
+            },
+            {
+              "wave": 2,
+              "name": "En recherche d'emploi",
+              "count": 20,
+              "percentage": 14,
+              "totalData": 140
+            },
+            {
+              "wave": 2,
+              "name": "En poursuite d'études (formation initiale ou alternance)",
+              "count": 4,
+              "percentage": 3,
+              "totalData": 140
+            },
+            {
+              "wave": 2,
+              "name": "Inactif (ex : congés maternité, maladie longue, sabbatique, césure...)",
+              "count": 5,
+              "percentage": 4,
+              "totalData": 140
+            },
+            {
+              "wave": 2,
+              "name": "Non répondant",
+              "count": 6,
+              "percentage": 4,
+              "totalData": 140
+            },
+            {
+              "wave": 3,
+              "name": "Non répondant",
+              "count": 21,
+              "percentage": 15,
+              "totalData": 136
+            },
+            {
+              "wave": 3,
+              "name": "En poursuite d'études (formation initiale ou alternance)",
+              "count": 5,
+              "percentage": 4,
+              "totalData": 136
+            },
+            {
+              "wave": 3,
+              "name": "En recherche d'emploi",
+              "count": 12,
+              "percentage": 9,
+              "totalData": 136
+            },
+            {
+              "wave": 3,
+              "name": "Inactif (ex : congés maternité, maladie longue, sabbatique, césure...)",
+              "count": 3,
+              "percentage": 2,
+              "totalData": 136
+            },
+            {
+              "wave": 3,
+              "name": "En activité professionnelle",
+              "count": 95,
+              "percentage": 70,
+              "totalData": 136
+            },
+            {
+              "wave": 4,
+              "name": "En recherche d'emploi",
+              "count": 4,
+              "percentage": 3,
+              "totalData": 131
+            },
+            {
+              "wave": 4,
+              "name": "Inactif (ex : congés maternité, maladie longue, sabbatique, césure...)",
+              "count": 3,
+              "percentage": 2,
+              "totalData": 131
+            },
+            {
+              "wave": 4,
+              "name": "Non répondant",
+              "count": 25,
+              "percentage": 19,
+              "totalData": 131
+            },
+            {
+              "wave": 4,
+              "name": "En poursuite d'études (formation initiale ou alternance)",
+              "count": 4,
+              "percentage": 3,
+              "totalData": 131
+            },
+            {
+              "wave": 4,
+              "name": "En activité professionnelle",
+              "count": 95,
+              "percentage": 73,
+              "totalData": 131
+            }
+          ],
+          "name": "Statut Professionnel : Situation après la certification",
+          "title": "Statut Professionnel : Situation après la certification",
+          "visible": true,
+          "widgetType": "STATUS_BY_WAVE",
+          "widgetSubType": "STATUS_WAVE_BREAKDOWN",
+          "columnSize": 2,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "687325bd0b583066c043a6e7",
+          "chartType": "PieChart",
+          "data": [
+            {
+              "name": "En poursuite d'études (formation initiale ou alternance)",
+              "count": 183,
+              "percentage": 57,
+              "totalData": 319
+            },
+            {
+              "name": "En activité professionnelle",
+              "count": 105,
+              "percentage": 33,
+              "totalData": 319
+            },
+            {
+              "name": "En recherche d'emploi",
+              "count": 20,
+              "percentage": 6,
+              "totalData": 319
+            },
+            {
+              "name": "Inactif (ex : congés maternité, maladie longue, sabbatique, césure...)",
+              "count": 5,
+              "percentage": 2,
+              "totalData": 319
+            },
+            {
+              "name": "Non répondant",
+              "count": 6,
+              "percentage": 2,
+              "totalData": 319
+            }
+          ],
+          "name": "Situation Professionnelle à 6 mois après la certification",
+          "title": "Situation Professionnelle à 6 mois après la certification",
+          "visible": true,
+          "widgetType": "PROFESSIONAL_SITUATION",
+          "widgetSubType": null,
+          "columnSize": 2,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        }
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "name": "Global",
+      "_id": "687326160b583066c043a6ed",
+      "background": "#ffff",
+      "title": "Global",
+      "widgetIds": [
+        {
+          "_id": "6873266d0b583066c043a6f3",
+          "chartType": "card",
+          "data": [
+            {
+              "wave": 1,
+              "name": "Targeted Positions",
+              "count": 0,
+              "percentage": 0,
+              "totalData": 0
+            },
+            {
+              "wave": 2,
+              "name": "Targeted Positions",
+              "count": 77,
+              "percentage": 74,
+              "totalData": 104
+            },
+            {
+              "wave": 3,
+              "name": "Targeted Positions",
+              "count": 77,
+              "percentage": 81,
+              "totalData": 95
+            },
+            {
+              "wave": 4,
+              "name": "Targeted Positions",
+              "count": 70,
+              "percentage": 75,
+              "totalData": 93
+            }
+          ],
+          "name": "Postes",
+          "title": "Postes ciblés après 24 mois",
+          "visible": true,
+          "widgetType": "POSITIONS_FUNCTIONS",
+          "widgetSubType": "POSITIONS_EVOLUTION",
+          "columnSize": 1,
+          "rowSize": 1,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "687326b10b583066c043a6fa",
+          "chartType": "card",
+          "data": [
+            {
+              "wave": 1,
+              "name": "Targeted",
+              "count": 0,
+              "percentage": 0,
+              "totalData": 0
+            },
+            {
+              "wave": 1,
+              "name": "Non-targeted",
+              "count": 0,
+              "percentage": 0,
+              "totalData": 0
+            },
+            {
+              "wave": 2,
+              "name": "Targeted",
+              "count": 104,
+              "percentage": 100,
+              "totalData": 104
+            },
+            {
+              "wave": 2,
+              "name": "Non-targeted",
+              "count": 0,
+              "percentage": 0,
+              "totalData": 104
+            },
+            {
+              "wave": 3,
+              "name": "Targeted",
+              "count": 95,
+              "percentage": 100,
+              "totalData": 95
+            },
+            {
+              "wave": 3,
+              "name": "Non-targeted",
+              "count": 0,
+              "percentage": 0,
+              "totalData": 95
+            },
+            {
+              "wave": 4,
+              "name": "Targeted",
+              "count": 93,
+              "percentage": 100,
+              "totalData": 93
+            },
+            {
+              "wave": 4,
+              "name": "Non-targeted",
+              "count": 0,
+              "percentage": 0,
+              "totalData": 93
+            }
+          ],
+          "name": "Domaines",
+          "title": "Domaines ciblés après 24 mois",
+          "visible": true,
+          "widgetType": "DOMAINS",
+          "widgetSubType": "DOMAIN_EVOLUTION",
+          "columnSize": 1,
+          "rowSize": 1,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "687326ce0b583066c043a701",
+          "chartType": "card",
+          "data": [
+            {
+              "wave": 1,
+              "name": "Targeted Salary",
+              "count": 0,
+              "percentage": 0,
+              "totalData": 383
+            },
+            {
+              "wave": 2,
+              "name": "Targeted Salary",
+              "count": 51,
+              "percentage": 36,
+              "totalData": 140
+            },
+            {
+              "wave": 3,
+              "name": "Targeted Salary",
+              "count": 50,
+              "percentage": 37,
+              "totalData": 136
+            },
+            {
+              "wave": 4,
+              "name": "Targeted Salary",
+              "count": 56,
+              "percentage": 43,
+              "totalData": 131
+            }
+          ],
+          "name": "Salaires",
+          "title": "Salaires ciblés après 24 mois",
+          "visible": true,
+          "widgetType": "SALARIES",
+          "widgetSubType": "SALARY_EVOLUTION",
+          "columnSize": 1,
+          "rowSize": 1,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "687326f00b583066c043a708",
+          "chartType": "card",
+          "data": [
+            {
+              "wave": 1,
+              "name": "Overall Competencies",
+              "count": 0,
+              "percentage": 0,
+              "totalData": 0
+            },
+            {
+              "wave": 2,
+              "name": "Overall Competencies",
+              "count": 47,
+              "percentage": 45,
+              "totalData": 104
+            },
+            {
+              "wave": 3,
+              "name": "Overall Competencies",
+              "count": 52,
+              "percentage": 55,
+              "totalData": 95
+            },
+            {
+              "wave": 4,
+              "name": "Overall Competencies",
+              "count": 47,
+              "percentage": 51,
+              "totalData": 93
+            }
+          ],
+          "name": "Compétences",
+          "title": "Compétences ciblées sont utlisées.Compétences",
+          "visible": true,
+          "widgetType": "SKILLS",
+          "widgetSubType": "OVERALL_COMPETENCIES",
+          "columnSize": 1,
+          "rowSize": 1,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "687327270b583066c043a70f",
+          "chartType": "card",
+          "data": [
+            {
+              "name": "1 600€ à 1 899€",
+              "count": 90,
+              "percentage": 31,
+              "totalData": 292
+            }
+          ],
+          "name": "Fourchette salariale moyenne",
+          "title": "Fourchette salariale moyenne",
+          "visible": true,
+          "widgetType": "SALARIES",
+          "widgetSubType": "SALARY_AVERAGE",
+          "columnSize": 2,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "687327dc0b583066c043a716",
+          "chartType": "SlicedChart",
+          "data": [
+            {
+              "name": "Training Satisfaction",
+              "count": 258,
+              "percentage": 89,
+              "totalData": 290
+            }
+          ],
+          "name": "Taux de satisfaction de la formation",
+          "title": "Taux de satisfaction de la formation",
+          "visible": true,
+          "widgetType": "SATISFACTION",
+          "widgetSubType": null,
+          "columnSize": 2,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "687328490b583066c043a71d",
+          "chartType": "PieChart",
+          "data": [
+            {
+              "name": "Diplômé",
+              "count": 318,
+              "percentage": 83,
+              "totalData": 383
+            },
+            {
+              "name": "Non diplômé",
+              "count": 65,
+              "percentage": 17,
+              "totalData": 383
+            }
+          ],
+          "name": "Effectif & Taux de succès à certification",
+          "title": "Effectif & Taux de succès à certification",
+          "visible": true,
+          "widgetType": "GRADUATION_SUCCESS",
+          "widgetSubType": null,
+          "columnSize": 2,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "687328820b583066c043a724",
+          "chartType": "LineChart",
+          "data": [
+            {
+              "name": "Wave 1",
+              "count": 318,
+              "percentage": 44,
+              "totalData": 725
+            },
+            {
+              "name": "Wave 2",
+              "count": 140,
+              "percentage": 19,
+              "totalData": 725
+            },
+            {
+              "name": "Wave 3",
+              "count": 136,
+              "percentage": 19,
+              "totalData": 725
+            },
+            {
+              "name": "Wave 4",
+              "count": 131,
+              "percentage": 18,
+              "totalData": 725
+            }
+          ],
+          "name": "Distribution des enquêtes par vague",
+          "title": "Distribution des enquêtes par vague",
+          "visible": true,
+          "widgetType": "SURVEY_DISTRIBUTION",
+          "widgetSubType": null,
+          "columnSize": 2,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "687329620b583066c043a72b",
+          "chartType": "HorizontalStackedChart",
+          "data": [
+            {
+              "wave": 1,
+              "name": "SENT",
+              "count": 318,
+              "percentage": 100,
+              "totalData": 318
+            },
+            {
+              "wave": 1,
+              "name": "OPENED",
+              "count": 318,
+              "percentage": 100,
+              "totalData": 318
+            },
+            {
+              "wave": 1,
+              "name": "COMPLETED",
+              "count": 318,
+              "percentage": 100,
+              "totalData": 318
+            },
+            {
+              "wave": 2,
+              "name": "SENT",
+              "count": 140,
+              "percentage": 100,
+              "totalData": 140
+            },
+            {
+              "wave": 2,
+              "name": "OPENED",
+              "count": 133,
+              "percentage": 95,
+              "totalData": 140
+            },
+            {
+              "wave": 2,
+              "name": "COMPLETED",
+              "count": 133,
+              "percentage": 95,
+              "totalData": 140
+            },
+            {
+              "wave": 3,
+              "name": "SENT",
+              "count": 136,
+              "percentage": 100,
+              "totalData": 136
+            },
+            {
+              "wave": 3,
+              "name": "OPENED",
+              "count": 115,
+              "percentage": 85,
+              "totalData": 136
+            },
+            {
+              "wave": 3,
+              "name": "COMPLETED",
+              "count": 115,
+              "percentage": 85,
+              "totalData": 136
+            },
+            {
+              "wave": 4,
+              "name": "SENT",
+              "count": 131,
+              "percentage": 100,
+              "totalData": 131
+            },
+            {
+              "wave": 4,
+              "name": "OPENED",
+              "count": 104,
+              "percentage": 79,
+              "totalData": 131
+            },
+            {
+              "wave": 4,
+              "name": "COMPLETED",
+              "count": 104,
+              "percentage": 79,
+              "totalData": 131
+            }
+          ],
+          "name": "Ouvert – Commencé – Enquête complétée (EE1–EE4)",
+          "title": "Ouvert – Commencé – Enquête complétée (EE1–EE4)",
+          "visible": true,
+          "widgetType": "SURVEY_COMPLETION",
+          "widgetSubType": null,
+          "columnSize": 2,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        }
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "name": "Compétences",
+      "_id": "687329700b583066c043a731",
+      "background": "#ffff",
+      "title": "Compétences",
+      "widgetIds": [
+        {
+          "_id": "687329a00b583066c043a737",
+          "chartType": "PieChart",
+          "data": [
+            {
+              "name": "competenceDefineObjectives",
+              "count": 79,
+              "percentage": 10,
+              "totalData": 790
+            },
+            {
+              "name": "competenceImplementSalesTools",
+              "count": 79,
+              "percentage": 10,
+              "totalData": 790
+            },
+            {
+              "name": "competenceAnalyzeIndicators",
+              "count": 71,
+              "percentage": 9,
+              "totalData": 790
+            },
+            {
+              "name": "competenceDefineIndicators",
+              "count": 63,
+              "percentage": 8,
+              "totalData": 790
+            },
+            {
+              "name": "competenceDevObjectives",
+              "count": 63,
+              "percentage": 8,
+              "totalData": 790
+            },
+            {
+              "name": "Autres",
+              "count": 435,
+              "percentage": 55,
+              "totalData": 790
+            }
+          ],
+          "name": "Les 5 principales compétences utilisées dans les emplois ciblés",
+          "title": "Les 5 principales compétences utilisées dans les emplois ciblés",
+          "visible": true,
+          "widgetType": "SKILLS",
+          "widgetSubType": "TARGETED_JOB_SKILLS",
+          "columnSize": 2,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "687329b90b583066c043a73e",
+          "chartType": "PieChart",
+          "data": [
+            {
+              "name": "competenceDevObjectives",
+              "count": 79,
+              "percentage": 10,
+              "totalData": 790
+            },
+            {
+              "name": "competenceAnalyzeIndicators",
+              "count": 79,
+              "percentage": 10,
+              "totalData": 790
+            },
+            {
+              "name": "competenceDefineObjectives",
+              "count": 71,
+              "percentage": 9,
+              "totalData": 790
+            },
+            {
+              "name": "competenceDashboards",
+              "count": 71,
+              "percentage": 9,
+              "totalData": 790
+            },
+            {
+              "name": "competenceImplementSalesTools",
+              "count": 71,
+              "percentage": 9,
+              "totalData": 790
+            },
+            {
+              "name": "Autres",
+              "count": 419,
+              "percentage": 53,
+              "totalData": 790
+            }
+          ],
+          "name": "Les 5 principales compétences utilisées dans les emplois non ciblés",
+          "title": "Les 5 principales compétences utilisées dans les emplois non ciblés",
+          "visible": true,
+          "widgetType": "SKILLS",
+          "widgetSubType": "NON_TARGETED_JOB_SKILLS",
+          "columnSize": 2,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        }
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "name": "Emploi",
+      "_id": "687329c50b583066c043a744",
+      "background": "#ffff",
+      "title": "Emploi",
+      "widgetIds": [
+        {
+          "_id": "687329f70b583066c043a74a",
+          "chartType": "PieChart",
+          "data": [
+            {
+              "name": "commercial",
+              "count": 40,
+              "percentage": 38,
+              "totalData": 104
+            },
+            {
+              "name": "conseiller commercial",
+              "count": 24,
+              "percentage": 23,
+              "totalData": 104
+            },
+            {
+              "name": "responsable commercial",
+              "count": 4,
+              "percentage": 4,
+              "totalData": 104
+            },
+            {
+              "name": "Autres postes ciblés",
+              "count": 9,
+              "percentage": 9,
+              "totalData": 104
+            },
+            {
+              "name": "Postes non ciblés",
+              "count": 27,
+              "percentage": 26,
+              "totalData": 104
+            }
+          ],
+          "name": "Emplois ciblés après 6 mois",
+          "title": "Emplois ciblés après 6 mois",
+          "visible": true,
+          "widgetType": "POSITIONS_FUNCTIONS",
+          "widgetSubType": "POSITION_TOP3_COMPARISON",
+          "columnSize": 2,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "68732a2e0b583066c043a751",
+          "chartType": "PieChart",
+          "data": [
+            {
+              "name": "Immobilier",
+              "count": 45,
+              "percentage": 15,
+              "totalData": 292
+            },
+            {
+              "name": "IMMOBILIER",
+              "count": 10,
+              "percentage": 3,
+              "totalData": 292
+            },
+            {
+              "name": "Commerce",
+              "count": 8,
+              "percentage": 3,
+              "totalData": 292
+            },
+            {
+              "name": "Autres",
+              "count": 229,
+              "percentage": 79,
+              "totalData": 292
+            }
+          ],
+          "name": "Les 3 principaux domaines",
+          "title": "Les 3 principaux domaines",
+          "visible": true,
+          "widgetType": "DOMAINS",
+          "widgetSubType": "DOMAIN_TOP3_COMPARISON",
+          "columnSize": 2,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "68732a520b583066c043a758",
+          "chartType": "PieChart",
+          "data": [
+            {
+              "name": "Moyenne entreprise : 50 à 499",
+              "count": 53,
+              "percentage": 24,
+              "totalData": 224
+            },
+            {
+              "name": "Très grande entreprise : 1000 et +",
+              "count": 40,
+              "percentage": 18,
+              "totalData": 224
+            },
+            {
+              "name": "Petite entreprise : 10 à 49",
+              "count": 38,
+              "percentage": 17,
+              "totalData": 224
+            },
+            {
+              "name": "Très petite entreprise : 1 à 9",
+              "count": 60,
+              "percentage": 26,
+              "totalData": 224
+            },
+            {
+              "name": "Grande entreprise : 500 à 999",
+              "count": 17,
+              "percentage": 8,
+              "totalData": 224
+            },
+            {
+              "name": "Micro entreprise : 0",
+              "count": 16,
+              "percentage": 7,
+              "totalData": 224
+            }
+          ],
+          "name": "Taille de l'entreprise dans les emplois ciblés",
+          "title": "Taille de l'entreprise dans les emplois ciblés",
+          "visible": true,
+          "widgetType": "COMPANIES",
+          "widgetSubType": "TARGETED_COMPANY_SIZE",
+          "columnSize": 2,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "68732a650b583066c043a75f",
+          "chartType": "PieChart",
+          "data": [
+            {
+              "name": "Moyenne entreprise : 50 à 499",
+              "count": 12,
+              "percentage": 18,
+              "totalData": 68
+            },
+            {
+              "name": "Petite entreprise : 10 à 49",
+              "count": 22,
+              "percentage": 32,
+              "totalData": 68
+            },
+            {
+              "name": "Très petite entreprise : 1 à 9",
+              "count": 12,
+              "percentage": 18,
+              "totalData": 68
+            },
+            {
+              "name": "Grande entreprise : 500 à 999",
+              "count": 7,
+              "percentage": 10,
+              "totalData": 68
+            },
+            {
+              "name": "Très grande entreprise : 1000 et +",
+              "count": 9,
+              "percentage": 13,
+              "totalData": 68
+            },
+            {
+              "name": "Micro entreprise : 0",
+              "count": 6,
+              "percentage": 9,
+              "totalData": 68
+            }
+          ],
+          "name": "Taille de l'entreprise dans les emplois non ciblés",
+          "title": "Taille de l'entreprise dans les emplois non ciblés",
+          "visible": true,
+          "widgetType": "COMPANIES",
+          "widgetSubType": "NON_TARGETED_COMPANY_SIZE",
+          "columnSize": 2,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "68732a9e0b583066c043a766",
+          "chartType": "LineChart",
+          "data": [
+            {
+              "wave": 1,
+              "name": "No Manager Level Data",
+              "count": 0,
+              "percentage": 0,
+              "totalData": 383
+            },
+            {
+              "wave": 2,
+              "name": true,
+              "count": 12,
+              "percentage": 9,
+              "totalData": 140
+            },
+            {
+              "wave": 3,
+              "name": true,
+              "count": 10,
+              "percentage": 7,
+              "totalData": 136
+            },
+            {
+              "wave": 4,
+              "name": true,
+              "count": 10,
+              "percentage": 8,
+              "totalData": 131
+            }
+          ],
+          "name": "Niveau managérial",
+          "title": "Niveau managérial",
+          "visible": true,
+          "widgetType": "MANAGER_LEVEL",
+          "widgetSubType": null,
+          "columnSize": 2,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "68732ad00b583066c043a76d",
+          "chartType": "VerticalStackedChart",
+          "data": [
+            {
+              "name": "CDI",
+              "count": 185,
+              "percentage": 64,
+              "totalData": 292
+            },
+            {
+              "name": "Auto-entrepreneur",
+              "count": 40,
+              "percentage": 14,
+              "totalData": 292
+            },
+            {
+              "name": "CDD",
+              "count": 29,
+              "percentage": 10,
+              "totalData": 292
+            },
+            {
+              "name": "Gérant",
+              "count": 12,
+              "percentage": 4,
+              "totalData": 292
+            },
+            {
+              "name": "Intérim",
+              "count": 10,
+              "percentage": 3,
+              "totalData": 292
+            },
+            {
+              "name": "Indépendant",
+              "count": 6,
+              "percentage": 2,
+              "totalData": 292
+            },
+            {
+              "name": "Autres",
+              "count": 10,
+              "percentage": 3,
+              "totalData": 292
+            },
+            {
+              "name": "Non ciblés",
+              "count": 0,
+              "percentage": 0,
+              "totalData": 292
+            }
+          ],
+          "name": "Type de contrat",
+          "title": "Type de contrat",
+          "visible": true,
+          "widgetType": "CONTRACT_TYPES",
+          "widgetSubType": null,
+          "columnSize": 2,
+          "rowSize": 3,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "68732af40b583066c043a774",
+          "chartType": "VerticalStackedChart",
+          "data": [
+            {
+              "name": "commercial",
+              "count": 123,
+              "percentage": 42,
+              "totalData": 292
+            },
+            {
+              "name": "autre",
+              "count": 68,
+              "percentage": 23,
+              "totalData": 292
+            },
+            {
+              "name": "conseiller commercial",
+              "count": 64,
+              "percentage": 22,
+              "totalData": 292
+            },
+            {
+              "name": "responsable commercial",
+              "count": 14,
+              "percentage": 5,
+              "totalData": 292
+            },
+            {
+              "name": "attaché commercial",
+              "count": 10,
+              "percentage": 3,
+              "totalData": 292
+            },
+            {
+              "name": "chef de secteur",
+              "count": 5,
+              "percentage": 2,
+              "totalData": 292
+            },
+            {
+              "name": "responsable de rayon/ d’univers",
+              "count": 3,
+              "percentage": 1,
+              "totalData": 292
+            },
+            {
+              "name": "chargé de communication",
+              "count": 2,
+              "percentage": 1,
+              "totalData": 292
+            }
+          ],
+          "name": "Top 8 fonctions",
+          "title": "Top 8 fonctions",
+          "visible": true,
+          "widgetType": "POSITIONS_FUNCTIONS",
+          "widgetSubType": "TOP_8_POSITIONS",
+          "columnSize": 2,
+          "rowSize": 3,
+          "status": "ACTIVE"
+        }
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "name": "Parcours",
+      "_id": "68732bb80b583066c043a77a",
+      "background": "#ffff",
+      "title": "Parcours",
+      "widgetIds": [
+        {
+          "_id": "68732bf20b583066c043a780",
+          "chartType": "TraceableSankee",
+          "data": [
+            {
+              "from": "Diplômé",
+              "to": "EE1 Recherche",
+              "value": 139,
+              "id": "A0-1"
+            },
+            {
+              "from": "Diplômé",
+              "to": "EE1 Poursuit des études",
+              "value": 179,
+              "id": "A1-1"
+            },
+            {
+              "from": "EE1 Recherche",
+              "to": "EE2 Recherche",
+              "value": 20,
+              "id": "B0-2"
+            },
+            {
+              "from": "EE1 Poursuit des études",
+              "to": "EE2 Poursuit des études",
+              "value": 4,
+              "id": "B1-2"
+            },
+            {
+              "from": "EE2 A un emploi",
+              "to": "EE3 A un emploi",
+              "value": 95,
+              "id": "C0-3"
+            },
+            {
+              "from": "EE2 Recherche",
+              "to": "EE3 Recherche",
+              "value": 12,
+              "id": "C1-3"
+            },
+            {
+              "from": "EE2 Poursuit des études",
+              "to": "EE3 Poursuit des études",
+              "value": 4,
+              "id": "C2-3"
+            },
+            {
+              "from": "EE2 Inactif (ex : congés maternité, maladie longue, sabbatique, césure...)",
+              "to": "EE3 Inactif (ex : congés maternité, maladie longue, sabbatique, césure...)",
+              "value": 3,
+              "id": "C3-3"
+            },
+            {
+              "from": "EE2 Non répondant",
+              "to": "EE3 Non répondant",
+              "value": 6,
+              "id": "C4-3"
+            },
+            {
+              "from": "EE3 Non répondant",
+              "to": "EE4 Non répondant",
+              "value": 21,
+              "id": "D0-4"
+            },
+            {
+              "from": "EE3 Poursuit des études",
+              "to": "EE4 Poursuit des études",
+              "value": 4,
+              "id": "D1-4"
+            },
+            {
+              "from": "EE3 Recherche",
+              "to": "EE4 Recherche",
+              "value": 4,
+              "id": "D2-4"
+            },
+            {
+              "from": "EE3 Inactif (ex : congés maternité, maladie longue, sabbatique, césure...)",
+              "to": "EE4 Inactif (ex : congés maternité, maladie longue, sabbatique, césure...)",
+              "value": 3,
+              "id": "D3-4"
+            },
+            {
+              "from": "EE3 A un emploi",
+              "to": "EE4 A un emploi",
+              "value": 95,
+              "id": "D4-4"
+            },
+            {
+              "from": "EE4 Recherche",
+              "to": "Fin de l'enquête",
+              "value": 4,
+              "id": "E0-5"
+            },
+            {
+              "from": "EE4 Inactif (ex : congés maternité, maladie longue, sabbatique, césure...)",
+              "to": "Fin de l'enquête",
+              "value": 3,
+              "id": "E1-5"
+            },
+            {
+              "from": "EE4 Non répondant",
+              "to": "Fin de l'enquête",
+              "value": 25,
+              "id": "E2-5"
+            },
+            {
+              "from": "EE4 Poursuit des études",
+              "to": "Fin de l'enquête",
+              "value": 4,
+              "id": "E3-5"
+            },
+            {
+              "from": "EE4 A un emploi",
+              "to": "Fin de l'enquête",
+              "value": 95,
+              "id": "E4-5"
+            }
+          ],
+          "name": "Évolution du statut professionnel de l’étudiant",
+          "title": "Évolution du statut professionnel de l’étudiant",
+          "visible": true,
+          "widgetType": "STATUS_BY_WAVE",
+          "widgetSubType": "STATUS_EVOLUTION",
+          "columnSize": 4,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        }
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "name": "Répartition Géographique",
+      "_id": "68732c060b583066c043a786",
+      "background": "#ffff",
+      "title": "Répartition Géographique",
+      "widgetIds": [
+        {
+          "_id": "68732c640b583066c043a78c",
+          "chartType": "MapChart",
+          "data": [
+            {
+              "name": "Autre",
+              "count": 284,
+              "percentage": 89,
+              "totalData": 318
+            },
+            {
+              "name": "Île-de-France",
+              "count": 34,
+              "percentage": 11,
+              "totalData": 318
+            }
+          ],
+          "name": "Étudiants par région",
+          "title": "Étudiants par région",
+          "visible": true,
+          "widgetType": "REGION",
+          "widgetSubType": "STUDENT_REGION_DISTRIBUTION",
+          "columnSize": 3,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "68732c8d0b583066c043a793",
+          "chartType": "PieChart",
+          "data": [
+            {
+              "name": "MALE",
+              "count": 141,
+              "percentage": 44,
+              "totalData": 318
+            },
+            {
+              "name": "FEMALE",
+              "count": 177,
+              "percentage": 56,
+              "totalData": 318
+            }
+          ],
+          "name": "Répartition par genre",
+          "title": "Répartition par genre",
+          "visible": true,
+          "widgetType": "GENDER",
+          "widgetSubType": null,
+          "columnSize": 1,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        },
+        {
+          "_id": "68732cc00b583066c043a79a",
+          "chartType": "MapChart",
+          "data": [
+            {
+              "name": "Autre",
+              "count": 1,
+              "averageSalary": 0,
+              "totalData": 1
+            },
+            {
+              "name": "Île-de-France",
+              "count": 1,
+              "averageSalary": 0,
+              "totalData": 1
+            }
+          ],
+          "name": "Salaire moyen par région (€)",
+          "title": "Salaire moyen par région (€)",
+          "visible": true,
+          "widgetType": "REGION",
+          "widgetSubType": "REGION_SALARY_AVERAGE",
+          "columnSize": 4,
+          "rowSize": 2,
+          "status": "ACTIVE"
+        }
+      ],
+      "status": "ACTIVE"
+    }
+  ],
+  "source": "2022",
+  "title": "RDC 2022",
+  "status": "ACTIVE"
+}

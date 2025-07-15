@@ -1,0 +1,28 @@
+<div class="text-box" [style.background-color]="widget.data?.background || '#ffffff'">
+    <!-- Action Buttons -->
+    <div class="button-container" *ngIf="widget.actions && widget.actions.length > 0">
+        <button *ngFor="let action of widget.actions" class="info-button" [class]="action.type" [title]="action.title"
+            (click)="onActionClick(action)">
+            <img [src]="getActionIcon(action.icon)" [alt]="action.title">
+        </button>
+    </div>
+
+    <!-- Widget Content -->
+    <div class="text-content">
+        <h3 class="text-title">{{ widget.title }}</h3>
+
+        <!-- Text Content -->
+        <div class="text-body" [innerHTML]="widget.data?.content || ''"></div>
+
+        <!-- Analysis Toggle (if available) -->
+        <div class="analysis-section" *ngIf="widget.data?.analysis">
+            <button class="analysis-toggle" (click)="toggleAnalysis()" [class.expanded]="isAnalysisExpanded">
+                {{ getAnalysisButtonText() }}
+            </button>
+
+            <div class="analysis-content" [class.show]="isAnalysisExpanded">
+                <div [innerHTML]="widget.data.analysis"></div>
+            </div>
+        </div>
+    </div>
+</div>
