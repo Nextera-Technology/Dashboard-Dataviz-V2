@@ -188,6 +188,7 @@ export class SankeyChartWidgetComponent implements OnInit, OnDestroy {
         sourceIdField: "from",
         targetIdField: "to",
         valueField: "value",
+        paddingRight: 170,
         nodeWidth: 20,
         nodePadding: 10,
         linkOpacity: 0.5,
