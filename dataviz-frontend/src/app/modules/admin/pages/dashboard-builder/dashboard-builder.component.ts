@@ -118,7 +118,7 @@ interface Dashboard {
   templateUrl: "./dashboard-builder.component.html",
   styleUrl: "./dashboard-builder.component.scss",
 })
-export class DashboardBuilderComponent implements OnInit, OnDestroy {
+export class  DashboardBuilderComponent implements OnInit, OnDestroy {
   dashboard?: Dashboard;
   widgetSectionList = [];
   selectedTabIndex = 0;

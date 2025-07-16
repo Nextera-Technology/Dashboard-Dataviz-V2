@@ -23,9 +23,10 @@ declare var am5xy: any;
   imports: [CommonModule, MatButtonModule, MatIconModule],
   template: `
     <div
-      class="chart-box"
+      class="chart-box relative"
       [style.background-color]="widget.data?.background || '#ffffff'"
     >
+      <div class="chart-legend">Total Data : {{ widget.data.length || 0 }}</div>
       <!-- Action Buttons -->
       <div class="button-container">
         <button class="info-button primary" (click)="onActionClick('info')">
@@ -66,7 +67,7 @@ declare var am5xy: any;
   styles: [
     `
       .chart-box {
-      height:100%;
+        height: 100%;
         position: relative;
         text-align: center;
         border-radius: 12px;
@@ -88,8 +89,23 @@ declare var am5xy: any;
         flex-direction: column;
       }
 
+      .chart-legend {
+        position: absolute;
+        top: 10px;
+        left: 14px;
+        z-index: 2;
+        background: rgba(255, 255, 255, 0.85);
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #15616d;
+        pointer-events: none;
+        text-align: left;
+      }
+
       .chart-title {
-        font-family: 'Inter';
+        font-family: "Inter";
         font-size: 18px;
         font-weight: 600;
         color: #00454d;
@@ -199,14 +215,14 @@ export class LineChartWidgetComponent implements OnInit, OnDestroy {
       am5xy.CategoryAxis.new(this.root, {
         categoryField: "name",
         renderer: am5xy.AxisRendererX.new(this.root, { minGridDistance: 30 }),
-        tooltip: am5.Tooltip.new(this.root, {})
+        tooltip: am5.Tooltip.new(this.root, {}),
       })
     );
 
     // Y Axis
     this.yAxis = this.chart.yAxes.push(
       am5xy.ValueAxis.new(this.root, {
-        renderer: am5xy.AxisRendererY.new(this.root, {})
+        renderer: am5xy.AxisRendererY.new(this.root, {}),
       })
     );
 
@@ -226,13 +242,13 @@ export class LineChartWidgetComponent implements OnInit, OnDestroy {
         fillOpacity: 0.1,
         tooltip: am5.Tooltip.new(this.root, {
           // labelText: "Envoyé: {valueY}"
-          labelText: "{valueY}"
-        })
+          labelText: "{valueY}",
+        }),
       })
     );
 
     this.series.strokes.template.setAll({
-      strokeWidth: 3
+      strokeWidth: 3,
     });
 
     this.series.bullets.push(() => {
@@ -259,12 +275,15 @@ export class LineChartWidgetComponent implements OnInit, OnDestroy {
         }),
       })
     );
-    this.chart.set("cursor", am5xy.XYCursor.new(this.root, {
-      behavior: "none",
-      xAxis: this.xAxis,
-      yAxis: this.yAxis,
-    }));    
-    
+    this.chart.set(
+      "cursor",
+      am5xy.XYCursor.new(this.root, {
+        behavior: "none",
+        xAxis: this.xAxis,
+        yAxis: this.yAxis,
+      })
+    );
+
     this.series.data.setAll(this.data);
 
     // Legend

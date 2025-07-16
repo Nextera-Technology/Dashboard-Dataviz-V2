@@ -10,40 +10,38 @@
 
   <form [formGroup]="sectionForm" (ngSubmit)="onSubmit()" class="flex-grow">
     <mat-dialog-content class="py-6 px-6">
-      <div class="form-fields flex flex-col gap-5">
-        <mat-form-field class="w-full">
-          <mat-label>Section Title</mat-label>
-          <input  formControlName="title" placeholder="e.g., Key Metrics, Performance Overview"
-            class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 
+      <div class="form-fields flex flex-col gap-3">
+        <div class="w-full">
+          <label>Section Title</label>
+          <input formControlName="title" placeholder="e.g., Key Metrics, Performance Overview" class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 
                      focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
                      hover:border-gray-400 text-sm" />
-          <mat-error *ngIf="sectionForm.get('title')?.hasError('required')">
+          <div class="text-red-400"
+            *ngIf="sectionForm.get('title')?.hasError('required') && sectionForm.get('title')?.touched">
             Title is required
-          </mat-error>
-        </mat-form-field>
+          </div>
+        </div>
 
-        <mat-form-field class="w-full">
-          <mat-label>Section Name (Slug)</mat-label>
-          <input  formControlName="name" placeholder="e.g., key-metrics (auto-generated or custom)"
-            class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 
+        <div class="w-full">
+          <label>Section Name (Slug)</label>
+          <input formControlName="name" placeholder="e.g., key-metrics (auto-generated or custom)" class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 
                      focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
                      hover:border-gray-400 text-sm" />
-          <mat-error *ngIf="sectionForm.get('name')?.hasError('required')">
+          <div class="text-red-400"
+            *ngIf="sectionForm.get('name')?.hasError('required') && sectionForm.get('name')?.touched">
             Name is required
-          </mat-error>
-        </mat-form-field>
+          </div>
+        </div>
 
-        <mat-form-field class="w-full">
-          <mat-label>Background Color</mat-label>
-          <input  type="color" formControlName="background"
-            class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 
-                     focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
-                     hover:border-gray-400 text-sm"
-            [style.background-color]="sectionForm.get('background')?.value" />
-          <mat-error *ngIf="sectionForm.get('background')?.hasError('required')">
+        <div class="w-full flex flex-col gap-1 p-2">
+          <label for="background" class="text-sm font-medium text-gray-700">Background Color</label>
+          <input id="background" type="color" formControlName="background"
+            class="h-12 w-20 rounded border border-gray-300 cursor-pointer" />
+          <div *ngIf="sectionForm.get('background')?.hasError('required')" class="text-red-600 text-xs mt-1">
             Background color is required
-          </mat-error>
-        </mat-form-field>
+          </div>
+        </div>
+
       </div>
     </mat-dialog-content>
 

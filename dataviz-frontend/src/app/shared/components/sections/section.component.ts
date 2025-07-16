@@ -69,7 +69,7 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
                 widget?.name ===
                   'Statut Professionnel : Situation après la certification'
               "
-              class="grid"
+              class="grid h-full"
               style="margin-bottom: 20px;"
             >
               <div class="chart-box shadow-[0_2px_8px_rgba(0,0,0,0.1)]" style="position: relative;">

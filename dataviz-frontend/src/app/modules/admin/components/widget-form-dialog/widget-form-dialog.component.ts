@@ -315,21 +315,33 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
    * onWidgetTypeOrSubTypeChange for chart type filtering.
    * This is called directly from the HTML (selectionChange).
    */
-  onWidgetTypeChange(selectedType: string): void {
+  onWidgetTypeChange(event: Event | string): void {
+    const selectedType =
+      typeof event === "string"
+        ? event
+        : (event.target as HTMLSelectElement).value;
+
+    console.log("Selected widget type:", selectedType); // Debug log
+
+    // Find the selected widget type option
     const selectedWidgetTypeOption = this.widgetTypes.find(
       (type) => type.value === selectedType
     );
-    this.filteredSubTypes = selectedWidgetTypeOption?.subTypes || [];
 
-    const currentSubType = this.widgetForm.get("widgetSubType")?.value;
+    // Update filteredSubTypes
+    this.filteredSubTypes = selectedWidgetTypeOption?.subTypes || [];
+    console.log("Filtered subTypes:", this.filteredSubTypes); // Debug log
+
     // Reset widgetSubType if current subType is not valid for the new widgetType
+    const currentSubType = this.widgetForm.get("widgetSubType")?.value;
     if (
       currentSubType &&
       !this.filteredSubTypes.some((sub) => sub.value === currentSubType)
     ) {
       this.widgetForm.get("widgetSubType")?.setValue(null);
     }
-    // Now trigger the chart type filtering after subType has potentially been reset
+
+    // Trigger chart type filtering
     this.onWidgetTypeOrSubTypeChange();
   }
 
@@ -369,7 +381,8 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
 
     // Set default chart or null if no options
     const currentChartType = this.widgetForm.get("chartType")?.value;
-    if (!currentChartType &&
+    if (
+      !currentChartType &&
       matchedChartOptionData?.defaultChart &&
       this.filteredChartTypes.some(
         (c) => c.chartType === matchedChartOptionData.defaultChart
