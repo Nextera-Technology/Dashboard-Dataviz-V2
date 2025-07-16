@@ -10,7 +10,7 @@
 
     <form [formGroup]="widgetForm" (ngSubmit)="onSubmit()" class="flex-grow">
         <mat-dialog-content class="py-6 px-6 overflow-y-auto">
-            <div class="form-fields grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+            <div class="form-fields grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 pb-5">
                 <mat-form-field class="col-span-2">
                     <mat-label>Widget Title</mat-label>
                     <input matInput formControlName="title" placeholder="e.g., Sales Performance, User Demographics"
@@ -63,7 +63,7 @@
                     </mat-select>
                 </mat-form-field>
 
-                <mat-form-field class="col-span-1">
+                <mat-form-field class="col-span-1 chart-form-field">
                     <mat-label>Chart Type</mat-label>
                     <div class="mat-form-field-wrapper custom-input-trigger" (click)="openChartTypeSelection()"
                         [class.disabled-trigger]="!filteredChartTypes || filteredChartTypes.length === 0">
@@ -144,13 +144,13 @@
             </div>
         </mat-dialog-content>
 
-        <mat-dialog-actions align="end" class="px-6 py-4 border-t border-gray-200 bg-gray-50">
-            <button mat-button type="button" (click)="onCancel()"
-                class="px-5 py-2.5 rounded-md text-gray-700 hover:bg-gray-200 transition-colors duration-200 shadow-sm hover:shadow-md">
+        <mat-dialog-actions align="end" class="px-6 py-4 flex gap-2 border-t border-gray-200 bg-gray-50">
+            <button  type="button" (click)="onCancel()"
+                class="px-6 py-2.5 text-gray-700 bg-white outline-none border border-gray-300 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500/15 transition-all duration-200 shadow-sm hover:shadow-md">
                 Cancel
             </button>
-            <button mat-raised-button color="primary" type="submit" [disabled]="widgetForm.invalid"
-                class="px-6 py-2.5 rounded-md shadow-md hover:shadow-lg transition-all duration-300">
+            <button  color="primary" type="submit" [disabled]="widgetForm.invalid"
+                class="px-6 py-2.5 bg-blue-600 text-white outline-none rounded-lg font-medium shadow-sm hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/15 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none transition-all duration-200">
                 {{ isEditMode ? 'Save Changes' : 'Add Widget' }}
             </button>
         </mat-dialog-actions>

@@ -72,7 +72,7 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
               class="grid"
               style="margin-bottom: 20px;"
             >
-              <div class="chart-box" style="position: relative;">
+              <div class="chart-box shadow-[0_2px_8px_rgba(0,0,0,0.1)]" style="position: relative;">
                 <div class="button-container">
                   <button class="info-button" title="Information">
                     <img
@@ -364,7 +364,6 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
         text-align: center;
         border-radius: 12px;
         padding: 20px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         transition: all 0.3s ease;
         min-height: 300px;
         display: flex;
@@ -372,7 +371,6 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
       }
 
       .chart-box:hover {
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
         transform: translateY(-2px);
       }
       .status-grid-rowed {
@@ -449,6 +447,7 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
       }
 
       .widget {
+      height:100%;
         background: white;
         border-radius: 8px;
         padding: 1.5rem;

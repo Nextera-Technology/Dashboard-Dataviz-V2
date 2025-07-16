@@ -1,93 +1,191 @@
-<div class="dashboard-form-dialog flex flex-col bg-white rounded-lg shadow-2xl border border-gray-300 overflow-hidden">
-  <div class="header flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50">
-    <h2 class="text-xl font-semibold text-gray-800">
-      {{ isEditMode ? 'Edit Dashboard' : 'Create New Dashboard' }}
-    </h2>
-    <button mat-icon-button (click)="onCancel()" aria-label="Close dialog">
-      <mat-icon class="text-gray-600 hover:text-gray-800">close</mat-icon>
+<div class="dashboard-form-dialog flex flex-col bg-white rounded-xl border border-gray-200 overflow-y-auto max-w-3xl w-full mx-auto">
+  <!-- Header -->
+  <div class="header flex justify-between items-center px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-slate-50 to-gray-50">
+    <div>
+      <h2 class="text-2xl font-bold text-gray-900 mb-1">
+        {{ isEditMode ? 'Edit Dashboard' : 'Create New Dashboard' }}
+      </h2>
+      <p class="text-sm text-gray-500">Configure your dashboard settings and data sources</p>
+    </div>
+    <button (click)="onCancel()" 
+            class="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 text-gray-400 hover:text-gray-600">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
     </button>
   </div>
 
+  <!-- Form Content -->
   <form [formGroup]="dashboardForm" (ngSubmit)="onSubmit()" class="flex-grow">
-    <mat-dialog-content class="py-6 px-6">
-      <div class="form-fields flex flex-col gap-5">
-        <mat-form-field class="w-full">
-          <mat-label>Dashboard Name (Slug)</mat-label>
-          <input matInput formControlName="name" placeholder="e.g., sales-report-2024"
-            class="rounded-md border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
-          <mat-error *ngIf="dashboardForm.get('name')?.hasError('required') && dashboardForm.get('name')?.touched">
-            Name is required
-          </mat-error>
-        </mat-form-field>
+    <div class="py-8 px-8 space-y-8">
+      <!-- Basic Information -->
+      <div class="space-y-6">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
+          
+          <!-- Dashboard Name -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Dashboard Name (Slug) <span class="text-red-500">*</span>
+            </label>
+            <input 
+              formControlName="name" 
+              placeholder="e.g., sales-report-2024"
+              class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 
+                     focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
+                     hover:border-gray-400 text-sm" 
+            />
+            <div *ngIf="dashboardForm.get('name')?.hasError('required') && dashboardForm.get('name')?.touched" 
+                 class="mt-2 text-sm text-red-600 flex items-center">
+              <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+              </svg>
+              Name is required
+            </div>
+          </div>
 
-        <mat-form-field class="w-full">
-          <mat-label>Dashboard Title</mat-label>
-          <input matInput formControlName="title" placeholder="e.g., 2024 Annual Sales Report"
-            class="rounded-md border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
-          <mat-error *ngIf="dashboardForm.get('title')?.hasError('required') && dashboardForm.get('title')?.touched">
-            Title is required
-          </mat-error>
-        </mat-form-field>
+          <!-- Dashboard Title -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Dashboard Title <span class="text-red-500">*</span>
+            </label>
+            <input 
+              formControlName="title" 
+              placeholder="e.g., 2024 Annual Sales Report"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none shadow-sm placeholder-gray-400 
+                     focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
+                     hover:border-gray-400 text-sm" 
+            />
+            <div *ngIf="dashboardForm.get('title')?.hasError('required') && dashboardForm.get('title')?.touched" 
+                 class="mt-2 text-sm text-red-600 flex items-center">
+              <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+              </svg>
+              Title is required
+            </div>
+          </div>
+        </div>
 
-        <div class="sources-section w-full border border-gray-200 rounded-lg p-4 mt-2">
-          <h3 class="text-lg font-semibold text-gray-800 mb-4 flex justify-between items-center">
-            Sources
-            <button mat-flat-button color="primary" type="button" (click)="addSource()">
-              <mat-icon>add</mat-icon> Add Source
+        <!-- Data Sources Section -->
+        <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+          <div class="flex justify-between items-center mb-6 gap-3">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">Data Sources</h3>
+              <p class="text-sm text-gray-500 mt-1">Configure the data sources for your dashboard</p>
+            </div>
+            <button 
+              type="button" 
+              (click)="addSource()"
+              class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg 
+                     hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
+                     transition-all duration-200 shadow-sm hover:shadow-md">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Add Source
             </button>
-          </h3>
+          </div>
 
-          <div formArrayName="sourcesFormArray" class="flex flex-col gap-4">
-            <div *ngFor="let sourceGroup of sourcesFormArray.controls; let i = index" [formGroupName]="i"
-              class="source-item flex flex-col sm:flex-row gap-4 p-4 border border-gray-300 rounded-md bg-gray-50 items-start sm:items-center relative">
-              <div class="flex-grow grid gap-4 w-full" [class.grid-cols-2]="getFilteredClasses(sourceGroup).length > 0"
-                [class.grid-cols-1]="getFilteredClasses(sourceGroup).length === 0">
-                <mat-form-field class="w-full">
-                  <mat-label>Certification</mat-label>
-                  <mat-select formControlName="certification"
-                    (selectionChange)="onCertificationChange(sourceGroup, $event.value)">
-                    <mat-option *ngFor="let source of allSources" [value]="source.certification">
+          <div formArrayName="sourcesFormArray" class="space-y-4">
+            <div *ngFor="let sourceGroup of sourcesFormArray.controls; let i = index" 
+                 [formGroupName]="i"
+                 class="source-item bg-white rounded-lg border border-gray-200 p-5 relative hover:shadow-sm transition-shadow duration-200">
+              
+              <div class="grid gap-4" 
+                   [class.grid-cols-1]="getFilteredClasses(sourceGroup).length === 0"
+                   [class.grid-cols-2]="getFilteredClasses(sourceGroup).length > 0">
+                
+                <!-- Certification Dropdown -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Certification <span class="text-red-500">*</span>
+                  </label>
+                  <select 
+                    formControlName="certification"
+                    (change)="onCertificationChange(sourceGroup, $event.target.value)"
+                    class="w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm 
+                           focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
+                           hover:border-gray-400 text-sm bg-white">
+                    <option value="">Select certification...</option>
+                    <option *ngFor="let source of allSources" [value]="source.certification">
                       {{ source.certification }}
-                    </mat-option>
-                  </mat-select>
-                  <mat-error
-                    *ngIf="sourceGroup.get('certification')?.hasError('required') && sourceGroup.get('certification')?.touched">
+                    </option>
+                  </select>
+                  <div *ngIf="sourceGroup.get('certification')?.hasError('required') && sourceGroup.get('certification')?.touched" 
+                       class="mt-2 text-sm text-red-600 flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                    </svg>
                     Certification is required
-                  </mat-error>
-                </mat-form-field>
+                  </div>
+                </div>
 
-                <mat-form-field class="w-full" *ngIf="getFilteredClasses(sourceGroup).length > 0">
-                  <mat-label>Class</mat-label>
-                  <mat-select formControlName="classes" [multiple]="true">
-                    <mat-option *ngFor="let cls of getFilteredClasses(sourceGroup)" [value]="cls">
-                      {{ cls }}
-                    </mat-option>
-                  </mat-select>
-                  <mat-hint>Select one or more classes for the certification.</mat-hint>
-                </mat-form-field>
+                <!-- Classes Multi-Select -->
+                <div *ngIf="getFilteredClasses(sourceGroup).length > 0">
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Classes</label>
+                  <div class="relative">
+                    <select 
+                      formControlName="classes"
+                      multiple
+                      class="w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm 
+                             focus:ring-4 focus:ring-blue-500/15   focus:border-blue-500 transition-all duration-200
+                             hover:border-gray-400 text-sm bg-white min-h-[42px]">
+                      <option *ngFor="let cls of getFilteredClasses(sourceGroup)" [value]="cls">
+                        {{ cls }}
+                      </option>
+                    </select>
+                    <p class="mt-1 text-xs text-gray-500">Hold Ctrl/Cmd to select multiple classes</p>
+                  </div>
+                </div>
               </div>
 
-              <mat-icon (click)="removeSource(i)" *ngIf="sourcesFormArray.length > 1"
-                class="absolute w-[42px] h-[42px] top-2 cursor-pointer right-2 text-red-500 hover:text-red-800">delete</mat-icon>
+              <!-- Remove Source Button -->
+              <button 
+                *ngIf="sourcesFormArray.length > 1"
+                type="button"
+                (click)="removeSource(i)"
+                class="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 
+                       rounded-lg transition-all duration-200">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+              </button>
             </div>
-            <p class="text-sm text-gray-500 mt-2" *ngIf="sourcesFormArray.length === 0">
-              Please add at least one source for this dashboard.
-            </p>
+
+            <!-- Empty State -->
+            <div *ngIf="sourcesFormArray.length === 0" 
+                 class="text-center py-8 text-gray-500">
+              <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <p class="text-sm">No data sources configured yet.</p>
+              <p class="text-xs mt-1">Click "Add Source" to get started.</p>
+            </div>
           </div>
         </div>
       </div>
-    </mat-dialog-content>
+    </div>
 
-    <mat-dialog-actions align="end" class="px-6 py-4 border-t border-gray-200 bg-gray-50">
-      <button mat-button type="button" (click)="onCancel()"
-        class="px-5 py-2.5 rounded-md text-gray-700 hover:bg-gray-200 transition-colors duration-200 shadow-sm hover:shadow-md">
+    <!-- Footer Actions -->
+    <div class="px-8 py-6 bg-gray-50 border-t border-gray-200 flex justify-end space-x-4">
+      <button 
+        type="button" 
+        (click)="onCancel()"
+        class="px-6 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg font-medium
+               hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2
+               transition-all duration-200 shadow-sm hover:shadow-md">
         Cancel
       </button>
-      <button mat-raised-button color="primary" type="submit"
+      
+      <button 
+        type="submit"
         [disabled]="dashboardForm.invalid || sourcesFormArray.length === 0"
-        class="px-6 py-2.5 rounded-md shadow-md hover:shadow-lg transition-all duration-300">
+        class="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium shadow-sm
+               hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+               disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none
+               transition-all duration-200">
         {{ isEditMode ? 'Save Changes' : 'Create Dashboard' }}
       </button>
-    </mat-dialog-actions>
+    </div>
   </form>
 </div>

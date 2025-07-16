@@ -34,3 +34,14 @@ mat-form-field {
   background-color: #f0f0f0;
   color: #333;
 }
+
+::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled){
+  background: transparent !important;
+  border: 1px solid gray !important;
+  border-radius: 8px;
+}
+::ng-deep .mat-mdc-form-field-has-icon-suffix .mat-mdc-text-field-wrapper{
+   background: transparent !important;
+  border: 1px solid gray !important;
+  border-radius: 8px;
+}

@@ -236,18 +236,19 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
       font-size: 14px;
       font-weight: 500;
       transition: all 0.3s ease;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .nav-item:hover {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
       transform: translateX(4px);
-      border-color: rgba(255, 255, 255, 0.3);
     }
 
     .nav-item.active {
-      background: rgba(255, 255, 255, 0.3);
-      border-color: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.2);
+    color: #f8fafc;
+    border-left: 3px solid #ffffff;
+    font-weight: 600;
     }
 
     .nav-item mat-icon {
