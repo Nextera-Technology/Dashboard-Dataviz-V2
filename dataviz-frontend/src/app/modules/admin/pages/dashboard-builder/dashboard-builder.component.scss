@@ -35,6 +35,10 @@
 
   /* Improve layout densification without altering row height */
   grid-auto-flow: dense; // Fill gaps created by spanning items
+
+  /* Base min height so row-span works, but allow growth to preserve existing
+     proportions. */
+  grid-auto-rows: minmax(250px, auto);
 }
 
 // CDK Drag & Drop styles

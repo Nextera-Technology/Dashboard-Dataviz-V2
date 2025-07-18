@@ -442,6 +442,7 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
       .widgets-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr); /* Always 4 columns per row */
+        grid-auto-rows: minmax(350px, auto); /* 1×1 card baseline */
         gap: 1.5rem;
         align-items: stretch; /* Make all widgets stretch to same height */
       }
@@ -513,6 +514,12 @@ export class SectionComponent implements OnInit {
     if (this.section && this.section.widgetIds?.length) {
       this.visibleWidgets = this.section.widgetIds
         .filter((widget: any) => widget.visible)
+        // Ensure consistent ordering (by _id if numeric or fallback to title)
+        .map((widget: any) => ({
+          ...widget,
+          columnSize: typeof widget.columnSize === 'string' ? parseInt(widget.columnSize, 10) : widget.columnSize,
+          rowSize: typeof widget.rowSize === 'string' ? parseInt(widget.rowSize, 10) : widget.rowSize,
+        }))
         .sort((a: any, b: any) => {
           // Sort by widget order if available, otherwise by title
           const aOrder = parseInt(a.id) || 0;
