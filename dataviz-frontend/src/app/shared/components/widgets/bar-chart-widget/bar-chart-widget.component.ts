@@ -66,6 +66,12 @@ export class BarChartWidgetComponent
   }
 
   ngAfterViewInit(): void {
+    // Sort data if chartType indicates a sorted bar chart
+    if (this.widget.chartType && this.widget.chartType.toLowerCase().includes('sorted')) {
+      if (this.data) {
+        this.data = [...this.data].sort((a: any, b: any) => (b.count ?? 0) - (a.count ?? 0));
+      }
+    }
     // Chart code goes in a timeout to make sure that the DOM is ready
     this.zone.runOutsideAngular(() => {
       if (!this.data || this.data.length === 0) {
@@ -89,6 +95,13 @@ export class BarChartWidgetComponent
 
       // Create axes
       const yRenderer = am5xy.AxisRendererY.new(root, {});
+
+      // Prevent long category names from overlapping by truncating with ellipsis
+      yRenderer.labels.template.setAll({
+        maxWidth: 140,
+        oversizedBehavior: "truncate",
+        fontSize: "12px",
+      });
       const yAxis = chart.yAxes.push(
         am5xy.CategoryAxis.new(root, {
           categoryField: "name", // Assuming a 'category' field in your data

@@ -41,6 +41,10 @@ import { StatusGridWidgetComponent } from "app/shared/components/widgets/status-
 import { TextWidgetComponent } from "app/shared/components/widgets/text-widget/text-widget.component";
 import { PictorialStackedChartWidgetComponent } from "app/shared/components/widgets/pictorial-fraction-chart/pictorial-fraction-chart.component";
 import { WorldMapWidgetComponent } from "app/shared/components/widgets/world-map-widget/world-map-widget.component";
+import { RadarChartWidgetComponent } from "app/shared/components/widgets/radar-chart-widget/radar-chart-widget.component";
+import { DonutChartWidgetComponent } from "app/shared/components/widgets/donut-chart-widget/donut-chart-widget.component";
+import { AnimatedGaugeWidgetComponent } from "app/shared/components/widgets/animated-gauge-widget/animated-gauge-widget.component";
+import { YesNoGaugeWidgetComponent } from "app/shared/components/widgets/yes-no-gauge-widget/yes-no-gauge-widget.component";
 
 // Define interfaces for better type safety based on your GraphQL queries
 interface WidgetData {
@@ -114,6 +118,10 @@ interface Dashboard {
     TextWidgetComponent,
     PictorialStackedChartWidgetComponent,
     WorldMapWidgetComponent,
+    RadarChartWidgetComponent,
+    DonutChartWidgetComponent,
+    AnimatedGaugeWidgetComponent,
+    YesNoGaugeWidgetComponent,
   ],
   templateUrl: "./dashboard-builder.component.html",
   styleUrl: "./dashboard-builder.component.scss",
@@ -170,6 +178,26 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
       const result = await this.dashboardService.getOneDashboard(id);
       if (result) {
         this.dashboard = result;
+
+        // Assign fallback chartType when missing to avoid placeholder rendering
+        this.dashboard.sectionIds?.forEach((sec) => {
+          sec.widgetIds?.forEach((w) => {
+            if (!w.chartType || w.chartType.trim() === "") {
+              // Simple heuristic mapping – extend as required
+              if (w.widgetSubType === "STATUS_WAVE_BREAKDOWN") {
+                w.chartType = "HorizontalStackedChart";
+              } else if (w.widgetSubType === "STATUS_EVOLUTION") {
+                w.chartType = "LineChart";
+              } else if (w.widgetSubType === "POSITION_TOP3_COMPARISON") {
+                w.chartType = "PieChart";
+              } else {
+                // Generic fallback – treat as PieChart
+                w.chartType = "PieChart";
+              }
+            }
+          });
+        });
+
         this.widgetSectionList = [
           ...this.dashboard?.sectionIds?.[0]?.widgetIds,
         ];
@@ -533,6 +561,11 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
       region: "mat_solid:public",
     };
     return icons[type.toLowerCase()] || "mat_solid:widgets";
+  }
+
+  // Normalize chartType for switch matching (lowercase, no spaces)
+  chartKey(type?: string | null): string {
+    return (type || "").toLowerCase();
   }
 
   /**
