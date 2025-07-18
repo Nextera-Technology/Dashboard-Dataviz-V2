@@ -72,7 +72,7 @@
                         </div>
 
                         <div class="widget-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 p-6 overflow-y-auto"
-                            cdkDropList [cdkDropListData]="section?.widgetIds"
+                            cdkDropList cdkDropListOrientation="mixed" [cdkDropListData]="section?.widgetIds"
                             (cdkDropListDropped)="onWidgetDrop($event, i)">
                             <div class="widget-card bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-400 transition-all duration-300 ease-in-out cursor-grab flex flex-col"
                                 *ngFor="let widget of section?.widgetIds; trackBy: trackById" cdkDrag
