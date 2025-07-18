@@ -26,13 +26,29 @@
         </div>
 
         <div class="builder-content flex-1 overflow-hidden">
-            <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)"
-                class="section-tabs h-full">
-                <mat-tab *ngFor="let section of dashboard?.sectionIds; trackBy: trackById; let i = index"
-                    [label]="section.title">
-                    <ng-template matTabContent>
-                        <div
-                            class="section-header flex justify-between items-center py-4 px-6 bg-white border-b border-gray-200 shadow-sm">
+            <!-- Custom draggable tab headers -->
+            <div class="custom-tab-header flex border-b border-gray-200 bg-white" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="onSectionDrop($event)">
+                <div *ngFor="let section of dashboard?.sectionIds; trackBy: trackById; let i = index" 
+                     cdkDrag 
+                     class="custom-tab-item px-4 py-3"
+                     [class.active-tab]="selectedTabIndex === i"
+                     (click)="selectedTabIndex = i; onTabChange(i)">
+                    <div class="flex items-center gap-2">
+                        <mat-icon cdkDragHandle>drag_indicator</mat-icon>
+                        <span>{{ section.title }}</span>
+                    </div>
+                </div>
+                <div *ngIf="!dashboard?.sectionIds || dashboard?.sectionIds.length === 0" 
+                     class="custom-tab-item px-4 py-3 active-tab">
+                    <span>No Sections</span>
+                </div>
+            </div>
+
+            <!-- Tab content -->
+            <div class="tab-content flex-1 overflow-auto">
+                <ng-container *ngIf="dashboard?.sectionIds && dashboard?.sectionIds.length > 0">
+                    <div *ngFor="let section of dashboard?.sectionIds; let i = index" [hidden]="selectedTabIndex !== i" class="h-full">
+                        <div class="section-header flex justify-between items-center py-4 px-6 bg-white border-b border-gray-200 shadow-sm">
                             <div class="section-info">
                                 <h3 class="text-xl font-semibold text-gray-800">
                                     {{ section.title }}
@@ -164,24 +180,20 @@
                                 </div>
                             </div>
                         </div>
-                    </ng-template>
-                </mat-tab>
+                    </div>
+                </ng-container>
 
-                <mat-tab *ngIf="!dashboard?.sectionIds || dashboard?.sectionIds.length === 0" label="No Sections">
-                    <ng-template matTabContent>
-                        <div class="flex flex-col items-center justify-center h-full p-8 text-gray-600">
-                            <mat-icon class="text-6xl text-gray-400 mb-4" svgIcon="mat_solid:tab_unselected"></mat-icon>
-                            <p class="text-lg font-medium mb-2">No sections added yet!</p>
-                            <p class="text-center mb-6">Start building your dashboard by adding a new section.</p>
-                            <button mat-raised-button color="primary" (click)="addSection()"
-                                class="flex items-center space-x-2 px-8 py-4 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 text-lg">
-                                <mat-icon class="text-2xl" svgIcon="mat_solid:add"></mat-icon>
-                                <span>Add Your First Section</span>
-                            </button>
-                        </div>
-                    </ng-template>
-                </mat-tab>
-            </mat-tab-group>
+                <div *ngIf="!dashboard?.sectionIds || dashboard?.sectionIds.length === 0" class="flex flex-col items-center justify-center h-full p-8 text-gray-600">
+                    <mat-icon class="text-6xl text-gray-400 mb-4" svgIcon="mat_solid:tab_unselected"></mat-icon>
+                    <p class="text-lg font-medium mb-2">No sections added yet!</p>
+                    <p class="text-center mb-6">Start building your dashboard by adding a new section.</p>
+                    <button mat-raised-button color="primary" (click)="addSection()"
+                        class="flex items-center space-x-2 px-8 py-4 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 text-lg">
+                        <mat-icon class="text-2xl" svgIcon="mat_solid:add"></mat-icon>
+                        <span>Add Your First Section</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </app-admin-layout>

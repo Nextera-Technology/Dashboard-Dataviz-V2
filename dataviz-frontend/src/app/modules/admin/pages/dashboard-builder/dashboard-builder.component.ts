@@ -196,12 +196,108 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
 
   onWidgetDrop(event: CdkDragDrop<Widget[]>, sectionIndex: number): void {
     if (!this.dashboard) return;
-    const dataWidgets = [...this.widgetSectionList];
-
-    moveItemInArray(dataWidgets, event.previousIndex, event.currentIndex);
-
-    this.widgetSectionList = dataWidgets;
+  
+    const mutableWidgets = [...this.widgetSectionList];
+    moveItemInArray(mutableWidgets, event.previousIndex, event.currentIndex);
+    this.widgetSectionList = mutableWidgets;
+    
+    // Create a new array of sections with the updated widgets
+    if (this.dashboard.sectionIds && this.dashboard.sectionIds[this.selectedTabIndex]) {
+      const updatedSections = this.dashboard.sectionIds.map((section, idx) => {
+        if (idx === this.selectedTabIndex) {
+          // For the current section, update its widgets
+          return {
+            ...section,
+            widgetIds: [...mutableWidgets]
+          };
+        }
+        // For other sections, keep them as is
+        return section;
+      });
+      
+      // Update the dashboard with the new sections array
+      this.dashboard = {
+        ...this.dashboard,
+        sectionIds: updatedSections
+      };
+    }
+    
     this._saveSection();
+  }
+
+  onSectionDrop(event: CdkDragDrop<any[]>): void {
+    if (!this.dashboard || !this.dashboard.sectionIds) return;
+    
+    // Get the current selected tab before reordering
+    const currentSelectedSection = this.dashboard.sectionIds[this.selectedTabIndex];
+    const mutableSectionIds = [...this.dashboard.sectionIds];
+    
+    // Reorder sections in the mutable copy
+    moveItemInArray(mutableSectionIds, event.previousIndex, event.currentIndex);
+    
+    this.dashboard = {
+      ...this.dashboard,
+      sectionIds: mutableSectionIds
+    };
+    
+    const newSelectedIndex = this.dashboard.sectionIds.findIndex(
+      section => section._id === currentSelectedSection._id
+    );
+    
+    this.selectedTabIndex = newSelectedIndex >= 0 ? newSelectedIndex : 0;
+    this.widgetSectionList = [...this.dashboard.sectionIds[this.selectedTabIndex].widgetIds];
+    
+    // Save the dashboard with the new section order but don't reload
+    // as reloading is causing the order to revert
+    this.saveDashboardWithoutReload();
+  }
+
+  // New method to save dashboard without reloading
+  async saveDashboardWithoutReload(): Promise<void> {
+    if (!this.dashboard) {
+      this.snackBar.open("No dashboard data to save.", "Close", {
+        duration: 3000,
+      });
+      return;
+    }
+
+    try {
+      // Instead of modifying the dashboard object, create a new input object with only the fields
+      // that are expected by the UpdateDashboardInput type
+      const updateInput = {
+        name: this.dashboard.name,
+        title: this.dashboard.title,
+        sectionIds: this.dashboard.sectionIds
+          .map((section: Section) => section._id && !section._id.startsWith("temp_") ? section._id : undefined)
+          .filter(Boolean),
+        sources: this.dashboard.sources
+      };
+
+      let result;
+      if (this.dashboard._id && this.dashboard._id !== "new") {
+        result = await this.dashboardService.updateDashboard(
+          this.dashboard._id,
+          updateInput
+        );
+        console.log("Dashboard updated with new section order:", result);
+        this.snackBar.open("Section order updated!", "Close", { duration: 2000 });
+      } else {
+        result = await this.dashboardService.createDashboard(updateInput);
+        if (result?._id) {
+          // Create a new dashboard object with the new ID
+          this.dashboard = {
+            ...this.dashboard,
+            _id: result._id
+          };
+          this.snackBar.open("Dashboard created with new section order!", "Close", { duration: 2000 });
+        }
+      }
+    } catch (error) {
+      console.error("Error saving dashboard section order:", error);
+      this.snackBar.open("Error saving section order. Please try again.", "Close", {
+        duration: 3000
+      });
+    }
   }
 
   editWidget(widget: Widget): void {
@@ -274,35 +370,27 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
     }
 
     try {
-      let result;
-      const dashboardToSave = { ...this.dashboard };
-      dashboardToSave.sectionIds = dashboardToSave.sectionIds.map(
-        (section) => ({
-          ...section,
-          _id:
-            section._id && section._id.startsWith("temp_")
-              ? undefined
-              : section._id,
-          widgetIds: section.widgetIds.map((widget) => ({
-            ...widget,
-            _id:
-              widget._id && widget._id.startsWith("temp_")
-                ? undefined
-                : widget._id,
-          })),
-        })
-      );
+      // Create a new input object with only the fields expected by the UpdateDashboardInput type
+      const updateInput = {
+        name: this.dashboard.name,
+        title: this.dashboard.title,
+        sectionIds: this.dashboard.sectionIds
+          .map((section: Section) => section._id && !section._id.startsWith("temp_") ? section._id : undefined)
+          .filter(Boolean),
+        sources: this.dashboard.sources
+      };
 
+      let result;
       if (this.dashboard._id && this.dashboard._id !== "new") {
         result = await this.dashboardService.updateDashboard(
           this.dashboard._id,
-          dashboardToSave
+          updateInput
         );
         this.snackBar.open("Dashboard updated successfully!", "Close", {
           duration: 3000,
         });
       } else {
-        result = await this.dashboardService.createDashboard(dashboardToSave);
+        result = await this.dashboardService.createDashboard(updateInput);
         if (result?._id) {
           this.dashboard._id = result._id;
           this.router.navigate([
@@ -452,18 +540,41 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
    * and calling the dashboard service's update method.
    */
   private async _saveSection(): Promise<void> {
-    const formValues = this.dashboard?.sectionIds?.[this.selectedTabIndex];
+    const section = this.dashboard?.sectionIds?.[this.selectedTabIndex];
+    if (!section || !section._id) {
+      console.error("Cannot save section: No section selected or section has no ID");
+      return;
+    }
+
     try {
+      // Create a mutable copy of the widget IDs to avoid read-only issues
+      // Extract only the widget IDs, not the entire widget objects
+      const widgetIds = this.widgetSectionList.map(widget => 
+        widget._id && !widget._id.startsWith('temp_') ? widget._id : undefined
+      ).filter(Boolean);
+      
       const sectionPayload = {
-        widgetIds: this.widgetSectionList?.map((widget) => widget?._id),
+        widgetIds: widgetIds,
+        // Include other section properties that might need to be preserved
+        title: section.title,
+        background: section.background,
+        name: section.name
       };
+      
+      console.log("Saving section with widget order:", sectionPayload);
+      
       // Update existing dashboard with modified sections
       const result = await this.dashboardService.updateSection(
-        formValues?._id,
+        section._id,
         sectionPayload
       );
+      
+      console.log("Section update result:", result);
     } catch (error) {
       console.error("Error saving section:", error);
+      this.snackBar.open("Error saving widget order. Please try again.", "Close", {
+        duration: 3000
+      });
     }
   }
 
