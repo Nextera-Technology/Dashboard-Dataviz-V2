@@ -1,5 +1,21 @@
 .dashboard-builder {
   height: 100vh;
+  overflow: hidden; // Prevent body scrolling
+}
+
+.builder-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.custom-tab-header {
+  flex-shrink: 0; // Prevent tab header from shrinking
+}
+
+.tab-content {
+  flex: 1;
+  overflow: auto;
 }
 
 .section-tabs {
@@ -10,6 +26,12 @@
   height: calc(100% - 48px);
   overflow: auto;
   display: block;
+}
+
+// Widget grid container
+.widget-grid {
+  min-height: 100%;
+  padding-bottom: 2rem; // Add padding at bottom to ensure last widgets are visible
 }
 
 // CDK Drag & Drop styles
@@ -60,6 +82,23 @@
   min-width: 350px; /* Adjust to match the typical width of your widget card */
   // You might need to dynamically set width/height based on columnSize/rowSize if your cards vary greatly
   // Or set to a representative average size.
+}
+
+// Custom tab styling
+.custom-tab-item {
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+  
+  &.active-tab {
+    border-bottom-color: #3f51b5;
+    color: #3f51b5;
+    font-weight: 500;
+  }
+  
+  &:hover:not(.active-tab) {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
 }
 
 @media (max-width: 768px) {
