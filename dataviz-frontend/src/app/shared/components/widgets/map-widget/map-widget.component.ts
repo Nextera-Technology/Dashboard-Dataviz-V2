@@ -28,6 +28,13 @@ declare const am5geodata_franceLow: any;
 export class MapWidgetComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() widget!: DashboardWidget;
 
+  /**
+   * Holds the computed total count of data points displayed by this map. It is
+   * rendered in the template (see chart-legend div) so it must exist to satisfy
+   * Angular template type-checking.
+   */
+  totalData: number = 0;
+
   private root: any;
   private chart: any;
   public chartId: string;
@@ -67,6 +74,34 @@ export class MapWidgetComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     // Component initialization
+    this.calculateTotalData();
+  }
+
+  /**
+   * Derive total data points from the widget's mapData structure.  Supports
+   * both object and array forms for future flexibility.
+   */
+  private calculateTotalData(): void {
+    const mapData: any = this.widget?.data?.mapData || this.widget?.data || {};
+
+    // If mapData is array of objects with totalData field
+    if (Array.isArray(mapData)) {
+      if (mapData.length === 0) {
+        this.totalData = 0;
+        return;
+      }
+      this.totalData = mapData[0]?.totalData ?? mapData.length;
+      return;
+    }
+
+    // If mapData is object of key -> value
+    if (typeof mapData === 'object') {
+      this.totalData = Object.keys(mapData).length;
+      return;
+    }
+
+    // Fallback
+    this.totalData = 0;
   }
 
   private initializeChart(): void {

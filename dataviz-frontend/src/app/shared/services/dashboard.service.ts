@@ -18,6 +18,12 @@ export interface Section {
 }
 
 export interface Widget {
+  /**
+   * MongoDB style identifier. Present on persisted widgets returned by the backend.
+   * Not required for newly created (client-side) widgets, so keep it optional.
+   */
+  _id?: string;
+  /** Friendly identifier string used in the mock data/service. */
   id: string;
   title: string;
   type: 'metric' | 'pie' | 'bar' | 'line' | 'column' | 'sankey' | 'table' | 'text' | 'map';
@@ -27,6 +33,12 @@ export interface Widget {
   section: string;
   lastUpdated?: Date;
   data?: any;
+  /**
+   * Optional background color or CSS value used for styling the widget itself (not the internal data).
+   * Several templates already bind to `widget.background`, so leaving it undefined should gracefully
+   * fall back to default styling.
+   */
+  background?: string;
   actions?: WidgetAction[];
 }
 
