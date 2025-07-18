@@ -32,6 +32,9 @@
 .widget-grid {
   min-height: 100%;
   padding-bottom: 2rem; // Add padding at bottom to ensure last widgets are visible
+
+  /* Improve layout densification without altering row height */
+  grid-auto-flow: dense; // Fill gaps created by spanning items
 }
 
 // CDK Drag & Drop styles
