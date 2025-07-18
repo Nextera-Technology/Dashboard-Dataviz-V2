@@ -1,4 +1,5 @@
 <div class="column-chart-widget h-full w-full" [style.background-color]="widget?.background || '#ffffff'">
+    <div class="chart-legend">Total Data : {{ totalData }}</div>
     <div [id]="'column-chart-div-' + widget._id" class="chart-container h-full w-full"></div>
     <ng-container *ngIf="!data || data.length === 0">
         <div

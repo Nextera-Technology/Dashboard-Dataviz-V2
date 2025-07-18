@@ -42,6 +42,20 @@ export class BarChartWidgetComponent
   @Input() widget!: Widget;
   @Input() data: any[] | undefined;
 
+  // Computed total data for overlay
+  get totalData(): number {
+    if (!this.data || this.data.length === 0) {
+      return 0;
+    }
+    // If totalData field exists in first item, use it; otherwise use length or sum
+    const first = this.data[0];
+    if (first && first.totalData !== undefined) {
+      return first.totalData;
+    }
+    // Fallback: sum of count fields if present
+    return this.data.reduce((sum: number, item: any) => sum + (item.count ?? 0), 0);
+  }
+
   private root!: am5.Root;
   private chart!: am5xy.XYChart;
 

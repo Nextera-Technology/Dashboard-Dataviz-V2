@@ -29,6 +29,20 @@ export class ColumnChartWidgetComponent
   @Input() widget = null;
   @Input() data: any[] | undefined;
 
+  get totalData(): number {
+    if (!this.data || this.data.length === 0) {
+      return 0;
+    }
+    const first = this.data[0];
+    if (first && first.totalData !== undefined) {
+      return first.totalData;
+    }
+    if (Array.isArray(this.data)) {
+      return this.data.reduce((sum: number, item: any) => sum + (item.value ?? item.count ?? 0), 0);
+    }
+    return 0;
+  }
+
   private root!: am5.Root;
   private chart!: am5xy.XYChart;
 

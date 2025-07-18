@@ -34,3 +34,22 @@
   width: 100%;
   height: 400px;
 }
+
+.map-widget {
+  position: relative;
+}
+
+.chart-legend {
+  position: absolute;
+  top: 10px;
+  left: 14px;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #15616d;
+  pointer-events: none;
+  text-align: left;
+}

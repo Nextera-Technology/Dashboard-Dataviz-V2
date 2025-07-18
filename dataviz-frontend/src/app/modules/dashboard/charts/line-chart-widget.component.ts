@@ -26,7 +26,7 @@ declare var am5xy: any;
       class="chart-box relative"
       [style.background-color]="widget.data?.background || '#ffffff'"
     >
-      <div class="chart-legend">Total Data : {{ widget.data.length || 0 }}</div>
+      <div class="chart-legend">Total Data : {{ totalData }}</div>
       <!-- Action Buttons -->
       <div class="button-container">
         <button class="info-button primary" (click)="onActionClick('info')">
@@ -174,6 +174,8 @@ export class LineChartWidgetComponent implements OnInit, OnDestroy {
   @Input() data: any;
   @ViewChild("chartContainer", { static: true }) chartContainer!: ElementRef;
 
+  totalData: number = 0;
+
   private root: any;
   private chart: any;
   private xAxis: any;
@@ -181,6 +183,7 @@ export class LineChartWidgetComponent implements OnInit, OnDestroy {
   private series: any;
 
   ngOnInit(): void {
+    this.calculateTotalData();
     if (this.widget.data) {
       this.createChart();
     }
@@ -321,5 +324,22 @@ export class LineChartWidgetComponent implements OnInit, OnDestroy {
       iconMap[iconName] ||
       `https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/${iconName}`
     );
+  }
+
+  private calculateTotalData(): void {
+    if (!this.widget?.data) {
+      this.totalData = 0;
+      return;
+    }
+
+    const dataArray = Array.isArray(this.widget.data) ? this.widget.data : [];
+    if (dataArray.length) {
+      this.totalData = dataArray[0]?.totalData ?? dataArray.reduce((sum: number, item: any) => sum + (item.count ?? 0), 0);
+    } else if (this.widget.data?.series && Array.isArray(this.widget.data.series)) {
+      const series0 = this.widget.data.series[0];
+      this.totalData = series0?.totalData ?? this.widget.data.series.reduce((sum: number, item: any) => sum + (item.value ?? item.count ?? 0), 0);
+    } else {
+      this.totalData = this.widget.data.totalData ?? 0;
+    }
   }
 }
