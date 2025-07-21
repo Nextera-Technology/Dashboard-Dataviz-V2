@@ -59,10 +59,13 @@ export class BarChartWidgetComponent
   private root!: am5.Root;
   private chart!: am5xy.XYChart;
 
-  constructor(private zone: NgZone) {}
+  constructor(private zone: NgZone) {
+    console.log("BarChartWidgetComponent initialized");
+  }
 
   ngOnInit(): void {
     // Data processing or initial setup can happen here
+    console.log("BarChartWidget initialized with data:", this.data);
   }
 
   ngAfterViewInit(): void {
@@ -72,6 +75,7 @@ export class BarChartWidgetComponent
         this.data = [...this.data].sort((a: any, b: any) => (b.count ?? 0) - (a.count ?? 0));
       }
     }
+    debugger;
     // Chart code goes in a timeout to make sure that the DOM is ready
     this.zone.runOutsideAngular(() => {
       if (!this.data || this.data.length === 0) {
@@ -146,6 +150,7 @@ export class BarChartWidgetComponent
       this.chart = chart;
     });
   }
+  
 
   ngOnDestroy(): void {
     this.zone.runOutsideAngular(() => {

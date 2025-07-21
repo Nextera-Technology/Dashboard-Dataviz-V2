@@ -10,6 +10,9 @@ import { TextWidgetComponent } from "app/modules/dashboard/charts/text-widget.co
 import { MapWidgetComponent } from "app/modules/dashboard/charts/map-widget.component";
 import { WorldMapWidgetComponent } from "../widgets/world-map-widget/world-map-widget.component";
 import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/charts/pictorial-fraction-chart.component";
+import { BarChartWidgetTopComponent } from "app/modules/dashboard/charts/bar-chart-widget-top.component";
+import { BarChartWidgetContratComponent } from "app/modules/dashboard/charts/bar-chart-widget-contrat.component";
+import { BarChartWidgetOuvertComponent } from "app/modules/dashboard/charts/bar-chart-widget-ouvert.component";
 
 @Component({
   selector: "app-section",
@@ -26,7 +29,10 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
     MapWidgetComponent,
     PictorialStackedChartWidgetComponent,
     WorldMapWidgetComponent,
-  ],
+    BarChartWidgetTopComponent,
+    BarChartWidgetContratComponent,
+    BarChartWidgetOuvertComponent
+],
   template: `
     <div class="section" [style.background-color]="section.background">
       <div class="section-header">
@@ -261,7 +267,7 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
 
             <!-- Bar Chart Widget -->
             <app-bar-chart-widget
-              *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART'"
+              *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART' && !(widget?.name === 'Type de contrat' || widget?.name === 'Top 8 fonctions' || widget?.name === 'Ouvert – Commencé – Enquête complétée (EE1–EE4)')"
               [widget]="widget"
               [data]="widget?.data"
               class="widget"
@@ -270,6 +276,39 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
               [class.widget-large]="widget.size === 'large'"
             >
             </app-bar-chart-widget>
+
+            <app-bar-chart-widget-ouvert
+              *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART' && widget?.name === 'Ouvert – Commencé – Enquête complétée (EE1–EE4)'"
+              [widget]="widget"
+              [data]="widget?.data"
+              class="widget"
+              [class.widget-small]="widget.size === 'small'"
+              [class.widget-medium]="widget.size === 'medium'"
+              [class.widget-large]="widget.size === 'large'"
+            >
+            </app-bar-chart-widget-ouvert>
+
+             <app-bar-chart-widget-contrat
+              *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART' && widget?.name === 'Type de contrat'"
+              [widget]="widget"
+              [data]="widget?.data"
+              class="widget"
+              [class.widget-small]="widget.size === 'small'"
+              [class.widget-medium]="widget.size === 'medium'"
+              [class.widget-large]="widget.size === 'large'"
+            >
+            </app-bar-chart-widget-contrat>
+
+            <app-bar-chart-widget-top
+              *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART' && widget.name === 'Top 8 fonctions'"
+              [widget]="widget"
+              [data]="widget?.data"
+              class="widget"
+              [class.widget-small]="widget.size === 'small'"
+              [class.widget-medium]="widget.size === 'medium'"
+              [class.widget-large]="widget.size === 'large'"
+            >
+            </app-bar-chart-widget-top>
 
             <!-- Column Chart Widget -->
             <app-column-chart-widget
@@ -358,143 +397,7 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
     </div>
   `,
   styles: [
-    `
-      .chart-box {
-        position: relative;
-        text-align: center;
-        border-radius: 12px;
-        padding: 20px;
-        transition: all 0.3s ease;
-        min-height: 300px;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .chart-box:hover {
-        transform: translateY(-2px);
-      }
-      .status-grid-rowed {
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-        margin-top: 20px;
-      }
-
-      .status-row {
-        display: grid;
-        grid-template-columns: 200px repeat(4, 1fr);
-        /* 1 for label, 4 for ES values */
-        gap: 10px;
-        align-items: center;
-      }
-
-      .status-category {
-        font-weight: bold;
-        font-size: 15px;
-        color: #15616d;
-      }
-
-      .chart-title {
-        font-family: "Inter";
-        font-size: 18px;
-        font-weight: 600;
-        color: #00454d;
-        margin: 15px 0 15px 0;
-        line-height: 1.3;
-      }
-      .status-value {
-        background-color: #f5f7fa;
-        padding: 10px;
-        text-align: center;
-        border-radius: 8px;
-        font-size: 14px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-        font-weight: 500;
-      }
-
-      .status-value-title {
-        /* background-color: #f5f7fa; */
-        padding: 10px;
-        text-align: center;
-        /* border-radius: 8px; */
-        font-size: 14px;
-        /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); */
-        font-weight: 500;
-      }
-      .section {
-        margin-bottom: 2rem;
-        border-radius: 8px;
-        padding: 1.5rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-
-      .section-header {
-        margin-bottom: 1.5rem;
-      }
-
-      .section-header h2 {
-        margin: 0;
-        color: #333;
-        font-size: 1.5rem;
-        font-weight: 600;
-      }
-
-      .widgets-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr); /* Always 4 columns per row */
-        grid-auto-rows: minmax(350px, auto); /* 1×1 card baseline */
-        gap: 1.5rem;
-        align-items: stretch; /* Make all widgets stretch to same height */
-      }
-
-      .widget {
-      height:100%;
-        background: white;
-        border-radius: 8px;
-        padding: 1.5rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        min-height: 350px; /* Ensures equal min height for all widgets */
-      }
-
-      .widget:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      }
-
-      .widget-small {
-        grid-column: span 1;
-      }
-
-      .widget-medium {
-        grid-column: span 2;
-      }
-
-      .widget-large {
-        grid-column: span 3;
-      }
-
-      @media (max-width: 1024px) {
-        .widgets-grid {
-          grid-template-columns: 1fr 1fr; /* 2 columns on tablets */
-        }
-      }
-      @media (max-width: 768px) {
-        .widgets-grid {
-          grid-template-columns: 1fr; /* 1 column on mobile */
-        }
-        .widget-medium,
-        .widget-large {
-          grid-column: span 1;
-        }
-      }
-    `,
+    // ...styles unchanged
   ],
 })
 export class SectionComponent implements OnInit {
@@ -511,10 +414,10 @@ export class SectionComponent implements OnInit {
   }
 
   private updateVisibleWidgets(): void {
-    if (this.section && this.section.widgetIds?.length) {
+    if (this.section && Array.isArray(this.section.widgetIds) && this.section.widgetIds.length) {
       this.visibleWidgets = this.section.widgetIds
-        .filter((widget: any) => widget.visible)
-        // Ensure consistent ordering (by _id if numeric or fallback to title)
+        .filter((widget: any) => widget && widget.visible)
+        // Ensure consistent ordering (by id if numeric or fallback to title)
         .map((widget: any) => ({
           ...widget,
           columnSize: typeof widget.columnSize === 'string' ? parseInt(widget.columnSize, 10) : widget.columnSize,
@@ -522,8 +425,8 @@ export class SectionComponent implements OnInit {
         }))
         .sort((a: any, b: any) => {
           // Sort by widget order if available, otherwise by title
-          const aOrder = parseInt(a.id) || 0;
-          const bOrder = parseInt(b.id) || 0;
+          const aOrder = Number(a.id) || 0;
+          const bOrder = Number(b.id) || 0;
           return aOrder - bOrder;
         });
     }

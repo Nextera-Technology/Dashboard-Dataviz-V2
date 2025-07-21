@@ -13,7 +13,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AuthService, User } from '../../core/auth/auth.service';
-import { DashboardService, DashboardData, FilterData, CertificationFilter, SectionFilter } from '../../shared/services/dashboard.service';
+import { DashboardService, DashboardData, FilterData, CertificationFilter, SectionFilter, Section } from '../../shared/services/dashboard.service';
 import { SectionComponent } from '../../shared/components/sections/section.component';
 import { DashboardBuilderService } from '../admin/pages/dashboard-builder/dashboard-builder.service';
 
@@ -61,15 +61,46 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   // Filter data
   certifications: CertificationFilter[] = [];
   sections: SectionFilter[] = [];
+  sectionsList: Section[] = [];
+  sectionSelections: boolean[] = [];
+  selectedSections: string[] = [];
 
   get filteredCertifications() {
     if (!this.certificationSearch) {
       return this.certifications;
     }
-    return this.certifications.filter(cert => 
+    return this.certificateList.filter(cert => 
       cert.name.toLowerCase().includes(this.certificationSearch.toLowerCase())
     );
   }
+
+  certificateList = [
+    { name: "RDC 2021", children: [], expanded: false  },
+    { name: "RDC 2022", children: ["Classe 2022", "Classe Excellence 2022"], expanded: false  },
+    { name: "RDC 2023", children: [] , expanded: false },
+    { name: "RDC 2024", children: [] , expanded: false },
+    { name: "RDC 2025", children: [] , expanded: false },
+    { name: "Classe 2022", children: [] , expanded: false },
+    { name: "Classe Excellence 2022", children: [], expanded: false  },
+    { name: "CDRH 2022", children: [], expanded: false  },
+    { name: "CDRH 2023", children: [] , expanded: false },
+    { name: "CDRH 2024", children: [], expanded: false  },
+    { name: "CDRH 2025", children: [] , expanded: false },
+    { name: "CPEB 2021", children: [] , expanded: false },
+    { name: "CPEB 2022", children: [], expanded: false  },
+    { name: "CPEB 2023", children: [], expanded: false  },
+    { name: "CPEB 2024", children: [], expanded: false  },
+    { name: "CPEB 2025", children: [] , expanded: false }
+   ];
+
+  selectedChildren: { [key: string]: boolean } = {};
+
+getChildModel(childName: string): boolean {
+  if (this.selectedChildren[childName] === undefined) {
+    this.selectedChildren[childName] = false;
+  }
+  return this.selectedChildren[childName];
+}
 
   constructor(
     private authService: AuthService,
@@ -103,7 +134,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       if (result?.data) {
         this.dashboard = result?.data[0];
         this.dashboards = result?.data;
-        console.log("Dashboards loaded:", this.dashboard);
+        if(result?.data[0] && result?.data[0]?.sectionIds) {
+          this.sectionsList = result?.data[0].sectionIds || [];
+        }
       }
     } catch (error) {
       console.error("Error loading dashboards:", error);
@@ -119,6 +152,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   onCertificationSearch(): void {
+    // this.filteredCertifications = this.certificateList.filter(cert => {
+    //   return cert.name.toLowerCase().includes(this.certificationSearch.toLowerCase());
+    // });
     console.log('Certification search:', this.certificationSearch);
   }
 
@@ -140,6 +176,15 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   applySectionFilters(): void {
+    if (this.selectedSections.length === 0) {
+      this.snackBar.open('Please select at least one section', 'Close', {
+        duration: 2000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+      });
+      return;
+    }
+  //this.dashboard.sectionIds = this.dashboard.sectionIds.filter(section => this.selectedSections.includes(section.name));
     console.log('Applying section filters');
     this.snackBar.open('Section filters applied', 'Close', {
       duration: 2000,
@@ -150,7 +195,19 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   updateCounts(): void {
     this.selectedCertificationsCount = this.certifications.filter(cert => cert.selected).length;
-    this.selectedSectionsCount = this.sections.filter(section => section.selected).length;
+  }
+
+  updateSelectionCounts(){
+    this.selectedSectionsCount = this.selectedSections.length;
+  }
+
+  onCheckboxChange(item: string, isChecked: boolean) {
+    if (isChecked) {
+      this.selectedSections.push(item);
+    } else {
+      this.selectedSections = this.selectedSections.filter(i => i !== item);
+    }
+    this.updateSelectionCounts();
   }
 
   logout(): void {

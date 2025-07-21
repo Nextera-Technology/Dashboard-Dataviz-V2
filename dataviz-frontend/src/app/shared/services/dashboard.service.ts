@@ -10,12 +10,16 @@ export interface DashboardData {
 }
 
 export interface Section {
+  _id: string;
   id: string;
   title: string;
+  name: string | null;
   background: string;
   visible: boolean;
   widgets: Widget[];
+  status: string | null;
 }
+
 
 export interface Widget {
   /**
@@ -129,7 +133,10 @@ export class DashboardService {
     theme: 'light',
     sections: [
       {
+        _id:"0",
         id: '1',
+        name: 'Overview',
+        status: null,
         title: 'Overview',
         background: '#f5f5f5',
         visible: true,
@@ -213,7 +220,10 @@ export class DashboardService {
         ]
       },
       {
+        _id:"0",
         id: '2',
+        name: 'Demographics',
+        status: null,
         title: 'Demographics',
         background: '#e3f2fd',
         visible: true,
@@ -265,7 +275,10 @@ export class DashboardService {
         ]
       },
       {
+        _id:"0",
         id: '3',
+        name: 'Employment',
+        status: null,
         title: 'Employment',
         background: '#f3e5f5',
         visible: true,
@@ -323,7 +336,10 @@ export class DashboardService {
         ]
       },
       {
+        _id:"0",
         id: '4',
+        name: 'Certifications',
+        status: null,
         title: 'Certifications',
         background: '#e8f5e8',
         visible: true,
@@ -382,7 +398,10 @@ export class DashboardService {
         ]
       },
       {
+        _id:"0",
         id: '5',
+        name: 'Analysis',
+        status: null,
         title: 'Analysis',
         background: '#fff3e0',
         visible: true,
@@ -532,10 +551,13 @@ export class DashboardService {
   createSection(sectionData: CreateSectionData): Observable<Section> {
     const newSection: Section = {
       id: Date.now().toString(),
+      _id: "0",
       title: sectionData.title,
       background: sectionData.background,
       visible: true,
-      widgets: []
+      widgets: [],
+      name: sectionData.title,
+      status: true ? 'active' : 'inactive',
     };
     
     this.dashboardData.sections.push(newSection);

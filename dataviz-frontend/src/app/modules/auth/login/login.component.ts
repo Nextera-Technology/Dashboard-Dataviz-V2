@@ -33,7 +33,7 @@ import { AuthService, LoginCredentials } from "../../../core/auth/auth.service";
   ],
   template: `
     <div
-      class="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-600 to-cyan-800 py-12 px-4 sm:px-6 lg:px-8"
+      class="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-600 to-cyan-800 py-24 px-4 sm:px-6 lg:px-8"
     >
       <div class="max-w-md w-full space-y-8">
         <!-- Logo -->
@@ -43,19 +43,23 @@ import { AuthService, LoginCredentials } from "../../../core/auth/auth.service";
             src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/Nextera%20Logo%20Career%20Insight%20White%20text.png"
             alt="Nextera Logo"
           />
-          <h2 class="mt-6 text-3xl font-extrabold text-white">
-            Sign in to your account
-          </h2>
-          <p class="mt-2 text-sm text-cyan-100">Welcome to DataViz Dashboard</p>
+         
         </div>
 
         <!-- Login Form -->
-        <mat-card class="bg-white shadow-xl">
-          <mat-card-content class="p-8">
+        <mat-card class="bg-white shadow-xl rounded-lg p-4">
+          <mat-card-content class="p-20">
+            <div class="text-center mb-6">
+               <h2 class="mt-6 text-3xl font-extrabold">
+              Sign in to your account
+            </h2>
+              <p class="mt-2 text-sm ">Welcome to DataViz Dashboard</p>
+            </div>
+            
             <form
               [formGroup]="loginForm"
-              (ngSubmit)="onSubmit()"
-              class="space-y-6"
+              (ngSubmit)="onSubmit($event)"
+              class="space-y-6 padding-bottom-8"
             >
               <!-- Email Field -->
               <mat-form-field class="w-full">
@@ -63,6 +67,7 @@ import { AuthService, LoginCredentials } from "../../../core/auth/auth.service";
                 <input
                   matInput
                   type="email"
+                   required="true"
                   formControlName="email"
                   placeholder="Enter your email"
                   autocomplete="email"
@@ -77,10 +82,11 @@ import { AuthService, LoginCredentials } from "../../../core/auth/auth.service";
               </mat-form-field>
 
               <!-- Password Field -->
-              <mat-form-field class="w-full">
+              <mat-form-field class="w-full mb-4">
                 <mat-label>Password</mat-label>
                 <input
                   matInput
+                  required="true"
                   [type]="showPassword ? 'text' : 'password'"
                   formControlName="password"
                   placeholder="Enter your password"
@@ -92,7 +98,7 @@ import { AuthService, LoginCredentials } from "../../../core/auth/auth.service";
                   type="button"
                   (click)="togglePasswordVisibility()"
                   matSuffix
-                  class="cursor-pointer"
+                  class="cursor-pointer mt-1"
                 >
                   <mat-icon>
                     {{ showPassword ? "visibility_off" : "visibility" }}
@@ -119,18 +125,21 @@ import { AuthService, LoginCredentials } from "../../../core/auth/auth.service";
               <!-- Submit Button -->
               <button
                 mat-raised-button
-                color="primary"
                 type="submit"
                 [disabled]="loginForm.invalid || isLoading"
-                class="w-full h-12 text-lg"
+                class="w-full h-12 text-lg bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200 mb-8 flex items-center justify-center"
+                style="background-color: #2563eb; color: #fff;"
               >
-                <mat-spinner
-                  *ngIf="isLoading"
-                  diameter="20"
-                  class="mr-2"
-                ></mat-spinner>
+                <div class="flex items-center justify-center">
+                  <mat-spinner
+                    *ngIf="isLoading"
+                    diameter="20"
+                    class="mr-2"
+                  ></mat-spinner>
+                  
+                  <span *ngIf="isLoading">Signing in...</span>
+                </div>
                 <span *ngIf="!isLoading">Sign in</span>
-                <span *ngIf="isLoading">Signing in...</span>
               </button>
             </form>
           </mat-card-content>
@@ -170,7 +179,8 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  async onSubmit() {
+  async onSubmit(event: Event) {
+    event.preventDefault();
     if (this.loginForm.valid) {
       this.isLoading = true;
       this.errorMessage = "";
@@ -179,12 +189,22 @@ export class LoginComponent implements OnInit {
       try {
         const user = await this.authService.userLogin(credentials?.email, credentials?.password);
         this.isLoading = false;
-        this.snackBar.open(`Welcome back, ${user.lastName} ${user.firstName}!`, "Close", {
+        if (!user || !user.user) {
+          this.snackBar.open(`Login failed. Please check your credentials.`, "Close", {
+            duration: 3000,
+            horizontalPosition: "center",
+            verticalPosition: "top",
+          });
+
+          throw new Error("Login failed. Please check your credentials.");
+        }
+
+        this.snackBar.open(`Welcome back, ${user.user.lastName} ${user.user.firstName}!`, "Close", {
           duration: 3000,
           horizontalPosition: "center",
           verticalPosition: "top",
         });
-        this.router.navigate(["/dashboard"]);
+        this.router.navigate(["/admin/dashboard-list"]);
       } catch (error) {
         this.isLoading = false;
         this.errorMessage =

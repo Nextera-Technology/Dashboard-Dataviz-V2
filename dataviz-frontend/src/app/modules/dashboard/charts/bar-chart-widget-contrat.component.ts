@@ -9,16 +9,12 @@ import {
 import { CommonModule } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
-import {
-  DashboardWidget,
-  WidgetAction,
-} from "app/shared/services/dashboard.service";
 
 declare var am5: any;
 declare var am5xy: any;
 
 @Component({
-  selector: "app-bar-chart-widget",
+  selector: "app-bar-chart-widget-contrat",
   standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule],
   template: `
@@ -49,21 +45,6 @@ declare var am5xy: any;
 
         <!-- Chart Container -->
         <div #chartContainer class="chart-container"></div>
-
-        <!-- Manual Legend (if needed) -->
-        <!-- <div class="manual-legend" *ngIf="widget.data">
-          <div 
-            *ngFor="let item of widget.data" 
-            class="legend-item">
-            <span class="legend-color" [style.background-color]="item.color"></span>
-            <span class="legend-label">
-              {{ item.name }}
-              <span class="legend-value" [style.color]="item.color">
-                <strong>{{ item.count }} ({{ item.percentage }}%)</strong>
-              </span>
-            </span>
-          </div>
-        </div> -->
       </div>
     </div>
   `,
@@ -117,7 +98,7 @@ declare var am5xy: any;
       }
 
       .chart-container {
-        height: 300px;
+        height: 100%;
         width: 100%;
         margin-bottom: 15px;
       }
@@ -176,7 +157,7 @@ declare var am5xy: any;
     `,
   ],
 })
-export class BarChartWidgetComponent implements OnInit, OnDestroy {
+export class BarChartWidgetContratComponent implements OnInit, OnDestroy {
   @Input() widget: any;
   @Input() data: any;
   @ViewChild("chartContainer", { static: true }) chartContainer!: ElementRef;
@@ -188,17 +169,81 @@ export class BarChartWidgetComponent implements OnInit, OnDestroy {
   private xAxis: any;
   private yAxis: any;
   private series: any;
+  jobTitles: string[] = [];
+  waveLabelMap = {
+    1: 'EE1',
+    2: 'EE2',
+    3: 'EE3',
+    4: 'EE4'
+  };
+  waves: number[] = [];
+
+  jobBaseColors = {
+    "CDI": "#1D3557",
+        "CDD": "#457B9D",
+        "Intérim": "#A8DADC",
+        "Fonctionnaire": "#F4A261",
+        "Contractuel": "#E76F51",
+        "Auto-Entrepreneur": "#2A9D8F",
+        "Gérant": "#264653",
+        "Indépendant": "#6D597A",
+        "Mandataire Social": "#B5838D",
+        "Autre": "#ADB5BD"
+  };
+
 
   ngOnInit(): void {
     this.calculateTotalData();
     if (this.widget.data) {
+      this.waveLabelMap = {
+        1: 'EE1',
+        2: 'EE2',
+        3: 'EE3',
+        4: 'EE4',
+      };
+
+      this.waves = Object.keys(this.waveLabelMap).map(Number);
+
+      // Get unique job names
+      this.jobTitles = Array.from(new Set(this.data.map(d => d.name)));
+
+      // For each wave, build a series (bar values are per job name)
+      this.series = this.waves.map(waveNum => ({
+        name: this.waveLabelMap[waveNum],
+        data: this.jobTitles.map(name => {
+          const match = this.data.find(
+            d => d.name === name && d.wave === waveNum
+          );
+          return match ? match.count : 0;
+        })
+      }));
+      console.log("Series:", this.series);
+
       this.createChart();
     }
   }
 
-  
+  createChart(): void {
+    const originalData = [...this.data];
 
-  private createChart(): void {
+    // Step 1: Extract all unique job titles
+    const jobTitles = Array.from(new Set(originalData.map(d => d.name)));
+
+    // Step 2: Group data into new format
+    const groupedData = jobTitles.map(title => {
+      const entry = { name: title, EE1: 0, EE2: 0, EE3: 0, EE4: 0 };
+      originalData.forEach(item => {
+        if (item.name === title) {
+          const waveKey = `EE${item.wave}`;
+          entry[waveKey] = item.count;
+        }
+      });
+      return entry;
+    });
+   
+    
+
+    // Step 3: Create root and chart
     this.root = am5.Root.new(this.chartContainer.nativeElement);
     this.root.setThemes([am5.Theme.new(this.root)]);
 
@@ -208,80 +253,111 @@ export class BarChartWidgetComponent implements OnInit, OnDestroy {
       })
     );
 
-    // Y Axis (categories)
-    this.yAxis = this.chart.yAxes.push(
+    // Step 4: Y Axis (Job Titles)
+    const yAxis = this.chart.yAxes.push(
       am5xy.CategoryAxis.new(this.root, {
         categoryField: "name",
-        renderer: am5xy.AxisRendererY.new(this.root, { minGridDistance: 20 }),
+        renderer: am5xy.AxisRendererY.new(this.root, {}),
       })
     );
-    this.yAxis.data.setAll(this.widget.data);
+    yAxis.data.setAll(groupedData);
 
-    // X Axis (values)
-    this.xAxis = this.chart.xAxes.push(
+    // Step 5: X Axis (Count)
+    const xAxis = this.chart.xAxes.push(
       am5xy.ValueAxis.new(this.root, {
         renderer: am5xy.AxisRendererX.new(this.root, {}),
       })
     );
 
-    // Series
-    this.series = this.chart.series.push(
-      am5xy.ColumnSeries.new(this.root, {
-        name: "Values",
-        xAxis: this.xAxis,
-        yAxis: this.yAxis,
-        valueXField: "count",
-        categoryYField: "name",
-        fill: am5.color("#67b7dc"),
-        stroke: am5.color("#67b7dc"),
-      })
-    );
-    this.series.data.setAll(this.widget.data);
+    // Step 6: Create series for each wave (EE1, EE2, ...)
+    ["EE1", "EE2", "EE3", "EE4"].forEach((wave, index) => {
+        const esShade = { EE1: 50, EE2: 20, EE3: -20, EE4: -50 }[wave];
+      const series = this.chart.series.push(
+        am5xy.ColumnSeries.new(this.root, {
+          name: wave,
+          xAxis: xAxis,
+          yAxis: yAxis,
+          valueXField: wave,
+          categoryYField: "name",
+          clustered: true,
+          tooltip: am5.Tooltip.new(this.root, {
+            labelText: `{name} - ${wave}: {${wave}}`
+          }),
+        })
+      );
 
-    // Bar colors
-    this.series.columns.template.adapters.add(
-      "fill",
-      (fill: any, target: any) => {
-        return am5.color(target.dataItem.dataContext.color || "#67b7dc");
-      }
-    );
-    this.series.columns.template.adapters.add(
-      "stroke",
-      (stroke: any, target: any) => {
-        return am5.color(target.dataItem.dataContext.color || "#67b7dc");
-      }
-    );
+      // Optional colors
+      series.columns.template.setAll({
+        tooltipText: `{name} - ${wave}: {${wave}}`,
+        cornerRadiusTL: 4,
+        cornerRadiusBL: 4,
+        strokeWidth: 1
+      });
 
-    // Tooltips
-    this.series.columns.template.set("tooltipText", "{name}: {count}");
 
-    // Appearance
-    this.series.columns.template.setAll({
-      cornerRadiusTL: 6,
-      cornerRadiusBL: 6,
-      strokeWidth: 2,
+      // Apply different colors per job title
+      series.columns.template.adapters.add("fill", (fill, target) => {
+        const dataItem = target.dataItem;
+        const jobTitle = dataItem?.dataContext?.name;
+        if (jobTitle && this.jobBaseColors[jobTitle]) {
+          return am5.color(this.shadeColor(this.jobBaseColors[jobTitle], esShade));
+        }
+        return fill;
+      });
+
+      series.columns.template.adapters.add("stroke", (stroke, target) => {
+        const dataItem = target.dataItem;
+        const jobTitle = dataItem?.dataContext?.name;
+        if (jobTitle && this.jobBaseColors[jobTitle]) {
+         return am5.color(this.shadeColor(this.jobBaseColors[jobTitle], esShade));
+        }
+        return stroke;
+      });
+
+      series.data.setAll(groupedData);
+      series.appear(1000);
+      series.events.once("datavalidated", function () {
+          am5.array.each(series.dataItems, function (dataItem) {
+            if (dataItem.get("valueX") === 0) {
+              dataItem.set("valueXWorking", 0.5);
+            }
+          });
+        });
+    });
+    this.chart.set("config", {
+      type: 'bar',
+      height: 500, // Adjust height to show all 8 labels
+      stacked: false
     });
 
+    // Add legend
+    this.chart.set("legend", am5.Legend.new(this.root, {}));
+
     // Animate
-    this.series.appear(1000);
     this.chart.appear(1000, 100);
   }
 
-  private calculateTotalData(): void {
-    if (!this.widget?.data) {
-      this.totalData = 0;
-      return;
-    }
+  shadeColor(color, percent) {
+        let f = parseInt(color.slice(1), 16),
+          t = percent < 0 ? 0 : 255,
+          p = Math.abs(percent) / 100,
+          R = f >> 16,
+          G = f >> 8 & 0x00FF,
+          B = f & 0x0000FF;
+        return "#" + (
+          0x1000000 +
+          (Math.round((t - R) * p) + R) * 0x10000 +
+          (Math.round((t - G) * p) + G) * 0x100 +
+          (Math.round((t - B) * p) + B)
+        ).toString(16).slice(1);
+  }
 
-    const dataArray = Array.isArray(this.widget.data) ? this.widget.data : [];
-    if (dataArray.length) {
-      this.totalData = dataArray[0]?.totalData ?? dataArray.reduce((sum: number, item: any) => sum + (item.count ?? 0), 0);
-    } else if (this.widget.data?.series && Array.isArray(this.widget.data.series)) {
-      const series0 = this.widget.data.series[0];
-      this.totalData = series0?.totalData ?? this.widget.data.series.reduce((sum: number, item: any) => sum + (item.value ?? item.count ?? 0), 0);
-    } else {
-      this.totalData = this.widget.data.totalData ?? 0;
-    }
+  private calculateTotalData(): void {
+    const maxTotalData = this.data
+  .filter(item => item.hasOwnProperty('totalData'))
+  .map(item => item.totalData);
+
+    this.totalData = Math.max(...maxTotalData);
   }
 
   onActionClick(action: string): void {
