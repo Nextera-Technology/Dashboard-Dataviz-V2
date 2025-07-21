@@ -52,6 +52,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   currentUser: User | null = null;
   dashboard = null;
+  dashboardOriginal = null;
   filters: FilterData | null = null;
   dashboards = [];
   certificationSearch: string = '';
@@ -133,6 +134,7 @@ getChildModel(childName: string): boolean {
         await this.dashboardService.getAllDashboards(filter);
       if (result?.data) {
         this.dashboard = result?.data[0];
+        this.dashboardOriginal = result?.data[0];
         this.dashboards = result?.data;
         if(result?.data[0] && result?.data[0]?.sectionIds) {
           this.sectionsList = result?.data[0].sectionIds || [];
@@ -167,7 +169,6 @@ getChildModel(childName: string): boolean {
   }
 
   applyCertificationFilters(): void {
-    console.log('Applying certification filters');
     this.snackBar.open('Certification filters applied', 'Close', {
       duration: 2000,
       horizontalPosition: 'center',
@@ -177,15 +178,15 @@ getChildModel(childName: string): boolean {
 
   applySectionFilters(): void {
     if (this.selectedSections.length === 0) {
-      this.snackBar.open('Please select at least one section', 'Close', {
-        duration: 2000,
-        horizontalPosition: 'center',
-        verticalPosition: 'top'
-      });
+      this.dashboard = this.dashboardOriginal;
       return;
     }
-  //this.dashboard.sectionIds = this.dashboard.sectionIds.filter(section => this.selectedSections.includes(section.name));
-    console.log('Applying section filters');
+  this.dashboard = {
+    ...this.dashboard,
+    sectionIds: this.dashboardOriginal.sectionIds.filter(
+      (section: Section) => this.selectedSections.includes(section.name)
+    )
+  };
     this.snackBar.open('Section filters applied', 'Close', {
       duration: 2000,
       horizontalPosition: 'center',
