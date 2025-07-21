@@ -257,7 +257,6 @@ export class BarChartWidgetOuvertComponent implements OnInit, OnDestroy {
           return match ? match.count : 0;
         })
       }));
-      console.log("Series Data:", this.series);
       this.createChart1();
     }
   }
@@ -310,6 +309,7 @@ export class BarChartWidgetOuvertComponent implements OnInit, OnDestroy {
   // 6. Create Y axis (value)
   this.yAxis = this.chart.yAxes.push(
     am5xy.ValueAxis.new(this.root, {
+      min: 0,  // Set minimum value to 0
       renderer: am5xy.AxisRendererY.new(this.root, {})
     })
   );

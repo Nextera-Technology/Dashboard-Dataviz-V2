@@ -117,13 +117,6 @@ getChildModel(childName: string): boolean {
       return;
     }
 
-    // Load filter data
-    // this.dashboardService.getFilters().subscribe(filters => {
-    //   this.filters = filters;
-    //   this.certifications = filters.certifications;
-    //   this.sections = filters.sections;
-    //   this.updateCounts();
-    // });
     this.loadDashboards();
   }
 
@@ -138,6 +131,11 @@ getChildModel(childName: string): boolean {
         this.dashboards = result?.data;
         if(result?.data[0] && result?.data[0]?.sectionIds) {
           this.sectionsList = result?.data[0].sectionIds || [];
+          
+          this.sectionsList.forEach(section => {
+            this.selectedSections.push(section.name);
+          });
+          this.updateSelectionCounts();
         }
       }
     } catch (error) {

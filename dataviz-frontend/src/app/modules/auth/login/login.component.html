@@ -1,0 +1,197 @@
+<div class="flex min-w-0 flex-auto flex-col items-center sm:flex-row sm:justify-center md:items-start md:justify-start">
+    <div
+        class="w-full px-4 py-8 sm:bg-card sm:w-auto sm:rounded-2xl sm:p-12 sm:shadow md:flex md:h-full md:w-1/2 md:items-center md:justify-end md:rounded-none md:p-16 md:shadow-none">
+        <div class="mx-auto w-full max-w-80 sm:mx-0 sm:w-80">
+            <div class="w-12">
+                <img src="	https://angular-material.fusetheme.com/images/logo/logo.svg" class="ng-tns-c2381817493-1">
+            </div>
+            <div class="mt-8 text-4xl font-extrabold leading-tight tracking-tight">
+                Sign In
+            </div>
+            <!-- <div class="mt-0.5 flex items-baseline font-medium">
+                <div class="">Don't have an account?</div>
+                <a class="ml-1 text-primary-500 hover:underline" href="/sign-up">Sign up </a>
+            </div> -->
+            <section class="mt-8 fuse-alert-appearance-outline fuse-alert-type-info">
+                <div class="fuse-alert-container ng-trigger ng-trigger-fadeIn" style="opacity: 1;"><!----><!---->
+                    <div class="fuse-alert-content ifss-box">
+                        <div class="fuse-alert-title"></div>
+                        <div class="fuse-alert-message ifuss-text"> You are browsing <strong
+                                class="ng-tns-c4114177555-2">Fuse
+                                Demo</strong>. Click on the "Sign in" button to access the Demo and Documentation.
+                        </div>
+                    </div>
+                    <button mat-icon-button=""
+                        class="fuse-alert-dismiss-button mdc-icon-button mat-mdc-icon-button mat-unthemed mat-mdc-button-base"
+                        mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple"
+                        mat-ripple-loader-centered="">
+                        <span class="mat-mdc-button-persistent-ripple mdc-icon-button__ripple"></span>
+
+                        <span class="mat-focus-indicator"></span>
+                        <span class="mat-mdc-button-touch-target"></span>
+                    </button>
+                </div><!---->
+            </section>
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit($event)" class="space-y-6 padding-bottom-8">
+                <!-- Email Field -->
+                <!-- Email Label -->
+
+                <div class="LoginFields">
+                    <label>Email address *</label>
+                    <input class="form-control login__input" type="text" placeholder="Enter Email"
+                        formControlName="email">
+                    <small *ngIf="loginForm.get('email')?.hasError('required')" class="text-red-500">
+                        Email is required
+                    </small>
+                    <small *ngIf="loginForm.get('email')?.hasError('email')" class="text-red-500">
+                        Please enter a valid email address
+                    </small>
+                </div>
+                <div class="LoginFields position-relative">
+                    <label>Password *</label>
+                    <input class="form-control login__input" type="password" placeholder="Password" required="true"
+                        [type]="showPassword ? 'text' : 'password'" formControlName="password">
+                    <button mat-icon-button type="button" (click)="togglePasswordVisibility()" matSuffix
+                        class="cursor-pointer mt-1 absolute-icon">
+                        <mat-icon>
+                            {{ showPassword ? "visibility_off" : "visibility" }}
+                        </mat-icon>
+                    </button>
+
+                    <small *ngIf="loginForm.get('password')?.hasError('required')" class="text-red-500">
+                        Password is required
+                    </small>
+                </div>
+
+
+                <!-- Error Message -->
+                <div *ngIf="errorMessage" class="p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <div class="flex items-center">
+                        <mat-icon class="text-red-500 mr-2">error</mat-icon>
+                        <span class="text-sm text-red-700">{{ errorMessage }}</span>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button mat-raised-button type="submit" [disabled]="loginForm.invalid || isLoading"
+                    class="w-full h-12 text-lg bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200 mb-8 flex items-center justify-center"
+                    style="background-color: #2563eb; color: #fff;">
+                    <div class="flex items-center justify-center">
+                        <mat-spinner style="color: #fff;" *ngIf="isLoading" diameter="20" class="mr-2"></mat-spinner>
+
+                        <span *ngIf="isLoading">Signing in...</span>
+                    </div>
+                    <span *ngIf="!isLoading">Sign in</span>
+                </button>
+            </form>
+        </div>
+
+    </div>
+    <div style="background: #000; height: 100vh;"
+        class="relative hidden h-full w-1/2 flex-auto items-center justify-center overflow-hidden bg-gray-800 p-16 dark:border-l md:flex lg:px-28">
+        <div class="relative z-10 w-full max-w-2xl">
+            <svg viewBox="0 0 960 540" width="100%" height="100%" preserveAspectRatio="xMidYMax slice"
+                xmlns="http://www.w3.org/2000/svg" class="absolute inset-0 pointer-events-none">
+                <g fill="none" stroke="currentColor" stroke-width="100" class="text-gray-700 opacity-25">
+                    <circle r="234" cx="196" cy="23" class="ng-tns-c2381817493-1"></circle>
+                    <circle r="234" cx="790" cy="491" class="ng-tns-c2381817493-1"></circle>
+                </g>
+            </svg>
+            <svg viewBox="0 0 220 192" width="220" height="192" fill="none"
+                class="absolute -top-16 -right-16 text-gray-700">
+                <defs>
+                    <pattern id="837c3e70-6c3a-44e6-8854-cc48c737b659" x="0" y="0" width="20" height="20"
+                        patternUnits="userSpaceOnUse">
+                        <rect x="0" y="0" width="4" height="4" fill="currentColor" class="ng-tns-c2381817493-1"></rect>
+                    </pattern>
+                </defs>
+                <rect width="220" height="192" fill="url(#837c3e70-6c3a-44e6-8854-cc48c737b659)"
+                    class="ng-tns-c2381817493-1"></rect>
+
+            </svg>
+            <div class="text-6xl font-bold leading-none text-gray-100">
+                <div>Welcome to</div>
+                <div>our community</div>
+            </div>
+            <div class="mt-6 text-lg leading-6 tracking-tight text-gray-400"> Fuse helps developers to build organized
+                and well coded dashboards full of beautiful and rich modules. Join us and start building your
+                application today. </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="false"
+    class="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-600 to-cyan-800 py-24 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <!-- Logo -->
+        <div class="text-center">
+            <img class="mx-auto h-32 w-auto"
+                src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/Nextera%20Logo%20Career%20Insight%20White%20text.png"
+                alt="Nextera Logo" />
+
+        </div>
+
+        <!-- Login Form -->
+        <mat-card class="bg-white shadow-xl rounded-lg p-4">
+            <mat-card-content class="p-20">
+                <div class="text-center mb-6">
+                    <h2 class="mt-6 text-3xl font-extrabold">
+                        Sign in to your account
+                    </h2>
+                    <p class="mt-2 text-sm ">Welcome to DataViz Dashboard</p>
+                </div>
+
+                <form [formGroup]="loginForm" (ngSubmit)="onSubmit($event)" class="space-y-6 padding-bottom-8">
+                    <!-- Email Field -->
+                    <mat-form-field class="w-full">
+                        <mat-label>Email address</mat-label>
+                        <input matInput type="email" required="true" formControlName="email"
+                            placeholder="Enter your email" autocomplete="email" [class.error]="hasError('email')" />
+                        <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+                            Email is required
+                        </mat-error>
+                        <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+                            Please enter a valid email address
+                        </mat-error>
+                    </mat-form-field>
+
+                    <!-- Password Field -->
+                    <mat-form-field class="w-full mb-4">
+                        <mat-label>Password</mat-label>
+                        <input matInput required="true" [type]="showPassword ? 'text' : 'password'"
+                            formControlName="password" placeholder="Enter your password" autocomplete="current-password"
+                            [class.error]="hasError('password')" />
+                        <button mat-icon-button type="button" (click)="togglePasswordVisibility()" matSuffix
+                            class="cursor-pointer mt-1">
+                            <mat-icon>
+                                {{ showPassword ? "visibility_off" : "visibility" }}
+                            </mat-icon>
+                        </button>
+                        <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                            Password is required
+                        </mat-error>
+                    </mat-form-field>
+
+                    <!-- Error Message -->
+                    <div *ngIf="errorMessage" class="p-3 bg-red-50 border border-red-200 rounded-lg">
+                        <div class="flex items-center">
+                            <mat-icon class="text-red-500 mr-2">error</mat-icon>
+                            <span class="text-sm text-red-700">{{ errorMessage }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button mat-raised-button type="submit" [disabled]="loginForm.invalid || isLoading"
+                        class="w-full h-12 text-lg bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200 mb-8 flex items-center justify-center"
+                        style="background-color: #2563eb; color: #fff;">
+                        <div class="flex items-center justify-center">
+                            <mat-spinner *ngIf="isLoading" diameter="20" class="mr-2"></mat-spinner>
+
+                            <span *ngIf="isLoading">Signing in...</span>
+                        </div>
+                        <span *ngIf="!isLoading">Sign in</span>
+                    </button>
+                </form>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

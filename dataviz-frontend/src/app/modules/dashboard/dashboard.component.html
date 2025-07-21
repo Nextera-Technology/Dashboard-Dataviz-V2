@@ -86,7 +86,7 @@
             </div>
             <div class="checkbox-list">
                 <div class="checkbox-item" *ngFor="let section of sectionsList; let i = index">
-                    <input type="checkbox" [id]="'section_' + section._id"
+                    <input type="checkbox" [id]="'section_' + section._id" [checked]="true"
                         (change)="onCheckboxChange(section.name, $event.target.checked)">
                     <label [for]="'section_' + section._id">{{ section.name }}</label>
                 </div>
