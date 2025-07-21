@@ -21,6 +21,9 @@ export interface Widget {
   visible: boolean;
   scope: string;
   data: any;
+  // Holds various runtime configuration for widget (dimensions, colours, etc.)
+  // Not all widgets use this, so keep it optional.
+  config?: any;
 }
 
 // Widget types found in static dashboard
@@ -48,6 +51,56 @@ export const CARD_SIZES = {
   MEDIUM: 'medium',
   LARGE: 'large'
 } as const;
+
+// New: Generic mapping for all widget types used across the application so that the same source of truth is reused everywhere
+// Using an object literal instead of an enum so that we can derive union string types automatically via `keyof`
+export const WidgetType = {
+  METRIC_CARD: 'metric',
+  PIE_CHART: 'pie',
+  RADIAL_BAR_CHART: 'radial_bar_chart',
+  ANIMATED_GAUGE: 'animated_gauge',
+  YES_NO_GAUGE: 'yes_no_gauge',
+
+  BAR_CHART: 'barchart',
+  LINE_CHART: 'linechart',
+  COLUMN_CHART: 'columnchart',
+  TRACEABLE_SANKEY_DIAGRAM: 'traceable_sankey_diagram',
+  MAP_CHART: 'mapchart',
+  DONUT_CHART: 'donut',
+  PICTORIAL_FRACTION_CHART: 'pictorial_fraction_chart',
+  HORIZONTAL_STACKED_CHART: 'horizontal_stacked_chart',
+  VERTICAL_STACKED_CHART: 'vertical_stacked_chart',
+  CLUSTERED_COLUMN_BAR: 'clustered_column_bar',
+
+  TABLE: 'table',
+  TEXT: 'text'
+} as const;
+
+// Derive a union type from the WidgetType constant for strong typing elsewhere
+export type WidgetType = typeof WidgetType[keyof typeof WidgetType];
+
+// ------------------------------------------------------------------------------------
+// Chart type mapping (used for chart widgets specifically). In many cases this overlaps
+// with WidgetType but having a separate constant helps when a widget can support
+// multiple chart flavours. Keep the naming consistent with backend values.
+export const ChartType = {
+  PIE_CHART_BROKEN_DOWN_SLICES: 'pie',
+  RADIAL_BAR_CHART: 'radial_bar_chart',
+  ANIMATED_GAUGE: 'animated_gauge',
+  YES_NO_GAUGE: 'yes_no_gauge',
+  BAR_CHART: 'barchart',
+  LINE_CHART: 'linechart',
+  COLUMN_CHART: 'columnchart',
+  TRACEABLE_SANKEY_DIAGRAM: 'traceable_sankey_diagram',
+  MAP_CHART: 'mapchart',
+  DONUT_CHART: 'donut',
+  PICTORIAL_FRACTION_CHART: 'pictorial_fraction_chart',
+  HORIZONTAL_STACKED_CHART: 'horizontal_stacked_chart',
+  VERTICAL_STACKED_CHART: 'vertical_stacked_chart',
+  CLUSTERED_COLUMN_BAR: 'clustered_column_bar'
+} as const;
+
+export type ChartType = typeof ChartType[keyof typeof ChartType];
 
 // Mock data for testing
 export const MOCK_DASHBOARD: Dashboard = {

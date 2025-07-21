@@ -58,11 +58,15 @@ export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
         // Enhanced unauthorized check:
         // Check if the error is specifically due to UNAUTHENTICATED or similar codes
         const code = extensions?.code;
-        // if (message?.includes('Unauthorized') || code === 'UNAUTHENTICATED') {
-        //     console.warn('Unauthorized access detected. Clearing token and reloading.');
-        //     localStorage.removeItem(TOKEN_KEY);
-        //     window.location.reload();
-        // }
+        if (message?.toLowerCase().includes('unauthorized') || code === 'UNAUTHENTICATED') {
+            console.warn('Unauthorized access detected. Clearing token and reloading.');
+            localStorage.removeItem(TOKEN_KEY);
+            // Also clear the stored user profile if it exists
+            localStorage.removeItem(environment?.userProfileKey ?? 'currentUser');
+            sessionStorage.clear();
+            // Force reload so the route guard (if any) can redirect to login page
+            window.location.reload();
+        }
       });
     }
     if (networkError) {

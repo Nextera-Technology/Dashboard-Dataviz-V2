@@ -1,10 +1,10 @@
-<div class="widget-config-dialog flex flex-col bg-white rounded-lg shadow-2xl border border-gray-300 overflow-y-auto">
-    <div class="header flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50">
-        <h2 class="text-xl font-semibold text-gray-800">
+<div class="widget-config-dialog flex flex-col bg-white rounded-2xl shadow-xl ring-1 ring-gray-200 overflow-y-auto">
+    <div class="header flex justify-between items-center px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-500 rounded-t-2xl text-white shadow-md">
+        <h2 class="text-xl font-semibold">
             {{ isEditMode ? 'Edit Widget' : 'Add New Widget' }}
         </h2>
         <button mat-icon-button (click)="onCancel()" aria-label="Close dialog">
-            <mat-icon class="text-gray-600 hover:text-gray-800">close</mat-icon>
+            <mat-icon class="text-white/80 hover:text-white">close</mat-icon>
         </button>
     </div>
 
@@ -161,7 +161,7 @@
             </div>
         </div>
 
-        <mat-dialog-actions align="end" class="px-6 py-4 flex gap-2 border-t border-gray-200 bg-gray-50">
+        <mat-dialog-actions align="end" class="px-6 py-4 flex gap-2 bg-white rounded-b-2xl">
             <button type="button" (click)="onCancel()"
                 class="px-6 py-2.5 text-gray-700 bg-white outline-none border border-gray-300 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500/15 transition-all duration-200 shadow-sm hover:shadow-md">
                 Cancel

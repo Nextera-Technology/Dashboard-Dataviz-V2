@@ -29,7 +29,20 @@ interface Widget {
 })
 export class SankeyChartWidgetComponent implements OnInit, OnDestroy {
   @Input() widget = null;
-  @Input() data: any[] | undefined;
+  @Input() data: any;
+
+  get totalData(): number {
+    if (!this.data || this.data.length === 0) {
+      return 0;
+    }
+    const first = this.data[0];
+    if (first && first.totalData !== undefined) {
+      return first.totalData;
+    }
+    return Array.isArray(this.data)
+      ? this.data.length
+      : 0;
+  }
 
   @ViewChild("chartContainer", { static: true }) chartContainer!: ElementRef;
 

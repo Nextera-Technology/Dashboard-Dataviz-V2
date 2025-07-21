@@ -26,6 +26,9 @@ declare var am5flow: any;
       class="chart-box"
       [style.background-color]="widget.data?.background || '#ffffff'"
     >
+      <!-- Total Data label -->
+      <div class="chart-legend">Total Data : {{ totalData }}</div>
+
       <!-- Action Buttons -->
       <div class="button-container">
         <button class="info-button primary" (click)="onActionClick('info')">
@@ -105,6 +108,21 @@ declare var am5flow: any;
         margin-bottom: 15px;
       }
 
+      .chart-legend {
+        position: absolute;
+        top: 10px;
+        left: 14px;
+        z-index: 2;
+        background: rgba(255, 255, 255, 0.85);
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #15616d;
+        pointer-events: none;
+        text-align: left;
+      }
+
       /* Manual Legend */
       .manual-legend {
         display: flex;
@@ -160,10 +178,13 @@ export class SankeyChartWidgetComponent implements OnInit, OnDestroy {
   @Input() data: any;
   @ViewChild("chartContainer", { static: true }) chartContainer!: ElementRef;
 
+  totalData: number = 0;
+
   private root: any;
   private chart: any;
 
   ngOnInit(): void {
+    this.calculateTotalData();
     if (this.widget.data) {
       this.createChart();
     }
@@ -250,5 +271,19 @@ export class SankeyChartWidgetComponent implements OnInit, OnDestroy {
       iconMap[iconName] ||
       `https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/${iconName}`
     );
+  }
+
+  private calculateTotalData(): void {
+    if (!this.widget?.data) {
+      this.totalData = 0;
+      return;
+    }
+
+    const arr = Array.isArray(this.widget.data) ? this.widget.data : [];
+    if (arr.length) {
+      this.totalData = arr[0]?.totalData ?? arr.length;
+      return;
+    }
+    this.totalData = this.widget.data.totalData ?? 0;
   }
 }

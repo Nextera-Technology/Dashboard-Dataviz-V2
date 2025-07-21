@@ -13,6 +13,8 @@ declare var am5xy: any;
   imports: [CommonModule, MatButtonModule, MatIconModule],
   template: `
     <div class="chart-box" [style.background-color]="widget.data?.background || '#ffffff'">
+      <!-- Total Data label -->
+      <div class="chart-legend">Total Data : {{ totalData }}</div>
       <!-- Action Buttons -->
       <div class="button-container">
         <button class="info-button primary" (click)="onActionClick('info')">
@@ -119,6 +121,21 @@ declare var am5xy: any;
       color: #333;
     }
 
+    .chart-legend {
+      position: absolute;
+      top: 10px;
+      left: 14px;
+      z-index: 2;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #15616d;
+      pointer-events: none;
+      text-align: left;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .chart-box {
@@ -145,6 +162,8 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
   @Input() data: any;
   @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef;
 
+  totalData: number = 0;
+
   private root: any;
   private chart: any;
   private xAxis: any;
@@ -152,6 +171,8 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
   private series: any[] = [];
 
   ngOnInit(): void {
+    this.calculateTotalData();
+
     if (this.widget.data?.series) {
       this.createChart();
     }
@@ -242,6 +263,39 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
       series.appear(1000, 100 * this.series.indexOf(series));
     });
     this.chart.appear(1000, 100);
+  }
+
+  private calculateTotalData(): void {
+    if (!this.widget?.data) {
+      this.totalData = 0;
+      return;
+    }
+
+    const dataObj = this.widget.data;
+
+    // Case 1: If data is array
+    if (Array.isArray(dataObj) && dataObj.length) {
+      this.totalData = dataObj[0]?.totalData ?? dataObj.length;
+      return;
+    }
+
+    // Case 2: If data contains series array
+    if (Array.isArray(dataObj.series) && dataObj.series.length) {
+      // Try to use totalData from first series item
+      if (dataObj.series[0]?.totalData !== undefined) {
+        this.totalData = dataObj.series[0].totalData;
+      } else {
+        // Fallback: sum available count/value fields
+        this.totalData = dataObj.series.reduce((sum: number, item: any) => {
+          const v = item.count ?? item.value ?? 0;
+          return sum + v;
+        }, 0);
+      }
+      return;
+    }
+
+    // Case 3: If totalData field exists directly
+    this.totalData = dataObj.totalData ?? 0;
   }
 
   onActionClick(action: string): void {

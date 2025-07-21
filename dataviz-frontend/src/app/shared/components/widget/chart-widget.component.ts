@@ -25,8 +25,8 @@ import { Widget, WidgetType, ChartType } from '../../models/widget.types';
       
       <div class="chart-content">
         <div class="chart-container" #chartContainer>
-          <!-- Pie Chart -->
-          <div *ngIf="widget.config.chartType === 'pie'" class="pie-chart">
+          <!-- Pie / Donut Chart -->
+          <div *ngIf="widget.config.chartType === 'pie' || widget.config.chartType === 'donut'" class="pie-chart">
             <svg viewBox="0 0 200 200" class="pie-svg">
               <g transform="translate(100, 100)">
                 <ng-container *ngFor="let slice of getPieSlices(); let i = index">

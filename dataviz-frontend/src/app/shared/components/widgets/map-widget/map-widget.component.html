@@ -1,17 +1,4 @@
-<div class="widget-container" [style.background-color]="widget.data?.background || '#ffffff'">
-    <!-- Action Buttons -->
-    <div class="button-container" *ngIf="widget.actions && widget.actions.length > 0">
-        <button *ngFor="let action of widget.actions" class="info-button" [class]="action.type" [title]="action.title"
-            (click)="onActionClick(action)">
-            <img [src]="getActionIcon(action.icon)" [alt]="action.title">
-        </button>
-    </div>
-
-    <!-- Widget Content -->
-    <div class="widget-header">
-        <h3>{{ widget.title }}</h3>
-    </div>
-    <div class="widget-content">
-        <div [id]="chartId" class="map-chart"></div>
-    </div>
+<div class="map-widget h-full w-full" [style.background-color]="widget?.background || '#ffffff'">
+    <div class="chart-legend">Total Data : {{ totalData }}</div>
+    <div [id]="'map-chart-div-' + widget._id" class="chart-container h-full w-full"></div>
 </div>
