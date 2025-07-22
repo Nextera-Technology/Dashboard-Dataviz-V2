@@ -75,7 +75,6 @@ export class BarChartWidgetComponent
         this.data = [...this.data].sort((a: any, b: any) => (b.count ?? 0) - (a.count ?? 0));
       }
     }
-    debugger;
     // Chart code goes in a timeout to make sure that the DOM is ready
     this.zone.runOutsideAngular(() => {
       if (!this.data || this.data.length === 0) {

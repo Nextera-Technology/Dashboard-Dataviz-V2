@@ -267,7 +267,9 @@ export class PieChartWidgetComponent implements OnInit, OnDestroy {
       maxWidth: 125, // Set maximum width for labels
       oversizedBehavior: "wrap", // Wrap long text
       paddingBottom: 15,
-      paddingRight: 10
+      paddingRight: 10,
+      forceHidden: false, // allow hiding if overlap
+      radius: 20 // or experiment with am5.percent(80)
     });
 
     // Configure series appearance
