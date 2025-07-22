@@ -50,6 +50,8 @@ export class LoginComponent implements OnInit {
       email: ["", [Validators.required, Validators.email]],
       password: ["", [Validators.required]],
     });
+
+    this.loginForm.markAsUntouched();
   }
 
   ngOnInit(): void {
@@ -57,6 +59,8 @@ export class LoginComponent implements OnInit {
     if (this.authService.isAuthenticated()) {
       this.router.navigate(["/dashboard"]);
     }
+
+    this.loginForm.markAsUntouched();
 
     // Clear error message when form changes
     this.loginForm.valueChanges.subscribe(() => {
