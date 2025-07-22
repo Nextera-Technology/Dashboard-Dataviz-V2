@@ -98,7 +98,6 @@ declare var am5xy: any;
       }
 
       .chart-container {
-        height: 100%;
         width: 100%;
         margin-bottom: 15px;
       }
@@ -224,7 +223,7 @@ export class BarChartWidgetContratComponent implements OnInit, OnDestroy {
   }
 
   createChart(): void {
-    const originalData = [...this.data];
+    const originalData = [...this.data].reverse();
 
     // Step 1: Extract all unique job titles
     const jobTitles = Array.from(new Set(originalData.map(d => d.name)));

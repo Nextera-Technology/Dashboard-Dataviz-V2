@@ -115,31 +115,31 @@ import { BarChartWidgetOuvertComponent } from "app/modules/dashboard/charts/bar-
                     </div>
                     <div class="status-row">
                       <div class="status-category">A un emploi</div>
-                      <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">{{getDataForWave("En recherche d'emploi", 1)}}</div>
-                      <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">{{getDataForWave("En recherche d'emploi", 2)}}</div>
-                      <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">{{getDataForWave("En recherche d'emploi", 3)}}</div>
-                      <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">{{getDataForWave("En recherche d'emploi", 4)}}</div>
+                      <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">{{getDataForWave("En activité professionnelle", 1)}}</div>
+                      <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">{{getDataForWave("En activité professionnelle", 2)}}</div>
+                      <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">{{getDataForWave("En activité professionnelle", 3)}}</div>
+                      <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">{{getDataForWave("En activité professionnelle", 4)}}</div>
                     </div>
                     <div class="status-row">
                       <div class="status-category">Recherche</div>
-                      <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">{{getDataForWave("Recherche", 1)}}</div>
-                      <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">{{getDataForWave("Recherche", 2)}}</div>
-                      <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">{{getDataForWave("Recherche", 3)}}</div>
-                      <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">{{getDataForWave("Recherche", 4)}}</div>
+                      <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">{{getDataForWave("En recherche d'emploi", 1)}}</div>
+                      <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">{{getDataForWave("En recherche d'emploi", 2)}}</div>
+                      <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">{{getDataForWave("En recherche d'emploi", 3)}}</div>
+                      <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">{{getDataForWave("En recherche d'emploi", 4)}}</div>
                     </div>
                     <div class="status-row">
                       <div class="status-category">Poursuit des études</div>
-                      <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">{{getDataForWave("Poursuit des études", 1)}}</div>
-                      <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">{{getDataForWave("Poursuit des études", 2)}}</div>
-                      <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">{{getDataForWave("Poursuit des études", 3)}}</div>
-                      <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">{{getDataForWave("Poursuit des études", 4)}}</div>
+                      <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">{{getDataForWave("En poursuite d'études (formation initiale ou alternance)", 1)}}</div>
+                      <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">{{getDataForWave("En poursuite d'études (formation initiale ou alternance)", 2)}}</div>
+                      <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">{{getDataForWave("En poursuite d'études (formation initiale ou alternance)", 3)}}</div>
+                      <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">{{getDataForWave("En poursuite d'études (formation initiale ou alternance)", 4)}}</div>
                     </div>
                     <div class="status-row">
                       <div class="status-category">Inactif</div>
-                      <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">{{getDataForWave("Inactif", 1)}}</div>
-                      <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">{{getDataForWave("Inactif", 2)}}</div>
-                      <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">{{getDataForWave("Inactif", 3)}}</div>
-                      <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">{{getDataForWave("Inactif", 4)}}</div>
+                      <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">{{getDataForWave("Inactif (ex : congés maternité, maladie longue, sabbatique, césure...)", 1)}}</div>
+                      <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">{{getDataForWave("Inactif (ex : congés maternité, maladie longue, sabbatique, césure...)", 2)}}</div>
+                      <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">{{getDataForWave("Inactif (ex : congés maternité, maladie longue, sabbatique, césure...)", 3)}}</div>
+                      <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">{{getDataForWave("Inactif (ex : congés maternité, maladie longue, sabbatique, césure...)", 4)}}</div>
                     </div>
                     <div class="status-row">
                       <div class="status-category">Non répondant</div>
