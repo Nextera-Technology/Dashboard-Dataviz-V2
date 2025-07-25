@@ -198,10 +198,12 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
           });
         });
 
+      if(this.dashboard.sectionIds.length > 0) {
         this.widgetSectionList = [
           ...this.dashboard?.sectionIds?.[0]?.widgetIds,
         ];
         console.log("Loaded dashboard:", this.dashboard);
+      }
       } else {
         this.snackBar.open("Dashboard not found.", "Close", { duration: 3000 });
         this.router.navigate(["/admin/dashboard-list"]);
