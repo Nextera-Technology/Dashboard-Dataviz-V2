@@ -203,6 +203,18 @@
           </div>
         </div>
 
+        <div class="action-buttons relative p-6 pt-0">
+          <div class="flex space-x-3">
+         <button 
+            (click)="manageDashboard(dashboard, $event)"
+            class="flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500 text-white font-semibold hover:from-gray-500 hover:to-gray-700 transform hover:scale-105 transition ease-in-out duration-300 shadow-md hover:shadow-md"
+          >
+            <div class="flex items-center justify-center space-x-2">
+            <span>Manage</span>
+            </div>
+          </button>
+            </div>
+        </div>
         <!-- Modern Action Buttons -->
         <div class="action-buttons relative p-6 pt-0">
           <div class="flex space-x-3">
@@ -215,7 +227,6 @@
                 <span>View</span>
               </div>
             </button>
-            
             <button 
               (click)="editDashboard(dashboard, $event)"
               class="flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r from-slate-500 to-slate-600 text-white font-semibold hover:from-slate-600 hover:to-slate-700 transform hover:scale-105 transition ease-in-out duration-300 shadow-md hover:shadow-md"

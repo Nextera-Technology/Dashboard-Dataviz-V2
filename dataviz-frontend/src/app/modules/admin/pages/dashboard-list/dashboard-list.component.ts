@@ -271,6 +271,20 @@ export class DashboardListComponent implements OnInit {
     }
   }
 
+   manageDashboard(dashboard: Dashboard): void {
+    // Add smooth transition effect
+    const element = event?.target as HTMLElement;
+    if (element) {
+      element.style.transform = 'scale(0.95)';
+      element.style.transition = 'transform 0.1s ease';
+      setTimeout(() => {
+          this.router.navigate(["/admin/dashboard-builder", dashboard._id]);
+      }, 100);
+    } else {
+      this.router.navigate(["/admin/dashboard-builder", dashboard._id]);
+    }
+  }
+
   createNewDashboard(): void {
     const dialogRef = this.dialog.open<
       DashboardFormDialogComponent,
