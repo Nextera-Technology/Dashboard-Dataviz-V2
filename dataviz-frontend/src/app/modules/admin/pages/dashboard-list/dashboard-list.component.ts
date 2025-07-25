@@ -171,6 +171,7 @@ import {
   DashboardFormDialogComponent,
   DashboardFormDialogData,
 } from "../../components/dashboard-form-dialog/dashboard-form-dialog.component";
+import { ShareDataService } from "app/shared/services/share-data.service";
 
 // UPDATED: Dashboard interface to reflect the new 'sources' array structure
 interface Section {
@@ -216,7 +217,8 @@ export class DashboardListComponent implements OnInit {
   constructor(
     private dashboardService: DashboardBuilderService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private shareDataService: ShareDataService
   ) {}
 
   ngOnInit(): void {
@@ -260,9 +262,9 @@ export class DashboardListComponent implements OnInit {
     if (element) {
       element.style.transform = 'scale(0.95)';
       element.style.transition = 'transform 0.1s ease';
-      
       setTimeout(() => {
-        this.router.navigate(["/admin/dashboard-builder", dashboard._id]);
+        this.shareDataService.setDashboardId(dashboard._id || '');
+        this.router.navigate(['/dashboard']);
       }, 100);
     } else {
       this.router.navigate(["/admin/dashboard-builder", dashboard._id]);

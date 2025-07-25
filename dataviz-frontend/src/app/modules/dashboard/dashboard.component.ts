@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,6 +16,7 @@ import { AuthService, User } from '../../core/auth/auth.service';
 import { DashboardService, DashboardData, FilterData, CertificationFilter, SectionFilter, Section } from '../../shared/services/dashboard.service';
 import { SectionComponent } from '../../shared/components/sections/section.component';
 import { DashboardBuilderService } from '../admin/pages/dashboard-builder/dashboard-builder.service';
+import { ShareDataService } from 'app/shared/services/share-data.service';
 
 declare var am5: any;
 declare var am5xy: any;
@@ -54,10 +55,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   dashboard = null;
   dashboardOriginal = null;
   filters: FilterData | null = null;
-  dashboards = [];
+  // dashboards = [];
   certificationSearch: string = '';
   selectedCertificationsCount: number = 0;
   selectedSectionsCount: number = 0;
+  dashboardId: string | null = null;
 
   // Filter data
   certifications: CertificationFilter[] = [];
@@ -107,11 +109,16 @@ getChildModel(childName: string): boolean {
     private authService: AuthService,
     private dashboardService: DashboardBuilderService,
     private router: Router,
-    private snackBar: MatSnackBar
-  ) {}
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar,
+    private shareDataService: ShareDataService
+  ) {
+    
+  }
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
+    this.dashboardId = this.shareDataService.getDashboardId();
     if (!this.currentUser) {
       this.router.navigate(['/auth/login']);
       return;
@@ -123,15 +130,13 @@ getChildModel(childName: string): boolean {
   async loadDashboards() {
     try {
       const filter = {};
-      const result =
-        await this.dashboardService.getAllDashboards(filter);
-      if (result?.data) {
-        this.dashboard = result?.data[0];
-        this.dashboardOriginal = result?.data[0];
-        this.dashboards = result?.data;
-        if(result?.data[0] && result?.data[0]?.sectionIds) {
-          this.sectionsList = result?.data[0].sectionIds || [];
-          
+      const result = await this.dashboardService.getOneDashboard(this.dashboardId);
+      if (result) {
+        this.dashboardOriginal = result;
+        console.log("Loaded dashboard:", this.dashboardOriginal);
+        this.dashboard = { ...this.dashboardOriginal };
+        if(this.dashboardOriginal && this.dashboardOriginal.sectionIds) {
+          this.sectionsList = this.dashboardOriginal.sectionIds || [];
           this.sectionsList.forEach(section => {
             this.selectedSections.push(section.name);
           });

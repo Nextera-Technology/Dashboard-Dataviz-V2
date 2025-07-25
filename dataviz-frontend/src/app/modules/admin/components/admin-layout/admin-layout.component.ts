@@ -61,12 +61,12 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
         </div>
 
         <!-- Back to Dashboard -->
-        <div class="back-to-dashboard">
+        <!-- <div class="back-to-dashboard">
           <a routerLink="/dashboard" class="back-link">
             <mat-icon>arrow_back</mat-icon>
             <span>View Dashboard</span>
           </a>
-        </div>
+        </div> -->
       </aside>
 
       <!-- Main Content -->
