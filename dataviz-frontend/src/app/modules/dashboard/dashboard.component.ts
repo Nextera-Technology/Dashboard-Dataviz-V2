@@ -113,7 +113,7 @@ getChildModel(childName: string): boolean {
     private snackBar: MatSnackBar,
     private shareDataService: ShareDataService
   ) {
-    
+    shareDataService.setIsDashboard(true);
   }
 
   ngOnInit(): void {
@@ -133,7 +133,6 @@ getChildModel(childName: string): boolean {
       const result = await this.dashboardService.getOneDashboard(this.dashboardId);
       if (result) {
         this.dashboardOriginal = result;
-        console.log("Loaded dashboard:", this.dashboardOriginal);
         this.dashboard = { ...this.dashboardOriginal };
         if(this.dashboardOriginal && this.dashboardOriginal.sectionIds) {
           this.sectionsList = this.dashboardOriginal.sectionIds || [];

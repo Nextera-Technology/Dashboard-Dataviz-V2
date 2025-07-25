@@ -27,19 +27,18 @@
 
         <div class="builder-content flex-1 overflow-hidden">
             <!-- Custom draggable tab headers -->
-            <div class="custom-tab-header flex border-b border-gray-200 bg-white" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="onSectionDrop($event)">
-                <div *ngFor="let section of dashboard?.sectionIds; trackBy: trackById; let i = index" 
-                     cdkDrag 
-                     class="custom-tab-item px-4 py-3"
-                     [class.active-tab]="selectedTabIndex === i"
-                     (click)="selectedTabIndex = i; onTabChange(i)">
+            <div class="custom-tab-header flex border-b border-gray-200 bg-white" cdkDropList
+                cdkDropListOrientation="horizontal" (cdkDropListDropped)="onSectionDrop($event)">
+                <div *ngFor="let section of dashboard?.sectionIds; trackBy: trackById; let i = index" cdkDrag
+                    class="custom-tab-item px-4 py-3" [class.active-tab]="selectedTabIndex === i"
+                    (click)="selectedTabIndex = i; onTabChange(i)">
                     <div class="flex items-center gap-2">
                         <mat-icon cdkDragHandle>drag_indicator</mat-icon>
                         <span>{{ section.title }}</span>
                     </div>
                 </div>
-                <div *ngIf="!dashboard?.sectionIds || dashboard?.sectionIds.length === 0" 
-                     class="custom-tab-item px-4 py-3 active-tab">
+                <div *ngIf="!dashboard?.sectionIds || dashboard?.sectionIds.length === 0"
+                    class="custom-tab-item px-4 py-3 active-tab">
                     <span>No Sections</span>
                 </div>
             </div>
@@ -47,8 +46,10 @@
             <!-- Tab content -->
             <div class="tab-content flex-1 overflow-auto">
                 <ng-container *ngIf="dashboard?.sectionIds && dashboard?.sectionIds.length > 0">
-                    <div *ngFor="let section of dashboard?.sectionIds; let i = index" [hidden]="selectedTabIndex !== i" class="h-full">
-                        <div class="section-header flex justify-between items-center py-4 px-6 bg-white border-b border-gray-200 shadow-sm">
+                    <div *ngFor="let section of dashboard?.sectionIds; let i = index" [hidden]="selectedTabIndex !== i"
+                        class="h-full">
+                        <div
+                            class="section-header flex justify-between items-center py-4 px-6 bg-white border-b border-gray-200 shadow-sm">
                             <div class="section-info">
                                 <h3 class="text-xl font-semibold text-gray-800">
                                     {{ section.title }}
@@ -79,10 +80,8 @@
                                 [class.col-span-1]="widget.columnSize === 1"
                                 [class.col-span-2]="widget.columnSize === 2"
                                 [class.col-span-3]="widget.columnSize === 3"
-                                [class.col-span-4]="widget.columnSize === 4"
-                                [class.row-span-1]="widget.rowSize === 1"
-                                [class.row-span-2]="widget.rowSize === 2"
-                                [class.row-span-3]="widget.rowSize === 3"
+                                [class.col-span-4]="widget.columnSize === 4" [class.row-span-1]="widget.rowSize === 1"
+                                [class.row-span-2]="widget.rowSize === 2" [class.row-span-3]="widget.rowSize === 3"
                                 [class.row-span-4]="widget.rowSize === 4" #widgetCard>
                                 <ng-template cdkDragPreview>
                                     <div
@@ -124,34 +123,41 @@
                                                 [data]="widget.data"></app-metric-widget>
                                             <app-bar-chart-widget *ngSwitchCase="'CLUSTERED_BAR_CHART'"
                                                 [widget]="widget" [data]="widget.data"></app-bar-chart-widget>
-                                            <app-bar-chart-widget *ngSwitchCase="'SORTED_BAR_CHART'" [widget]="widget" [data]="widget.data"></app-bar-chart-widget>
-                                            <app-bar-chart-widget *ngSwitchCase="'SortedBarChart'" [widget]="widget" [data]="widget.data"></app-bar-chart-widget>
-                                            <app-bar-chart-widget *ngSwitchCase="'sorted_bar_chart'" [widget]="widget" [data]="widget.data"></app-bar-chart-widget>
+                                            <app-bar-chart-widget *ngSwitchCase="'SORTED_BAR_CHART'" [widget]="widget"
+                                                [data]="widget.data"></app-bar-chart-widget>
+                                            <app-bar-chart-widget *ngSwitchCase="'SortedBarChart'" [widget]="widget"
+                                                [data]="widget.data"></app-bar-chart-widget>
+                                            <app-bar-chart-widget *ngSwitchCase="'sorted_bar_chart'" [widget]="widget"
+                                                [data]="widget.data"></app-bar-chart-widget>
                                             <app-column-chart-widget *ngSwitchCase="'ColumnChart'" [widget]="widget"
                                                 [data]="widget.data"></app-column-chart-widget>
                                             <app-line-chart-widget *ngSwitchCase="'LINE_CHART_WITH_DATA_LABELS'"
                                                 [widget]="widget" [data]="widget.data"></app-line-chart-widget>
                                             <app-pie-chart-widget *ngSwitchCase="'PIE_CHART_BROKEN_DOWN_SLICES'"
                                                 [widget]="widget" [data]="widget.data"></app-pie-chart-widget>
-                                            <app-pie-chart-widget *ngSwitchCase="'PieChart'"
-                                                [widget]="widget" [data]="widget.data"></app-pie-chart-widget>
-                                            <app-donut-chart-widget *ngSwitchCase="'donut'" [widget]="widget" [data]="widget.data"></app-donut-chart-widget>
-                                            <app-donut-chart-widget *ngSwitchCase="'Donut'" [widget]="widget" [data]="widget.data"></app-donut-chart-widget>
-                                            <app-donut-chart-widget *ngSwitchCase="'DONUT'" [widget]="widget" [data]="widget.data"></app-donut-chart-widget>
-                                            <app-donut-chart-widget *ngSwitchCase="'donut_chart'" [widget]="widget" [data]="widget.data"></app-donut-chart-widget>
-                                            <app-pie-chart-widget *ngSwitchCase="'SlicedChart'"
-                                                [widget]="widget" [data]="widget.data"></app-pie-chart-widget>
+                                            <app-pie-chart-widget *ngSwitchCase="'PieChart'" [widget]="widget"
+                                                [data]="widget.data"></app-pie-chart-widget>
+                                            <app-donut-chart-widget *ngSwitchCase="'donut'" [widget]="widget"
+                                                [data]="widget.data"></app-donut-chart-widget>
+                                            <app-donut-chart-widget *ngSwitchCase="'Donut'" [widget]="widget"
+                                                [data]="widget.data"></app-donut-chart-widget>
+                                            <app-donut-chart-widget *ngSwitchCase="'DONUT'" [widget]="widget"
+                                                [data]="widget.data"></app-donut-chart-widget>
+                                            <app-donut-chart-widget *ngSwitchCase="'donut_chart'" [widget]="widget"
+                                                [data]="widget.data"></app-donut-chart-widget>
+                                            <app-pie-chart-widget *ngSwitchCase="'SlicedChart'" [widget]="widget"
+                                                [data]="widget.data"></app-pie-chart-widget>
 
-                                            <app-line-chart-widget *ngSwitchCase="'LineChart'"
-                                                [widget]="widget" [data]="widget.data"></app-line-chart-widget>
+                                            <app-line-chart-widget *ngSwitchCase="'LineChart'" [widget]="widget"
+                                                [data]="widget.data"></app-line-chart-widget>
 
                                             <app-column-chart-widget *ngSwitchCase="'HorizontalStackedChart'"
                                                 [widget]="widget" [data]="widget.data"></app-column-chart-widget>
                                             <app-column-chart-widget *ngSwitchCase="'VerticalStackedChart'"
                                                 [widget]="widget" [data]="widget.data"></app-column-chart-widget>
 
-                                            <app-sankey-chart-widget *ngSwitchCase="'TraceableSankee'"
-                                                [widget]="widget" [data]="widget.data"></app-sankey-chart-widget>
+                                            <app-sankey-chart-widget *ngSwitchCase="'TraceableSankee'" [widget]="widget"
+                                                [data]="widget.data"></app-sankey-chart-widget>
 
                                             <app-map-widget *ngSwitchCase="'MapChart'" [widget]="widget"
                                                 [data]="widget.data"></app-map-widget>
@@ -163,23 +169,40 @@
                                                 [widget]="widget" [data]="widget.data"></app-pictorial-fraction-chart>
                                             <app-status-grid-widget *ngSwitchCase="'StatusGrid'" [widget]="widget"
                                                 [data]="widget.data"></app-status-grid-widget>
-                                            <app-map-widget *ngSwitchCase="'DRILL_DOWN_MAP'" [widget]="widget"
-                                                [data]="widget.data"></app-map-widget>
-                                            <app-radar-chart-widget *ngSwitchCase="'RadialBarChart'" [widget]="widget" [data]="widget.data"></app-radar-chart-widget>
-                                            <app-radar-chart-widget *ngSwitchCase="'RadarChart'" [widget]="widget" [data]="widget.data"></app-radar-chart-widget>
-                                            <app-radar-chart-widget *ngSwitchCase="'radialbarchart'" [widget]="widget" [data]="widget.data"></app-radar-chart-widget>
-                                            <app-radar-chart-widget *ngSwitchCase="'radialbarchart'" [widget]="widget" [data]="widget.data"></app-radar-chart-widget>
-                                            <app-radar-chart-widget *ngSwitchCase="'radarchart'" [widget]="widget" [data]="widget.data"></app-radar-chart-widget>
-                                            <app-radar-chart-widget *ngSwitchCase="'RADAR_CHART'" [widget]="widget" [data]="widget.data"></app-radar-chart-widget>
-                                            <app-radar-chart-widget *ngSwitchCase="'radar_chart'" [widget]="widget" [data]="widget.data"></app-radar-chart-widget>
-                                            <app-radar-chart-widget *ngSwitchCase="'RADIAL_BAR_CHART'" [widget]="widget" [data]="widget.data"></app-radar-chart-widget>
-                                            <app-radar-chart-widget *ngSwitchCase="'radial_bar_chart'" [widget]="widget" [data]="widget.data"></app-radar-chart-widget>
-                                            <app-animated-gauge-widget *ngSwitchCase="'ANIMATED_GAUGE'" [widget]="widget" [data]="widget.data"></app-animated-gauge-widget>
-                                            <app-animated-gauge-widget *ngSwitchCase="'animated_gauge'" [widget]="widget" [data]="widget.data"></app-animated-gauge-widget>
-                                            <app-animated-gauge-widget *ngSwitchCase="'AnimatedGauge'" [widget]="widget" [data]="widget.data"></app-animated-gauge-widget>
-                                            <app-yes-no-gauge-widget *ngSwitchCase="'YES_NO_GAUGE'" [widget]="widget" [data]="widget.data"></app-yes-no-gauge-widget>
-                                            <app-yes-no-gauge-widget *ngSwitchCase="'yes_no_gauge'" [widget]="widget" [data]="widget.data"></app-yes-no-gauge-widget>
-                                            <app-yes-no-gauge-widget *ngSwitchCase="'YesNoGauge'" [widget]="widget" [data]="widget.data"></app-yes-no-gauge-widget>
+                                            <app-world-map-widget *ngSwitchCase="'DRILL_DOWN_MAP'" [widget]="widget"
+                                                [data]="widget.data"></app-world-map-widget>
+                                            <app-radar-chart-widget *ngSwitchCase="'RadialBarChart'" [widget]="widget"
+                                                [data]="widget.data"></app-radar-chart-widget>
+                                            <app-radar-chart-widget *ngSwitchCase="'RadarChart'" [widget]="widget"
+                                                [data]="widget.data"></app-radar-chart-widget>
+                                            <app-radar-chart-widget *ngSwitchCase="'radialbarchart'" [widget]="widget"
+                                                [data]="widget.data"></app-radar-chart-widget>
+                                            <app-radar-chart-widget *ngSwitchCase="'radialbarchart'" [widget]="widget"
+                                                [data]="widget.data"></app-radar-chart-widget>
+                                            <app-radar-chart-widget *ngSwitchCase="'radarchart'" [widget]="widget"
+                                                [data]="widget.data"></app-radar-chart-widget>
+                                            <app-radar-chart-widget *ngSwitchCase="'RADAR_CHART'" [widget]="widget"
+                                                [data]="widget.data"></app-radar-chart-widget>
+                                            <app-radar-chart-widget *ngSwitchCase="'radar_chart'" [widget]="widget"
+                                                [data]="widget.data"></app-radar-chart-widget>
+                                            <app-radar-chart-widget *ngSwitchCase="'RADIAL_BAR_CHART'" [widget]="widget"
+                                                [data]="widget.data"></app-radar-chart-widget>
+                                            <app-radar-chart-widget *ngSwitchCase="'radial_bar_chart'" [widget]="widget"
+                                                [data]="widget.data"></app-radar-chart-widget>
+                                            <app-animated-gauge-widget *ngSwitchCase="'ANIMATED_GAUGE'"
+                                                [widget]="widget" [data]="widget.data"></app-animated-gauge-widget>
+                                            <app-animated-gauge-widget *ngSwitchCase="'animated_gauge'"
+                                                [widget]="widget" [data]="widget.data"></app-animated-gauge-widget>
+                                            <app-animated-gauge-widget *ngSwitchCase="'AnimatedGauge'" [widget]="widget"
+                                                [data]="widget.data"></app-animated-gauge-widget>
+                                            <app-yes-no-gauge-widget *ngSwitchCase="'YES_NO_GAUGE'" [widget]="widget"
+                                                [data]="widget.data"></app-yes-no-gauge-widget>
+                                            <app-yes-no-gauge-widget *ngSwitchCase="'yes_no_gauge'" [widget]="widget"
+                                                [data]="widget.data"></app-yes-no-gauge-widget>
+                                            <app-yes-no-gauge-widget *ngSwitchCase="'YesNoGauge'" [widget]="widget"
+                                                [data]="widget.data"></app-yes-no-gauge-widget>
+                                            <app-sankey-chart-widget *ngSwitchCase="'TRACEABLE_SANKEY_DIAGRAM'" [widget]="widget"
+                                                [data]="widget.data"></app-sankey-chart-widget>
                                             <div *ngSwitchDefault
                                                 class="flex flex-col items-center justify-center h-full text-gray-500 bg-gray-50 p-4 rounded-lg">
                                                 <mat-icon class="text-6xl text-gray-400"
@@ -221,7 +244,8 @@
                     </div>
                 </ng-container>
 
-                <div *ngIf="!dashboard?.sectionIds || dashboard?.sectionIds.length === 0" class="flex flex-col items-center justify-center h-full p-8 text-gray-600">
+                <div *ngIf="!dashboard?.sectionIds || dashboard?.sectionIds.length === 0"
+                    class="flex flex-col items-center justify-center h-full p-8 text-gray-600">
                     <mat-icon class="text-6xl text-gray-400 mb-4" svgIcon="mat_solid:tab_unselected"></mat-icon>
                     <p class="text-lg font-medium mb-2">No sections added yet!</p>
                     <p class="text-center mb-6">Start building your dashboard by adding a new section.</p>

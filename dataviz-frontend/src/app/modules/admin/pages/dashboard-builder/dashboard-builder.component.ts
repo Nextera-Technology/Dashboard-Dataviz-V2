@@ -30,7 +30,6 @@ import {
 import { SectionFormDialogComponent } from "../../components/section-form-dialog/section-form-dialog.component";
 import { DashboardBuilderService } from "./dashboard-builder.service";
 import { MetricWidgetComponent } from "app/shared/components/widgets/metric-widget/metric-widget.component";
-import { BarChartWidgetComponent } from "app/shared/components/widgets/bar-chart-widget/bar-chart-widget.component";
 import { ColumnChartWidgetComponent } from "app/shared/components/widgets/column-chart-widget/column-chart-widget.component";
 import { LineChartWidgetComponent } from "app/shared/components/widgets/line-chart-widget/line-chart-widget.component";
 import { PieChartWidgetComponent } from "app/shared/components/widgets/pie-chart-widget/pie-chart-widget.component";
@@ -45,6 +44,8 @@ import { RadarChartWidgetComponent } from "app/shared/components/widgets/radar-c
 import { DonutChartWidgetComponent } from "app/shared/components/widgets/donut-chart-widget/donut-chart-widget.component";
 import { AnimatedGaugeWidgetComponent } from "app/shared/components/widgets/animated-gauge-widget/animated-gauge-widget.component";
 import { YesNoGaugeWidgetComponent } from "app/shared/components/widgets/yes-no-gauge-widget/yes-no-gauge-widget.component";
+import { BarChartWidgetComponent } from "app/modules/dashboard/charts/bar-chart-widget.component";
+import { ShareDataService } from "app/shared/services/share-data.service";
 
 // Define interfaces for better type safety based on your GraphQL queries
 interface WidgetData {
@@ -141,8 +142,11 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
     private router: Router,
     private dashboardService: DashboardBuilderService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
-  ) {}
+    private snackBar: MatSnackBar,
+    private shareDataService: ShareDataService  
+  ) {
+     shareDataService.setIsDashboard(false);
+  }
 
   ngOnInit(): void {
     const dashboardId = this.route.snapshot.paramMap.get("id");

@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 export class ShareDataService {
 
   private dashboardId: string | null = null;
+  private isDashboard: boolean = false; 
   constructor() { }
 
   setDashboardId(id: string) {
@@ -14,5 +15,12 @@ export class ShareDataService {
 
   getDashboardId(): string | null {
     return this.dashboardId;
+  }
+
+  setIsDashboard(isDashboard: boolean) {
+    this.isDashboard = isDashboard;
+  }
+  getIsDashboard(): boolean {
+    return this.isDashboard;
   }
 }

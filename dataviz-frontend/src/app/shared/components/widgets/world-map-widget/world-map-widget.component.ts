@@ -55,40 +55,6 @@ export class WorldMapWidgetComponent
     "FR-PAC": "Provence-Alpes-Côte d'Azur",
     "FR-COR": "Corse",
   };
-
-  // // Dummy data as provided by the user
-  // private studentsData = {
-  //   "FR-PAC": 66,
-  //   "FR-OCC": 41,
-  //   "FR-GES": 34,
-  //   "FR-IDF": 34,
-  //   "FR-NOR": 33,
-  //   "FR-ARA": 31,
-  //   "FR-HDF": 30,
-  //   "FR-NAQ": 22,
-  //   "FR-PDL": 14,
-  //   "FR-BRE": 12,
-  //   "FR-BFC": 1,
-  //   "FR-CVL": 0,
-  //   "FR-COR": 0,
-  // };
-
-  // private salaryData = {
-  //   "FR-IDF": "3,100 €",
-  //   "FR-PAC": "2,700 €",
-  //   "FR-ARA": "2,600 €",
-  //   "FR-NAQ": "2,500 €",
-  //   "FR-GES": "2,500 €",
-  //   "FR-OCC": "2,400 €",
-  //   "FR-BFC": "2,400 €",
-  //   "FR-PDL": "2,300 €",
-  //   "FR-HDF": "2,240 €",
-  //   "FR-BRE": "2,200 €",
-  //   "FR-NOR": "2,200 €",
-  //   "FR-COR": "Données non disponibles",
-  //   "FR-CVL": "Données non disponibles",
-  // };
-
   // gradient based on bigger smaller size
   private manualColorMap = {
         "FR-PAC": am5.color(0x002F6C), // very dark blue (70)
@@ -137,10 +103,17 @@ export class WorldMapWidgetComponent
   ngOnInit(): void {
     console.log(`[FranceRegionalMapsComponent] ngOnInit fired.`);
     console.log("Widget Data:", this.widget);
-    if (this.widget?.name === 'Étudiants par région') {
+    if (this.widget?.widgetSubType === 'STUDENT_REGION_DISTRIBUTION') {
       this.createStudentData();
-    }else if (this.widget?.name === 'Salaire moyen par région (€)') {
+    }else if (this.widget?.widgetSubType === 'REGION_SALARY_AVERAGE') {
       this.createSalaryData();
+    }else{
+      this._generateCustomLegend(
+        this.studentsLegendId,
+        this.studentsData,
+        this.manualColorMap,
+        (code, value) => `${this.regionNames[code] || code}: ${value}`
+      );
     }
   }
 

@@ -201,30 +201,6 @@ export class BarChartWidgetTopComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.calculateTotalData();
     if (this.widget.data) {
-      this.waveLabelMap = {
-        1: 'EE1',
-        2: 'EE2',
-        3: 'EE3',
-        4: 'EE4',
-      };
-
-      this.waves = Object.keys(this.waveLabelMap).map(Number);
-
-      // Get unique job names
-      this.jobTitles = Array.from(new Set(this.data.map(d => d.name)));
-
-      // For each wave, build a series (bar values are per job name)
-      this.series = this.waves.map(waveNum => ({
-        name: this.waveLabelMap[waveNum],
-        data: this.jobTitles.map(name => {
-          const match = this.data.find(
-            d => d.name === name && d.wave === waveNum
-          );
-          return match ? match.count : 0;
-        })
-      }));
-      console.log("Series:", this.series);
-
       this.createChart();
     }
   }

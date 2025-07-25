@@ -56,9 +56,7 @@ import { BarChartWidgetOuvertComponent } from "app/modules/dashboard/charts/bar-
           >
             <app-metric-widget
               *ngIf="
-                widget.chartType === 'CARD' &&
-                widget?.name !==
-                  'Statut Professionnel : Situation après la certification'
+                widget.chartType === 'CARD'
               "
               [widget]="widget"
               [data]="widget?.data"
@@ -166,7 +164,7 @@ import { BarChartWidgetOuvertComponent } from "app/modules/dashboard/charts/bar-
 
             <!-- Bar Chart Widget -->
             <app-bar-chart-widget
-              *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART' && !(widget?.name === 'Type de contrat' || widget?.name === 'Top 8 fonctions' || widget?.name === 'Ouvert – Commencé – Enquête complétée (EE1–EE4)')"
+              *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART'"
               [widget]="widget"
               [data]="widget?.data"
               class="widget"
@@ -176,7 +174,7 @@ import { BarChartWidgetOuvertComponent } from "app/modules/dashboard/charts/bar-
             >
             </app-bar-chart-widget>
 
-            <app-bar-chart-widget-ouvert
+            <!-- <app-bar-chart-widget-ouvert
               *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART' && widget?.name === 'Ouvert – Commencé – Enquête complétée (EE1–EE4)'"
               [widget]="widget"
               [data]="widget?.data"
@@ -185,9 +183,9 @@ import { BarChartWidgetOuvertComponent } from "app/modules/dashboard/charts/bar-
               [class.widget-medium]="widget.size === 'medium'"
               [class.widget-large]="widget.size === 'large'"
             >
-            </app-bar-chart-widget-ouvert>
+            </app-bar-chart-widget-ouvert> -->
 
-             <app-bar-chart-widget-contrat
+             <!-- <app-bar-chart-widget-contrat
               *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART' && widget?.name === 'Type de contrat'"
               [widget]="widget"
               [data]="widget?.data"
@@ -207,7 +205,7 @@ import { BarChartWidgetOuvertComponent } from "app/modules/dashboard/charts/bar-
               [class.widget-medium]="widget.size === 'medium'"
               [class.widget-large]="widget.size === 'large'"
             >
-            </app-bar-chart-widget-top>
+            </app-bar-chart-widget-top> -->
 
             <!-- Column Chart Widget -->
             <app-column-chart-widget
@@ -334,10 +332,10 @@ export class SectionComponent implements OnInit {
 
   prepareDataForSituationChart() {
     this.visibleWidgets.forEach(widget => {
-      if (widget.chartType === 'CARD' && widget.name === 'Statut Professionnel : Situation après la certification') {
+      if (widget.chartType === 'CARD') {
         this.cardData = widget.data || [];
         this.situationData = this.transformDataWithPercentage(this.cardData);
-        console.log(this.situationData);
+        // console.log(this.situationData);
       }
     });
   }

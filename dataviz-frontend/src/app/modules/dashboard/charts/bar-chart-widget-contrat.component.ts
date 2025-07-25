@@ -216,8 +216,7 @@ export class BarChartWidgetContratComponent implements OnInit, OnDestroy {
           return match ? match.count : 0;
         })
       }));
-      console.log("Series:", this.series);
-
+    
       this.createChart();
     }
   }
@@ -353,10 +352,10 @@ export class BarChartWidgetContratComponent implements OnInit, OnDestroy {
 
   private calculateTotalData(): void {
     const maxTotalData = this.data
-  .filter(item => item.hasOwnProperty('totalData'))
-  .map(item => item.totalData);
+    .filter(item => item.hasOwnProperty('totalData'))
+    .map(item => item.totalData);
 
-    this.totalData = Math.max(...maxTotalData);
+      this.totalData = Math.max(...maxTotalData);
   }
 
   onActionClick(action: string): void {

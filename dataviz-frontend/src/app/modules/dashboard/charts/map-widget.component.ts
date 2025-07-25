@@ -12,6 +12,7 @@ import {
   DashboardWidget,
   WidgetAction,
 } from "app/shared/services/dashboard.service";
+import { ActionsButtonsComponent } from "app/shared/components/actions-buttons/actions-buttons.component";
 
 declare const am5: any;
 declare const am5themes_Animated: any;
@@ -21,7 +22,7 @@ declare const am5geodata_franceLow: any;
 @Component({
   selector: "app-map-widget",
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, ActionsButtonsComponent],
   template: `
     <div
       class="widget-container"
@@ -31,20 +32,7 @@ declare const am5geodata_franceLow: any;
       <div class="chart-legend">Total Data : {{ totalData }}</div>
 
       <!-- Action Buttons -->
-      <div class="button-container">
-        <button class="info-button primary" (click)="onActionClick('info')">
-          <img [src]="getActionIcon('paragraph.png')" alt="Info" />
-        </button>
-        <button class="info-button secondary" (click)="onActionClick('export')">
-          <img [src]="getActionIcon('excel.png')" alt="Export" />
-        </button>
-        <button
-          class="info-button secondary"
-          (click)="onActionClick('audience')"
-        >
-          <img [src]="getActionIcon('audience_4644048.png')" alt="Audience" />
-        </button>
-      </div>
+      <app-actions-buttons [widget]="widget"></app-actions-buttons>
 
       <!-- Widget Content -->
       <div class="widget-header">

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { DashboardWidget, WidgetAction } from 'app/shared/services/dashboard.service';
+import { ActionsButtonsComponent } from 'app/shared/components/actions-buttons/actions-buttons.component';
 
 declare var am5: any;
 declare var am5xy: any;
@@ -10,26 +11,13 @@ declare var am5xy: any;
 @Component({
   selector: 'app-column-chart-widget',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, ActionsButtonsComponent],
   template: `
     <div class="chart-box" [style.background-color]="widget.data?.background || '#ffffff'">
       <!-- Total Data label -->
       <div class="chart-legend">Total Data : {{ totalData }}</div>
-      <!-- Action Buttons -->
-      <div class="button-container">
-        <button class="info-button primary" (click)="onActionClick('info')">
-          <img [src]="getActionIcon('paragraph.png')" alt="Info" />
-        </button>
-        <button class="info-button secondary" (click)="onActionClick('export')">
-          <img [src]="getActionIcon('excel.png')" alt="Export" />
-        </button>
-        <button
-          class="info-button secondary"
-          (click)="onActionClick('audience')"
-        >
-          <img [src]="getActionIcon('audience_4644048.png')" alt="Audience" />
-        </button>
-      </div>
+
+      <app-actions-buttons [widget]="widget"></app-actions-buttons>
 
       <!-- Widget Content -->
       <div class="chart-content">

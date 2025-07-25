@@ -43,8 +43,8 @@ declare var am5xy: any;
     
 
       <!-- Widget Content -->
-      <div class="chart-content mt-4">
-        <h3 class="chart-title">{{ widget.title }}</h3>
+      <div class="chart-content mt-6">
+        <h3 class="chart-title" style="margin-top: 16px;">{{ widget.title }}</h3>
          <div class="job-base-map-list">
         <span *ngFor="let key of jobBaseMapKeys; let last = last">
           <span 
