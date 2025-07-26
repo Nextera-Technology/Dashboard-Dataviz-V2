@@ -118,95 +118,67 @@
 
                                 <div class="widget-content flex-grow flex flex-col justify-between p-4">
                                     <div class="mb-4">
-                                        <ng-container [ngSwitch]="widget.chartType">
-                                            <app-metric-widget *ngSwitchCase="'CARD'" [widget]="widget"
-                                                [data]="widget.data"></app-metric-widget>
-                                            <app-bar-chart-widget *ngSwitchCase="'CLUSTERED_BAR_CHART'"
-                                                [widget]="widget" [data]="widget.data"></app-bar-chart-widget>
-                                            <app-bar-chart-widget *ngSwitchCase="'SORTED_BAR_CHART'" [widget]="widget"
-                                                [data]="widget.data"></app-bar-chart-widget>
-                                            <app-bar-chart-widget *ngSwitchCase="'SortedBarChart'" [widget]="widget"
-                                                [data]="widget.data"></app-bar-chart-widget>
-                                            <app-bar-chart-widget *ngSwitchCase="'sorted_bar_chart'" [widget]="widget"
-                                                [data]="widget.data"></app-bar-chart-widget>
-                                            <app-column-chart-widget *ngSwitchCase="'ColumnChart'" [widget]="widget"
-                                                [data]="widget.data"></app-column-chart-widget>
-                                            <app-line-chart-widget *ngSwitchCase="'LINE_CHART_WITH_DATA_LABELS'"
-                                                [widget]="widget" [data]="widget.data"></app-line-chart-widget>
-                                            <app-pie-chart-widget *ngSwitchCase="'PIE_CHART_BROKEN_DOWN_SLICES'"
-                                                [widget]="widget" [data]="widget.data"></app-pie-chart-widget>
-                                            <app-pie-chart-widget *ngSwitchCase="'PieChart'" [widget]="widget"
-                                                [data]="widget.data"></app-pie-chart-widget>
-                                            <app-donut-chart-widget *ngSwitchCase="'donut'" [widget]="widget"
-                                                [data]="widget.data"></app-donut-chart-widget>
-                                            <app-donut-chart-widget *ngSwitchCase="'Donut'" [widget]="widget"
-                                                [data]="widget.data"></app-donut-chart-widget>
-                                            <app-donut-chart-widget *ngSwitchCase="'DONUT'" [widget]="widget"
-                                                [data]="widget.data"></app-donut-chart-widget>
-                                            <app-donut-chart-widget *ngSwitchCase="'donut_chart'" [widget]="widget"
-                                                [data]="widget.data"></app-donut-chart-widget>
-                                            <app-pie-chart-widget *ngSwitchCase="'SlicedChart'" [widget]="widget"
-                                                [data]="widget.data"></app-pie-chart-widget>
-
-                                            <app-line-chart-widget *ngSwitchCase="'LineChart'" [widget]="widget"
-                                                [data]="widget.data"></app-line-chart-widget>
-
-                                            <app-column-chart-widget *ngSwitchCase="'HorizontalStackedChart'"
-                                                [widget]="widget" [data]="widget.data"></app-column-chart-widget>
-                                            <app-column-chart-widget *ngSwitchCase="'VerticalStackedChart'"
-                                                [widget]="widget" [data]="widget.data"></app-column-chart-widget>
-
-                                            <app-sankey-chart-widget *ngSwitchCase="'TraceableSankee'" [widget]="widget"
-                                                [data]="widget.data"></app-sankey-chart-widget>
-
-                                            <app-map-widget *ngSwitchCase="'MapChart'" [widget]="widget"
-                                                [data]="widget.data"></app-map-widget>
-                                            <app-simple-table-widget *ngSwitchCase="'Table'" [widget]="widget"
-                                                [data]="widget.data"></app-simple-table-widget>
-                                            <app-text-widget *ngSwitchCase="'Text'" [widget]="widget"
-                                                [data]="widget.data"></app-text-widget>
-                                            <app-pictorial-fraction-chart *ngSwitchCase="'PICTORIAL_FRACTION_CHART'"
-                                                [widget]="widget" [data]="widget.data"></app-pictorial-fraction-chart>
-                                            <app-status-grid-widget *ngSwitchCase="'StatusGrid'" [widget]="widget"
-                                                [data]="widget.data"></app-status-grid-widget>
-                                            <app-world-map-widget *ngSwitchCase="'DRILL_DOWN_MAP'" [widget]="widget"
-                                                [data]="widget.data"></app-world-map-widget>
-                                            <app-radar-chart-widget *ngSwitchCase="'RadialBarChart'" [widget]="widget"
-                                                [data]="widget.data"></app-radar-chart-widget>
-                                            <app-radar-chart-widget *ngSwitchCase="'RadarChart'" [widget]="widget"
-                                                [data]="widget.data"></app-radar-chart-widget>
-                                            <app-radar-chart-widget *ngSwitchCase="'radialbarchart'" [widget]="widget"
-                                                [data]="widget.data"></app-radar-chart-widget>
-                                            <app-radar-chart-widget *ngSwitchCase="'radialbarchart'" [widget]="widget"
-                                                [data]="widget.data"></app-radar-chart-widget>
-                                            <app-radar-chart-widget *ngSwitchCase="'radarchart'" [widget]="widget"
-                                                [data]="widget.data"></app-radar-chart-widget>
-                                            <app-radar-chart-widget *ngSwitchCase="'RADAR_CHART'" [widget]="widget"
-                                                [data]="widget.data"></app-radar-chart-widget>
-                                            <app-radar-chart-widget *ngSwitchCase="'radar_chart'" [widget]="widget"
-                                                [data]="widget.data"></app-radar-chart-widget>
-                                            <app-radar-chart-widget *ngSwitchCase="'RADIAL_BAR_CHART'" [widget]="widget"
-                                                [data]="widget.data"></app-radar-chart-widget>
-                                            <app-radar-chart-widget *ngSwitchCase="'radial_bar_chart'" [widget]="widget"
-                                                [data]="widget.data"></app-radar-chart-widget>
-                                            <app-animated-gauge-widget *ngSwitchCase="'ANIMATED_GAUGE'"
-                                                [widget]="widget" [data]="widget.data"></app-animated-gauge-widget>
-                                            <app-animated-gauge-widget *ngSwitchCase="'animated_gauge'"
-                                                [widget]="widget" [data]="widget.data"></app-animated-gauge-widget>
-                                            <app-animated-gauge-widget *ngSwitchCase="'AnimatedGauge'" [widget]="widget"
-                                                [data]="widget.data"></app-animated-gauge-widget>
-                                            <app-yes-no-gauge-widget *ngSwitchCase="'YES_NO_GAUGE'" [widget]="widget"
-                                                [data]="widget.data"></app-yes-no-gauge-widget>
-                                            <app-yes-no-gauge-widget *ngSwitchCase="'yes_no_gauge'" [widget]="widget"
-                                                [data]="widget.data"></app-yes-no-gauge-widget>
-                                            <app-yes-no-gauge-widget *ngSwitchCase="'YesNoGauge'" [widget]="widget"
-                                                [data]="widget.data"></app-yes-no-gauge-widget>
-                                            <app-sankey-chart-widget *ngSwitchCase="'TRACEABLE_SANKEY_DIAGRAM'" [widget]="widget"
-                                                [data]="widget.data"></app-sankey-chart-widget>
-                                            <div *ngSwitchDefault
+                                        <ng-container>
+                                            <app-metric-widget *ngIf="widget.chartType === 'CARD' && !(widget?.widgetType === 'STATUS_BY_WAVE'  || widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN')" [widget]="widget" [data]="widget.data"></app-metric-widget>
+                                            <app-breakdown-chart-widget *ngIf="widget.chartType === 'CARD'  && (widget?.widgetType === 'STATUS_BY_WAVE'  || widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN')" [widget]="widget" [data]="widget.data"></app-breakdown-chart-widget>
+                                            <app-bar-chart-widget *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART' || widget.chartType === 'SORTED_BAR_CHART' || widget.chartType === 'SortedBarChart' || widget.chartType === 'sorted_bar_chart'" [widget]="widget" [data]="widget.data"></app-bar-chart-widget>
+                                            <app-column-chart-widget *ngIf="widget.chartType === 'ColumnChart' || widget.chartType === 'HorizontalStackedChart' || widget.chartType === 'VerticalStackedChart'" [widget]="widget" [data]="widget.data"></app-column-chart-widget>
+                                            <app-line-chart-widget *ngIf="widget.chartType === 'LINE_CHART_WITH_DATA_LABELS' || widget.chartType === 'LineChart'" [widget]="widget" [data]="widget.data"></app-line-chart-widget>
+                                            <app-pie-chart-widget *ngIf="widget.chartType === 'PIE_CHART_BROKEN_DOWN_SLICES' || widget.chartType === 'PieChart' || widget.chartType === 'SlicedChart'" [widget]="widget" [data]="widget.data"></app-pie-chart-widget>
+                                            <app-donut-chart-widget *ngIf="widget.chartType === 'donut' || widget.chartType === 'Donut' || widget.chartType === 'DONUT' || widget.chartType === 'donut_chart'" [widget]="widget" [data]="widget.data"></app-donut-chart-widget>
+                                            <app-pictorial-fraction-chart *ngIf="widget.chartType === 'PICTORIAL_FRACTION_CHART'" [widget]="widget" [data]="widget.data"></app-pictorial-fraction-chart>
+                                            <app-status-grid-widget *ngIf="widget.chartType === 'StatusGrid'" [widget]="widget" [data]="widget.data"></app-status-grid-widget>
+                                            <app-world-map-widget *ngIf="widget.chartType === 'DRILL_DOWN_MAP'" [widget]="widget" [data]="widget.data"></app-world-map-widget>
+                                            <app-radar-chart-widget *ngIf="widget.chartType === 'RadialBarChart' || widget.chartType === 'RadarChart' || widget.chartType === 'radialbarchart' || widget.chartType === 'radarchart' || widget.chartType === 'RADAR_CHART' || widget.chartType === 'radar_chart' || widget.chartType === 'RADIAL_BAR_CHART' || widget.chartType === 'radial_bar_chart'" [widget]="widget" [data]="widget.data"></app-radar-chart-widget>
+                                            <app-animated-gauge-widget *ngIf="widget.chartType === 'ANIMATED_GAUGE' || widget.chartType === 'animated_gauge' || widget.chartType === 'AnimatedGauge'" [widget]="widget" [data]="widget.data"></app-animated-gauge-widget>
+                                            <app-yes-no-gauge-widget *ngIf="widget.chartType === 'YES_NO_GAUGE' || widget.chartType === 'yes_no_gauge' || widget.chartType === 'YesNoGauge'" [widget]="widget" [data]="widget.data"></app-yes-no-gauge-widget>
+                                            <app-sankey-chart-widget *ngIf="widget.chartType === 'TraceableSankee' || widget.chartType === 'TRACEABLE_SANKEY_DIAGRAM'" [widget]="widget" [data]="widget.data"></app-sankey-chart-widget>
+                                            <app-map-widget *ngIf="widget.chartType === 'MapChart'" [widget]="widget" [data]="widget.data"></app-map-widget>
+                                            <app-simple-table-widget *ngIf="widget.chartType === 'Table'" [widget]="widget" [data]="widget.data"></app-simple-table-widget>
+                                            <app-text-widget *ngIf="widget.chartType === 'Text'" [widget]="widget" [data]="widget.data"></app-text-widget>
+                                            <div *ngIf="!(
+                                                widget.chartType === 'CARD' ||
+                                                widget.chartType === 'CLUSTERED_BAR_CHART' ||
+                                                widget.chartType === 'SORTED_BAR_CHART' ||
+                                                widget.chartType === 'SortedBarChart' ||
+                                                widget.chartType === 'sorted_bar_chart' ||
+                                                widget.chartType === 'ColumnChart' ||
+                                                widget.chartType === 'HorizontalStackedChart' ||
+                                                widget.chartType === 'VerticalStackedChart' ||
+                                                widget.chartType === 'LINE_CHART_WITH_DATA_LABELS' ||
+                                                widget.chartType === 'LineChart' ||
+                                                widget.chartType === 'PIE_CHART_BROKEN_DOWN_SLICES' ||
+                                                widget.chartType === 'PieChart' ||
+                                                widget.chartType === 'SlicedChart' ||
+                                                widget.chartType === 'donut' ||
+                                                widget.chartType === 'Donut' ||
+                                                widget.chartType === 'DONUT' ||
+                                                widget.chartType === 'donut_chart' ||
+                                                widget.chartType === 'PICTORIAL_FRACTION_CHART' ||
+                                                widget.chartType === 'StatusGrid' ||
+                                                widget.chartType === 'DRILL_DOWN_MAP' ||
+                                                widget.chartType === 'RadialBarChart' ||
+                                                widget.chartType === 'RadarChart' ||
+                                                widget.chartType === 'radialbarchart' ||
+                                                widget.chartType === 'radarchart' ||
+                                                widget.chartType === 'RADAR_CHART' ||
+                                                widget.chartType === 'radar_chart' ||
+                                                widget.chartType === 'RADIAL_BAR_CHART' ||
+                                                widget.chartType === 'radial_bar_chart' ||
+                                                widget.chartType === 'ANIMATED_GAUGE' ||
+                                                widget.chartType === 'animated_gauge' ||
+                                                widget.chartType === 'AnimatedGauge' ||
+                                                widget.chartType === 'YES_NO_GAUGE' ||
+                                                widget.chartType === 'yes_no_gauge' ||
+                                                widget.chartType === 'YesNoGauge' ||
+                                                widget.chartType === 'TraceableSankee' ||
+                                                widget.chartType === 'TRACEABLE_SANKEY_DIAGRAM' ||
+                                                widget.chartType === 'MapChart' ||
+                                                widget.chartType === 'Table' ||
+                                                widget.chartType === 'Text'
+                                            ) || !widget.chartType"
                                                 class="flex flex-col items-center justify-center h-full text-gray-500 bg-gray-50 p-4 rounded-lg">
-                                                <mat-icon class="text-6xl text-gray-400"
-                                                    svgIcon="mat_solid:widgets">widgets</mat-icon>
+                                                <mat-icon class="text-6xl text-gray-400" svgIcon="mat_solid:widgets">widgets</mat-icon>
                                                 <p class="text-lg font-medium mt-2">No Chart or Data</p>
                                                 <p class="text-sm text-center">Configure widget type or add data.</p>
                                             </div>

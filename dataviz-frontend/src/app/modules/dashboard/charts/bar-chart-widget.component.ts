@@ -105,7 +105,7 @@ declare var am5xy: any;
       }
 
       .chart-container {
-        height: 300px;
+        height: 100%;
         width: 100%;
         margin-bottom: 15px;
       }

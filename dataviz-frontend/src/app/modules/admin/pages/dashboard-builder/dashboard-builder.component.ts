@@ -33,7 +33,6 @@ import { MetricWidgetComponent } from "app/shared/components/widgets/metric-widg
 import { ColumnChartWidgetComponent } from "app/shared/components/widgets/column-chart-widget/column-chart-widget.component";
 import { LineChartWidgetComponent } from "app/shared/components/widgets/line-chart-widget/line-chart-widget.component";
 import { PieChartWidgetComponent } from "app/shared/components/widgets/pie-chart-widget/pie-chart-widget.component";
-import { SankeyChartWidgetComponent } from "app/shared/components/widgets/sankey-chart-widget/sankey-chart-widget.component";
 import { MapWidgetComponent } from "app/shared/components/widgets/map-widget/map-widget.component";
 import { SimpleTableWidgetComponent } from "app/shared/components/widgets/simple-table-widget/simple-table-widget.component";
 import { StatusGridWidgetComponent } from "app/shared/components/widgets/status-grid-widget/status-grid-widget.component";
@@ -46,6 +45,8 @@ import { AnimatedGaugeWidgetComponent } from "app/shared/components/widgets/anim
 import { YesNoGaugeWidgetComponent } from "app/shared/components/widgets/yes-no-gauge-widget/yes-no-gauge-widget.component";
 import { BarChartWidgetComponent } from "app/modules/dashboard/charts/bar-chart-widget.component";
 import { ShareDataService } from "app/shared/services/share-data.service";
+import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/breakdown-chart-widget.component";
+import { SankeyChartWidgetComponent } from "app/modules/dashboard/charts/sankey-chart-widget.component";
 
 // Define interfaces for better type safety based on your GraphQL queries
 interface WidgetData {
@@ -123,6 +124,7 @@ interface Dashboard {
     DonutChartWidgetComponent,
     AnimatedGaugeWidgetComponent,
     YesNoGaugeWidgetComponent,
+    BreakDownChartWidgetComponent
   ],
   templateUrl: "./dashboard-builder.component.html",
   styleUrl: "./dashboard-builder.component.scss",

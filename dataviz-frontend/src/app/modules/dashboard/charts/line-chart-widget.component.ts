@@ -36,7 +36,7 @@ declare var am5xy: any;
         <h3 class="chart-title">{{ widget.title }}</h3>
 
         <!-- Chart Container -->
-        <div #chartContainer class="chart-container"></div>
+        <div #chartContainer class="chart-container h-full w-full"></div>
 
         <!-- Manual Legend (if needed) -->
         <!-- <div class="manual-legend" *ngIf="widget.data">
@@ -61,7 +61,7 @@ declare var am5xy: any;
         border-radius: 12px;
         padding: 20px;
         transition: all 0.3s ease;
-        min-height: 300px;
+        min-height: 220px;
         display: flex;
         flex-direction: column;
       }
@@ -102,8 +102,9 @@ declare var am5xy: any;
       }
 
       .chart-container {
-        height: 300px;
+        height: 100%;
         width: 100%;
+        min-height: 150px;
         margin-bottom: 15px;
       }
 
@@ -139,7 +140,7 @@ declare var am5xy: any;
       @media (max-width: 768px) {
         .chart-box {
           padding: 15px;
-          min-height: 250px;
+          min-height: 220px;
         }
 
         .chart-title {
@@ -147,7 +148,7 @@ declare var am5xy: any;
         }
 
         .chart-container {
-          height: 250px;
+          height: 100%;
         }
 
         .legend-item {

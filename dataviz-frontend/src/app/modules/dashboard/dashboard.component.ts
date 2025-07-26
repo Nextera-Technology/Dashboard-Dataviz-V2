@@ -119,6 +119,7 @@ getChildModel(childName: string): boolean {
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
     this.dashboardId = this.shareDataService.getDashboardId();
+
     if (!this.currentUser) {
       this.router.navigate(['/auth/login']);
       return;

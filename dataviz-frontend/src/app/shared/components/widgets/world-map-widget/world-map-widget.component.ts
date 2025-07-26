@@ -15,11 +15,12 @@ import * as am5 from "@amcharts/amcharts5";
 import * as am5map from "@amcharts/amcharts5/map";
 import * as am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 import * as am5geodata_franceLow from "@amcharts/amcharts5-geodata/franceLow";
+import { ActionsButtonsComponent } from "../../actions-buttons/actions-buttons.component";
 
 @Component({
   selector: "app-world-map-widget",
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule,ActionsButtonsComponent],
   templateUrl: "./world-map-widget.component.html",
   styleUrl: "./world-map-widget.component.scss",
 })

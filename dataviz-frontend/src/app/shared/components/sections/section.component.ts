@@ -13,6 +13,7 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
 import { BarChartWidgetTopComponent } from "app/modules/dashboard/charts/bar-chart-widget-top.component";
 import { BarChartWidgetContratComponent } from "app/modules/dashboard/charts/bar-chart-widget-contrat.component";
 import { BarChartWidgetOuvertComponent } from "app/modules/dashboard/charts/bar-chart-widget-ouvert.component";
+import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/breakdown-chart-widget.component";
 
 @Component({
   selector: "app-section",
@@ -29,9 +30,7 @@ import { BarChartWidgetOuvertComponent } from "app/modules/dashboard/charts/bar-
     MapWidgetComponent,
     PictorialStackedChartWidgetComponent,
     WorldMapWidgetComponent,
-    BarChartWidgetTopComponent,
-    BarChartWidgetContratComponent,
-    BarChartWidgetOuvertComponent
+    BreakDownChartWidgetComponent
   ],
   template: `
     <div class="section" [style.background-color]="section.background">
@@ -40,7 +39,7 @@ import { BarChartWidgetOuvertComponent } from "app/modules/dashboard/charts/bar-
       </div>
 
       <div
-        class="widgets-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 p-6 overflow-y-auto"
+        class="widgets-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 auto-rows-[220px] gap-6 p-6 overflow-y-auto"
       >
         <ng-container *ngFor="let widget of visibleWidgets">
           <!-- Metric Widget -->
@@ -56,7 +55,7 @@ import { BarChartWidgetOuvertComponent } from "app/modules/dashboard/charts/bar-
           >
             <app-metric-widget
               *ngIf="
-                widget.chartType === 'CARD'
+                widget.chartType === 'CARD' && !(widget?.widgetType === 'STATUS_BY_WAVE'  || widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN')
               "
               [widget]="widget"
               [data]="widget?.data"
@@ -67,11 +66,25 @@ import { BarChartWidgetOuvertComponent } from "app/modules/dashboard/charts/bar-
             >
             </app-metric-widget>
 
-            <div
+            <app-breakdown-chart-widget
+              *ngIf="
+                widget.chartType === 'CARD' && (widget?.widgetType === 'STATUS_BY_WAVE'  || widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN')
+              "
+              [widget]="widget"
+              [data]="widget?.data"
+              class="widget"
+              [class.widget-small]="widget.size === 'small'"
+              [class.widget-medium]="widget.size === 'medium'"
+              [class.widget-large]="widget.size === 'large'"
+            >
+            </app-breakdown-chart-widget>
+
+            <!-- <div
               *ngIf="
                 widget.chartType === 'CARD' &&
-                widget?.name ===
-                  'Statut Professionnel : Situation après la certification'
+                widget?.widgetType ===
+                  'STATUS_BY_WAVE' &&
+                widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN'
               "
               class="grid h-full"
               style="margin-bottom: 20px;"
@@ -100,9 +113,9 @@ import { BarChartWidgetOuvertComponent } from "app/modules/dashboard/charts/bar-
                       alt="Download"
                     />
                   </button>
-                </div>
+                </div> 
 
-                 <h3>Statut Professionnel : Situation après la certification</h3>
+                 <h3>{{widget?.name}}</h3>
                   <div class="status-grid-rowed">
                     <div class="status-row" style="color: #00454D">
                       <div class="status-category"></div>
@@ -148,7 +161,7 @@ import { BarChartWidgetOuvertComponent } from "app/modules/dashboard/charts/bar-
                     </div>
                   </div>
               </div>
-            </div>
+            </div> -->
 
             <!-- Pie Chart Widget -->
             <app-pie-chart-widget
@@ -256,7 +269,7 @@ import { BarChartWidgetOuvertComponent } from "app/modules/dashboard/charts/bar-
             </app-text-widget>
 
             <!-- Map Widget -->
-            <app-map-widget
+            <app-bar-chart-widget
               *ngIf="widget.chartType === 'CLUSTERED_COLUMN_CHART'"
               [widget]="widget"
               [data]="widget?.data"
@@ -265,7 +278,7 @@ import { BarChartWidgetOuvertComponent } from "app/modules/dashboard/charts/bar-
               [class.widget-medium]="widget.size === 'medium'"
               [class.widget-large]="widget.size === 'large'"
             >
-            </app-map-widget>
+            </app-bar-chart-widget>
 
             <app-pictorial-fraction-chart
               *ngIf="widget.chartType === 'PICTORIAL_FRACTION_CHART'"
