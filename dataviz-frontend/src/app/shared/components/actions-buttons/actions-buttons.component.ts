@@ -34,15 +34,17 @@ export class ActionsButtonsComponent implements OnInit {
     this.isDashboard = this.shareDataService.getIsDashboard();
   }
   paragraphClicked(dialogType: string) {
-   const dialogRef = this.dialog.open(ScopeDialogComponent, {
-         width: '80%'
+   const dialogRef = this.dialog.open(InformationDialogComponent, {
+         width: '62%',
+         data: { widget: this.widget }
     });
       
   }
  
   scopeClicked(info: string): void {
     const dialogRef = this.dialog.open(ScopeDialogComponent, {
-         width: '80%'
+         width: '62%',
+         data: { widget: this.widget }
     });
 
     dialogRef.afterClosed().subscribe(() => {

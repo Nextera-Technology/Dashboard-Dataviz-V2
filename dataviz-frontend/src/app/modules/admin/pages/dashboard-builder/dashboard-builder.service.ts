@@ -74,6 +74,10 @@ export class DashboardBuilderService {
     return await this.dashboardBuilderRepository.getChartOptions();
   }
 
+  async getWidgetDataSource(id: string) {
+    return await this.dashboardBuilderRepository.getWidgetDataSource(id);
+  }
+
   replaceUnderscoresPipe(value: string | null | undefined): string {
     if (value === null || value === undefined) {
       return "";

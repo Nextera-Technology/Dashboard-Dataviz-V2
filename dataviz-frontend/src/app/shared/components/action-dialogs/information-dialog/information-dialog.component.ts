@@ -1,27 +1,103 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { CommonModule } from '@angular/common';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Apollo, gql } from 'apollo-angular';
+import { DashboardBuilderService } from 'app/modules/admin/pages/dashboard-builder/dashboard-builder.service';
 declare var am5: any;
 declare var am5xy: any;
 @Component({
   selector: 'app-information-dialog',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './information-dialog.component.html',
   styleUrl: './information-dialog.component.scss'
 })
 export class InformationDialogComponent implements OnInit {
   private root2: any;
+  widgetData: any;
   @ViewChild("chartContainer", { static: true }) chartContainer!: ElementRef;
-  constructor(private dialogRef: MatDialogRef<InformationDialogComponent>) {
+  widget: any;
+  widgetSource:any;
+  scopeData:any;
+  scopePoints:string[] = [];
+  dataSources: any[] = [];
+  totalDataSources: number = 0;
 
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+  private dialogRef: MatDialogRef<InformationDialogComponent>,
+  private dashboardBuilderService: DashboardBuilderService,
+private apollo: Apollo) {
+    this.widgetData = data.widget;
+    console.log("Widget Data:", this.widgetData);
   }
-
+  
   ngOnInit(): void {
-    this.createChart();
-  }
-  onCancel() {
-   this.dialogRef.close();
+   
+    this.getWidgetSource(this.widgetData._id);
+    
   }
 
+  getInformationData() {
+    this.dashboardBuilderService.getWidgetDataSource(this.widgetData._id).then(data => {
+      console.log("Information Data:", data);
+    });
+  }
+
+  getWidgetSource(widgetId: string) {
+    this.apollo.mutate({
+      mutation: gql`
+        mutation GetWidgetDataSources($widgetId: String!) {
+          getWidgetDataSources(widgetId: $widgetId) {
+            widgetName
+            scope {
+              description
+              points
+            }
+            analyse {
+              description
+              points
+            }
+            recommendation {
+              description
+              points
+            }
+            totalDataSources
+            dataSources {
+              name
+              count
+              wave
+              code
+              averageSalary
+            }
+            description
+          }
+        }
+      `,
+      variables: {
+        widgetId: widgetId
+      }
+    }).subscribe((response:any) => {
+      console.log('Data source:', response);
+      this.widgetSource = response.data.getWidgetDataSources;
+      this.totalDataSources = this.widgetSource.totalDataSources ? this.widgetSource.totalDataSources : 0;
+      if(this.widgetSource && this.widgetSource.dataSources) {
+        this.dataSources = this.widgetSource.dataSources;
+        if(this.dataSources && this.dataSources.length > 0) {
+          this.createChart();
+        }
+      }
+      if(this.widgetSource && this.widgetSource.scope) {
+        this.scopeData = this.widgetSource.scope;
+        if(this.scopeData && this.scopeData.points) {
+          this.scopePoints = this.scopeData.points;
+        }
+       
+      }
+    });
+  }
+
+  onCancel() {
+    this.dialogRef.close();
+  }
   createChart() {
     this.root2 = am5.Root.new(this.chartContainer.nativeElement);
     this.root2.setThemes([am5.Theme.new(this.root2)]);
@@ -48,7 +124,7 @@ export class InformationDialogComponent implements OnInit {
 
     var yAxis2 = chart2.yAxes.push(am5xy.CategoryAxis.new(this.root2, {
       maxDeviation: 0,
-      categoryField: "network",
+      categoryField: "name",
       renderer: yRenderer2,
       tooltip: am5.Tooltip.new(this.root2, { themeTags: ["axis"] })
     }));
@@ -71,8 +147,8 @@ export class InformationDialogComponent implements OnInit {
       name: "Series 1",
       xAxis: xAxis2,
       yAxis: yAxis2,
-      valueXField: "value",
-      categoryYField: "network",
+      valueXField: "count",
+      categoryYField: "name",
       tooltip: am5.Tooltip.new(this.root2, {
         pointerOrientation: "left",
         labelText: "{valueX}"
@@ -95,52 +171,52 @@ export class InformationDialogComponent implements OnInit {
       return chart2.get("colors").getIndex(series2.columns.indexOf(target));
     });
 
-    // Set data
-    var dataJobTargeted = [
-      {
-        "network": "Autre",
-        "value": 27
-      },
-      {
-        "network": "Responsable de rayon/ d'univers",
-        "value": 1
-      },
-      {
-        "network": "Conseiller commercial",
-        "value": 24
-      },
-      {
-        "network": "Commercial",
-        "value": 40
-      },
-      {
-        "network": "Chargé de communication",
-        "value": 1
-      },
-      {
-        "network": "Responsable des ventes",
-        "value": 1
-      },
-      {
-        "network": "Chef de secteur",
-        "value": 3
-      },
-      {
-        "network": "Attaché commercial",
-        "value": 3
-      },
-      {
-        "network": "Responsable commercial",
-        "value": 4
-      },
-      {
-        "network": "Chef de projets marketing",
-        "value": 0
-      }
-    ];
+    // // Set data
+    // var dataJobTargeted = [
+    //   {
+    //     "network": "Autre",
+    //     "value": 27
+    //   },
+    //   {
+    //     "network": "Responsable de rayon/ d'univers",
+    //     "value": 1
+    //   },
+    //   {
+    //     "network": "Conseiller commercial",
+    //     "value": 24
+    //   },
+    //   {
+    //     "network": "Commercial",
+    //     "value": 40
+    //   },
+    //   {
+    //     "network": "Chargé de communication",
+    //     "value": 1
+    //   },
+    //   {
+    //     "network": "Responsable des ventes",
+    //     "value": 1
+    //   },
+    //   {
+    //     "network": "Chef de secteur",
+    //     "value": 3
+    //   },
+    //   {
+    //     "network": "Attaché commercial",
+    //     "value": 3
+    //   },
+    //   {
+    //     "network": "Responsable commercial",
+    //     "value": 4
+    //   },
+    //   {
+    //     "network": "Chef de projets marketing",
+    //     "value": 0
+    //   }
+    // ];
 
-    yAxis2.data.setAll(dataJobTargeted);
-    series2.data.setAll(dataJobTargeted);
+    yAxis2.data.setAll(this.dataSources);
+    series2.data.setAll(this.dataSources);
     sortCategoryAxis2();
 
     // Get series item by category

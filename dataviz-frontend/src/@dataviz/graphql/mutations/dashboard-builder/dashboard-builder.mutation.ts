@@ -71,3 +71,11 @@ export const gqlDeleteWidget = gql`
     }
   }
 `;
+
+export const gqlWidgetSourceData = gql`
+  mutation getWidgetDataSources($id: String!) {
+    getWidgetDataSources(widgetId: $id) {
+      widgetId
+    }
+  }
+`;
