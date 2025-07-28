@@ -369,6 +369,8 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
       },
     });
 
+   
+
     dialogRef.afterClosed().subscribe((result) => {
       if (result?._id) {
         this.loadDashboard(this.dashboard!._id!);
@@ -376,17 +378,73 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
     });
   }
 
+  /*
+    * Deletes a section from the dashboard and updates the widgetSectionList.
+    * This method is called when the user confirms deletion of a section.
+    */
+  deleteSection(section: Section): void {
+     if (!this.dashboard || !this.dashboard.sectionIds) return;
+    if (confirm(`Are you sure you want to delete the section "${section.title}"?`)) {
+      const index = this.dashboard.sectionIds.findIndex(
+        (s) => s._id === section._id
+      );
+      if (index !== -1) {
+        // Create a new dashboard object with updated sectionIds immutably
+        this.dashboard = {
+          ...this.dashboard,
+          sectionIds: [
+            ...this.dashboard.sectionIds.slice(0, index),
+            ...this.dashboard.sectionIds.slice(index + 1)
+          ]
+        };
+        // Also update the widgetSectionList to reflect the change in the UI
+        this.widgetSectionList = [];
+        this.selectedTabIndex = 0; // Reset to first tab
+        this.snackBar.open("Section deleted successfully.", "Close", {
+          duration: 3000,
+        });
+      }
+    }
+  }   
+
+  /**
+   * Deletes a widget from the current section of the dashboard.
+   * This method prompts the user for confirmation before deleting.
+   * It updates the dashboard's sectionIds to remove the widget
+   * and updates the widgetSectionList to reflect the change in the UI.
+   * @param widget The widget to delete.
+   * @returns void
+   */
   deleteWidget(widget: Widget): void {
     if (!this.dashboard || !this.dashboard.sectionIds) return;
 
     if (confirm(`Are you sure you want to delete "${widget.title}"?`)) {
-      const currentSection = this.dashboard.sectionIds[this.selectedTabIndex];
+      let currentSection = this.dashboard.sectionIds[this.selectedTabIndex];
       if (currentSection && currentSection.widgetIds) {
         const index = currentSection.widgetIds.findIndex(
           (w) => w._id === widget._id
         );
         if (index !== -1) {
-          currentSection.widgetIds.splice(index, 1);
+          debugger;
+          // Create a new section object with updated widgetIds immutably
+          const updatedSection = {
+            ...currentSection,
+            widgetIds: [
+              ...currentSection.widgetIds.slice(0, index),
+              ...currentSection.widgetIds.slice(index + 1)
+            ]
+          };
+          // Replace the section in the dashboard's sectionIds array immutably
+          if (this.dashboard && this.dashboard.sectionIds) {
+            this.dashboard = {
+              ...this.dashboard,
+              sectionIds: this.dashboard.sectionIds.map((section, idx) =>
+                idx === this.selectedTabIndex ? updatedSection : section
+              )
+            };
+            // Also update the widgetSectionList to reflect the change in the UI
+            this.widgetSectionList = [...updatedSection.widgetIds];
+          }
           this.snackBar.open(
             "Widget deleted locally. Remember to save dashboard.",
             "Close",
