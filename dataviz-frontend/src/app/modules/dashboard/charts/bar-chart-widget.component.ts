@@ -64,7 +64,6 @@ declare var am5xy: any;
         border-radius: 12px;
         padding: 20px;
         transition: all 0.3s ease;
-        min-height: 300px;
         display: flex;
         flex-direction: column;
       }
@@ -105,7 +104,7 @@ declare var am5xy: any;
       }
 
       .chart-container {
-        height: 100%;
+        height: 80vh;
         width: 100%;
         margin-bottom: 15px;
       }
@@ -154,7 +153,7 @@ declare var am5xy: any;
         }
 
         .chart-container {
-          height: 250px;
+          height: 100%;
         }
 
         .legend-item {
