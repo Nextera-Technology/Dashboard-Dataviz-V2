@@ -8,7 +8,7 @@ import { DashboardBuilderService } from 'app/modules/admin/pages/dashboard-build
 
 @Component({
   selector: 'app-scope-dialog',
-  imports: [ MatDialogModule,
+  imports: [MatDialogModule,
     MatIconModule,
     MatButtonModule,
     CommonModule],
@@ -20,30 +20,30 @@ export class ScopeDialogComponent implements OnInit {
   widgetData: any;
   @ViewChild("chartContainer", { static: true }) chartContainer!: ElementRef;
   widget: any;
-  widgetSource:any;
-  scopeData:any;
-  scopePoints:string[] = [];
+  widgetSource: any;
+  scopeData: any;
+  scopePoints: string[] = [];
   dataSources: any[] = [];
 
   analyseData: any;
   recommendationData: any;
 
-  anaysePoints: string[] = [];
+  analysePoints: string[] = [];
   recommendationPoints: string[] = [];
+  isLoading: boolean = false;
 
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
-  private dialogRef: MatDialogRef<ScopeDialogComponent>,
-  private dashboardBuilderService: DashboardBuilderService,
-private apollo: Apollo) {
+    private dialogRef: MatDialogRef<ScopeDialogComponent>,
+    private dashboardBuilderService: DashboardBuilderService,
+    private apollo: Apollo) {
     this.widgetData = data.widget;
-    console.log("Widget Data:", this.widgetData);
   }
-  
+
   ngOnInit(): void {
-   
+    this.isLoading = true;
     this.getWidgetSource(this.widgetData._id);
-    
+
   }
 
   getInformationData() {
@@ -85,27 +85,27 @@ private apollo: Apollo) {
       variables: {
         widgetId: widgetId
       }
-    }).subscribe((response:any) => {
-      console.log('Data source:', response);
+    }).subscribe((response: any) => {
+      this.isLoading = true;
       this.widgetSource = response.data.getWidgetDataSources;
-      
-      if(this.widgetSource && this.widgetSource.scope) {
+      this.isLoading = false;
+      if (this.widgetSource && this.widgetSource.scope) {
         this.scopeData = this.widgetSource.scope;
-        if(this.scopeData && this.scopeData.points) {
+        if (this.scopeData && this.scopeData.points) {
           this.scopePoints = this.scopeData.points;
         }
       }
 
-      if(this.widgetSource && this.widgetSource.analyse) {
+      if (this.widgetSource && this.widgetSource.analyse) {
         this.analyseData = this.widgetSource.analyse;
-        if(this.analyseData && this.analyseData.points) {
-          this.anaysePoints = this.analyseData.points;
+        if (this.analyseData && this.analyseData.points) {
+          this.analysePoints = this.analyseData.points;
         }
       }
 
-      if(this.widgetSource && this.widgetSource.recommendation) {
+      if (this.widgetSource && this.widgetSource.recommendation) {
         this.recommendationData = this.widgetSource.recommendation;
-        if(this.recommendationData && this.recommendationData.points) {
+        if (this.recommendationData && this.recommendationData.points) {
           this.recommendationPoints = this.recommendationData.points;
         }
       }
