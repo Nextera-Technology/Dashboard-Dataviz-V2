@@ -35,7 +35,7 @@ export class ActionsButtonsComponent implements OnInit {
   }
   paragraphClicked(dialogType: string) {
    const dialogRef = this.dialog.open(InformationDialogComponent, {
-         width: '62%',
+         width: '75%',
          data: { widget: this.widget }
     });
       
@@ -43,7 +43,7 @@ export class ActionsButtonsComponent implements OnInit {
  
   scopeClicked(info: string): void {
     const dialogRef = this.dialog.open(ScopeDialogComponent, {
-         width: '62%',
+         width: '75%',
          data: { widget: this.widget }
     });
 

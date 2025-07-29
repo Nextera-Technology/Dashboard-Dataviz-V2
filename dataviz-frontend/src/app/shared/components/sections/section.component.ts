@@ -269,7 +269,7 @@ import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/brea
             </app-text-widget>
 
             <!-- Map Widget -->
-            <app-bar-chart-widget
+            <app-column-chart-widget
               *ngIf="widget.chartType === 'CLUSTERED_COLUMN_CHART'"
               [widget]="widget"
               [data]="widget?.data"
@@ -278,7 +278,7 @@ import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/brea
               [class.widget-medium]="widget.size === 'medium'"
               [class.widget-large]="widget.size === 'large'"
             >
-            </app-bar-chart-widget>
+            </app-column-chart-widget>
 
             <app-pictorial-fraction-chart
               *ngIf="widget.chartType === 'PICTORIAL_FRACTION_CHART'"
