@@ -30,7 +30,6 @@ import {
 import { SectionFormDialogComponent } from "../../components/section-form-dialog/section-form-dialog.component";
 import { DashboardBuilderService } from "./dashboard-builder.service";
 import { MetricWidgetComponent } from "app/shared/components/widgets/metric-widget/metric-widget.component";
-import { ColumnChartWidgetComponent } from "app/shared/components/widgets/column-chart-widget/column-chart-widget.component";
 import { LineChartWidgetComponent } from "app/shared/components/widgets/line-chart-widget/line-chart-widget.component";
 import { PieChartWidgetComponent } from "app/shared/components/widgets/pie-chart-widget/pie-chart-widget.component";
 import { MapWidgetComponent } from "app/shared/components/widgets/map-widget/map-widget.component";
@@ -47,6 +46,7 @@ import { BarChartWidgetComponent } from "app/modules/dashboard/charts/bar-chart-
 import { ShareDataService } from "app/shared/services/share-data.service";
 import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/breakdown-chart-widget.component";
 import { SankeyChartWidgetComponent } from "app/modules/dashboard/charts/sankey-chart-widget.component";
+import { ColumnChartWidgetComponent } from "app/modules/dashboard/charts/column-chart-widget.component";
 
 // Define interfaces for better type safety based on your GraphQL queries
 interface WidgetData {

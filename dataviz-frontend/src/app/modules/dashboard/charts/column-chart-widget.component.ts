@@ -20,7 +20,7 @@ declare var am5xy: any;
       <app-actions-buttons [widget]="widget"></app-actions-buttons>
 
       <!-- Widget Content -->
-      <div class="chart-content">
+      <div class="chart-content mt-4">
         <h3 class="chart-title">{{ widget.title }}</h3>
         
         <!-- Chart Container -->
@@ -48,7 +48,7 @@ declare var am5xy: any;
       border-radius: 12px;
       padding: 20px;
       transition: all 0.3s ease;
-      min-height: 300px;
+      min-height: 200px;
       display: flex;
       flex-direction: column;
     }
@@ -76,7 +76,7 @@ declare var am5xy: any;
     }
 
     .chart-container {
-      height: 300px;
+      height: 100%;
       width: 100%;
       margin-bottom: 15px;
     }
@@ -128,7 +128,7 @@ declare var am5xy: any;
     @media (max-width: 768px) {
       .chart-box {
         padding: 15px;
-        min-height: 250px;
+        min-height: 200px;
       }
 
       .chart-title {
@@ -136,7 +136,7 @@ declare var am5xy: any;
       }
 
       .chart-container {
-        height: 250px;
+        height: 200px;
       }
 
       .legend-item {
@@ -160,8 +160,9 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.calculateTotalData();
-
-    if (this.widget.data?.series) {
+    if(this.widget.widgetType === 'SURVEY_COMPLETION' || this.widget.widget === 'SURVEY_COMPLETION') {
+      this.createSurveyChart();
+    }else if (this.widget.data?.series) {
       this.createChart();
     }
   }
@@ -170,6 +171,153 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
     if (this.root) {
       this.root.dispose();
     }
+  }
+
+
+  JobBaseMap = {
+    "SENT": "Envoyées",
+    "OPENED": "Ouvertes",
+    "COMPLETED": "Complétées"
+  }
+
+  jobBaseColors = {
+    "représentant commercial": "#1D3557",
+    "chargé(e) de communication": "#457B9D",
+    "chargé(e) d'études marketing": "#A8DADC",
+    "responsable de marché": "#F4A261",
+    "responsable marketing": "#E76F51",
+    "responsable de marque": "#2A9D8F",
+    "chef de produit": "#264653",
+    "chef de projet marketing": "#6D597A",
+    "responsable de secteur": "#B5838D",
+    "commercial": "#8ECAE6",
+    "conseiller commercial": "#219EBC",
+    "responsable des ventes": "#023047",
+    "directeur commercial": "#FFB703",
+    "responsable performance marketing et ventes": "#FB8500",
+    "responsable de rayon/ d’univers": "#9B5DE5",
+    "responsable des études marketing": "#F15BB5",
+    "autre": "#ADB5BD",
+    "CDI": "#1D3557",
+    "CDD": "#457B9D",
+    "Intérim": "#A8DADC",
+    "Fonctionnaire": "#F4A261",
+    "Contractuel": "#E76F51",
+    "Auto-Entrepreneur": "#2A9D8F",
+    "Gérant": "#264653",
+    "Indépendant": "#6D597A",
+    "Mandataire Social": "#B5838D",
+    "Autre": "#ADB5BD",
+    "SENT": "#8FD2D2",
+    "OPENED": "#4A90E2",
+    "COMPLETED": "#0E3F2D",
+  };
+
+  createSurveyChart(): void {
+    const originalData = [...this.data];
+    const waveLabelMap = {
+      1: 'EE1',
+      2: 'EE2',
+      3: 'EE3',
+      4: 'EE4'
+    };
+
+    const waves = Object.keys(waveLabelMap).map(Number);
+
+    // Get unique job names
+    const jobTitles = Array.from(new Set(originalData.map(d => d.name)));
+
+
+    // 1. Prepare wave labels
+    const waveLabels = waves.map(w => waveLabelMap[w]);
+
+    // 2. Get job types (Sent, Opened, Completed)
+    const jobNames = Array.from(new Set(originalData.map(d => d.name)));
+
+    // 3. Group data for vertical bar chart
+    const groupedData = waves.map(waveNum => {
+      const waveLabel = waveLabelMap[waveNum];
+      const entry: any = { wave: waveLabel };
+
+      jobNames.forEach(name => {
+        const item = originalData.find(d => d.wave === waveNum && d.name === name);
+        entry[name] = item ? item.count : 0;
+      });
+
+      return entry;
+    });
+
+    // 4. Create chart
+    this.root = am5.Root.new(this.chartContainer.nativeElement);
+    this.root.setThemes([am5.Theme.new(this.root)]);
+
+    this.chart = this.root.container.children.push(
+      am5xy.XYChart.new(this.root, {
+        panX: true,
+        panY: false,
+        wheelX: "panX",
+        wheelY: "zoomX",
+        layout: this.root.verticalLayout
+      })
+    );
+
+    // 5. Create X axis (category - wave)
+    this.xAxis = this.chart.xAxes.push(
+      am5xy.CategoryAxis.new(this.root, {
+        categoryField: "wave",
+        renderer: am5xy.AxisRendererX.new(this.root, { minGridDistance: 30 })
+      })
+    );
+    this.xAxis.data.setAll(groupedData);
+
+    // 6. Create Y axis (value)
+    this.yAxis = this.chart.yAxes.push(
+      am5xy.ValueAxis.new(this.root, {
+        min: 0,  // Set minimum value to 0
+        renderer: am5xy.AxisRendererY.new(this.root, {})
+      })
+    );
+
+    // 7. Create one series per job (Sent, Opened, Completed)
+    jobNames.forEach(jobName => {
+      const series = this.chart.series.push(
+        am5xy.ColumnSeries.new(this.root, {
+          name: this.JobBaseMap[jobName],
+          xAxis: this.xAxis,
+          yAxis: this.yAxis,
+          valueYField: jobName,
+          categoryXField: "wave",
+          clustered: true,
+          tooltip: am5.Tooltip.new(this.root, {
+            labelText: `{name} - {categoryX}: {valueY}`
+          })
+        })
+      );
+
+      series.columns.template.setAll({
+        tooltipText: `{name} - {categoryX}: {valueY}`,
+        strokeWidth: 1,
+        cornerRadiusTL: 4,
+        cornerRadiusTR: 4
+      });
+
+      // Optional: Use jobBaseColors
+      series.columns.template.adapters.add("fill", (fill, target) => {
+        return am5.color(this.jobBaseColors[jobName] || "#000");
+      });
+      series.columns.template.adapters.add("stroke", (stroke, target) => {
+        return am5.color(this.jobBaseColors[jobName] || "#000");
+      });
+
+      series.data.setAll(groupedData);
+      series.appear(1000);
+    });
+
+    // 8. Add legend
+    this.chart.set("legend", am5.Legend.new(this.root, {}));
+
+    // 9. Animate chart
+    this.chart.appear(1000, 100);
   }
 
   private createChart(): void {
@@ -286,17 +434,5 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
     this.totalData = dataObj.totalData ?? 0;
   }
 
-  onActionClick(action: string): void {
-    console.log('Action clicked:', action);
-    // Placeholder for future implementation
-  }
 
-  getActionIcon(iconName: string): string {
-    const iconMap: { [key: string]: string } = {
-      'paragraph.png': 'https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png',
-      'excel.png': 'https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png',
-      'audience_4644048.png': 'https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png'
-    };
-    return iconMap[iconName] || `https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/${iconName}`;
-  }
 } 
