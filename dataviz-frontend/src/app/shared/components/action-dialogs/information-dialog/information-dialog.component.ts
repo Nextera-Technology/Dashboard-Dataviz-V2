@@ -91,9 +91,29 @@ export class InformationDialogComponent implements OnInit {
   onCancel() {
     this.dialogRef.close();
   }
+
+  ngOnDestroy() {
+    if (this.root2) {
+      this.root2.dispose();
+      console.log("InformationDialogComponent: Disposed chart instance.");
+    }
+  }
   createChart() {
+
+    const chartHeight = 50 * this.dataSources.length; // 50px per item, tune as needed
+    const chartDiv = this.chartContainer.nativeElement;
+    if (chartDiv) {
+        chartDiv.style.height = `${chartHeight}px`;
+    }
+    console.log("chartDiv :", chartDiv);
+    console.log("Creating chart with height:", chartHeight);
+    
     this.root2 = am5.Root.new(this.chartContainer.nativeElement);
     this.root2.setThemes([am5.Theme.new(this.root2)]);
+
+    
+
+
 
     // Create chart
     var chart2 = this.root2.container.children.push(am5xy.XYChart.new(this.root2, {
@@ -109,19 +129,25 @@ export class InformationDialogComponent implements OnInit {
 
     // Create axes
     var yRenderer2 = am5xy.AxisRendererY.new(this.root2, {
-      minGridDistance: 30,
-      minorGridEnabled: true
-    });
+  minGridDistance: 20,
+  width: am5.percent(30),  // Ensure space between label and bar
+  opposite: false,
+  inside: false,
+});
 
-    yRenderer2.grid.template.set("location", 1);
+yRenderer2.labels.template.setAll({
+  oversizedBehavior: "truncate",
+  maxWidth: 150,
+  fontSize: 12,
+  textAlign: "right"
+});
 
-    var yAxis2 = chart2.yAxes.push(am5xy.CategoryAxis.new(this.root2, {
-      maxDeviation: 0,
-      categoryField: "name",
-      renderer: yRenderer2,
-      tooltip: am5.Tooltip.new(this.root2, { themeTags: ["axis"] })
-    }));
-
+var yAxis2 = chart2.yAxes.push(am5xy.CategoryAxis.new(this.root2, {
+  maxDeviation: 0,
+  categoryField: "name",
+  renderer: yRenderer2,
+  tooltip: am5.Tooltip.new(this.root2, { themeTags: ["axis"] })
+}));
     var xAxis2 = chart2.xAxes.push(am5xy.ValueAxis.new(this.root2, {
       maxDeviation: 0,
       min: 0,
@@ -131,7 +157,7 @@ export class InformationDialogComponent implements OnInit {
       extraMax: 0.1,
       renderer: am5xy.AxisRendererX.new(this.root2, {
         strokeOpacity: 0.1,
-        minGridDistance: 80
+        minGridDistance: 30
       })
     }));
 
@@ -155,6 +181,15 @@ export class InformationDialogComponent implements OnInit {
       strokeOpacity: 0
     });
 
+    if (series2.labels && series2.labels.template) {
+      series2.labels.template.setAll({
+        oversizedBehavior: "wrap",
+        maxWidth: 200,
+        fontSize: 12,
+      });
+    } else {
+      console.warn("series2.labels.template is undefined");
+    }
     // Make each column to be of a different color
     series2.columns.template.adapters.add("fill", function (fill, target) {
       return chart2.get("colors").getIndex(series2.columns.indexOf(target));
@@ -163,51 +198,6 @@ export class InformationDialogComponent implements OnInit {
     series2.columns.template.adapters.add("stroke", function (stroke, target) {
       return chart2.get("colors").getIndex(series2.columns.indexOf(target));
     });
-
-    // // Set data
-    // var dataJobTargeted = [
-    //   {
-    //     "network": "Autre",
-    //     "value": 27
-    //   },
-    //   {
-    //     "network": "Responsable de rayon/ d'univers",
-    //     "value": 1
-    //   },
-    //   {
-    //     "network": "Conseiller commercial",
-    //     "value": 24
-    //   },
-    //   {
-    //     "network": "Commercial",
-    //     "value": 40
-    //   },
-    //   {
-    //     "network": "Chargé de communication",
-    //     "value": 1
-    //   },
-    //   {
-    //     "network": "Responsable des ventes",
-    //     "value": 1
-    //   },
-    //   {
-    //     "network": "Chef de secteur",
-    //     "value": 3
-    //   },
-    //   {
-    //     "network": "Attaché commercial",
-    //     "value": 3
-    //   },
-    //   {
-    //     "network": "Responsable commercial",
-    //     "value": 4
-    //   },
-    //   {
-    //     "network": "Chef de projets marketing",
-    //     "value": 0
-    //   }
-    // ];
-
     yAxis2.data.setAll(this.dataSources);
     series2.data.setAll(this.dataSources);
     sortCategoryAxis2();
