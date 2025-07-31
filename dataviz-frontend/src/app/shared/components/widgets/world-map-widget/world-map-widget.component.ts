@@ -13,14 +13,12 @@ import { MatIconModule } from "@angular/material/icon"; // For the no-data overl
 /* amCharts 5 Imports */
 import * as am5 from "@amcharts/amcharts5";
 import * as am5map from "@amcharts/amcharts5/map";
-import * as am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 import * as am5geodata_franceLow from "@amcharts/amcharts5-geodata/franceLow";
-import { ActionsButtonsComponent } from "../../actions-buttons/actions-buttons.component";
 
 @Component({
   selector: "app-world-map-widget",
   standalone: true,
-  imports: [CommonModule, MatIconModule,ActionsButtonsComponent],
+  imports: [CommonModule, MatIconModule],
   templateUrl: "./world-map-widget.component.html",
   styleUrl: "./world-map-widget.component.scss",
 })
@@ -244,7 +242,8 @@ export class WorldMapWidgetComponent
             panX: "none",
             panY: "none",
             wheelY: "none",
-            projection: am5map.geoMercator()
+            projection: am5map.geoMercator(),
+            paddingBottom:20,
           })
         );
 

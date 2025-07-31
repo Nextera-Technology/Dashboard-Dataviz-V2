@@ -98,30 +98,44 @@ export class InformationDialogComponent implements OnInit {
       console.log("InformationDialogComponent: Disposed chart instance.");
     }
   }
+  getLength(){
+    if (this.dataSources && this.dataSources.length > 0) {
+      if( this.dataSources.length > 20) {
+        return 30;
+      }else if (this.dataSources.length > 10) {
+        return 30;
+      }else{
+        return 40;
+      }
+    }
+    return 40;
+  }
   createChart() {
 
-    const chartHeight = 50 * this.dataSources.length; // 50px per item, tune as needed
+    const chartHeight = this.getLength() * this.dataSources.length; // 50px per item, tune as needed
     const chartDiv = this.chartContainer.nativeElement;
     if (chartDiv) {
-        chartDiv.style.height = `${chartHeight}px`;
+      chartDiv.style.height = `${chartHeight}px`;
     }
     console.log("chartDiv :", chartDiv);
     console.log("Creating chart with height:", chartHeight);
-    
+
     this.root2 = am5.Root.new(this.chartContainer.nativeElement);
     this.root2.setThemes([am5.Theme.new(this.root2)]);
-
-    
-
-
 
     // Create chart
     var chart2 = this.root2.container.children.push(am5xy.XYChart.new(this.root2, {
       panX: false,
       panY: false,
+      width: am5.percent(100),
+      height: am5.percent(100),
+      layout: this.root2.verticalLayout,
       wheelX: "none",
       wheelY: "none",
-      paddingLeft: 0
+      paddingLeft: 20,
+      paddingRight: 20,
+      paddingTop: 20,
+      paddingBottom: 20
     }));
 
     // We don't want zoom-out button to appear while animating, so we hide it
@@ -129,25 +143,25 @@ export class InformationDialogComponent implements OnInit {
 
     // Create axes
     var yRenderer2 = am5xy.AxisRendererY.new(this.root2, {
-  minGridDistance: 20,
-  width: am5.percent(30),  // Ensure space between label and bar
-  opposite: false,
-  inside: false,
-});
+      minGridDistance: 20,
+      width: am5.percent(30),  // Ensure space between label and bar
+      opposite: false,
+      inside: false,
+    });
 
-yRenderer2.labels.template.setAll({
-  oversizedBehavior: "truncate",
-  maxWidth: 150,
-  fontSize: 12,
-  textAlign: "right"
-});
+    yRenderer2.labels.template.setAll({
+      oversizedBehavior: "truncate",
+      maxWidth: 350,
+      fontSize: 12,
+      textAlign: "right"
+    });
 
-var yAxis2 = chart2.yAxes.push(am5xy.CategoryAxis.new(this.root2, {
-  maxDeviation: 0,
-  categoryField: "name",
-  renderer: yRenderer2,
-  tooltip: am5.Tooltip.new(this.root2, { themeTags: ["axis"] })
-}));
+    var yAxis2 = chart2.yAxes.push(am5xy.CategoryAxis.new(this.root2, {
+      maxDeviation: 0,
+      categoryField: "name",
+      renderer: yRenderer2,
+      tooltip: am5.Tooltip.new(this.root2, { themeTags: ["axis"] })
+    }));
     var xAxis2 = chart2.xAxes.push(am5xy.ValueAxis.new(this.root2, {
       maxDeviation: 0,
       min: 0,
@@ -181,15 +195,6 @@ var yAxis2 = chart2.yAxes.push(am5xy.CategoryAxis.new(this.root2, {
       strokeOpacity: 0
     });
 
-    if (series2.labels && series2.labels.template) {
-      series2.labels.template.setAll({
-        oversizedBehavior: "wrap",
-        maxWidth: 200,
-        fontSize: 12,
-      });
-    } else {
-      console.warn("series2.labels.template is undefined");
-    }
     // Make each column to be of a different color
     series2.columns.template.adapters.add("fill", function (fill, target) {
       return chart2.get("colors").getIndex(series2.columns.indexOf(target));

@@ -37,21 +37,6 @@ declare var am5xy: any;
 
         <!-- Chart Container -->
         <div #chartContainer class="chart-container"></div>
-
-        <!-- Manual Legend (if needed) -->
-        <!-- <div class="manual-legend" *ngIf="widget.data">
-          <div 
-            *ngFor="let item of widget.data" 
-            class="legend-item">
-            <span class="legend-color" [style.background-color]="item.color"></span>
-            <span class="legend-label">
-              {{ item.name }}
-              <span class="legend-value" [style.color]="item.color">
-                <strong>{{ item.count }} ({{ item.percentage }}%)</strong>
-              </span>
-            </span>
-          </div>
-        </div> -->
       </div>
     </div>
   `,
@@ -104,9 +89,10 @@ declare var am5xy: any;
       }
 
       .chart-container {
-        height: 80vh;
+        height: 100%;
         width: 100%;
-        margin-bottom: 15px;
+        min-height: 150px;
+        margin-bottom: 10px;
       }
 
       /* Manual Legend */
@@ -145,7 +131,7 @@ declare var am5xy: any;
       @media (max-width: 768px) {
         .chart-box {
           padding: 15px;
-          min-height: 250px;
+          min-height: 230px;
         }
 
         .chart-title {
@@ -179,11 +165,11 @@ export class BarChartWidgetComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.calculateTotalData();
     if (this.widget.data) {
-      if(this.widget.widgetType ==='POSITIONS_FUNCTIONS' || this.widget.widgetSubType === 'TOP_8_POSITIONS') {
+      if (this.widget.widgetType === 'POSITIONS_FUNCTIONS' || this.widget.widgetSubType === 'TOP_8_POSITIONS') {
         this.createTopChart();
-      }else if(this.widget.widgetType === 'CONTRACT_TYPES' || this.widget.widgetSubType === 'CONTRACT_TYPE') {
+      } else if (this.widget.widgetType === 'CONTRACT_TYPES' || this.widget.widgetSubType === 'CONTRACT_TYPE') {
         this.createContratChart();
-      }else if(this.widget.widgetType === 'SURVEY_COMPLETION') {
+      } else if (this.widget.widgetType === 'SURVEY_COMPLETION') {
         this.createSurveyChart();
       } else {
         this.createChart();
@@ -191,13 +177,13 @@ export class BarChartWidgetComponent implements OnInit, OnDestroy {
     }
   }
 
-   JobBaseMap={
+  JobBaseMap = {
     "SENT": "Envoyées",
     "OPENED": "Ouvertes",
     "COMPLETED": "Complétées"
   }
 
-jobBaseColors = {
+  jobBaseColors = {
     "représentant commercial": "#1D3557",
     "chargé(e) de communication": "#457B9D",
     "chargé(e) d'études marketing": "#A8DADC",
@@ -216,40 +202,40 @@ jobBaseColors = {
     "responsable des études marketing": "#F15BB5",
     "autre": "#ADB5BD",
     "CDI": "#1D3557",
-        "CDD": "#457B9D",
-        "Intérim": "#A8DADC",
-        "Fonctionnaire": "#F4A261",
-        "Contractuel": "#E76F51",
-        "Auto-Entrepreneur": "#2A9D8F",
-        "Gérant": "#264653",
-        "Indépendant": "#6D597A",
-        "Mandataire Social": "#B5838D",
-        "Autre": "#ADB5BD",
+    "CDD": "#457B9D",
+    "Intérim": "#A8DADC",
+    "Fonctionnaire": "#F4A261",
+    "Contractuel": "#E76F51",
+    "Auto-Entrepreneur": "#2A9D8F",
+    "Gérant": "#264653",
+    "Indépendant": "#6D597A",
+    "Mandataire Social": "#B5838D",
+    "Autre": "#ADB5BD",
     "SENT": "#8FD2D2",
     "OPENED": "#4A90E2",
     "COMPLETED": "#0E3F2D",
   };
 
 
-   shadeColor(color, percent) {
-        let f = parseInt(color.slice(1), 16),
-          t = percent < 0 ? 0 : 255,
-          p = Math.abs(percent) / 100,
-          R = f >> 16,
-          G = f >> 8 & 0x00FF,
-          B = f & 0x0000FF;
-        return "#" + (
-          0x1000000 +
-          (Math.round((t - R) * p) + R) * 0x10000 +
-          (Math.round((t - G) * p) + G) * 0x100 +
-          (Math.round((t - B) * p) + B)
-        ).toString(16).slice(1);
+  shadeColor(color, percent) {
+    let f = parseInt(color.slice(1), 16),
+      t = percent < 0 ? 0 : 255,
+      p = Math.abs(percent) / 100,
+      R = f >> 16,
+      G = f >> 8 & 0x00FF,
+      B = f & 0x0000FF;
+    return "#" + (
+      0x1000000 +
+      (Math.round((t - R) * p) + R) * 0x10000 +
+      (Math.round((t - G) * p) + G) * 0x100 +
+      (Math.round((t - B) * p) + B)
+    ).toString(16).slice(1);
   }
 
   private calculateTotalData(): void {
     const maxTotalData = this.data
-  .filter(item => item.hasOwnProperty('totalData'))
-  .map(item => item.totalData);
+      .filter(item => item.hasOwnProperty('totalData'))
+      .map(item => item.totalData);
 
     this.totalData = Math.max(...maxTotalData);
   }
@@ -274,8 +260,8 @@ jobBaseColors = {
       });
       return entry;
     });
-   
-    
+
+
 
     // Step 3: Create root and chart
     this.root = am5.Root.new(this.chartContainer.nativeElement);
@@ -305,7 +291,7 @@ jobBaseColors = {
 
     // Step 6: Create series for each wave (EE1, EE2, ...)
     ["EE1", "EE2", "EE3", "EE4"].forEach((wave, index) => {
-        const esShade = { EE1: 50, EE2: 20, EE3: -20, EE4: -50 }[wave];
+      const esShade = { EE1: 50, EE2: 20, EE3: -20, EE4: -50 }[wave];
       const series = this.chart.series.push(
         am5xy.ColumnSeries.new(this.root, {
           name: wave,
@@ -343,7 +329,7 @@ jobBaseColors = {
         const dataItem = target.dataItem;
         const jobTitle = dataItem?.dataContext?.name;
         if (jobTitle && this.jobBaseColors[jobTitle]) {
-         return am5.color(this.shadeColor(this.jobBaseColors[jobTitle], esShade));
+          return am5.color(this.shadeColor(this.jobBaseColors[jobTitle], esShade));
         }
         return stroke;
       });
@@ -351,12 +337,12 @@ jobBaseColors = {
       series.data.setAll(groupedData);
       series.appear(1000);
       series.events.once("datavalidated", function () {
-          am5.array.each(series.dataItems, function (dataItem) {
-            if (dataItem.get("valueX") === 0) {
-              dataItem.set("valueXWorking", 0.5);
-            }
-          });
+        am5.array.each(series.dataItems, function (dataItem) {
+          if (dataItem.get("valueX") === 0) {
+            dataItem.set("valueXWorking", 0.5);
+          }
         });
+      });
     });
     this.chart.set("config", {
       type: 'bar',
@@ -372,7 +358,7 @@ jobBaseColors = {
   }
 
 
-    createContratChart(): void {
+  createContratChart(): void {
     const originalData = [...this.data].reverse();
 
     // Step 1: Extract all unique job titles
@@ -389,8 +375,8 @@ jobBaseColors = {
       });
       return entry;
     });
-   
-    
+
+
 
     // Step 3: Create root and chart
     this.root = am5.Root.new(this.chartContainer.nativeElement);
@@ -420,7 +406,7 @@ jobBaseColors = {
 
     // Step 6: Create series for each wave (EE1, EE2, ...)
     ["EE1", "EE2", "EE3", "EE4"].forEach((wave, index) => {
-        const esShade = { EE1: 50, EE2: 20, EE3: -20, EE4: -50 }[wave];
+      const esShade = { EE1: 50, EE2: 20, EE3: -20, EE4: -50 }[wave];
       const series = this.chart.series.push(
         am5xy.ColumnSeries.new(this.root, {
           name: wave,
@@ -458,7 +444,7 @@ jobBaseColors = {
         const dataItem = target.dataItem;
         const jobTitle = dataItem?.dataContext?.name;
         if (jobTitle && this.jobBaseColors[jobTitle]) {
-         return am5.color(this.shadeColor(this.jobBaseColors[jobTitle], esShade));
+          return am5.color(this.shadeColor(this.jobBaseColors[jobTitle], esShade));
         }
         return stroke;
       });
@@ -466,12 +452,12 @@ jobBaseColors = {
       series.data.setAll(groupedData);
       series.appear(1000);
       series.events.once("datavalidated", function () {
-          am5.array.each(series.dataItems, function (dataItem) {
-            if (dataItem.get("valueX") === 0) {
-              dataItem.set("valueXWorking", 0.5);
-            }
-          });
+        am5.array.each(series.dataItems, function (dataItem) {
+          if (dataItem.get("valueX") === 0) {
+            dataItem.set("valueXWorking", 0.5);
+          }
         });
+      });
     });
     this.chart.set("config", {
       type: 'bar',
@@ -486,113 +472,113 @@ jobBaseColors = {
     this.chart.appear(1000, 100);
   }
 
-  
+
   createSurveyChart(): void {
     const originalData = [...this.data];
     const waveLabelMap = {
-    1: 'EE1',
-    2: 'EE2',
-    3: 'EE3',
-    4: 'EE4'
-  };
-   
-  const waves = Object.keys(waveLabelMap).map(Number);
+      1: 'EE1',
+      2: 'EE2',
+      3: 'EE3',
+      4: 'EE4'
+    };
 
-      // Get unique job names
-  const jobTitles = Array.from(new Set(originalData.map(d => d.name)));
- 
+    const waves = Object.keys(waveLabelMap).map(Number);
 
-  // 1. Prepare wave labels
-  const waveLabels = waves.map(w => waveLabelMap[w]);
+    // Get unique job names
+    const jobTitles = Array.from(new Set(originalData.map(d => d.name)));
 
-  // 2. Get job types (Sent, Opened, Completed)
-  const jobNames = Array.from(new Set(originalData.map(d => d.name)));
 
-  // 3. Group data for vertical bar chart
-  const groupedData = waves.map(waveNum => {
-    const waveLabel = waveLabelMap[waveNum];
-    const entry: any = { wave: waveLabel };
+    // 1. Prepare wave labels
+    const waveLabels = waves.map(w => waveLabelMap[w]);
 
-    jobNames.forEach(name => {
-      const item = originalData.find(d => d.wave === waveNum && d.name === name);
-      entry[name] = item ? item.count : 0;
+    // 2. Get job types (Sent, Opened, Completed)
+    const jobNames = Array.from(new Set(originalData.map(d => d.name)));
+
+    // 3. Group data for vertical bar chart
+    const groupedData = waves.map(waveNum => {
+      const waveLabel = waveLabelMap[waveNum];
+      const entry: any = { wave: waveLabel };
+
+      jobNames.forEach(name => {
+        const item = originalData.find(d => d.wave === waveNum && d.name === name);
+        entry[name] = item ? item.count : 0;
+      });
+
+      return entry;
     });
 
-    return entry;
-  });
+    // 4. Create chart
+    this.root = am5.Root.new(this.chartContainer.nativeElement);
+    this.root.setThemes([am5.Theme.new(this.root)]);
 
-  // 4. Create chart
-  this.root = am5.Root.new(this.chartContainer.nativeElement);
-  this.root.setThemes([am5.Theme.new(this.root)]);
-
-  this.chart = this.root.container.children.push(
-    am5xy.XYChart.new(this.root, {
-      panX: true,
-      panY: false,
-      wheelX: "panX",
-      wheelY: "zoomX",
-      layout: this.root.verticalLayout
-    })
-  );
-
-  // 5. Create X axis (category - wave)
-  this.xAxis = this.chart.xAxes.push(
-    am5xy.CategoryAxis.new(this.root, {
-      categoryField: "wave",
-      renderer: am5xy.AxisRendererX.new(this.root, { minGridDistance: 30 })
-    })
-  );
-  this.xAxis.data.setAll(groupedData);
-
-  // 6. Create Y axis (value)
-  this.yAxis = this.chart.yAxes.push(
-    am5xy.ValueAxis.new(this.root, {
-      min: 0,  // Set minimum value to 0
-      renderer: am5xy.AxisRendererY.new(this.root, {})
-    })
-  );
-
-  // 7. Create one series per job (Sent, Opened, Completed)
-  jobNames.forEach(jobName => {
-    const series = this.chart.series.push(
-      am5xy.ColumnSeries.new(this.root, {
-        name: this.JobBaseMap[jobName],
-        xAxis: this.xAxis,
-        yAxis: this.yAxis,
-        valueYField: jobName,
-        categoryXField: "wave",
-        clustered: true,
-        tooltip: am5.Tooltip.new(this.root, {
-          labelText: `{name} - {categoryX}: {valueY}`
-        })
+    this.chart = this.root.container.children.push(
+      am5xy.XYChart.new(this.root, {
+        panX: true,
+        panY: false,
+        wheelX: "panX",
+        wheelY: "zoomX",
+        layout: this.root.verticalLayout
       })
     );
 
-    series.columns.template.setAll({
-      tooltipText: `{name} - {categoryX}: {valueY}`,
-      strokeWidth: 1,
-      cornerRadiusTL: 4,
-      cornerRadiusTR: 4
+    // 5. Create X axis (category - wave)
+    this.xAxis = this.chart.xAxes.push(
+      am5xy.CategoryAxis.new(this.root, {
+        categoryField: "wave",
+        renderer: am5xy.AxisRendererX.new(this.root, { minGridDistance: 30 })
+      })
+    );
+    this.xAxis.data.setAll(groupedData);
+
+    // 6. Create Y axis (value)
+    this.yAxis = this.chart.yAxes.push(
+      am5xy.ValueAxis.new(this.root, {
+        min: 0,  // Set minimum value to 0
+        renderer: am5xy.AxisRendererY.new(this.root, {})
+      })
+    );
+
+    // 7. Create one series per job (Sent, Opened, Completed)
+    jobNames.forEach(jobName => {
+      const series = this.chart.series.push(
+        am5xy.ColumnSeries.new(this.root, {
+          name: this.JobBaseMap[jobName],
+          xAxis: this.xAxis,
+          yAxis: this.yAxis,
+          valueYField: jobName,
+          categoryXField: "wave",
+          clustered: true,
+          tooltip: am5.Tooltip.new(this.root, {
+            labelText: `{name} - {categoryX}: {valueY}`
+          })
+        })
+      );
+
+      series.columns.template.setAll({
+        tooltipText: `{name} - {categoryX}: {valueY}`,
+        strokeWidth: 1,
+        cornerRadiusTL: 4,
+        cornerRadiusTR: 4
+      });
+
+      // Optional: Use jobBaseColors
+      series.columns.template.adapters.add("fill", (fill, target) => {
+        return am5.color(this.jobBaseColors[jobName] || "#000");
+      });
+      series.columns.template.adapters.add("stroke", (stroke, target) => {
+        return am5.color(this.jobBaseColors[jobName] || "#000");
+      });
+
+      series.data.setAll(groupedData);
+      series.appear(1000);
     });
 
-    // Optional: Use jobBaseColors
-    series.columns.template.adapters.add("fill", (fill, target) => {
-      return am5.color(this.jobBaseColors[jobName] || "#000");
-    });
-    series.columns.template.adapters.add("stroke", (stroke, target) => {
-      return am5.color(this.jobBaseColors[jobName] || "#000");
-    });
+    // 8. Add legend
+    this.chart.set("legend", am5.Legend.new(this.root, {}));
 
-    series.data.setAll(groupedData);
-    series.appear(1000);
-  });
-
-  // 8. Add legend
-  this.chart.set("legend", am5.Legend.new(this.root, {}));
-
-  // 9. Animate chart
-  this.chart.appear(1000, 100);
-}
+    // 9. Animate chart
+    this.chart.appear(1000, 100);
+  }
 
   private createChart(): void {
     this.root = am5.Root.new(this.chartContainer.nativeElement);
@@ -680,7 +666,7 @@ jobBaseColors = {
   //   }
   // }
 
- 
+
   ngOnDestroy(): void {
     if (this.root) {
       this.root.dispose();

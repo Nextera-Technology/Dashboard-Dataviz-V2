@@ -1,6 +1,6 @@
 /* src/app/components/france-regional-maps/france-regional-maps.component.scss */
 .france-regional-maps-container {
-  min-height: 400px; /* Minimum height for the container */
+  min-height: 250px; /* Minimum height for the container */
 }
 
 .map-card {
@@ -10,6 +10,7 @@
 .map-chart-container {
   width: 100%;
   height: 100%; /* Take full height of parent card */
+  padding: 4px;
 }
 
 .no-data-overlay {

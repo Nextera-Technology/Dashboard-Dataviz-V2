@@ -35,16 +35,22 @@ export class ActionsButtonsComponent implements OnInit {
   }
   paragraphClicked(dialogType: string) {
    const dialogRef = this.dialog.open(InformationDialogComponent, {
-         width: '75%',
-         data: { widget: this.widget }
+      width: '70%',
+      data: { widget: this.widget },
+      disableClose: false,
+      hasBackdrop: true,
+      panelClass: 'centered-dialog'
     });
       
   }
  
   scopeClicked(info: string): void {
     const dialogRef = this.dialog.open(ScopeDialogComponent, {
-         width: '75%',
-         data: { widget: this.widget }
+      width: '70%',
+      data: { widget: this.widget },
+      disableClose: false,
+      hasBackdrop: true,
+      panelClass: 'centered-dialog'
     });
 
     dialogRef.afterClosed().subscribe(() => {
