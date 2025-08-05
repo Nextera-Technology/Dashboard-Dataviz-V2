@@ -10,9 +10,6 @@ import { TextWidgetComponent } from "app/modules/dashboard/charts/text-widget.co
 import { MapWidgetComponent } from "app/modules/dashboard/charts/map-widget.component";
 import { WorldMapWidgetComponent } from "../widgets/world-map-widget/world-map-widget.component";
 import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/charts/pictorial-fraction-chart.component";
-import { BarChartWidgetTopComponent } from "app/modules/dashboard/charts/bar-chart-widget-top.component";
-import { BarChartWidgetContratComponent } from "app/modules/dashboard/charts/bar-chart-widget-contrat.component";
-import { BarChartWidgetOuvertComponent } from "app/modules/dashboard/charts/bar-chart-widget-ouvert.component";
 import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/breakdown-chart-widget.component";
 
 @Component({

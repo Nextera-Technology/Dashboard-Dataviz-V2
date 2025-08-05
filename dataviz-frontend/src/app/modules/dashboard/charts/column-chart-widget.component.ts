@@ -160,9 +160,9 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.calculateTotalData();
-    if(this.widget.widgetType === 'SURVEY_COMPLETION' || this.widget.widget === 'SURVEY_COMPLETION') {
+    if (this.widget.widgetType === 'SURVEY_COMPLETION' || this.widget.widget === 'SURVEY_COMPLETION') {
       this.createSurveyChart();
-    }else if (this.widget.data?.series) {
+    } else if (this.widget.data?.series) {
       this.createChart();
     }
   }
@@ -227,7 +227,6 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
     // Get unique job names
     const jobTitles = Array.from(new Set(originalData.map(d => d.name)));
 
-
     // 1. Prepare wave labels
     const waveLabels = waves.map(w => waveLabelMap[w]);
 
@@ -242,6 +241,8 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
       jobNames.forEach(name => {
         const item = originalData.find(d => d.wave === waveNum && d.name === name);
         entry[name] = item ? item.count : 0;
+        // Add percentage for label
+        entry[`${name}_percentage`] = item ? item.percentage : null;
       });
 
       return entry;
@@ -289,13 +290,13 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
           categoryXField: "wave",
           clustered: true,
           tooltip: am5.Tooltip.new(this.root, {
-            labelText: `{name} - {categoryX}: {valueY}`
+            labelText: `{name} - {categoryX}: {valueY} ({${jobName}_percentage}%)`
           })
         })
       );
 
       series.columns.template.setAll({
-        tooltipText: `{name} - {categoryX}: {valueY}`,
+        tooltipText: `{name} - {categoryX}: {valueY} ({${jobName}_percentage}%)`,
         strokeWidth: 1,
         cornerRadiusTL: 4,
         cornerRadiusTR: 4
@@ -311,6 +312,27 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
 
       series.data.setAll(groupedData);
       series.appear(1000);
+
+      series.bullets.push(() => {
+        const label = am5.Label.new(this.root, {
+          text: `{${jobName}_percentage}%`,
+          populateText: true,
+          centerX: am5.percent(50),
+          centerY: am5.percent(100),
+          dy: -5,
+          fontSize: 10
+        });
+
+        // Apply same color as bar
+        label.adapters.add("fill", () => {
+          return am5.color(this.jobBaseColors[jobName] || "#000");
+        });
+
+        return am5.Bullet.new(this.root, {
+          locationY: 1,
+          sprite: label
+        });
+      });
     });
 
     // 8. Add legend
@@ -326,7 +348,8 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
 
     this.chart = this.root.container.children.push(
       am5xy.XYChart.new(this.root, {
-        layout: this.root.verticalLayout
+        layout: this.root.verticalLayout,
+        maskBullets: false
       })
     );
 
@@ -366,7 +389,8 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
       // Set data for this series
       const data = categories.map((cat: string, catIndex: number) => ({
         category: cat,
-        value: seriesData.data[catIndex] || 0
+        value: seriesData.data[catIndex] || 0,
+        percentage: seriesData.percentages ? seriesData.percentages[catIndex] : null
       }));
       series.data.setAll(data);
 
@@ -375,9 +399,8 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
         cornerRadiusTL: 6,
         cornerRadiusTR: 6,
         strokeWidth: 2,
-        tooltipText: '{name}: {valueY}'
+        tooltipText: '{name}: {valueY} ({percentage}%)'
       });
-
       this.series.push(series);
     });
 
@@ -432,6 +455,7 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
 
     // Case 3: If totalData field exists directly
     this.totalData = dataObj.totalData ?? 0;
+
   }
 
 

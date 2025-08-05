@@ -335,6 +335,32 @@ export class BarChartWidgetComponent implements OnInit, OnDestroy {
       });
 
       series.data.setAll(groupedData);
+
+      series.bullets.push(() => {
+        const label = am5.Label.new(this.root, {
+          text: "{valueX}",
+          populateText: true,
+          centerY: am5.percent(50),
+          centerX: am5.percent(0),
+          paddingLeft: 10,
+          fontSize: 10
+        });
+
+        // Match label color to bar fill color
+        label.adapters.add("fill", (fill, target) => {
+          const dataItem = target.dataItem;
+          const jobTitle = dataItem?.dataContext?.name;
+          if (jobTitle && this.jobBaseColors[jobTitle]) {
+            return am5.color(this.shadeColor(this.jobBaseColors[jobTitle], esShade));
+          }
+          return fill;
+        });
+
+        return am5.Bullet.new(this.root, {
+          locationX: 1,
+          sprite: label
+        });
+      });
       series.appear(1000);
       series.events.once("datavalidated", function () {
         am5.array.each(series.dataItems, function (dataItem) {
@@ -346,7 +372,6 @@ export class BarChartWidgetComponent implements OnInit, OnDestroy {
     });
     this.chart.set("config", {
       type: 'bar',
-      height: 500, // Adjust height to show all 8 labels
       stacked: false
     });
 
@@ -450,6 +475,32 @@ export class BarChartWidgetComponent implements OnInit, OnDestroy {
       });
 
       series.data.setAll(groupedData);
+      series.bullets.push(() => {
+        const label = am5.Label.new(this.root, {
+          text: "{valueX}",
+          populateText: true,
+          centerY: am5.percent(50),
+          centerX: am5.percent(0),
+          paddingLeft: 10,
+          fontSize: 10
+        });
+
+        // Match label color to bar fill color
+        label.adapters.add("fill", (fill, target) => {
+          const dataItem = target.dataItem;
+          const jobTitle = dataItem?.dataContext?.name;
+          if (jobTitle && this.jobBaseColors[jobTitle]) {
+            return am5.color(this.shadeColor(this.jobBaseColors[jobTitle], esShade));
+          }
+          return fill;
+        });
+
+        return am5.Bullet.new(this.root, {
+          locationX: 1,
+          sprite: label
+        });
+      });
+
       series.appear(1000);
       series.events.once("datavalidated", function () {
         am5.array.each(series.dataItems, function (dataItem) {
@@ -461,7 +512,6 @@ export class BarChartWidgetComponent implements OnInit, OnDestroy {
     });
     this.chart.set("config", {
       type: 'bar',
-      height: 500, // Adjust height to show all 8 labels
       stacked: false
     });
 
@@ -571,6 +621,7 @@ export class BarChartWidgetComponent implements OnInit, OnDestroy {
 
       series.data.setAll(groupedData);
       series.appear(1000);
+
     });
 
     // 8. Add legend

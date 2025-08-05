@@ -43,3 +43,14 @@
     top: 20px;
     color: #0C7CD5;
 }
+
+.top-space{
+    margin-top: 25%;
+}
+
+@media screen and (min-width: 1200px) {
+  /* Your styles for large screens go here */
+  .top-space{
+    margin-top: 30%;
+  }
+}
