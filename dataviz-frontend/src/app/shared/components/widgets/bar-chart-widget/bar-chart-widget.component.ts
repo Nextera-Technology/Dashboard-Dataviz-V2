@@ -42,16 +42,39 @@ export class BarChartWidgetComponent
   @Input() widget!: Widget;
   @Input() data: any[] | undefined;
 
+  // Computed total data for overlay
+  get totalData(): number {
+    if (!this.data || this.data.length === 0) {
+      return 0;
+    }
+    // If totalData field exists in first item, use it; otherwise use length or sum
+    const first = this.data[0];
+    if (first && first.totalData !== undefined) {
+      return first.totalData;
+    }
+    // Fallback: sum of count fields if present
+    return this.data.reduce((sum: number, item: any) => sum + (item.count ?? 0), 0);
+  }
+
   private root!: am5.Root;
   private chart!: am5xy.XYChart;
 
-  constructor(private zone: NgZone) {}
+  constructor(private zone: NgZone) {
+    console.log("BarChartWidgetComponent initialized");
+  }
 
   ngOnInit(): void {
     // Data processing or initial setup can happen here
+    console.log("BarChartWidget initialized with data:", this.data);
   }
 
   ngAfterViewInit(): void {
+    // Sort data if chartType indicates a sorted bar chart
+    if (this.widget.chartType && this.widget.chartType.toLowerCase().includes('sorted')) {
+      if (this.data) {
+        this.data = [...this.data].sort((a: any, b: any) => (b.count ?? 0) - (a.count ?? 0));
+      }
+    }
     // Chart code goes in a timeout to make sure that the DOM is ready
     this.zone.runOutsideAngular(() => {
       if (!this.data || this.data.length === 0) {
@@ -75,6 +98,13 @@ export class BarChartWidgetComponent
 
       // Create axes
       const yRenderer = am5xy.AxisRendererY.new(root, {});
+
+      // Prevent long category names from overlapping by truncating with ellipsis
+      yRenderer.labels.template.setAll({
+        maxWidth: 140,
+        oversizedBehavior: "truncate",
+        fontSize: "12px",
+      });
       const yAxis = chart.yAxes.push(
         am5xy.CategoryAxis.new(root, {
           categoryField: "name", // Assuming a 'category' field in your data
@@ -119,6 +149,7 @@ export class BarChartWidgetComponent
       this.chart = chart;
     });
   }
+  
 
   ngOnDestroy(): void {
     this.zone.runOutsideAngular(() => {

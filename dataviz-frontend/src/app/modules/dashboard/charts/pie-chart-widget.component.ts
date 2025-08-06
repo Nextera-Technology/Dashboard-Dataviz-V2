@@ -13,6 +13,7 @@ import {
   DashboardWidget,
   WidgetAction,
 } from "app/shared/services/dashboard.service";
+import { ActionsButtonsComponent } from "app/shared/components/actions-buttons/actions-buttons.component";
 
 declare var am5: any;
 declare var am5percent: any;
@@ -20,26 +21,14 @@ declare var am5percent: any;
 @Component({
   selector: "app-pie-chart-widget",
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, ActionsButtonsComponent],
   template: `
     <div
       class="chart-box"
       [style.background-color]="widget?.background || '#ffffff'"
     >
-      <div class="button-container">
-        <button class="info-button primary" (click)="onActionClick('info')">
-          <img [src]="getActionIcon('paragraph.png')" alt="Info" />
-        </button>
-        <button class="info-button secondary" (click)="onActionClick('export')">
-          <img [src]="getActionIcon('excel.png')" alt="Export" />
-        </button>
-        <button
-          class="info-button secondary"
-          (click)="onActionClick('audience')"
-        >
-          <img [src]="getActionIcon('audience_4644048.png')" alt="Audience" />
-        </button>
-      </div>
+     <!-- Action Buttons -->
+      <app-actions-buttons [widget]="widget"></app-actions-buttons>
 
       <div class="chart-content">
         <h3 class="chart-title">{{ widget.title }}</h3>
@@ -267,7 +256,9 @@ export class PieChartWidgetComponent implements OnInit, OnDestroy {
       maxWidth: 125, // Set maximum width for labels
       oversizedBehavior: "wrap", // Wrap long text
       paddingBottom: 15,
-      paddingRight: 10
+      paddingRight: 10,
+      forceHidden: false, // allow hiding if overlap
+      radius: 20 // or experiment with am5.percent(80)
     });
 
     // Configure series appearance

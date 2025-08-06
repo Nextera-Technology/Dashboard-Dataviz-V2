@@ -48,6 +48,10 @@ export class DashboardService {
   async getOneDashboard(id: string) {
     return await this.dashboardRepository.getOneDashboard(id);
   }
+
+  async getWidgetDataSource(id: string) {
+    return await this.dashboardRepository.getWidgetDataSources(id);
+  }
 }
 
 // Example usage:

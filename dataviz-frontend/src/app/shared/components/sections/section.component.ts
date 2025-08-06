@@ -10,6 +10,7 @@ import { TextWidgetComponent } from "app/modules/dashboard/charts/text-widget.co
 import { MapWidgetComponent } from "app/modules/dashboard/charts/map-widget.component";
 import { WorldMapWidgetComponent } from "../widgets/world-map-widget/world-map-widget.component";
 import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/charts/pictorial-fraction-chart.component";
+import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/breakdown-chart-widget.component";
 
 @Component({
   selector: "app-section",
@@ -26,6 +27,7 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
     MapWidgetComponent,
     PictorialStackedChartWidgetComponent,
     WorldMapWidgetComponent,
+    BreakDownChartWidgetComponent
   ],
   template: `
     <div class="section" [style.background-color]="section.background">
@@ -34,7 +36,7 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
       </div>
 
       <div
-        class="widgets-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 p-6 overflow-y-auto"
+        class="widgets-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 auto-rows-[230px] gap-6 p-6 overflow-y-auto"
       >
         <ng-container *ngFor="let widget of visibleWidgets">
           <!-- Metric Widget -->
@@ -50,9 +52,7 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
           >
             <app-metric-widget
               *ngIf="
-                widget.chartType === 'CARD' &&
-                widget?.name !==
-                  'Statut Professionnel : Situation après la certification'
+                widget.chartType === 'CARD' && !(widget?.widgetType === 'STATUS_BY_WAVE'  || widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN')
               "
               [widget]="widget"
               [data]="widget?.data"
@@ -63,16 +63,30 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
             >
             </app-metric-widget>
 
-            <div
+            <app-breakdown-chart-widget
+              *ngIf="
+                widget.chartType === 'CARD' && (widget?.widgetType === 'STATUS_BY_WAVE'  || widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN')
+              "
+              [widget]="widget"
+              [data]="widget?.data"
+              class="widget"
+              [class.widget-small]="widget.size === 'small'"
+              [class.widget-medium]="widget.size === 'medium'"
+              [class.widget-large]="widget.size === 'large'"
+            >
+            </app-breakdown-chart-widget>
+
+            <!-- <div
               *ngIf="
                 widget.chartType === 'CARD' &&
-                widget?.name ===
-                  'Statut Professionnel : Situation après la certification'
+                widget?.widgetType ===
+                  'STATUS_BY_WAVE' &&
+                widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN'
               "
               class="grid h-full"
               style="margin-bottom: 20px;"
             >
-              <div class="chart-box shadow-[0_2px_8px_rgba(0,0,0,0.1)]" style="position: relative;">
+              <div class="chart-box shadow-[0_2px_8px_rgba(0,0,0,0.1)]" style="position: relative; padding: 20px; background-color: #fff;">
                 <div class="button-container">
                   <button class="info-button" title="Information">
                     <img
@@ -96,156 +110,55 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
                       alt="Download"
                     />
                   </button>
-                </div>
-                <h3 class="chart-title">
-                  Statut Professionnel : Situation après la certification
-                </h3>
-                <div class="status-grid-rowed">
-                  <div class="status-row" style="color: #00454D">
-                    <div class="status-category"></div>
-                    <div class="status-value-title"><strong>EE1</strong></div>
-                    <div class="status-value-title"><strong>EE2</strong></div>
-                    <div class="status-value-title"><strong>EE3</strong></div>
-                    <div class="status-value-title"><strong>EE4</strong></div>
-                  </div>
-                  <div class="status-row">
-                    <div class="status-category">A un emploi</div>
-                    <div
-                      class="status-value"
-                      style="background-color: #E6F0F9; border-left: 4px solid #457B9D;"
-                    >
-                      0%
+                </div> 
+
+                 <h3>{{widget?.name}}</h3>
+                  <div class="status-grid-rowed">
+                    <div class="status-row" style="color: #00454D">
+                      <div class="status-category"></div>
+                      <div class="status-value-title"><strong>EE1</strong></div>
+                      <div class="status-value-title"><strong>EE2</strong></div>
+                      <div class="status-value-title"><strong>EE3</strong></div>
+                      <div class="status-value-title"><strong>EE4</strong></div>
                     </div>
-                    <div
-                      class="status-value"
-                      style="background-color: #E6F0F9; border-left: 4px solid #457B9D;"
-                    >
-                      75%
+                    <div class="status-row">
+                      <div class="status-category">A un emploi</div>
+                      <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">{{getDataForWave("En activité professionnelle", 1)}}</div>
+                      <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">{{getDataForWave("En activité professionnelle", 2)}}</div>
+                      <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">{{getDataForWave("En activité professionnelle", 3)}}</div>
+                      <div class="status-value" style="background-color: #E6F0F9; border-left: 4px solid #457B9D;">{{getDataForWave("En activité professionnelle", 4)}}</div>
                     </div>
-                    <div
-                      class="status-value"
-                      style="background-color: #E6F0F9; border-left: 4px solid #457B9D;"
-                    >
-                      70%
+                    <div class="status-row">
+                      <div class="status-category">Recherche</div>
+                      <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">{{getDataForWave("En recherche d'emploi", 1)}}</div>
+                      <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">{{getDataForWave("En recherche d'emploi", 2)}}</div>
+                      <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">{{getDataForWave("En recherche d'emploi", 3)}}</div>
+                      <div class="status-value" style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;">{{getDataForWave("En recherche d'emploi", 4)}}</div>
                     </div>
-                    <div
-                      class="status-value"
-                      style="background-color: #E6F0F9; border-left: 4px solid #457B9D;"
-                    >
-                      73%
+                    <div class="status-row">
+                      <div class="status-category">Poursuit des études</div>
+                      <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">{{getDataForWave("En poursuite d'études (formation initiale ou alternance)", 1)}}</div>
+                      <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">{{getDataForWave("En poursuite d'études (formation initiale ou alternance)", 2)}}</div>
+                      <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">{{getDataForWave("En poursuite d'études (formation initiale ou alternance)", 3)}}</div>
+                      <div class="status-value" style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;">{{getDataForWave("En poursuite d'études (formation initiale ou alternance)", 4)}}</div>
                     </div>
-                  </div>
-                  <div class="status-row">
-                    <div class="status-category">Recherche</div>
-                    <div
-                      class="status-value"
-                      style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;"
-                    >
-                      44%
+                    <div class="status-row">
+                      <div class="status-category">Inactif</div>
+                      <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">{{getDataForWave("Inactif (ex : congés maternité, maladie longue, sabbatique, césure...)", 1)}}</div>
+                      <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">{{getDataForWave("Inactif (ex : congés maternité, maladie longue, sabbatique, césure...)", 2)}}</div>
+                      <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">{{getDataForWave("Inactif (ex : congés maternité, maladie longue, sabbatique, césure...)", 3)}}</div>
+                      <div class="status-value" style="background-color: #F9E9EC; border-left: 4px solid #A77A82;">{{getDataForWave("Inactif (ex : congés maternité, maladie longue, sabbatique, césure...)", 4)}}</div>
                     </div>
-                    <div
-                      class="status-value"
-                      style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;"
-                    >
-                      14%
-                    </div>
-                    <div
-                      class="status-value"
-                      style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;"
-                    >
-                      9%
-                    </div>
-                    <div
-                      class="status-value"
-                      style="background-color: #FAF2E6; border-left: 4px solid #D69B5A;"
-                    >
-                      3%
+                    <div class="status-row">
+                      <div class="status-category">Non répondant</div>
+                      <div class="status-value" style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;">{{getDataForWave("Non répondant", 1)}}</div>
+                      <div class="status-value" style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;">{{getDataForWave("Non répondant", 2)}}</div>
+                      <div class="status-value" style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;">{{getDataForWave("Non répondant", 3)}}</div>
+                      <div class="status-value" style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;">{{getDataForWave("Non répondant", 4)}}</div>
                     </div>
                   </div>
-                  <div class="status-row">
-                    <div class="status-category">Poursuit des études</div>
-                    <div
-                      class="status-value"
-                      style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;"
-                    >
-                      56%
-                    </div>
-                    <div
-                      class="status-value"
-                      style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;"
-                    >
-                      3%
-                    </div>
-                    <div
-                      class="status-value"
-                      style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;"
-                    >
-                      4%
-                    </div>
-                    <div
-                      class="status-value"
-                      style="background-color: #E6F7F4; border-left: 4px solid #2A9D8F;"
-                    >
-                      3%
-                    </div>
-                  </div>
-                  <div class="status-row">
-                    <div class="status-category">Inactif</div>
-                    <div
-                      class="status-value"
-                      style="background-color: #F9E9EC; border-left: 4px solid #A77A82;"
-                    >
-                      0%
-                    </div>
-                    <div
-                      class="status-value"
-                      style="background-color: #F9E9EC; border-left: 4px solid #A77A82;"
-                    >
-                      4%
-                    </div>
-                    <div
-                      class="status-value"
-                      style="background-color: #F9E9EC; border-left: 4px solid #A77A82;"
-                    >
-                      2%
-                    </div>
-                    <div
-                      class="status-value"
-                      style="background-color: #F9E9EC; border-left: 4px solid #A77A82;"
-                    >
-                      2%
-                    </div>
-                  </div>
-                  <div class="status-row">
-                    <div class="status-category">Non répondant</div>
-                    <div
-                      class="status-value"
-                      style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;"
-                    >
-                      0%
-                    </div>
-                    <div
-                      class="status-value"
-                      style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;"
-                    >
-                      4%
-                    </div>
-                    <div
-                      class="status-value"
-                      style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;"
-                    >
-                      15%
-                    </div>
-                    <div
-                      class="status-value"
-                      style="background-color: #e9e9f9; border-left: 4px solid #7d7aa7;"
-                    >
-                      19%
-                    </div>
-                  </div>
-                </div>
               </div>
-            </div>
+            </div> -->
 
             <!-- Pie Chart Widget -->
             <app-pie-chart-widget
@@ -270,6 +183,39 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
               [class.widget-large]="widget.size === 'large'"
             >
             </app-bar-chart-widget>
+
+            <!-- <app-bar-chart-widget-ouvert
+              *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART' && widget?.name === 'Ouvert – Commencé – Enquête complétée (EE1–EE4)'"
+              [widget]="widget"
+              [data]="widget?.data"
+              class="widget"
+              [class.widget-small]="widget.size === 'small'"
+              [class.widget-medium]="widget.size === 'medium'"
+              [class.widget-large]="widget.size === 'large'"
+            >
+            </app-bar-chart-widget-ouvert> -->
+
+             <!-- <app-bar-chart-widget-contrat
+              *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART' && widget?.name === 'Type de contrat'"
+              [widget]="widget"
+              [data]="widget?.data"
+              class="widget"
+              [class.widget-small]="widget.size === 'small'"
+              [class.widget-medium]="widget.size === 'medium'"
+              [class.widget-large]="widget.size === 'large'"
+            >
+            </app-bar-chart-widget-contrat>
+
+            <app-bar-chart-widget-top
+              *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART' && widget.name === 'Top 8 fonctions'"
+              [widget]="widget"
+              [data]="widget?.data"
+              class="widget"
+              [class.widget-small]="widget.size === 'small'"
+              [class.widget-medium]="widget.size === 'medium'"
+              [class.widget-large]="widget.size === 'large'"
+            >
+            </app-bar-chart-widget-top> -->
 
             <!-- Column Chart Widget -->
             <app-column-chart-widget
@@ -320,7 +266,7 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
             </app-text-widget>
 
             <!-- Map Widget -->
-            <app-map-widget
+            <app-column-chart-widget
               *ngIf="widget.chartType === 'CLUSTERED_COLUMN_CHART'"
               [widget]="widget"
               [data]="widget?.data"
@@ -329,7 +275,7 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
               [class.widget-medium]="widget.size === 'medium'"
               [class.widget-large]="widget.size === 'large'"
             >
-            </app-map-widget>
+            </app-column-chart-widget>
 
             <app-pictorial-fraction-chart
               *ngIf="widget.chartType === 'PICTORIAL_FRACTION_CHART'"
@@ -357,150 +303,15 @@ import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/char
       </div>
     </div>
   `,
-  styles: [
-    `
-      .chart-box {
-        position: relative;
-        text-align: center;
-        border-radius: 12px;
-        padding: 20px;
-        transition: all 0.3s ease;
-        min-height: 300px;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .chart-box:hover {
-        transform: translateY(-2px);
-      }
-      .status-grid-rowed {
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-        margin-top: 20px;
-      }
-
-      .status-row {
-        display: grid;
-        grid-template-columns: 200px repeat(4, 1fr);
-        /* 1 for label, 4 for ES values */
-        gap: 10px;
-        align-items: center;
-      }
-
-      .status-category {
-        font-weight: bold;
-        font-size: 15px;
-        color: #15616d;
-      }
-
-      .chart-title {
-        font-family: "Inter";
-        font-size: 18px;
-        font-weight: 600;
-        color: #00454d;
-        margin: 15px 0 15px 0;
-        line-height: 1.3;
-      }
-      .status-value {
-        background-color: #f5f7fa;
-        padding: 10px;
-        text-align: center;
-        border-radius: 8px;
-        font-size: 14px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-        font-weight: 500;
-      }
-
-      .status-value-title {
-        /* background-color: #f5f7fa; */
-        padding: 10px;
-        text-align: center;
-        /* border-radius: 8px; */
-        font-size: 14px;
-        /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); */
-        font-weight: 500;
-      }
-      .section {
-        margin-bottom: 2rem;
-        border-radius: 8px;
-        padding: 1.5rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-
-      .section-header {
-        margin-bottom: 1.5rem;
-      }
-
-      .section-header h2 {
-        margin: 0;
-        color: #333;
-        font-size: 1.5rem;
-        font-weight: 600;
-      }
-
-      .widgets-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr); /* Always 4 columns per row */
-        gap: 1.5rem;
-        align-items: stretch; /* Make all widgets stretch to same height */
-      }
-
-      .widget {
-      height:100%;
-        background: white;
-        border-radius: 8px;
-        padding: 1.5rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        min-height: 350px; /* Ensures equal min height for all widgets */
-      }
-
-      .widget:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      }
-
-      .widget-small {
-        grid-column: span 1;
-      }
-
-      .widget-medium {
-        grid-column: span 2;
-      }
-
-      .widget-large {
-        grid-column: span 3;
-      }
-
-      @media (max-width: 1024px) {
-        .widgets-grid {
-          grid-template-columns: 1fr 1fr; /* 2 columns on tablets */
-        }
-      }
-      @media (max-width: 768px) {
-        .widgets-grid {
-          grid-template-columns: 1fr; /* 1 column on mobile */
-        }
-        .widget-medium,
-        .widget-large {
-          grid-column: span 1;
-        }
-      }
-    `,
-  ],
+  styleUrls: ["./section.component.scss"],
 })
 export class SectionComponent implements OnInit {
   @Input() section!: any;
 
   visibleWidgets: any[] = [];
 
+  cardData: any[] = [];
+  situationData = [];
   ngOnInit(): void {
     this.updateVisibleWidgets();
   }
@@ -510,15 +321,66 @@ export class SectionComponent implements OnInit {
   }
 
   private updateVisibleWidgets(): void {
-    if (this.section && this.section.widgetIds?.length) {
+    if (this.section && Array.isArray(this.section.widgetIds) && this.section.widgetIds.length) {
       this.visibleWidgets = this.section.widgetIds
-        .filter((widget: any) => widget.visible)
+        .filter((widget: any) => widget && widget.visible)
+        // Ensure consistent ordering (by id if numeric or fallback to title)
+        .map((widget: any) => ({
+          ...widget,
+          columnSize: typeof widget.columnSize === 'string' ? parseInt(widget.columnSize, 10) : widget.columnSize,
+          rowSize: typeof widget.rowSize === 'string' ? parseInt(widget.rowSize, 10) : widget.rowSize,
+        }))
         .sort((a: any, b: any) => {
           // Sort by widget order if available, otherwise by title
-          const aOrder = parseInt(a.id) || 0;
-          const bOrder = parseInt(b.id) || 0;
+          const aOrder = Number(a.id) || 0;
+          const bOrder = Number(b.id) || 0;
           return aOrder - bOrder;
         });
     }
+    this.prepareDataForSituationChart();
   }
+
+  prepareDataForSituationChart() {
+    this.visibleWidgets.forEach(widget => {
+      if (widget.chartType === 'CARD') {
+        this.cardData = widget.data || [];
+        this.situationData = this.transformDataWithPercentage(this.cardData);
+        // console.log(this.situationData);
+      }
+    });
+  }
+
+  transformDataWithPercentage(dataArray) {
+    const result = {};
+    const allWaves = [1, 2, 3, 4];
+
+    dataArray.forEach(item => {
+      const { name, wave, percentage } = item;
+      const waveKey = `EE${wave}`;
+
+      if (!result[name]) {
+        result[name] = {};
+        // Initialize all waves with 0
+        allWaves.forEach(w => {
+          result[name][`EE${w}`] = 0;
+        });
+      }
+
+      result[name][waveKey] = percentage;
+    });
+
+    // Convert result object to array of objects
+    return result ? Object.keys(result).map(key => ({
+      name: key,
+      ...result[key]
+    })) : [];
+  }
+
+  getDataForWave(service: string, wave: number): string {
+    const waveKey = `EE${wave}`;
+    const dataItem = this.situationData.find(item => item.name === service);
+    return dataItem ? dataItem[waveKey] + '%' : '0%';
+  }
+
+
 }

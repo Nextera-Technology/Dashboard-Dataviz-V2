@@ -24,23 +24,59 @@
                 <span class="section-icon">📊</span>
                 Certification
             </div>
+
+            <!-- Search Input -->
             <div class="typeahead-container">
                 <input type="text" class="typeahead-input" placeholder="Rechercher une Certification..."
                     [(ngModel)]="certificationSearch" (input)="onCertificationSearch()" />
             </div>
+
+            <!-- Main Checkbox List -->
             <div class="checkbox-list">
+
+                <!-- Select All -->
                 <div class="checkbox-item select-all">
-                    <input type="checkbox" id="cert_select_all" (change)="toggleCertificationSelectAll()">
+                    <input type="checkbox" id="cert_select_all" (change)="toggleCertificationSelectAll()" />
                     <label for="cert_select_all">Sélectionner tout</label>
                 </div>
-                <div class="checkbox-item" *ngFor="let cert of filteredCertifications">
-                    <input type="checkbox" [id]="'cert_' + cert.id" [(ngModel)]="cert.selected">
-                    <label [for]="'cert_' + cert.id">{{ cert.name }}</label>
+
+                <!-- Each Certification Item -->
+                <div class="certification-item" *ngFor="let cert of filteredCertifications">
+
+                    <!-- Parent Row -->
+                    <div class="checkbox-item">
+                        <!-- Parent Checkbox -->
+                        <input type="checkbox" [id]="'cert_' + cert.name" [(ngModel)]="cert.selected" />
+                        <label  [for]="'cert_' + cert.name">{{ cert.name }}</label>
+                        <!-- Expand/Collapse Icon -->
+                        <button *ngIf="cert.children?.length" (click)="cert.expanded = !cert.expanded" type="button"
+                            class="toggle-button">
+                            {{ cert.expanded ? '▴' : '▾' }}
+                        </button>
+                    </div>
+                    
+
+                    <!-- Child List -->
+                    <div *ngIf="cert.expanded" class="child-list">
+                        <div class="checkbox-item" *ngFor="let child of cert.children">
+                            <input type="checkbox" [id]="'cert_' + child" [(ngModel)]="selectedChildren[child]" />
+                            <label   [for]="'cert_' + child">{{ child }}</label>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Selected Count -->
+                <div class="selected-count">
+                    {{ selectedCertificationsCount }} certification(s) sélectionnée(s)
+                </div>
+
+                <!-- Apply Button -->
+                <button class="clear-filters" (click)="applyCertificationFilters()">
+                    Appliquer les Filtres
+                </button>
             </div>
-            <div class="selected-count">{{ selectedCertificationsCount }} certification(s) sélectionnée(s)</div>
-            <button class="clear-filters" (click)="applyCertificationFilters()">Appliquer les Filtres</button>
         </div>
+
 
         <!-- Sections Filter Section -->
         <div class="filter-section">
@@ -49,9 +85,10 @@
                 Sections
             </div>
             <div class="checkbox-list">
-                <div class="checkbox-item" *ngFor="let section of sections">
-                    <input type="checkbox" [id]="'section_' + section.id" [(ngModel)]="section.selected">
-                    <label [for]="'section_' + section.id">{{ section.name }}</label>
+                <div class="checkbox-item" *ngFor="let section of sectionsList; let i = index">
+                    <input type="checkbox" [id]="'section_' + section._id" [checked]="true"
+                        (change)="onCheckboxChange(section.name, $event.target.checked)">
+                    <label [for]="'section_' + section._id">{{ section.name }}</label>
                 </div>
             </div>
             <div class="selected-count">{{ selectedSectionsCount }} section(s) sélectionnée(s)</div>

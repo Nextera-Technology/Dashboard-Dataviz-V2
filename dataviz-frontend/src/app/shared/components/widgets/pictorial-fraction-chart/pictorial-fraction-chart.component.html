@@ -1,5 +1,9 @@
-<div class="pictorial-stacked-chart-widget h-full w-full" [style.background-color]="widget?.background || '#ffffff'">
-    <div [id]="'pictorial-stacked-chart-div-' + widget._id" class="chart-container h-full w-full"></div>
+<div *ngIf="widget?._id" class="pictorial-stacked-chart-widget h-full w-full"
+    [style.background-color]="widget?.background || '#ffffff'">
+    <div class="flex items-center justify-center h-full w-full">
+        <div [id]="'pictorial-stacked-chart-div-' + widget._id" class="chart-container h-full w-full"></div>
+    </div>
+
     <ng-container *ngIf="!data || data.length === 0">
         <div
             class="no-data-overlay flex flex-col items-center justify-center absolute inset-0 text-gray-500 bg-white bg-opacity-75 z-10">

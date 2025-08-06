@@ -31,114 +31,8 @@ import { AuthService, LoginCredentials } from "../../../core/auth/auth.service";
     MatProgressSpinnerModule,
     MatSnackBarModule,
   ],
-  template: `
-    <div
-      class="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-600 to-cyan-800 py-12 px-4 sm:px-6 lg:px-8"
-    >
-      <div class="max-w-md w-full space-y-8">
-        <!-- Logo -->
-        <div class="text-center">
-          <img
-            class="mx-auto h-32 w-auto"
-            src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/Nextera%20Logo%20Career%20Insight%20White%20text.png"
-            alt="Nextera Logo"
-          />
-          <h2 class="mt-6 text-3xl font-extrabold text-white">
-            Sign in to your account
-          </h2>
-          <p class="mt-2 text-sm text-cyan-100">Welcome to DataViz Dashboard</p>
-        </div>
-
-        <!-- Login Form -->
-        <mat-card class="bg-white shadow-xl">
-          <mat-card-content class="p-8">
-            <form
-              [formGroup]="loginForm"
-              (ngSubmit)="onSubmit()"
-              class="space-y-6"
-            >
-              <!-- Email Field -->
-              <mat-form-field class="w-full">
-                <mat-label>Email address</mat-label>
-                <input
-                  matInput
-                  type="email"
-                  formControlName="email"
-                  placeholder="Enter your email"
-                  autocomplete="email"
-                  [class.error]="hasError('email')"
-                />
-                <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
-                  Email is required
-                </mat-error>
-                <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
-                  Please enter a valid email address
-                </mat-error>
-              </mat-form-field>
-
-              <!-- Password Field -->
-              <mat-form-field class="w-full">
-                <mat-label>Password</mat-label>
-                <input
-                  matInput
-                  [type]="showPassword ? 'text' : 'password'"
-                  formControlName="password"
-                  placeholder="Enter your password"
-                  autocomplete="current-password"
-                  [class.error]="hasError('password')"
-                />
-                <button
-                  mat-icon-button
-                  type="button"
-                  (click)="togglePasswordVisibility()"
-                  matSuffix
-                  class="cursor-pointer"
-                >
-                  <mat-icon>
-                    {{ showPassword ? "visibility_off" : "visibility" }}
-                  </mat-icon>
-                </button>
-                <mat-error
-                  *ngIf="loginForm.get('password')?.hasError('required')"
-                >
-                  Password is required
-                </mat-error>
-              </mat-form-field>
-
-              <!-- Error Message -->
-              <div
-                *ngIf="errorMessage"
-                class="p-3 bg-red-50 border border-red-200 rounded-lg"
-              >
-                <div class="flex items-center">
-                  <mat-icon class="text-red-500 mr-2">error</mat-icon>
-                  <span class="text-sm text-red-700">{{ errorMessage }}</span>
-                </div>
-              </div>
-
-              <!-- Submit Button -->
-              <button
-                mat-raised-button
-                color="primary"
-                type="submit"
-                [disabled]="loginForm.invalid || isLoading"
-                class="w-full h-12 text-lg"
-              >
-                <mat-spinner
-                  *ngIf="isLoading"
-                  diameter="20"
-                  class="mr-2"
-                ></mat-spinner>
-                <span *ngIf="!isLoading">Sign in</span>
-                <span *ngIf="isLoading">Signing in...</span>
-              </button>
-            </form>
-          </mat-card-content>
-        </mat-card>
-      </div>
-    </div>
-  `,
-  styles: [],
+  templateUrl: "./login.component.html",
+  styleUrls: ["./login.component.scss"],
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
@@ -156,6 +50,8 @@ export class LoginComponent implements OnInit {
       email: ["", [Validators.required, Validators.email]],
       password: ["", [Validators.required]],
     });
+
+    this.loginForm.markAsUntouched();
   }
 
   ngOnInit(): void {
@@ -164,13 +60,16 @@ export class LoginComponent implements OnInit {
       this.router.navigate(["/dashboard"]);
     }
 
+    this.loginForm.markAsUntouched();
+
     // Clear error message when form changes
     this.loginForm.valueChanges.subscribe(() => {
       this.errorMessage = "";
     });
   }
 
-  async onSubmit() {
+  async onSubmit(event: Event) {
+    event.preventDefault();
     if (this.loginForm.valid) {
       this.isLoading = true;
       this.errorMessage = "";
@@ -179,12 +78,22 @@ export class LoginComponent implements OnInit {
       try {
         const user = await this.authService.userLogin(credentials?.email, credentials?.password);
         this.isLoading = false;
-        this.snackBar.open(`Welcome back, ${user.lastName} ${user.firstName}!`, "Close", {
+        if (!user || !user.user) {
+          this.snackBar.open(`Login failed. Please check your credentials.`, "Close", {
+            duration: 3000,
+            horizontalPosition: "center",
+            verticalPosition: "top",
+          });
+
+          throw new Error("Login failed. Please check your credentials.");
+        }
+
+        this.snackBar.open(`Welcome back, ${user.user.lastName} ${user.user.firstName}!`, "Close", {
           duration: 3000,
           horizontalPosition: "center",
           verticalPosition: "top",
         });
-        this.router.navigate(["/dashboard"]);
+        this.router.navigate(["/admin/dashboard-list"]);
       } catch (error) {
         this.isLoading = false;
         this.errorMessage =

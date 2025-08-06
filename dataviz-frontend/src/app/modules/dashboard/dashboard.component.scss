@@ -353,6 +353,44 @@ header {
 .admin-menu-item span {
   flex: 1;
 }
+.certification-item {
+  margin-bottom: 12px;
+}
+
+.parent-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toggle-button {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+}
+
+.child-list {
+  margin-left: 28px;
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+}
+
+.child-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.list-item{
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 400;
+}
+
 
 /* Responsive Design */
 @media (max-width: 1024px) {

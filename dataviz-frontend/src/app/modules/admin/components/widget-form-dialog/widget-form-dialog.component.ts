@@ -478,9 +478,15 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
   private async _saveWidget(): Promise<void> {
     const formValues = this.widgetForm.value;
     try {
+      const numericFormValues = {
+        ...formValues,
+        columnSize: Number(formValues.columnSize),
+        rowSize: Number(formValues.rowSize),
+      };
+
       if (this.isEditMode && this.currentWidget?._id) {
         const widgetPayload = {
-          ...formValues,
+          ...numericFormValues,
           dashboardId: this.dashboard?._id,
           sectionId: this.currentSection?._id,
         };
@@ -496,7 +502,7 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
       } else {
         // Add new section
         const widgetPayload = {
-          ...formValues,
+          ...numericFormValues,
           dashboardId: this.dashboard?._id,
           sectionId: this.currentSection?._id,
         };

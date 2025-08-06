@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,9 +13,10 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AuthService, User } from '../../core/auth/auth.service';
-import { DashboardService, DashboardData, FilterData, CertificationFilter, SectionFilter } from '../../shared/services/dashboard.service';
+import { DashboardService, DashboardData, FilterData, CertificationFilter, SectionFilter, Section } from '../../shared/services/dashboard.service';
 import { SectionComponent } from '../../shared/components/sections/section.component';
 import { DashboardBuilderService } from '../admin/pages/dashboard-builder/dashboard-builder.service';
+import { ShareDataService } from 'app/shared/services/share-data.service';
 
 declare var am5: any;
 declare var am5xy: any;
@@ -52,58 +53,95 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   currentUser: User | null = null;
   dashboard = null;
+  dashboardOriginal = null;
   filters: FilterData | null = null;
-  dashboards = [];
+  // dashboards = [];
   certificationSearch: string = '';
   selectedCertificationsCount: number = 0;
   selectedSectionsCount: number = 0;
+  dashboardId: string | null = null;
 
   // Filter data
   certifications: CertificationFilter[] = [];
   sections: SectionFilter[] = [];
+  sectionsList: Section[] = [];
+  sectionSelections: boolean[] = [];
+  selectedSections: string[] = [];
 
   get filteredCertifications() {
     if (!this.certificationSearch) {
       return this.certifications;
     }
-    return this.certifications.filter(cert => 
+    return this.certificateList.filter(cert => 
       cert.name.toLowerCase().includes(this.certificationSearch.toLowerCase())
     );
   }
+
+  certificateList = [
+    { name: "RDC 2021", children: [], expanded: false  },
+    { name: "RDC 2022", children: ["Classe 2022", "Classe Excellence 2022"], expanded: false  },
+    { name: "RDC 2023", children: [] , expanded: false },
+    { name: "RDC 2024", children: [] , expanded: false },
+    { name: "RDC 2025", children: [] , expanded: false },
+    { name: "Classe 2022", children: [] , expanded: false },
+    { name: "Classe Excellence 2022", children: [], expanded: false  },
+    { name: "CDRH 2022", children: [], expanded: false  },
+    { name: "CDRH 2023", children: [] , expanded: false },
+    { name: "CDRH 2024", children: [], expanded: false  },
+    { name: "CDRH 2025", children: [] , expanded: false },
+    { name: "CPEB 2021", children: [] , expanded: false },
+    { name: "CPEB 2022", children: [], expanded: false  },
+    { name: "CPEB 2023", children: [], expanded: false  },
+    { name: "CPEB 2024", children: [], expanded: false  },
+    { name: "CPEB 2025", children: [] , expanded: false }
+   ];
+
+  selectedChildren: { [key: string]: boolean } = {};
+
+getChildModel(childName: string): boolean {
+  if (this.selectedChildren[childName] === undefined) {
+    this.selectedChildren[childName] = false;
+  }
+  return this.selectedChildren[childName];
+}
 
   constructor(
     private authService: AuthService,
     private dashboardService: DashboardBuilderService,
     private router: Router,
-    private snackBar: MatSnackBar
-  ) {}
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar,
+    private shareDataService: ShareDataService
+  ) {
+    shareDataService.setIsDashboard(true);
+  }
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
+    this.dashboardId = this.shareDataService.getDashboardId();
+
     if (!this.currentUser) {
       this.router.navigate(['/auth/login']);
       return;
     }
 
-    // Load filter data
-    // this.dashboardService.getFilters().subscribe(filters => {
-    //   this.filters = filters;
-    //   this.certifications = filters.certifications;
-    //   this.sections = filters.sections;
-    //   this.updateCounts();
-    // });
     this.loadDashboards();
   }
 
   async loadDashboards() {
     try {
       const filter = {};
-      const result =
-        await this.dashboardService.getAllDashboards(filter);
-      if (result?.data) {
-        this.dashboard = result?.data[0];
-        this.dashboards = result?.data;
-        console.log("Dashboards loaded:", this.dashboard);
+      const result = await this.dashboardService.getOneDashboard(this.dashboardId);
+      if (result) {
+        this.dashboardOriginal = result;
+        this.dashboard = { ...this.dashboardOriginal };
+        if(this.dashboardOriginal && this.dashboardOriginal.sectionIds) {
+          this.sectionsList = this.dashboardOriginal.sectionIds || [];
+          this.sectionsList.forEach(section => {
+            this.selectedSections.push(section.name);
+          });
+          this.updateSelectionCounts();
+        }
       }
     } catch (error) {
       console.error("Error loading dashboards:", error);
@@ -119,6 +157,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   onCertificationSearch(): void {
+    // this.filteredCertifications = this.certificateList.filter(cert => {
+    //   return cert.name.toLowerCase().includes(this.certificationSearch.toLowerCase());
+    // });
     console.log('Certification search:', this.certificationSearch);
   }
 
@@ -131,7 +172,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   applyCertificationFilters(): void {
-    console.log('Applying certification filters');
     this.snackBar.open('Certification filters applied', 'Close', {
       duration: 2000,
       horizontalPosition: 'center',
@@ -140,7 +180,16 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   applySectionFilters(): void {
-    console.log('Applying section filters');
+    if (this.selectedSections.length === 0) {
+      this.dashboard = this.dashboardOriginal;
+      return;
+    }
+  this.dashboard = {
+    ...this.dashboard,
+    sectionIds: this.dashboardOriginal.sectionIds.filter(
+      (section: Section) => this.selectedSections.includes(section.name)
+    )
+  };
     this.snackBar.open('Section filters applied', 'Close', {
       duration: 2000,
       horizontalPosition: 'center',
@@ -150,7 +199,19 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   updateCounts(): void {
     this.selectedCertificationsCount = this.certifications.filter(cert => cert.selected).length;
-    this.selectedSectionsCount = this.sections.filter(section => section.selected).length;
+  }
+
+  updateSelectionCounts(){
+    this.selectedSectionsCount = this.selectedSections.length;
+  }
+
+  onCheckboxChange(item: string, isChecked: boolean) {
+    if (isChecked) {
+      this.selectedSections.push(item);
+    } else {
+      this.selectedSections = this.selectedSections.filter(i => i !== item);
+    }
+    this.updateSelectionCounts();
   }
 
   logout(): void {

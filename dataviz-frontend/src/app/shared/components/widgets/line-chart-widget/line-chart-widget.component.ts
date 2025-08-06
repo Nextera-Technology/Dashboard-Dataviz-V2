@@ -29,6 +29,17 @@ export class LineChartWidgetComponent
   @Input() widget = null;
   @Input() data: any[] | undefined;
 
+  get totalData(): number {
+    if (!this.data || this.data.length === 0) {
+      return 0;
+    }
+    const first = this.data[0];
+    if (first && first.totalData !== undefined) {
+      return first.totalData;
+    }
+    return this.data.reduce((sum: number, item: any) => sum + (item.count ?? 0), 0);
+  }
+
   private root!: am5.Root;
   private chart!: am5xy.XYChart;
 
@@ -58,6 +69,17 @@ export class LineChartWidgetComponent
 
       // Create axes
       const xRenderer = am5xy.AxisRendererX.new(root, {});
+
+      // Improve readability of long categorical labels
+      xRenderer.labels.template.setAll({
+        rotation: -45,              // tilt labels
+        centerY: am5.p50,
+        centerX: am5.p100,
+        paddingTop: 10,
+        fontSize: "12px",
+        maxWidth: 120,
+        oversizedBehavior: "truncate", // show ellipsis when text wider than maxWidth
+      });
       const xAxis = chart.xAxes.push(
         am5xy.CategoryAxis.new(root, {
           categoryField: "name", // Assuming 'category' field

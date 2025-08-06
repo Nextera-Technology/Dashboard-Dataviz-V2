@@ -13,6 +13,7 @@ import {
   DashboardWidget,
   WidgetAction,
 } from "app/shared/services/dashboard.service";
+import { ActionsButtonsComponent } from "app/shared/components/actions-buttons/actions-buttons.component";
 
 declare var am5: any;
 declare var am5xy: any;
@@ -20,35 +21,22 @@ declare var am5xy: any;
 @Component({
   selector: "app-line-chart-widget",
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, ActionsButtonsComponent],
   template: `
     <div
       class="chart-box relative"
       [style.background-color]="widget.data?.background || '#ffffff'"
     >
-      <div class="chart-legend">Total Data : {{ widget.data.length || 0 }}</div>
-      <!-- Action Buttons -->
-      <div class="button-container">
-        <button class="info-button primary" (click)="onActionClick('info')">
-          <img [src]="getActionIcon('paragraph.png')" alt="Info" />
-        </button>
-        <button class="info-button secondary" (click)="onActionClick('export')">
-          <img [src]="getActionIcon('excel.png')" alt="Export" />
-        </button>
-        <button
-          class="info-button secondary"
-          (click)="onActionClick('audience')"
-        >
-          <img [src]="getActionIcon('audience_4644048.png')" alt="Audience" />
-        </button>
-      </div>
+      <div class="chart-legend">Total Data : {{ totalData }}</div>
+       <!-- Action Buttons -->
+     <app-actions-buttons [widget]="widget"></app-actions-buttons>
 
       <!-- Widget Content -->
       <div class="chart-content">
         <h3 class="chart-title">{{ widget.title }}</h3>
 
         <!-- Chart Container -->
-        <div #chartContainer class="chart-container"></div>
+        <div #chartContainer class="chart-container h-full w-full"></div>
 
         <!-- Manual Legend (if needed) -->
         <!-- <div class="manual-legend" *ngIf="widget.data">
@@ -73,7 +61,7 @@ declare var am5xy: any;
         border-radius: 12px;
         padding: 20px;
         transition: all 0.3s ease;
-        min-height: 300px;
+        min-height: 220px;
         display: flex;
         flex-direction: column;
       }
@@ -114,8 +102,9 @@ declare var am5xy: any;
       }
 
       .chart-container {
-        height: 300px;
+        height: 100%;
         width: 100%;
+        min-height: 150px;
         margin-bottom: 15px;
       }
 
@@ -151,7 +140,7 @@ declare var am5xy: any;
       @media (max-width: 768px) {
         .chart-box {
           padding: 15px;
-          min-height: 250px;
+          min-height: 220px;
         }
 
         .chart-title {
@@ -159,7 +148,7 @@ declare var am5xy: any;
         }
 
         .chart-container {
-          height: 250px;
+          height: 100%;
         }
 
         .legend-item {
@@ -174,6 +163,8 @@ export class LineChartWidgetComponent implements OnInit, OnDestroy {
   @Input() data: any;
   @ViewChild("chartContainer", { static: true }) chartContainer!: ElementRef;
 
+  totalData: number = 0;
+
   private root: any;
   private chart: any;
   private xAxis: any;
@@ -181,6 +172,7 @@ export class LineChartWidgetComponent implements OnInit, OnDestroy {
   private series: any;
 
   ngOnInit(): void {
+    this.calculateTotalData();
     if (this.widget.data) {
       this.createChart();
     }
@@ -321,5 +313,22 @@ export class LineChartWidgetComponent implements OnInit, OnDestroy {
       iconMap[iconName] ||
       `https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/${iconName}`
     );
+  }
+
+  private calculateTotalData(): void {
+    if (!this.widget?.data) {
+      this.totalData = 0;
+      return;
+    }
+
+    const dataArray = Array.isArray(this.widget.data) ? this.widget.data : [];
+    if (dataArray.length) {
+      this.totalData = dataArray[0]?.totalData ?? dataArray.reduce((sum: number, item: any) => sum + (item.count ?? 0), 0);
+    } else if (this.widget.data?.series && Array.isArray(this.widget.data.series)) {
+      const series0 = this.widget.data.series[0];
+      this.totalData = series0?.totalData ?? this.widget.data.series.reduce((sum: number, item: any) => sum + (item.value ?? item.count ?? 0), 0);
+    } else {
+      this.totalData = this.widget.data.totalData ?? 0;
+    }
   }
 }

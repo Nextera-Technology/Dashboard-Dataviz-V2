@@ -15,11 +15,13 @@ import {
   gqlCreateWidget,
   gqlUpdateWidget,
   gqlDeleteWidget,
+  gqlWidgetSourceData
 } from "@dataviz/graphql/mutations/dashboard-builder/dashboard-builder.mutation";
 import {
   gqlGetAllDashboard,
   gqlGetChartOptions,
   gqlGetOneDashboard,
+
 } from "@dataviz/graphql/queries/dashboard-builder/dashboard-builder.query";
 
 export class DashboardBuilderRepository {
@@ -352,6 +354,33 @@ export class DashboardBuilderRepository {
         message: "Failed to get one Dashboard.",
         originalError: error,
         queryOrMutation: query,
+        input: JSON.stringify(variables),
+      };
+    }
+  }
+
+  /**
+   
+   */
+  async getWidgetDataSources(id: string) {
+    if (!id) {
+      throw new Error("Dashboard input is required");
+    }
+    const mutation = gqlWidgetSourceData;
+    const variables = { id };
+
+    try {
+      const mutationResult = await this._client.GraphqlMutate(
+        mutation,
+        variables
+      );
+
+      return mutationResult.createDashboard;
+    } catch (error) {
+      throw {
+        message: "Failed to create Dashboard.",
+        originalError: error,
+        queryOrMutation: mutation,
         input: JSON.stringify(variables),
       };
     }

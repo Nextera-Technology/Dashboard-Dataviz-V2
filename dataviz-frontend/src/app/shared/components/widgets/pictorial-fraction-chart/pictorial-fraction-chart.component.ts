@@ -5,12 +5,15 @@ import {
   AfterViewInit,
   OnDestroy,
   NgZone,
+  SimpleChanges,
+  OnChanges,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5percent from "@amcharts/amcharts5/percent"; // For PictorialStackedSeries
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 import { MatIconModule } from "@angular/material/icon"; // For no-data icon
+import { initial } from "lodash";
 
 interface Widget {
   _id?: string;
@@ -36,7 +39,7 @@ interface Widget {
   styleUrl: "./pictorial-fraction-chart.component.scss",
 })
 export class PictorialStackedChartWidgetComponent
-  implements OnInit, AfterViewInit, OnDestroy
+  implements OnInit, AfterViewInit, OnDestroy, OnChanges
 {
   @Input() widget!: Widget;
   @Input() data: any[] | undefined;
@@ -44,18 +47,44 @@ export class PictorialStackedChartWidgetComponent
   private root!: am5.Root;
   private chart!: am5percent.SlicedChart; // PictorialStackedSeries is typically pushed into a PieChart root
 
-  constructor(private zone: NgZone) {}
+  constructor(private zone: NgZone) {
 
-  ngOnInit(): void {}
+  }
+
+  ngOnInit(): void {
+  }
 
   ngAfterViewInit(): void {
-    this.zone.runOutsideAngular(() => {
+    this.initializeChart();
+  }
+
+  // 👇 This detects changes to inputs
+  ngOnChanges(changes: SimpleChanges): void {
+    if ((changes['data'] || changes['widget']) && this.data?.length) {
+    setTimeout(() => {
+      this.initializeChart();
+    }, 0);
+  }
+    if (changes['widget'] && !changes['widget'].firstChange) {
+      this.initializeChart(); // re-render chart on widget update
+    }
+  }
+
+  initializeChart(): void {
+
+     this.zone.runOutsideAngular(() => {
       if (!this.data || this.data.length === 0) {
         console.warn(
           "PictorialStackedChartWidget: No data provided.",
           this.widget.title
         );
         return;
+      }
+
+      if (this.root) {
+        this.chart.dispose();
+        this.root.dispose();
+        console.log("Fraction-Chart : Disposed previous chart instance.");
       }
       const root = am5.Root.new(
       `pictorial-stacked-chart-div-${this.widget._id}`

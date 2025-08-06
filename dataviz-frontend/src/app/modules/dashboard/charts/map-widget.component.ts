@@ -12,6 +12,7 @@ import {
   DashboardWidget,
   WidgetAction,
 } from "app/shared/services/dashboard.service";
+import { ActionsButtonsComponent } from "app/shared/components/actions-buttons/actions-buttons.component";
 
 declare const am5: any;
 declare const am5themes_Animated: any;
@@ -21,27 +22,17 @@ declare const am5geodata_franceLow: any;
 @Component({
   selector: "app-map-widget",
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, ActionsButtonsComponent],
   template: `
     <div
       class="widget-container"
       [style.background-color]="widget.data?.background || '#ffffff'"
     >
+      <!-- Total Data label -->
+      <div class="chart-legend">Total Data : {{ totalData }}</div>
+
       <!-- Action Buttons -->
-      <div class="button-container">
-        <button class="info-button primary" (click)="onActionClick('info')">
-          <img [src]="getActionIcon('paragraph.png')" alt="Info" />
-        </button>
-        <button class="info-button secondary" (click)="onActionClick('export')">
-          <img [src]="getActionIcon('excel.png')" alt="Export" />
-        </button>
-        <button
-          class="info-button secondary"
-          (click)="onActionClick('audience')"
-        >
-          <img [src]="getActionIcon('audience_4644048.png')" alt="Audience" />
-        </button>
-      </div>
+      <app-actions-buttons [widget]="widget"></app-actions-buttons>
 
       <!-- Widget Content -->
       <div class="widget-header">
@@ -90,12 +81,29 @@ declare const am5geodata_franceLow: any;
         width: 100%;
         height: 400px;
       }
+
+      .chart-legend {
+        position: absolute;
+        top: 10px;
+        left: 14px;
+        z-index: 2;
+        background: rgba(255, 255, 255, 0.85);
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #15616d;
+        pointer-events: none;
+        text-align: left;
+      }
     `,
   ],
 })
 export class MapWidgetComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() widget: any;
   @Input() data: any;
+
+  totalData: number = 0;
 
   private root: any;
   private chart: any;
@@ -136,6 +144,34 @@ export class MapWidgetComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     // Component initialization
+    this.calculateTotalData();
+  }
+
+  private calculateTotalData(): void {
+    if (!this.data && !this.widget?.data) {
+      this.totalData = 0;
+      return;
+    }
+
+    const dataSource: any = this.data || this.widget.data;
+
+    if (Array.isArray(dataSource) && dataSource.length) {
+      this.totalData = dataSource[0]?.totalData ?? dataSource.length;
+      return;
+    }
+
+    if (dataSource?.series && Array.isArray(dataSource.series) && dataSource.series.length) {
+      this.totalData = dataSource.series[0]?.totalData ?? dataSource.series.length;
+      return;
+    }
+
+    if (typeof dataSource === 'object') {
+      // If object of regions, count keys as total
+      this.totalData = Object.keys(dataSource).length;
+      return;
+    }
+
+    this.totalData = 0;
   }
 
   private initializeChart(): void {

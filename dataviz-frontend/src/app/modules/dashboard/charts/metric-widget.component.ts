@@ -13,31 +13,19 @@ import {
   DashboardWidget,
   WidgetAction,
 } from "app/shared/services/dashboard.service";
+import { ActionsButtonsComponent } from "app/shared/components/actions-buttons/actions-buttons.component";
 
 @Component({
   selector: "app-metric-widget",
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, ActionsButtonsComponent],
   template: `
     <div
       class="chart-box"
       [style.background-color]="widget?.background || '#ffffff'"
       #chartBoxRef
     >
-      <div class="button-container">
-        <button class="info-button primary" (click)="onActionClick('info')">
-          <img [src]="getActionIcon('paragraph.png')" alt="Info" />
-        </button>
-        <button class="info-button secondary" (click)="onActionClick('export')">
-          <img [src]="getActionIcon('excel.png')" alt="Export" />
-        </button>
-        <button
-          class="info-button secondary"
-          (click)="onActionClick('audience')"
-        >
-          <img [src]="getActionIcon('audience_4644048.png')" alt="Audience" />
-        </button>
-      </div>
+    <app-actions-buttons [widget]="widget"></app-actions-buttons>
 
       <div class="metric-content">
         <h3 class="metric-title">{{ widget.title }}</h3>
@@ -245,26 +233,5 @@ export class MetricWidgetComponent implements AfterViewInit {
       return "metric-item-small-data";
     }
     return "";
-  }
-
-  onActionClick(action: string): void {
-    console.log("Action clicked:", action);
-    // Placeholder for future implementation
-  }
-
-  getActionIcon(iconName: string): string {
-    const iconMap: { [key: string]: string } = {
-      "paragraph.png":
-        "https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png",
-      "excel.png":
-        "https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png",
-      "audience_4644048.png":
-        "https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png",
-    };
-
-    return (
-      iconMap[iconName] ||
-      `https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/${iconName}`
-    );
   }
 }

@@ -112,20 +112,46 @@ export class WidgetFactoryComponent {
   WidgetType = WidgetType;
 
   isChartWidget(type: WidgetType): boolean {
-    return [
-      WidgetType.PIE_CHART,
-      WidgetType.BAR_CHART,
-      WidgetType.LINE_CHART
-    ].includes(type);
+    return (
+      [
+        WidgetType.PIE_CHART,
+        WidgetType.BAR_CHART,
+        WidgetType.LINE_CHART,
+        WidgetType.COLUMN_CHART,
+        WidgetType.RADIAL_BAR_CHART,
+        WidgetType.ANIMATED_GAUGE,
+        WidgetType.YES_NO_GAUGE,
+        WidgetType.TRACEABLE_SANKEY_DIAGRAM,
+        WidgetType.MAP_CHART,
+        WidgetType.DONUT_CHART,
+        WidgetType.PICTORIAL_FRACTION_CHART,
+        WidgetType.HORIZONTAL_STACKED_CHART,
+        WidgetType.VERTICAL_STACKED_CHART,
+        WidgetType.CLUSTERED_COLUMN_BAR
+      ] as WidgetType[]
+    ).includes(type);
   }
 
   isSupportedWidget(type: WidgetType): boolean {
-    return [
-      WidgetType.METRIC_CARD,
-      WidgetType.PIE_CHART,
-      WidgetType.BAR_CHART,
-      WidgetType.LINE_CHART
-    ].includes(type);
+    return (
+      [
+        WidgetType.METRIC_CARD,
+        WidgetType.PIE_CHART,
+        WidgetType.BAR_CHART,
+        WidgetType.LINE_CHART,
+        WidgetType.COLUMN_CHART,
+        WidgetType.RADIAL_BAR_CHART,
+        WidgetType.ANIMATED_GAUGE,
+        WidgetType.YES_NO_GAUGE,
+        WidgetType.TRACEABLE_SANKEY_DIAGRAM,
+        WidgetType.MAP_CHART,
+        WidgetType.DONUT_CHART,
+        WidgetType.PICTORIAL_FRACTION_CHART,
+        WidgetType.HORIZONTAL_STACKED_CHART,
+        WidgetType.VERTICAL_STACKED_CHART,
+        WidgetType.CLUSTERED_COLUMN_BAR
+      ] as WidgetType[]
+    ).includes(type);
   }
 
   onEdit(widget: Widget): void {

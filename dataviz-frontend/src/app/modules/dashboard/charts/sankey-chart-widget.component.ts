@@ -13,6 +13,7 @@ import {
   DashboardWidget,
   WidgetAction,
 } from "app/shared/services/dashboard.service";
+import { ActionsButtonsComponent } from "app/shared/components/actions-buttons/actions-buttons.component";
 
 declare var am5: any;
 declare var am5flow: any;
@@ -20,27 +21,17 @@ declare var am5flow: any;
 @Component({
   selector: "app-sankey-chart-widget",
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, ActionsButtonsComponent],
   template: `
     <div
       class="chart-box"
       [style.background-color]="widget.data?.background || '#ffffff'"
     >
-      <!-- Action Buttons -->
-      <div class="button-container">
-        <button class="info-button primary" (click)="onActionClick('info')">
-          <img [src]="getActionIcon('paragraph.png')" alt="Info" />
-        </button>
-        <button class="info-button secondary" (click)="onActionClick('export')">
-          <img [src]="getActionIcon('excel.png')" alt="Export" />
-        </button>
-        <button
-          class="info-button secondary"
-          (click)="onActionClick('audience')"
-        >
-          <img [src]="getActionIcon('audience_4644048.png')" alt="Audience" />
-        </button>
-      </div>
+      <!-- Total Data label -->
+      <div class="chart-legend">Total Data : {{ totalData }}</div>
+
+        <!-- Action Buttons -->
+      <app-actions-buttons [widget]="widget"></app-actions-buttons>
 
       <!-- Widget Content -->
       <div class="chart-content">
@@ -105,6 +96,21 @@ declare var am5flow: any;
         margin-bottom: 15px;
       }
 
+      .chart-legend {
+        position: absolute;
+        top: 10px;
+        left: 14px;
+        z-index: 2;
+        background: rgba(255, 255, 255, 0.85);
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #15616d;
+        pointer-events: none;
+        text-align: left;
+      }
+
       /* Manual Legend */
       .manual-legend {
         display: flex;
@@ -160,10 +166,13 @@ export class SankeyChartWidgetComponent implements OnInit, OnDestroy {
   @Input() data: any;
   @ViewChild("chartContainer", { static: true }) chartContainer!: ElementRef;
 
+  totalData: number = 0;
+
   private root: any;
   private chart: any;
 
   ngOnInit(): void {
+    this.calculateTotalData();
     if (this.widget.data) {
       this.createChart();
     }
@@ -250,5 +259,19 @@ export class SankeyChartWidgetComponent implements OnInit, OnDestroy {
       iconMap[iconName] ||
       `https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/${iconName}`
     );
+  }
+
+  private calculateTotalData(): void {
+    if (!this.widget?.data) {
+      this.totalData = 0;
+      return;
+    }
+
+    const arr = Array.isArray(this.widget.data) ? this.widget.data : [];
+    if (arr.length) {
+      this.totalData = arr[0]?.totalData ?? arr.length;
+      return;
+    }
+    this.totalData = this.widget.data.totalData ?? 0;
   }
 }
