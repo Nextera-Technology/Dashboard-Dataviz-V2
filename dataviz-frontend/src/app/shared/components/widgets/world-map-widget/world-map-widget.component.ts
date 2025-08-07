@@ -149,47 +149,53 @@ export class WorldMapWidgetComponent
   ngAfterViewInit(): void {
     console.log(`[FranceRegionalMapsComponent] ngAfterViewInit fired.`);
     this.zone.runOutsideAngular(() => {
-      // Use setTimeout to ensure DOM elements are ready before creating charts
       setTimeout(() => {
-        // this.createFranceMap(
-        //   this.studentsMapId,
-        //   this.studentsData,
-        //   "studentsCount", // Label field for tooltip
-        //   am5.color(0xedf6fe), // Min color for students (light blue)
-        //   am5.color(0x002f6c), // Max color for students (very dark blue)
-        //   this.studentsRoot // Pass root reference for management
-        // );
-
-        this.createFranceMap1(
-          this.studentsMapId,
-          this.studentsData,
-          "studentsCount",
-          this.studentsRoot
-        );
-
-        this.createFranceMap1(
-          this.salaryMapId,
-          this.salaryData,
-          "salaryAmount",
-          this.salaryRoot
-        );
-        // this.createFranceMap(
-        //   this.salaryMapId,
-        //   this.salaryData,
-        //   "salaryAmount", // Label field for tooltip
-        //   am5.color(0xedf6fe), // Min color for salaries (light blue)
-        //   am5.color(0x002f6c), // Max color for salaries (very dark blue)
-        //   this.salaryRoot // Pass root reference for management
-        // );
-        // Generate Salary Legend
-        this._generateCustomLegend(
-          this.salaryLegendId,
-          this.salaryData,
-          this.manualColorMapSalaries,
-          (code, value) => `${this.regionNames[code] || code}: ${value}`
-        );
-      }, 0);
+        this.initializeCharts();
+      }, 100);
     });
+  }
+
+  private initializeCharts(): void {
+    console.log(`[FranceRegionalMapsComponent] Initializing charts...`);
+    
+    const studentsMapDiv = document.getElementById(this.studentsMapId);
+    const salaryMapDiv = document.getElementById(this.salaryMapId);
+    
+    if (studentsMapDiv) {
+      console.log(`[FranceRegionalMapsComponent] Students map div found: ${this.studentsMapId}`);
+      this.createFranceMap1(
+        this.studentsMapId,
+        this.studentsData,
+        "studentsCount",
+        this.studentsRoot
+      );
+    } else {
+      console.error(`[FranceRegionalMapsComponent] Students map div not found: ${this.studentsMapId}`);
+    }
+
+    if (salaryMapDiv) {
+      console.log(`[FranceRegionalMapsComponent] Salary map div found: ${this.salaryMapId}`);
+      this.createFranceMap1(
+        this.salaryMapId,
+        this.salaryData,
+        "salaryAmount",
+        this.salaryRoot
+      );
+    } else {
+      console.error(`[FranceRegionalMapsComponent] Salary map div not found: ${this.salaryMapId}`);
+    }
+
+    const salaryLegendDiv = document.getElementById(this.salaryLegendId);
+    if (salaryLegendDiv) {
+      this._generateCustomLegend(
+        this.salaryLegendId,
+        this.salaryData,
+        this.manualColorMapSalaries,
+        (code, value) => `${this.regionNames[code] || code}: ${value}`
+      );
+    } else {
+      console.warn(`[FranceRegionalMapsComponent] Legend container not found: ${this.salaryLegendId}`);
+    }
   }
 
   getRegionColor(regionCode: string): am5.Color {
@@ -213,102 +219,94 @@ export class WorldMapWidgetComponent
 
 
   createFranceMap1(divId, data, labelField, rootRef: am5.Root | null) {
-        const chartDiv = document.getElementById(divId);
-        console.log(
-          `[FranceRegionalMapsComponent] createFranceMap called for ID: ${divId}. Div exists: ${!!chartDiv}. Current rootRef: ${!!rootRef}`
-        );
+    const chartDiv = document.getElementById(divId);
+    console.log(
+      `[FranceRegionalMapsComponent] createFranceMap called for ID: ${divId}. Div exists: ${!!chartDiv}. Current rootRef: ${!!rootRef}`
+    );
 
-        // Defensive disposal if a root already exists for this div
-        if (rootRef) {
-          console.warn(
-            `[FranceRegionalMapsComponent] createFranceMap for ${divId}: Root already exists. Disposing defensively.`
-          );
-          rootRef.dispose();
-          rootRef = null; // Clear reference
-        }
+    if (rootRef) {
+      console.warn(
+        `[FranceRegionalMapsComponent] createFranceMap for ${divId}: Root already exists. Disposing defensively.`
+      );
+      rootRef.dispose();
+      rootRef = null;
+    }
 
-        if (!chartDiv) {
-          console.error(
-            `[FranceRegionalMapsComponent] ERROR: Chart div '${divId}' not found for creating chart.`
-          );
-          return;
-        }
-        const root = am5.Root.new(divId);
-        root._logo.dispose();
-        root.setThemes([am5.Theme.new(root)]);
+    if (!chartDiv) {
+      console.error(
+        `[FranceRegionalMapsComponent] ERROR: Chart div '${divId}' not found for creating chart.`
+      );
+      return;
+    }
 
-        const chart = root.container.children.push(
-          am5map.MapChart.new(root, {
-            panX: "none",
-            panY: "none",
-            wheelY: "none",
-            projection: am5map.geoMercator(),
-            paddingBottom:20,
-          })
-        );
+    const containerRect = chartDiv.getBoundingClientRect();
+    if (containerRect.height < 100) {
+      console.warn(`[FranceRegionalMapsComponent] Chart container height is too small: ${containerRect.height}px`);
+    }
 
-        const polygonSeries = chart.series.push(
-          am5map.MapPolygonSeries.new(root, {
-            geoJSON: am5geodata_franceLow.default,
-            valueField: "value",
-            calculateAggregates: true
-          })
-        );
+    const root = am5.Root.new(divId);
+    root._logo.dispose();
+    root.setThemes([am5.Theme.new(root)]);
 
-        polygonSeries.mapPolygons.template.setAll({
-          tooltipText: "{name}: {" + labelField + "}",
-          interactive: true,
-          cursorOverStyle: "pointer"
-        });
+    const chart = root.container.children.push(
+      am5map.MapChart.new(root, {
+        panX: "none",
+        panY: "none",
+        wheelY: "none",
+        projection: am5map.geoMercator(),
+        paddingBottom: 20,
+        paddingTop: 10,
+        paddingLeft: 10,
+        paddingRight: 10,
+        layout: root.verticalLayout,
+        height: am5.percent(100),
+        width: am5.percent(100)
+      })
+    );
 
-        // ✨ Enable hover state
-        polygonSeries.mapPolygons.template.states.create("hover", {
-          fill: am5.color(0xffd700) // golden color or whatever you prefer
-        });
+    const polygonSeries = chart.series.push(
+      am5map.MapPolygonSeries.new(root, {
+        geoJSON: am5geodata_franceLow.default,
+        valueField: "value",
+        calculateAggregates: true
+      })
+    );
 
-        // ✨ Allow color binding via data
-        // polygonSeries.mapPolygons.template.set("fillField", "fill");
+    polygonSeries.mapPolygons.template.setAll({
+      tooltipText: "{name}: {" + labelField + "}",
+      interactive: true,
+      cursorOverStyle: "pointer"
+    });
 
-        // polygonSeries.set("heatRules", [{
-        //   target: polygonSeries.mapPolygons.template,
-        //   dataField: "value",
-        //   min: am5.color(0xD6EFFF), // light blue
-        //   max: am5.color(0x0033CC), // dark blue
-        //   key: "fill"
-        // }]);
+    polygonSeries.mapPolygons.template.states.create("hover", {
+      fill: am5.color(0xffd700)
+    });
 
-        polygonSeries.mapPolygons.template.adapters.add("fill", (fill, target) => {
-          const dataItem = target.dataItem;
-          const dataContext = dataItem?.dataContext as { fill?: am5.Color };
-          if (dataContext && dataContext.fill) {
-            return dataContext.fill; // Use fill from data context if available
-          }
-          return fill;
-        });
-
-        // polygonSeries.mapPolygons.template.states.create("hover", {
-        //   fill: am5.color(0xffd700), // e.g., golden hover color for contrast
-        //   duration: 200
-        // });
-
-
-        const dataItems = Object.entries(data).map(([id, value]) => {
-          let numericValue = typeof value === "string"
-            ? parseInt(value.replace(/[^\d]/g, ""))
-            : value;
-
-          return {
-            id,
-            value: numericValue,
-            [labelField]: value,
-            fill: this.manualColorMap[id] || am5.color(0xd6efff) // default if not specified
-          };
-        });
-
-
-        polygonSeries.data.setAll(dataItems);
-        chart.appear(1000, 100);
+    polygonSeries.mapPolygons.template.adapters.add("fill", (fill, target) => {
+      const dataItem = target.dataItem;
+      const dataContext = dataItem?.dataContext as { fill?: am5.Color };
+      if (dataContext && dataContext.fill) {
+        return dataContext.fill;
       }
+      return fill;
+    });
+
+    const dataItems = Object.entries(data).map(([id, value]) => {
+      let numericValue = typeof value === "string"
+        ? parseInt(value.replace(/[^\d]/g, ""))
+        : value;
+
+      return {
+        id,
+        value: numericValue,
+        [labelField]: value,
+        fill: this.manualColorMap[id] || am5.color(0xd6efff)
+      };
+    });
+
+    polygonSeries.data.setAll(dataItems);
+    chart.appear(1000, 100);
+  }
 
   /**
    * Generic function to create a France regional map.
