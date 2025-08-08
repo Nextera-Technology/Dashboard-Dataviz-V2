@@ -18,7 +18,8 @@ interface Widget {
   _id: string;
   title?: string;
   background?: string;
-  // ... other properties
+  columnSize?: number;
+  rowSize?: number;
 }
 
 @Component({
@@ -123,8 +124,6 @@ export class PieChartWidgetComponent
 
         const chart = root.container.children.push(
           am5percent.PieChart.new(root, {
-            // startAngle: 180,
-            // endAngle: 360,
             layout: root.horizontalLayout,
             innerRadius: am5.percent(50),
             radius: am5.percent(60)
@@ -133,8 +132,6 @@ export class PieChartWidgetComponent
 
         const series = chart.series.push(
           am5percent.PieSeries.new(root, {
-            // startAngle: 180,
-            // endAngle: 360,
             valueField: "count",
             categoryField: "name",
             alignLabels: false,
@@ -143,7 +140,7 @@ export class PieChartWidgetComponent
 
         series.slices.template.setAll({
           cornerRadius: 5,
-          shiftRadius: 8,
+          shiftRadius: 3,
           tooltipText:
             "{name}: {count} {percentage}%",
         });

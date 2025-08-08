@@ -39,32 +39,64 @@ declare var am5percent: any;
         <div class="chart-legend" >
           Total Data Used : {{ data && data.length && data[0].totalData ?? data[0].totalData || 0 }}
         </div>
-        <!-- <div class="manual-legend" *ngIf="data">
-          <div *ngFor="let item of data" class="legend-item">
-            <span class="legend-color"></span>
-            <span class="legend-label">
-              {{ item.name }}
-              <span class="legend-value" [style.color]="item.color">
-                <strong>{{ item.count }} ({{ item.percentage }}%)</strong>
-              </span>
-            </span>
-          </div>
-        </div> -->
+      </div>
+      
+      <!-- Buttons to toggle display mode -->
+      <div class="display-mode-toggle">
+        <button (click)="setDisplayMode('side')" [class.active]="displayMode === 'side'">Side</button>
+        <button (click)="setDisplayMode('list')" [class.active]="displayMode === 'list'">List</button>
       </div>
     </div>
   `,
   styles: [
     `
       .chart-box {
-      height:100%;
+        height: 100%;
         position: relative;
         text-align: center;
         border-radius: 12px;
         padding: 20px;
+        padding-bottom: 50px; /* Add padding to prevent overlap */
         transition: all 0.3s ease;
-        min-height: 300px;
+        min-height: 120px;
         display: flex;
         flex-direction: column;
+      }
+
+      .display-mode-toggle {
+        position: absolute;
+        bottom: 8px;
+        left: 8px;
+        z-index: 100;
+        display: flex;
+        gap: 4px;
+        background-color: rgba(240, 240, 240, 0.9);
+        padding: 4px;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .display-mode-toggle button {
+        border: 1px solid transparent;
+        background-color: transparent;
+        padding: 4px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 500;
+        color: #555;
+        transition: all 0.2s ease-in-out;
+      }
+
+      .display-mode-toggle button.active {
+        background-color: #ffffff;
+        border-color: #ddd;
+        color: #0d6efd;
+        font-weight: 600;
+      }
+
+      .display-mode-toggle button:not(.active):hover {
+        background-color: rgba(0, 0, 0, 0.05);
       }
 
       .chart-box:hover {
@@ -103,11 +135,13 @@ declare var am5percent: any;
       }
 
       .chart-container {
-        height: 350px;
+        height: 100%;
         width: 100%;
-        // margin-bottom: 15px;
-        // margin-top: 15px
-        /* Ensure the container has enough space for the chart and legend */
+        min-height: 100px;
+        max-height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       /* Manual Legend - Keep if you intend to use it, otherwise remove */
@@ -168,6 +202,7 @@ export class PieChartWidgetComponent implements OnInit, OnDestroy {
   @Input() widget: any;
   @Input() data: any;
   @ViewChild("chartContainer", { static: true }) chartContainer!: ElementRef;
+  public displayMode: "side" | "list" = "side";
 
   actions: [
     {
@@ -211,111 +246,124 @@ export class PieChartWidgetComponent implements OnInit, OnDestroy {
     }
   }
 
+  public setDisplayMode(mode: "side" | "list"): void {
+    if (this.displayMode !== mode) {
+      this.displayMode = mode;
+      if (this.data) {
+        this.createChart();
+      }
+    }
+  }
+
   private createChart(): void {
-    // Create root element
+    if (this.root) {
+      this.root.dispose();
+    }
     this.root = am5.Root.new(this.chartContainer.nativeElement);
     this.root._logo.dispose();
-
-    // Set themes
     this.root.setThemes([am5.Theme.new(this.root)]);
-
-    // Create chart
-    this.chart = this.root.container.children.push(
-      am5percent.PieChart.new(this.root, {
-        layout: this.root.horizontalLayout, // Use vertical layout for chart and legend
-        innerRadius: am5.percent(50),
-        radius: am5.percent(60), // Make the chart smaller (70% of container)
-      })
-    );
-
-    // Create series
-    this.series = this.chart.series.push(
-      am5percent.PieSeries.new(this.root, {
-        name: "Series",
-        categoryField: "name",
-        valueField: "value",
-        alignLabels: false,
-        fillField: "color",
-        legendLabelText: "{name}", // No longer needed if using custom label template
-        legendValueText: "{valuePercentTotal.formatNumber('#.0')}%", // No longer needed
-      })
-    );
-
-    // Set data
+    
     const data = this.data.map((item: any) => ({
       name: item.name,
       value: item.count,
-      color: item.color, // Pass color to amCharts data for consistent coloring
-      percentage: item.percentage, // Pass percentage for custom label/value
+      color: item.color,
     }));
 
-    this.series.data.setAll(data);
-    this.series.labels.template.setAll({
-      text: "{name}: {value} {percentage}%",
-      fontSize: "12px", // Adjust font size if needed
-      maxWidth: 125, // Set maximum width for labels
-      oversizedBehavior: "wrap", // Wrap long text
-      paddingBottom: 15,
-      paddingRight: 10,
-      forceHidden: false, // allow hiding if overlap
-      radius: 20 // or experiment with am5.percent(80)
-    });
+    if (this.displayMode === 'side') {
+      // SIDE MODE: Labels on chart
+      this.chart = this.root.container.children.push(
+        am5percent.PieChart.new(this.root, {
+          layout: this.root.horizontalLayout,
+          innerRadius: am5.percent(50),
+          radius: am5.percent(60),
+        })
+      );
+      this.series = this.chart.series.push(
+        am5percent.PieSeries.new(this.root, {
+          name: "Series",
+          categoryField: "name",
+          valueField: "value",
+          alignLabels: false,
+          fillField: "color",
+        })
+      );
+      this.series.data.setAll(data); // Set data before configuring labels
+      this.series.labels.template.setAll({
+        text: "{category}: {value} ({valuePercentTotal.formatNumber('#.0')}%)",
+        fontSize: "12px",
+        maxWidth: 125,
+        oversizedBehavior: "wrap",
+        paddingBottom: 15,
+        paddingRight: 10,
+        forceHidden: false,
+        radius: 20,
+      });
 
-    // Configure series appearance
+    } else {
+      // LIST MODE: Legend at bottom
+      this.chart = this.root.container.children.push(
+        am5percent.PieChart.new(this.root, {
+          layout: this.root.verticalLayout,
+          innerRadius: am5.percent(50),
+          radius: am5.percent(60),
+        })
+      );
+      this.series = this.chart.series.push(
+        am5percent.PieSeries.new(this.root, {
+          name: "Series",
+          categoryField: "name",
+          valueField: "value",
+          alignLabels: false,
+          fillField: "color",
+        })
+      );
+      this.series.data.setAll(data); // Set data before legend
+      this.series.labels.template.set("forceHidden", true);
+      this.series.ticks.template.set("forceHidden", true);
+      
+      const scrollbar = am5.Scrollbar.new(this.root, {
+        orientation: "vertical",
+      });
+      scrollbar.thumb.setAll({
+        fill: am5.color(0x000000),
+        fillOpacity: 0.2,
+        cornerRadiusTL: 4,
+        cornerRadiusTR: 4,
+        cornerRadiusBL: 4,
+        cornerRadiusBR: 4,
+      });
+
+      const legend = this.chart.children.push(
+        am5.Legend.new(this.root, {
+          centerX: am5.percent(50),
+          x: am5.percent(50),
+          marginTop: 15,
+          marginBottom: 15,
+          layout: this.root.verticalLayout,
+          width: am5.percent(90),
+          height: am5.percent(40),
+          verticalScrollbar: scrollbar,
+        })
+      );
+      legend.labels.template.setAll({ text: "{category}", oversizedBehavior: "truncate", maxWidth: 120 });
+      legend.valueLabels.template.setAll({ text: "= {value}", textAlign: "right"});
+      legend.data.setAll(this.series.dataItems); // Set legend data after series data
+    }
+
+    // Common settings for both modes
     this.series.slices.template.setAll({
-      tooltipText:  "{name}: {count} {percentage}%",
-      stroke: am5.color(0xffffff),
-      strokeWidth: 1.5,
-      cornerRadius: 5,
-      shiftRadius: 8,
+        tooltipText:  "{category}: {value} ({valuePercentTotal.formatNumber('#.0')}%)",
+        stroke: am5.color(0xffffff),
+        strokeWidth: 1.5,
+        cornerRadius: 5,
+        shiftRadius: 3,
     });
-
-    // Set colors
     this.series.set(
       "colors",
       am5.ColorSet.new(this.root, {
-        colors: data.map((item: any) => am5.color(item.color)), // Ensure am5.color conversion
+        colors: data.map((item: any) => am5.color(item.color)),
       })
     );
-
-    // Add legend
-    const legend = this.chart.children.push(
-      am5.Legend.new(this.root, {
-        centerX: am5.percent(50),
-        x: am5.percent(50),
-        layout: this.root.gridLayout, // Use gridLayout for wrapping
-        // If you want the legend below the chart, remove centerY and y,
-        // and ensure the chart layout is vertical.
-        // It will automatically position itself below the chart due to chart.children.push
-      })
-    );
-
-    // Customize legend item template
-    legend.itemContainers.template.setAll({
-      paddingLeft: 5,
-      paddingRight: 5,
-      paddingTop: 2,
-      paddingBottom: 2,
-    });
-
-    // Customize marker and label for each legend item
-    legend.labels.template.setAll({
-      oversizedBehavior: "wrap", // Wrap long labels
-      maxWidth: 150, // Max width for legend labels
-      fontSize: 14,
-      textAlign: "left",
-      populateText: true, // Enable text population
-    });
-
-    // Custom label text for legend (combining name and percentage)
-    legend.labels.template.set("text", "{name} [bold]({percentage}%)"); // Using custom percentage from data
-
-    // Hide value labels from legend as we're embedding it in the main label
-    legend.valueLabels.template.set("forceHidden", true);
-
-    legend.data.setAll(this.series.dataItems);
-
-    // Set up animations
     this.series.appear(1000, 100);
   }
 
