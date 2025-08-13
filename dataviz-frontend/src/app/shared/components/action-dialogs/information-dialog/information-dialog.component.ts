@@ -111,8 +111,26 @@ export class InformationDialogComponent implements OnInit {
     return 40;
   }
   createChart() {
+    // Build unique category per (name, wave) and aggregate duplicates
+    const aggregatedMap: Map<string, any> = new Map();
+    for (const src of this.dataSources) {
+      const waveLabel = (src?.wave ?? 'N/A');
+      const key = `${src?.name ?? 'Unknown'}__${waveLabel}`;
+      if (!aggregatedMap.has(key)) {
+        aggregatedMap.set(key, {
+          category: `${src?.name ?? 'Unknown'} (Wave ${waveLabel})`,
+          name: src?.name ?? 'Unknown',
+          wave: src?.wave ?? 'N/A',
+          count: src?.count ?? 0
+        });
+      } else {
+        const current = aggregatedMap.get(key);
+        current.count += (src?.count ?? 0);
+      }
+    }
+    const chartData = Array.from(aggregatedMap.values());
 
-    const chartHeight = this.getLength() * this.dataSources.length; // 50px per item, tune as needed
+    const chartHeight = this.getLength() * chartData.length; // 50px per item, tune as needed
     const chartDiv = this.chartContainer.nativeElement;
     if (chartDiv) {
       chartDiv.style.height = `${chartHeight}px`;
@@ -158,7 +176,7 @@ export class InformationDialogComponent implements OnInit {
 
     var yAxis2 = chart2.yAxes.push(am5xy.CategoryAxis.new(this.root2, {
       maxDeviation: 0,
-      categoryField: "name",
+      categoryField: "category",
       renderer: yRenderer2,
       tooltip: am5.Tooltip.new(this.root2, { themeTags: ["axis"] })
     }));
@@ -181,10 +199,10 @@ export class InformationDialogComponent implements OnInit {
       xAxis: xAxis2,
       yAxis: yAxis2,
       valueXField: "count",
-      categoryYField: "name",
+      categoryYField: "category",
       tooltip: am5.Tooltip.new(this.root2, {
         pointerOrientation: "left",
-        labelText: "{valueX}"
+        labelText: "{name} (Wave {wave}): {valueX}"
       })
     }));
 
@@ -203,8 +221,8 @@ export class InformationDialogComponent implements OnInit {
     series2.columns.template.adapters.add("stroke", function (stroke, target) {
       return chart2.get("colors").getIndex(series2.columns.indexOf(target));
     });
-    yAxis2.data.setAll(this.dataSources);
-    series2.data.setAll(this.dataSources);
+    yAxis2.data.setAll(chartData);
+    series2.data.setAll(chartData);
     sortCategoryAxis2();
 
     // Get series item by category

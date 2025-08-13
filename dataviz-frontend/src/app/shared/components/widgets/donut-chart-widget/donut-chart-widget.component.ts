@@ -33,13 +33,12 @@ interface Widget {
   imports: [CommonModule],
   template: `
     <div class="donut-chart-container">
-      <span class="total-data" *ngIf="totalData > 0">Total Data : {{ totalData }}</span>
-      <div [id]="chartDivId" class="donut-chart"></div>
+      <div class="donut-chart" [id]="chartDivId"></div>
     </div>
   `,
   styles: [`
     .donut-chart-container { width: 100%; height: 100%; position: relative; }
-    .donut-chart { width: 100%; height: 100%; min-height: 200px; max-height: 400px; }
+    .donut-chart { width: 100%; height: 100%; min-height: 150px; max-height: 400px; }
     .total-data { position: absolute; top: 0; left: 8px; font-size: 14px; font-weight: 600; color: #0d7680; }
   `]
 })

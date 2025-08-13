@@ -15,7 +15,8 @@ import {
   gqlCreateWidget,
   gqlUpdateWidget,
   gqlDeleteWidget,
-  gqlWidgetSourceData
+  gqlWidgetSourceData,
+  gqlExportWidgetData
 } from "@dataviz/graphql/mutations/dashboard-builder/dashboard-builder.mutation";
 import {
   gqlGetAllDashboard,
@@ -379,6 +380,32 @@ export class DashboardBuilderRepository {
     } catch (error) {
       throw {
         message: "Failed to create Dashboard.",
+        originalError: error,
+        queryOrMutation: mutation,
+        input: JSON.stringify(variables),
+      };
+    }
+  }
+
+  /**
+   * Export widget data via GraphQL, returning a downloadable filename.
+   */
+  async exportWidgetData(widgetId: string, exportType: string) {
+    if (!widgetId || !exportType) {
+      throw new Error("widgetId and exportType are required");
+    }
+    const mutation = gqlExportWidgetData;
+    const variables = { widgetId, exportType };
+
+    try {
+      const mutationResult = await this._client.GraphqlMutate(
+        mutation,
+        variables
+      );
+      return mutationResult?.getExportedWidgetData;
+    } catch (error) {
+      throw {
+        message: "Failed to export widget data.",
         originalError: error,
         queryOrMutation: mutation,
         input: JSON.stringify(variables),

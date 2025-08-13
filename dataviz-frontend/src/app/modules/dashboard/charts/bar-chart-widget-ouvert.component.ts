@@ -25,15 +25,16 @@ declare var am5xy: any;
       <div class="chart-legend">Total Data : {{ totalData }}</div>
       <!-- Action Buttons -->
       <div class="button-container">
-        <button class="info-button primary" (click)="onActionClick('info')">
+        <button class="info-button primary" (click)="onActionClick('info')" title="Information">
           <img [src]="getActionIcon('paragraph.png')" alt="Info" />
         </button>
-        <button class="info-button secondary" (click)="onActionClick('export')">
+        <button class="info-button secondary" (click)="onActionClick('export')" title="Export">
           <img [src]="getActionIcon('excel.png')" alt="Export" />
         </button>
         <button
           class="info-button secondary"
           (click)="onActionClick('audience')"
+          title="Audience"
         >
           <img [src]="getActionIcon('audience_4644048.png')" alt="Audience" />
         </button>

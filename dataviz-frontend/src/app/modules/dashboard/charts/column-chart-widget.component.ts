@@ -13,14 +13,14 @@ declare var am5xy: any;
   standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule, ActionsButtonsComponent],
   template: `
-    <div class="chart-box" [style.background-color]="widget.data?.background || '#ffffff'">
+    <div class="chart-box" [ngClass]="{'one-by-one': isOneByOne()}" [style.background-color]="widget.data?.background || '#ffffff'">
       <!-- Total Data label -->
       <div class="chart-legend">Total Data : {{ totalData }}</div>
 
       <app-actions-buttons [widget]="widget"></app-actions-buttons>
 
       <!-- Widget Content -->
-      <div class="chart-content mt-4">
+      <div class="chart-content">
         <h3 class="chart-title">{{ widget.title }}</h3>
         
         <!-- Chart Container -->
@@ -51,6 +51,7 @@ declare var am5xy: any;
       min-height: 200px;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
 
     .chart-box:hover {
@@ -71,14 +72,27 @@ declare var am5xy: any;
       font-size: 18px;
       font-weight: 600;
       color: #00454D;
-      margin: 0 0 15px 0;
+      margin: 30px 0 15px 0; /* Added top margin for spacing */
       line-height: 1.3;
     }
 
     .chart-container {
-      height: 100%;
+      flex: 1; /* Use flex to fill available space */
       width: 100%;
       margin-bottom: 15px;
+      min-height: 150px; /* Prevent collapsing on small data */
+    }
+
+    /* Tuning for compact 1x1 tiles */
+    .chart-box.one-by-one {
+      padding: 12px;
+    }
+    .chart-box.one-by-one .chart-title {
+      margin: 10px 0 8px 0;
+      font-size: 16px;
+    }
+    .chart-box.one-by-one .chart-container {
+      min-height: 0;
     }
 
     /* Manual Legend */
@@ -136,7 +150,7 @@ declare var am5xy: any;
       }
 
       .chart-container {
-        height: 200px;
+        /* Removed fixed height to allow flexibility */
       }
 
       .legend-item {
@@ -157,6 +171,12 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
   private xAxis: any;
   private yAxis: any;
   private series: any[] = [];
+
+  isOneByOne(): boolean {
+    const col = Number(this.widget?.columnSize);
+    const row = Number(this.widget?.rowSize);
+    return col === 1 && row === 1;
+  }
 
   ngOnInit(): void {
     this.calculateTotalData();
@@ -335,8 +355,16 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
       });
     });
 
-    // 8. Add legend
-    this.chart.set("legend", am5.Legend.new(this.root, {}));
+    // 8. Add legend (skip for very small 1x1 tiles to avoid overflow)
+    if (!this.isOneByOne()) {
+      this.chart.set("legend", am5.Legend.new(this.root, {
+        centerX: am5.percent(50),
+        x: am5.percent(50),
+        centerY: am5.percent(100),
+        y: am5.percent(100),
+        layout: this.root.horizontalLayout
+      }));
+    }
 
     // 9. Animate chart
     this.chart.appear(1000, 100);
@@ -404,18 +432,19 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
       this.series.push(series);
     });
 
-    // Add legend
-    const legend = this.chart.children.push(
-      am5.Legend.new(this.root, {
-        centerX: am5.percent(50),
-        x: am5.percent(50),
-        centerY: am5.percent(100),
-        y: am5.percent(100),
-        layout: this.root.horizontalLayout
-      })
-    );
-
-    legend.data.setAll(this.series);
+    // Add legend (skip for very small 1x1 tiles to avoid overflow)
+    if (!this.isOneByOne()) {
+      const legend = this.chart.children.push(
+        am5.Legend.new(this.root, {
+          centerX: am5.percent(50),
+          x: am5.percent(50),
+          centerY: am5.percent(100),
+          y: am5.percent(100),
+          layout: this.root.horizontalLayout
+        })
+      );
+      legend.data.setAll(this.series);
+    }
 
     // Animate
     this.series.forEach(series => {

@@ -21,6 +21,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { OverlayModule, CdkOverlayOrigin } from "@angular/cdk/overlay";
 import { AdminLayoutComponent } from "../../components/admin-layout/admin-layout.component";
 // CORRECTED IMPORT PATH AND COMPONENT NAME:
 import {
@@ -47,6 +48,8 @@ import { ShareDataService } from "app/shared/services/share-data.service";
 import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/breakdown-chart-widget.component";
 import { SankeyChartWidgetComponent } from "app/modules/dashboard/charts/sankey-chart-widget.component";
 import { ColumnChartWidgetComponent } from "app/modules/dashboard/charts/column-chart-widget.component";
+import { InformationDialogComponent } from "app/shared/components/action-dialogs/information-dialog/information-dialog.component";
+import { DataSourceQuickInfoDialogComponent } from "app/shared/components/action-dialogs/data-source-quick-info-dialog/data-source-quick-info-dialog.component";
 
 // Define interfaces for better type safety based on your GraphQL queries
 interface WidgetData {
@@ -106,6 +109,7 @@ interface Dashboard {
     MatDialogModule,
     MatTooltipModule,
     MatSnackBarModule,
+    OverlayModule,
     AdminLayoutComponent,
     // Import all atom widget components for dynamic rendering
     MetricWidgetComponent,
@@ -138,6 +142,17 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
   widgetDataSourceExpansionState: Map<string, boolean> = new Map();
   initialVisibleDataSourceTags = 2; // Number of tags to show initially
   @ViewChildren("widgetCard") widgetCards!: QueryList<ElementRef>;
+
+  // Quick info popover state
+  quickInfoOpen = false;
+  quickInfoWidget?: Widget;
+  quickInfoOrigin?: CdkOverlayOrigin;
+  positions: any[] = [
+    { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
+    { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' },
+    { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom' },
+    { originX: 'end', originY: 'top', overlayX: 'end', overlayY: 'bottom' },
+  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -581,6 +596,62 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
       .map((item) => item.name)
       .filter((name) => name !== undefined && name !== null);
     return [...new Set(names)]; // Return unique names
+  }
+
+  // Only for PIE 1x1: decide if we show popup link instead of list
+  isPieChartOneByOne(widget: Widget): boolean {
+    const typeKey = (widget.chartType || '').toLowerCase();
+    const isPie = [
+      'piechart',
+      'pie_chart_broken_down_slices',
+      'slicedchart'
+    ].includes(typeKey);
+    return isPie && Number(widget.columnSize) === 1 && Number(widget.rowSize) === 1;
+  }
+
+  // Generic: is widget 1x1
+  private isOneByOne(widget: Widget): boolean {
+    return Number(widget.columnSize) === 1 && Number(widget.rowSize) === 1;
+  }
+
+  // For ALL non-pie charts sized 1x1, use popup like pie 1x1
+  isNonPieChartOneByOne(widget: Widget): boolean {
+    const typeKey = (widget.chartType || '').toLowerCase();
+    const isPie = ['piechart', 'pie_chart_broken_down_slices', 'slicedchart'].includes(typeKey);
+    return this.isOneByOne(widget) && !isPie;
+  }
+
+  // Extra: detect 2x1 and 1x2 for scroll behavior in builder
+  isTwoByOne(widget: Widget): boolean {
+    return Number(widget.columnSize) === 2 && Number(widget.rowSize) === 1;
+  }
+
+  isOneByTwo(widget: Widget): boolean {
+    return Number(widget.columnSize) === 1 && Number(widget.rowSize) === 2;
+  }
+
+  openDataSourceDialog(widget: Widget): void {
+    this.dialog.open(DataSourceQuickInfoDialogComponent, {
+      width: '380px',
+      maxWidth: '95vw',
+      data: { widget }
+    });
+  }
+
+  openQuickInfo(origin: CdkOverlayOrigin, widget: Widget, event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.quickInfoOrigin = origin;
+    this.quickInfoWidget = widget;
+    this.quickInfoOpen = true;
+  }
+
+  closeQuickInfo(event?: MouseEvent): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    this.quickInfoOpen = false;
   }
 
   // Toggle expansion state for data source tags of a specific widget

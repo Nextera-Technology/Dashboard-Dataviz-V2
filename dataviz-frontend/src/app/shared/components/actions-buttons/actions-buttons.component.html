@@ -1,16 +1,30 @@
-<div *ngIf="isDashboard" class="actions-buttons"> 
-    <div class="button-container">
-        <button class="info-button primary" (click)="paragraphClicked('information')">
-            <img [src]="getActionIcon('paragraph.png')" alt="Info" />
-        </button>
-        <button class="info-button secondary"
-         onclick="window.open(`https://docs.google.com/spreadsheets/d/16Ob9SgV4pd171NAXZaZh6hrTec-CWxsf8ifmaRqMewE/edit?gid=892605651#gid=892605651`, '_blank')"
-            title="Export">
-            <img src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png" alt="Download" />
-            
-        </button>
-        <button class="info-button secondary" (click)="scopeClicked('audience')">
-            <img [src]="getActionIcon('audience_4644048.png')" alt="Audience" />
-        </button>
+<div *ngIf="isDashboard" class="actions-buttons">
+  <div class="button-container" (click)="$event.stopPropagation()">
+    <button class="info-button primary" (click)="paragraphClicked('information')" title="Information">
+      <img [src]="getActionIcon('paragraph.png')" alt="Info" />
+    </button>
+
+    <div class="export-wrapper" style="position: relative;">
+      <button class="info-button secondary" (click)="toggleExportMenu($event)" [disabled]="exportLoading" title="Export">
+        <img
+          src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+          alt="Download"
+        />
+      </button>
+
+      <div class="export-menu" *ngIf="exportMenuOpen && !exportLoading">
+        <button class="export-item" (click)="onExport('csv')">Export CSV</button>
+        <button class="export-item" (click)="onExport('json')">Export JSON</button>
+        <button class="export-item" (click)="onExport('excel')">Export Excel</button>
+      </div>
+
+      <div class="export-loading-overlay" *ngIf="exportLoading">
+        <div class="spinner"></div>
+      </div>
     </div>
+
+    <button class="info-button secondary" (click)="scopeClicked('audience')" title="Audience">
+      <img [src]="getActionIcon('audience_4644048.png')" alt="Audience" />
+    </button>
+  </div>
 </div>

@@ -1,6 +1,67 @@
 /* src/app/components/widgets/metric-widget/metric-widget.component.scss */
 .metric-widget {
-  height: 100%; // Ensure it fills its parent container
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
   width: 100%;
-  box-sizing: border-box; // Include padding and border in the element's total width and height
+  box-sizing: border-box;
+  padding: 1rem;
+  border-radius: 8px;
+  background: inherit;
+  min-height: 120px;
+  text-align: center;
+}
+.metric-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #00454d;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+.metric-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1e9180;
+  margin-bottom: 0.25rem;
+  line-height: 1;
+}
+.metric-subtitle {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+  line-height: 1.2;
+}
+.metric-total {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 0.25rem;
+}
+.metric-no-data {
+  font-size: 1rem;
+  color: #aaa;
+  margin-bottom: 0.5rem;
+}
+.metric-no-data-icon {
+  font-size: 2.5rem;
+  color: #ccc;
+}
+@media (max-width: 768px) {
+  .metric-widget {
+    padding: 0.5rem;
+    min-height: 80px;
+  }
+  .metric-title {
+    font-size: 1rem;
+  }
+  .metric-value {
+    font-size: 2rem;
+  }
+  .metric-subtitle {
+    font-size: 0.9rem;
+  }
+  .metric-total {
+    font-size: 0.8rem;
+  }
 }

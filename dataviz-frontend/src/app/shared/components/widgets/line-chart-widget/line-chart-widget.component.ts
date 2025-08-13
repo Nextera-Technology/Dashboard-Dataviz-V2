@@ -117,6 +117,13 @@ export class LineChartWidgetComponent
       series.appear(1000);
       chart.appear(1000, 100);
 
+      const isSmall = (this.widget as any)?.columnSize <= 2 && (this.widget as any)?.rowSize <= 1;
+      if (isSmall) {
+        xRenderer.labels.template.setAll({ fontSize: "10px", maxWidth: 80, oversizedBehavior: "truncate", rotation: -30 });
+        yRenderer.labels.template.setAll({ fontSize: "10px" });
+        chart.setAll({ paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0 });
+      }
+
       // Add cursor
       chart.set("cursor", am5xy.XYCursor.new(root, {}));
 

@@ -92,6 +92,18 @@ export class DatavizPlatformService {
     }
 
     /**
+     * Getter for isMac
+     */
+    get isMac(): boolean {
+        if (!this.isBrowser) {
+            return false;
+        }
+
+        const ua = navigator.userAgent;
+        return /Macintosh|Mac OS X/.test(ua) && !/iPhone|iPad|iPod/.test(ua);
+    }
+
+    /**
      * Getter for isChrome
      */
     get isChrome(): boolean {

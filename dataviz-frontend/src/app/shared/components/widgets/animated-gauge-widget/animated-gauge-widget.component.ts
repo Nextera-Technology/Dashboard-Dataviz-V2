@@ -33,7 +33,7 @@ interface Widget {
   `,
   styles: [`
     .gauge-container { position: relative; width: 100%; height: 100%; }
-    .gauge-chart { width: 100%; height: 300px; }
+    .gauge-chart { width: 100%; height: 100%; min-height: 150px; }
     .center-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; font-weight: 700; color: #0d7680; }
   `]
 })

@@ -72,7 +72,7 @@
                             </div>
                         </div>
 
-                        <div class="widget-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 auto-rows-[270px] gap-6 p-6 overflow-y-auto"
+                        <div class="widget-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 auto-rows-[230px] gap-6 p-6 overflow-y-auto"
                             cdkDropList cdkDropListOrientation="mixed" [cdkDropListData]="section?.widgetIds"
                             (cdkDropListDropped)="onWidgetDrop($event, i)">
                             <div class="widget-card bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-400 transition-all duration-300 ease-in-out cursor-grab flex flex-col"
@@ -116,26 +116,30 @@
                                     </div>
                                 </div>
 
-                                <div class="widget-content flex-grow flex flex-col justify-between p-4 h-full">
-                                    <div class="mb-4 h-full">
+                                <div class="widget-content flex-1 flex flex-col p-4 overflow-hidden"
+     [ngClass]="{
+       'content-scroll': isPieChartOneByOne(widget) || isNonPieChartOneByOne(widget) || isTwoByOne(widget) || isOneByTwo(widget)
+     }">
+                                    <div class="flex-1 min-h-0"
+                                         [ngClass]="{ 'has-scroll': isPieChartOneByOne(widget) || isNonPieChartOneByOne(widget) || isTwoByOne(widget) || isOneByTwo(widget) }">
                                         <ng-container>
-                                            <app-metric-widget *ngIf="widget.chartType === 'CARD' && !(widget?.widgetType === 'STATUS_BY_WAVE'  || widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN')" [widget]="widget" [data]="widget.data"></app-metric-widget>
-                                            <app-breakdown-chart-widget *ngIf="widget.chartType === 'CARD'  && (widget?.widgetType === 'STATUS_BY_WAVE'  || widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN')" [widget]="widget" [data]="widget.data"></app-breakdown-chart-widget>
+                                            <app-metric-widget *ngIf="widget.chartType === 'CARD' && !(widget?.widgetType === 'STATUS_BY_WAVE'  || widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN')" [widget]="widget" [data]="widget.data" class="h-full"></app-metric-widget>
+                                            <app-breakdown-chart-widget *ngIf="widget.chartType === 'CARD'  && (widget?.widgetType === 'STATUS_BY_WAVE'  || widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN')" [widget]="widget" [data]="widget.data" class="h-full"></app-breakdown-chart-widget>
                                             <app-bar-chart-widget *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART'  || widget.chartType === 'SORTED_BAR_CHART' || widget.chartType === 'SortedBarChart' || widget.chartType === 'sorted_bar_chart'" [widget]="widget" [data]="widget.data" class="h-full"></app-bar-chart-widget>
-                                            <app-column-chart-widget *ngIf="widget.chartType === 'ColumnChart' || widget.chartType === 'CLUSTERED_COLUMN_CHART' || widget.chartType === 'HorizontalStackedChart' || widget.chartType === 'VerticalStackedChart'" [widget]="widget" [data]="widget.data"></app-column-chart-widget>
-                                            <app-line-chart-widget *ngIf="widget.chartType === 'LINE_CHART_WITH_DATA_LABELS' || widget.chartType === 'LineChart'" [widget]="widget" [data]="widget.data"></app-line-chart-widget>
-                                            <app-pie-chart-widget *ngIf="widget.chartType === 'PIE_CHART_BROKEN_DOWN_SLICES' || widget.chartType === 'PieChart' || widget.chartType === 'SlicedChart'" [widget]="widget" [data]="widget.data"></app-pie-chart-widget>
-                                            <app-donut-chart-widget *ngIf="widget.chartType === 'donut' || widget.chartType === 'Donut' || widget.chartType === 'DONUT' || widget.chartType === 'donut_chart'" [widget]="widget" [data]="widget.data"></app-donut-chart-widget>
-                                            <app-pictorial-fraction-chart *ngIf="widget.chartType === 'PICTORIAL_FRACTION_CHART'" [widget]="widget" [data]="widget.data"></app-pictorial-fraction-chart>
-                                            <app-status-grid-widget *ngIf="widget.chartType === 'StatusGrid'" [widget]="widget" [data]="widget.data"></app-status-grid-widget>
-                                            <app-world-map-widget *ngIf="widget.chartType === 'DRILL_DOWN_MAP'" [widget]="widget" [data]="widget.data"></app-world-map-widget>
-                                            <app-radar-chart-widget *ngIf="widget.chartType === 'RadialBarChart' || widget.chartType === 'RadarChart' || widget.chartType === 'radialbarchart' || widget.chartType === 'radarchart' || widget.chartType === 'RADAR_CHART' || widget.chartType === 'radar_chart' || widget.chartType === 'RADIAL_BAR_CHART' || widget.chartType === 'radial_bar_chart'" [widget]="widget" [data]="widget.data"></app-radar-chart-widget>
-                                            <app-animated-gauge-widget *ngIf="widget.chartType === 'ANIMATED_GAUGE' || widget.chartType === 'animated_gauge' || widget.chartType === 'AnimatedGauge'" [widget]="widget" [data]="widget.data"></app-animated-gauge-widget>
-                                            <app-yes-no-gauge-widget *ngIf="widget.chartType === 'YES_NO_GAUGE' || widget.chartType === 'yes_no_gauge' || widget.chartType === 'YesNoGauge'" [widget]="widget" [data]="widget.data"></app-yes-no-gauge-widget>
-                                            <app-sankey-chart-widget *ngIf="widget.chartType === 'TraceableSankee' || widget.chartType === 'TRACEABLE_SANKEY_DIAGRAM'" [widget]="widget" [data]="widget.data"></app-sankey-chart-widget>
-                                            <app-map-widget *ngIf="widget.chartType === 'MapChart'" [widget]="widget" [data]="widget.data"></app-map-widget>
-                                            <app-simple-table-widget *ngIf="widget.chartType === 'Table'" [widget]="widget" [data]="widget.data"></app-simple-table-widget>
-                                            <app-text-widget *ngIf="widget.chartType === 'Text'" [widget]="widget" [data]="widget.data"></app-text-widget>
+                                            <app-column-chart-widget *ngIf="widget.chartType === 'ColumnChart' || widget.chartType === 'CLUSTERED_COLUMN_CHART' || widget.chartType === 'HorizontalStackedChart' || widget.chartType === 'VerticalStackedChart'" [widget]="widget" [data]="widget.data" class="h-full"></app-column-chart-widget>
+                                            <app-line-chart-widget *ngIf="widget.chartType === 'LINE_CHART_WITH_DATA_LABELS' || widget.chartType === 'LineChart'" [widget]="widget" [data]="widget.data" class="h-full"></app-line-chart-widget>
+                                            <app-pie-chart-widget *ngIf="widget.chartType === 'PIE_CHART_BROKEN_DOWN_SLICES' || widget.chartType === 'PieChart' || widget.chartType === 'SlicedChart'" [widget]="widget" [data]="widget.data" class="h-full"></app-pie-chart-widget>
+                                            <app-donut-chart-widget *ngIf="widget.chartType === 'donut' || widget.chartType === 'Donut' || widget.chartType === 'DONUT' || widget.chartType === 'donut_chart'" [widget]="widget" [data]="widget.data" class="h-full"></app-donut-chart-widget>
+                                            <app-pictorial-fraction-chart *ngIf="widget.chartType === 'PICTORIAL_FRACTION_CHART'" [widget]="widget" [data]="widget.data" class="h-full"></app-pictorial-fraction-chart>
+                                            <app-status-grid-widget *ngIf="widget.chartType === 'StatusGrid'" [widget]="widget" [data]="widget.data" class="h-full"></app-status-grid-widget>
+                                            <app-world-map-widget *ngIf="widget.chartType === 'DRILL_DOWN_MAP'" [widget]="widget" [data]="widget.data" class="h-full"></app-world-map-widget>
+                                            <app-radar-chart-widget *ngIf="widget.chartType === 'RadialBarChart' || widget.chartType === 'RadarChart' || widget.chartType === 'radialbarchart' || widget.chartType === 'radarchart' || widget.chartType === 'RADAR_CHART' || widget.chartType === 'radar_chart' || widget.chartType === 'RADIAL_BAR_CHART' || widget.chartType === 'radial_bar_chart'" [widget]="widget" [data]="widget.data" class="h-full"></app-radar-chart-widget>
+                                            <app-animated-gauge-widget *ngIf="widget.chartType === 'ANIMATED_GAUGE' || widget.chartType === 'animated_gauge' || widget.chartType === 'AnimatedGauge'" [widget]="widget" [data]="widget.data" class="h-full"></app-animated-gauge-widget>
+                                            <app-yes-no-gauge-widget *ngIf="widget.chartType === 'YES_NO_GAUGE' || widget.chartType === 'yes_no_gauge' || widget.chartType === 'YesNoGauge'" [widget]="widget" [data]="widget.data" class="h-full"></app-yes-no-gauge-widget>
+                                            <app-sankey-chart-widget *ngIf="widget.chartType === 'TraceableSankee' || widget.chartType === 'TRACEABLE_SANKEY_DIAGRAM'" [widget]="widget" [data]="widget.data" class="h-full"></app-sankey-chart-widget>
+                                            <app-map-widget *ngIf="widget.chartType === 'MapChart'" [widget]="widget" [data]="widget.data" class="h-full"></app-map-widget>
+                                            <app-simple-table-widget *ngIf="widget.chartType === 'Table'" [widget]="widget" [data]="widget.data" class="h-full"></app-simple-table-widget>
+                                            <app-text-widget *ngIf="widget.chartType === 'Text'" [widget]="widget" [data]="widget.data" class="h-full"></app-text-widget>
                                             <div *ngIf="!(
                                                 widget.chartType === 'CARD' ||
                                                 widget.chartType === 'CLUSTERED_BAR_CHART' ||
@@ -185,32 +189,76 @@
                                             </div>
                                         </ng-container>
                                     </div>
-                                    <div class="widget-info text-sm text-gray-600">
-                                        <span class="widget-size block mb-2">Size: {{ widget.columnSize }}x{{
-                                            widget.rowSize }}</span>
-                                        <div class="widget-source-container"
-                                            *ngIf="getUniqueDataSourceNames(widget).length > 0; else noDataSource">
-                                            <span class="font-medium block mb-1">Data Source:</span>
-                                            <div class="flex flex-wrap gap-1">
-                                                <span *ngFor="
-                            let name of getUniqueDataSourceNames(widget) | slice:0: (isDataSourceExpanded(widget._id!) ? 9999 : initialVisibleDataSourceTags)
-                          " class="px-2 py-0.5 bg-blue-100 h-[24px] text-blue-800 rounded-full text-xs font-medium">
-                                                    {{ name }}
-                                                </span>
-                                                <button
-                                                    *ngIf="getUniqueDataSourceNames(widget).length > initialVisibleDataSourceTags"
-                                                    (click)="toggleDataSourceExpansion(widget._id!)"
-                                                    class="text-blue-600 h-[24px] hover:text-blue-800 text-xs py-0 px-2 min-w-0">
-                                                    {{ isDataSourceExpanded(widget._id!) ? 'Show less...' : 'Show
-                                                    more...' }}
+                                    <div class="widget-info text-sm text-gray-600 flex-shrink-0 pt-2 relative z-10">
+                                        <span class="widget-size block mb-2">Size: {{ widget.columnSize }}x{{ widget.rowSize }}</span>
+
+                                        <!-- If 1x1 (including PIE 1x1), use popup link like PIE 1x1 -->
+                                        <div *ngIf="isPieChartOneByOne(widget) || isNonPieChartOneByOne(widget); else defaultDataSourceBlock">
+                                            <div class="widget-source-container" *ngIf="getUniqueDataSourceNames(widget).length > 0">
+                                                <span class="font-medium">Data Source:</span>
+                                                <span cdkOverlayOrigin #origin="cdkOverlayOrigin"></span>
+                                                <button type="button" (click)="openQuickInfo(origin, widget, $event)"
+                                                    class="text-blue-600 hover:text-blue-800 text-xs px-2 relative z-10">
+                                                    Show more...
                                                 </button>
+
+                                                <!-- Popover overlay -->
+                                                <ng-template
+                                                    cdkConnectedOverlay
+                                                    [cdkConnectedOverlayOrigin]="origin"
+                                                    [cdkConnectedOverlayOpen]="quickInfoOpen && quickInfoWidget?._id === widget._id"
+                                                    [cdkConnectedOverlayPositions]="positions"
+                                                    [cdkConnectedOverlayHasBackdrop]="true"
+                                                    (backdropClick)="closeQuickInfo($event)"
+                                                >
+                                                    <div class="quick-info-card shadow-lg rounded-xl border border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/70 min-w-[280px] max-w-[360px]">
+                                                        <div class="px-3 py-2 flex items-center justify-between border-b border-gray-100">
+                                                            <div class="flex items-center gap-2 text-gray-700 text-sm font-semibold">
+                                                                <mat-icon class="text-base text-blue-500">source</mat-icon>
+                                                                <span>Data Source</span>
+                                                            </div>
+                                                            <button type="button" class="text-gray-500 hover:text-gray-700"
+                                                                (click)="closeQuickInfo($event)">
+                                                                <mat-icon class="text-base">close</mat-icon>
+                                                            </button>
+                                                        </div>
+                                                        <div class="p-3">
+                                                            <div class="text-[13px] font-medium text-slate-600 mb-1" *ngIf="quickInfoWidget?.title">{{ quickInfoWidget?.title }}</div>
+                                                            <div class="text-[11px] text-slate-500 mb-2">Total sources: {{ getUniqueDataSourceNames(quickInfoWidget!).length }}</div>
+                                                            <div class="max-h-[220px] overflow-auto grid gap-1">
+                                                                <div *ngFor="let name of getUniqueDataSourceNames(quickInfoWidget!)"
+                                                                    class="px-2 py-1 rounded-md text-[12px] bg-blue-50 text-blue-800">
+                                                                    {{ name }}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </ng-template>
                                             </div>
                                         </div>
-                                        <ng-template #noDataSource>
-                                            <span class="widget-source block mt-1 text-gray-500 text-xs">No data source
-                                                defined.</span>
-                                        </ng-template>
-                                    </div>
+
+                                        <!-- Default behavior for other charts -->
+                                        <ng-template #defaultDataSourceBlock>
+                                        <div class="widget-source-container"
+                                                *ngIf="getUniqueDataSourceNames(widget).length > 0; else noDataSource">
+                                                <span class="font-medium block mb-1">Data Source:</span>
+                                                <div class="flex flex-wrap gap-1">
+                                                    <span *ngFor="let name of getUniqueDataSourceNames(widget) | slice:0: (isDataSourceExpanded(widget._id!) ? 9999 : initialVisibleDataSourceTags)"
+                                                        class="px-2 py-0.5 bg-blue-100 h-[24px] text-blue-800 rounded-full text-xs font-medium">
+                                                        {{ name }}
+                                                    </span>
+                                                    <button *ngIf="getUniqueDataSourceNames(widget).length > initialVisibleDataSourceTags"
+                                                        (click)="toggleDataSourceExpansion(widget._id!)"
+                                                        class="text-blue-600 h-[24px] hover:text-blue-800 text-xs py-0 px-2 min-w-0">
+                                                        {{ isDataSourceExpanded(widget._id!) ? 'Show less...' : 'Show more...' }}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <ng-template #noDataSource>
+                                                <span class="widget-source block mt-1 text-gray-500 text-xs">No data source defined.</span>
+                                            </ng-template>
+                                            </ng-template>
+                                        </div>
                                 </div>
                             </div>
                         </div>

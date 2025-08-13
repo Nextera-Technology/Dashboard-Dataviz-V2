@@ -51,6 +51,15 @@ export class PictorialStackedChartWidgetComponent
 
   }
 
+  // Dynamic height per grid size to compress 1x1 further in builder with scroll
+  getChartHeight(): number {
+    const col = Number(this.widget?.columnSize ?? 0);
+    const row = Number(this.widget?.rowSize ?? 0);
+    if (col === 1 && row === 1) return 170;
+    if ((col === 2 && row === 1) || (col === 1 && row === 2)) return 220;
+    return 300;
+  }
+
   ngOnInit(): void {
   }
 
@@ -89,6 +98,8 @@ export class PictorialStackedChartWidgetComponent
       const root = am5.Root.new(
       `pictorial-stacked-chart-div-${this.widget._id}`
       );
+      // Remove amCharts logo overlay to avoid layout intrusion
+      (root as any)._logo && (root as any)._logo.dispose();
 
       root.setThemes([am5themes_Animated.new(root)]);
 
@@ -114,9 +125,18 @@ export class PictorialStackedChartWidgetComponent
       );
 
       series.labelsContainer.set("width", 100);
-      series.ticks.template.set("location", 0.6);
+      // Hide ticks to reduce clutter in small tiles
+      series.ticks.template.set("visible", false);
 
       series.data.setAll(this.data);
+
+      const col = Number(this.widget?.columnSize ?? 0);
+      const row = Number(this.widget?.rowSize ?? 0);
+      const isSmall = (col === 1 && row === 1) || (col === 2 && row === 1) || (col === 1 && row === 2);
+      if (isSmall) {
+        series.labels.template.setAll({ fontSize: "9px", maxWidth: 70, oversizedBehavior: "truncate" });
+        series.labelsContainer.set("width", 70);
+      }
 
       series.appear(1000, 100);
 

@@ -25,6 +25,7 @@ declare var am5percent: any;
   template: `
     <div
       class="chart-box"
+      [ngClass]="{ 'list-mode': displayMode === 'list', 'short-row': (widget?.rowSize || 1) <= 1 }"
       [style.background-color]="widget?.background || '#ffffff'"
     >
      <!-- Action Buttons -->
@@ -61,6 +62,15 @@ declare var am5percent: any;
         min-height: 120px;
         display: flex;
         flex-direction: column;
+      }
+
+      /* More compact spacing for 1-row tiles (e.g., 1x1 or 2x1) */
+      .chart-box.short-row {
+        padding: 12px;
+      }
+      .chart-box.short-row .chart-title {
+        margin: 10px 0 8px 0;
+        font-size: 16px;
       }
 
       .display-mode-toggle {
@@ -112,7 +122,7 @@ declare var am5percent: any;
 
       .chart-legend {
         position: absolute;
-        top: 10px;
+        top: 12px;
         left: 14px;
         z-index: 2;
         background: rgba(255,255,255,0.85);
@@ -142,6 +152,12 @@ declare var am5percent: any;
         display: flex;
         align-items: center;
         justify-content: center;
+      }
+
+      /* In list mode, avoid centering so chart + legend stack from top and keep legend visible */
+      .chart-box.list-mode .chart-container {
+        align-items: flex-start;
+        justify-content: flex-start;
       }
 
       /* Manual Legend - Keep if you intend to use it, otherwise remove */
@@ -269,6 +285,11 @@ export class PieChartWidgetComponent implements OnInit, OnDestroy {
       color: item.color,
     }));
 
+    const colSize = Number(this.widget.columnSize || 1);
+    const rowSize = Number(this.widget.rowSize || 1);
+    const isSmall = colSize <= 1 && rowSize <= 1; // strictly 1x1
+    const isShortRow = rowSize <= 1; // includes 1x1 and 2x1
+
     if (this.displayMode === 'side') {
       // SIDE MODE: Labels on chart
       this.chart = this.root.container.children.push(
@@ -305,7 +326,7 @@ export class PieChartWidgetComponent implements OnInit, OnDestroy {
         am5percent.PieChart.new(this.root, {
           layout: this.root.verticalLayout,
           innerRadius: am5.percent(50),
-          radius: am5.percent(60),
+          radius: isShortRow ? am5.percent(35) : am5.percent(60),
         })
       );
       this.series = this.chart.series.push(
@@ -337,16 +358,37 @@ export class PieChartWidgetComponent implements OnInit, OnDestroy {
         am5.Legend.new(this.root, {
           centerX: am5.percent(50),
           x: am5.percent(50),
-          marginTop: 15,
-          marginBottom: 15,
+          marginTop: isShortRow ? 5 : 15,
+          marginBottom: isShortRow ? 5 : 15,
           layout: this.root.verticalLayout,
           width: am5.percent(90),
-          height: am5.percent(40),
+          height: am5.percent(isShortRow ? 60 : 40),
           verticalScrollbar: scrollbar,
         })
       );
+      // Configure legend labels
       legend.labels.template.setAll({ text: "{category}", oversizedBehavior: "truncate", maxWidth: 120 });
-      legend.valueLabels.template.setAll({ text: "= {value}", textAlign: "right"});
+      
+      // Use an adapter to force consistent value and percentage display
+      legend.valueLabels.template.adapters.add("text", (text, target) => {
+        // Check if we have a valid data item
+        if (target.dataItem) {
+          // Extract the working value and percentage from the data item
+          const seriesDataItem = target.dataItem as any;
+          const value = seriesDataItem.get("valueWorking");
+          const percent = seriesDataItem.get("valuePercentTotal");
+
+          // Create a number formatter to ensure consistent percentage formatting
+          const numberFormatter = am5.NumberFormatter.new(this.root, {
+            numberFormat: "#.0'%'", // Format with one decimal place
+          });
+          
+          // Return formatted text with value and percentage
+          return `= ${value} (${numberFormatter.format(percent)})`;
+        }
+        return text;
+      });
+
       legend.data.setAll(this.series.dataItems); // Set legend data after series data
     }
 

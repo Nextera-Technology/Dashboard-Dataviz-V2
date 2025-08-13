@@ -79,7 +79,8 @@ declare const am5geodata_franceLow: any;
 
       .map-chart {
         width: 100%;
-        height: 400px;
+        height: 100%;
+        min-height: 150px;
       }
 
       .chart-legend {

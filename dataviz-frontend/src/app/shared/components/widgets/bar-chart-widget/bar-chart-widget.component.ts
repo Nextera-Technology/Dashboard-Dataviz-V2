@@ -138,6 +138,14 @@ export class BarChartWidgetComponent
 
       series.data.setAll(this.data); // Set chart data
 
+      // Responsive label density for small widgets
+      const isSmall = (this.widget?.columnSize ?? 0) <= 2 && (this.widget?.rowSize ?? 0) <= 1;
+      if (isSmall) {
+        yRenderer.labels.template.setAll({ fontSize: "10px", maxWidth: 80, oversizedBehavior: "truncate" });
+        xRenderer.labels.template.setAll({ fontSize: "10px" });
+        chart.setAll({ paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0 });
+      }
+
       // Make stuff animate on load
       series.appear(1000);
       chart.appear(1000, 100);

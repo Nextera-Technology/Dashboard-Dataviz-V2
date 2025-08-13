@@ -25,7 +25,11 @@ import * as am5geodata_franceLow from "@amcharts/amcharts5-geodata/franceLow";
 export class WorldMapWidgetComponent
   implements OnInit, AfterViewInit, OnDestroy
 {
-  @Input() widget = null;
+  @Input() widget: any;
+  public isNarrow = false;
+  public isOneByTwo = false;
+  public isOneByOne = false;
+
   public studentsMapId: string;
   public salaryMapId: string;
   studentsData = {};
@@ -89,19 +93,25 @@ export class WorldMapWidgetComponent
   public salaryLegendId: string; // ID for salary legend container
 
   constructor(private zone: NgZone) {
-    // Generate unique IDs for each map instance
-    this.studentsMapId =
-      "students-map-chart-" + Math.random().toString(36).substr(2, 9);
-    this.salaryMapId =
-      "salary-map-chart-" + Math.random().toString(36).substr(2, 9);
+    this.studentsMapId = "students-map-chart-" + Math.random().toString(36).substr(2, 9);
+    this.salaryMapId = "salary-map-chart-" + Math.random().toString(36).substr(2, 9);
     console.log(
       `[FranceRegionalMapsComponent] Constructor fired. Students Map ID: ${this.studentsMapId}, Salary Map ID: ${this.salaryMapId}`
     );
   }
 
   ngOnInit(): void {
+    const colSize = Number(this.widget.columnSize || 1);
+    const rowSize = Number(this.widget.rowSize || 1);
+    
+    this.isNarrow = colSize <= 1;
+    this.isOneByTwo = colSize === 1 && rowSize === 2;
+    this.isOneByOne = colSize === 1 && rowSize === 1;
+    
     console.log(`[FranceRegionalMapsComponent] ngOnInit fired.`);
     console.log("Widget Data:", this.widget);
+    console.log(`Layout: ${colSize}x${rowSize}, isNarrow: ${this.isNarrow}, isOneByTwo: ${this.isOneByTwo}`);
+    
     if (this.widget?.widgetSubType === 'STUDENT_REGION_DISTRIBUTION') {
       this.createStudentData();
     }else if (this.widget?.widgetSubType === 'REGION_SALARY_AVERAGE') {

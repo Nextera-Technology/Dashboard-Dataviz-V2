@@ -104,16 +104,26 @@ export class ColumnChartWidgetComponent
         })
       );
 
-      // Add legend
-      const legend = chart.children.push(
-        am5.Legend.new(root, {
-          centerX: am5.percent(50),
-          x: am5.percent(50),
-          y: am5.percent(0),
-          layout: root.horizontalLayout
-        })
-      );
-      legend.data.setAll(chart.series.values);
+      // Legend only on larger widgets
+      const isSmall = (this.widget?.columnSize ?? 0) <= 2 && (this.widget?.rowSize ?? 0) <= 1;
+      if (!isSmall) {
+        const legend = chart.children.push(
+          am5.Legend.new(root, {
+            centerX: am5.percent(50),
+            x: am5.percent(50),
+            y: am5.percent(0),
+            layout: root.horizontalLayout
+          })
+        );
+        legend.data.setAll(chart.series.values);
+      }
+
+      // Responsive label sizes for small widgets
+      if (isSmall) {
+        xRenderer.labels.template.setAll({ fontSize: "10px", maxWidth: 80, oversizedBehavior: "truncate" });
+        yRenderer.labels.template.setAll({ fontSize: "10px" });
+        chart.setAll({ paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0 });
+      }
 
       series.data.setAll(this.data);
 

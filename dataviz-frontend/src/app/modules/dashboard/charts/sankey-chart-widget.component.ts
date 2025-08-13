@@ -68,6 +68,7 @@ declare var am5flow: any;
         min-height: 300px;
         display: flex;
         flex-direction: column;
+        height: 100%;
       }
 
       .chart-box:hover {
@@ -91,7 +92,7 @@ declare var am5flow: any;
       }
 
       .chart-container {
-        height: 400px;
+        flex: 1;
         width: 100%;
         margin-bottom: 15px;
       }
@@ -150,9 +151,9 @@ declare var am5flow: any;
           font-size: 16px;
         }
 
-        .chart-container {
+        /* .chart-container {
           height: 300px;
-        }
+        } */
 
         .legend-item {
           font-size: 12px;
@@ -182,6 +183,9 @@ export class SankeyChartWidgetComponent implements OnInit, OnDestroy {
     if (this.root) {
       this.root.dispose();
     }
+    if ((this as any)._sankeyResizeObserver) {
+      (this as any)._sankeyResizeObserver.disconnect();
+    }
   }
 
   private createChart(): void {
@@ -196,6 +200,7 @@ export class SankeyChartWidgetComponent implements OnInit, OnDestroy {
         targetIdField: "to",
         valueField: "value",
         paddingRight: 170,
+        paddingBottom: 30,
         nodeWidth: 20,
         nodePadding: 10,
         linkOpacity: 0.5,
@@ -219,6 +224,17 @@ export class SankeyChartWidgetComponent implements OnInit, OnDestroy {
     });
 
     this.chart.appear(1000, 100);
+    // Ensure chart resizes when container resizes
+    if ((window as any).ResizeObserver) {
+      const resizeObserver = new ResizeObserver(() => {
+        if (this.root) {
+          this.root.resize();
+        }
+      });
+      resizeObserver.observe(this.chartContainer.nativeElement);
+      // store to clean up later
+      (this as any)._sankeyResizeObserver = resizeObserver;
+    }
   }
 
   private showFallbackContent(): void {

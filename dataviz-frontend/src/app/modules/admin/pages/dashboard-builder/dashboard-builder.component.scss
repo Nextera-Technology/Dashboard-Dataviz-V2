@@ -34,11 +34,11 @@
   padding-bottom: 2rem; // Add padding at bottom to ensure last widgets are visible
 
   /* Improve layout densification without altering row height */
-  grid-auto-flow: dense; // Fill gaps created by spanning items
+  grid-auto-flow: row; // Fill gaps created by spanning items
 
-  /* Reduce the base row height so widgets that span many rows don’t reserve
+  /* Reduce the base row height so widgets that span many rows don't reserve
      an unnecessarily large area when their content is limited. */
-  grid-auto-rows: minmax(120px, auto);
+  /* grid-auto-rows: minmax(120px, auto); */
 }
 
 // CDK Drag & Drop styles
@@ -81,6 +81,201 @@
   min-height: 80px; /* Example min height */
   transform: rotate(2deg); /* Slight rotation for a "lifting" effect */
   cursor: grabbing; /* Indicate grabbing */
+}
+
+/* Ensure chart area can be clipped in tiny (1x1) without covering info section */
+.widget-card {
+  .widget-content {
+    position: relative;
+    z-index: 0; /* chart area */
+  }
+  .widget-info {
+    position: relative;
+    z-index: 2; /* keep above chart */
+    background: transparent;
+  }
+}
+
+/* Small 1x1 widgets often need tighter spacing so info fits without overlap */
+.widget-card.col-span-1.row-span-1 {
+  .widget-info {
+    padding-top: 6px;
+  }
+  .widget-content {
+    overflow: hidden; /* ensure charts don't bleed into info area */
+  }
+  /* In case any chart inside overflows, hide overflow only for 1x1 */
+  .widget-content > *:first-child {
+    overflow: hidden;
+  }
+  .widget-content > .flex-1,
+  .widget-content > .min-h-0 {
+    overflow: hidden; /* clip bottom of chart if needed */
+  }
+
+  /* All 1x1 charts: kontainer chart bisa discroll */
+  .widget-content.content-scroll > .has-scroll {
+    overflow-y: auto !important; /* force vertical scroll */
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-width: thin; /* Firefox */
+    height: 200px; /* fixed viewport for 1x1 */
+    max-height: 200px;
+  }
+  .widget-content.content-scroll > .has-scroll::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+  }
+  .widget-content.content-scroll > .has-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.25);
+    border-radius: 6px;
+  }
+  .widget-content.content-scroll > .has-scroll::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.05);
+  }
+
+  /* Khusus pie 1x1 di builder: hilangkan break baris ekstra dan besarkan container */
+  ::ng-deep app-pie-chart-widget .chart-content br {
+    display: none !important;
+  }
+  ::ng-deep app-pie-chart-widget .chart-box {
+    padding: 12px !important;
+    padding-bottom: 12px !important;
+    min-height: 0 !important;
+  }
+  ::ng-deep app-pie-chart-widget .chart-title {
+    margin: 6px 0 6px 0 !important;
+    font-size: 15px !important;
+  }
+  ::ng-deep app-pie-chart-widget .chart-container {
+    height: 200px !important;
+    min-height: 200px !important;
+    max-height: 200px !important;
+  }
+
+  /* Pictorial Fraction 1x1 in builder: make more compact and enable scroll */
+  /* Override wrapper that used h-full so scroll actually appears on parent */
+  ::ng-deep app-pictorial-fraction-chart .pictorial-stacked-chart-widget {
+    height: auto !important;
+  }
+  ::ng-deep app-pictorial-fraction-chart .pictorial-stacked-chart-widget > div {
+    height: auto !important;
+    display: block !important;
+  }
+  /* Fine-tune inner spacing */
+  ::ng-deep app-pictorial-fraction-chart .chart-container {
+    min-height: 240px !important; /* exceed wrapper max-height (200px) to force scrollbar */
+    height: 240px !important;
+  }
+  ::ng-deep app-pictorial-fraction-chart .mat-icon,
+  ::ng-deep app-pictorial-fraction-chart .no-data-overlay { /* keep no-data overlay consistent */
+    pointer-events: none;
+  }
+
+  /* World Map 1x1 in builder: hide region list, show map only */
+  ::ng-deep app-world-map-widget .region-names-list {
+    display: none !important;
+  }
+  ::ng-deep app-world-map-widget .map-and-legend-wrapper {
+    width: 100% !important;
+  }
+  ::ng-deep app-world-map-widget .map-chart-container {
+    min-height: 180px !important;
+    height: 200px !important;
+  }
+}
+
+/* Medium tiles 2x1 and 1x2: enable scroll like 1x1 but with taller viewport */
+.widget-card.col-span-2.row-span-1,
+.widget-card.col-span-1.row-span-2 {
+  .widget-content {
+    overflow: hidden;
+  }
+  .widget-content > *:first-child {
+    overflow: hidden;
+  }
+  .widget-content > .flex-1,
+  .widget-content > .min-h-0 {
+    overflow: hidden;
+  }
+
+  .widget-content.content-scroll > .has-scroll {
+    overflow-y: auto !important;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    height: 260px; /* fixed viewport for 2x1 / 1x2 */
+    max-height: 260px; /* slightly larger than 1x1 */
+  }
+  .widget-content.content-scroll > .has-scroll::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+  }
+  .widget-content.content-scroll > .has-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.25);
+    border-radius: 6px;
+  }
+  .widget-content.content-scroll > .has-scroll::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.05);
+  }
+
+  /* Align pie and map chart containers with main dashboard scaling for medium tiles */
+  ::ng-deep app-pie-chart-widget .chart-box {
+    padding: 14px !important;
+  }
+  ::ng-deep app-pie-chart-widget .chart-title {
+    margin: 8px 0 8px 0 !important;
+  }
+  ::ng-deep app-pie-chart-widget .chart-container {
+    height: 220px !important;
+    min-height: 220px !important;
+    max-height: 220px !important;
+  }
+
+  /* Pictorial Fraction 2x1 / 1x2 in builder: allow scroll like map/pie */
+  ::ng-deep app-pictorial-fraction-chart .pictorial-stacked-chart-widget {
+    height: auto !important;
+  }
+  ::ng-deep app-pictorial-fraction-chart .pictorial-stacked-chart-widget > div {
+    height: auto !important;
+    display: block !important;
+  }
+  ::ng-deep app-pictorial-fraction-chart .chart-container {
+    min-height: 300px !important; /* exceed wrapper max-height (260px) to force scrollbar */
+    height: 320px !important;
+  }
+
+  /* Ensure Status By Wave (Breakdown) 2x1 is taller than viewport so content is visible and scrollable */
+  ::ng-deep app-breakdown-chart-widget {
+    display: block !important;
+    height: auto !important;
+  }
+  ::ng-deep app-breakdown-chart-widget .chart-box,
+  ::ng-deep app-breakdown-chart-widget .status-grid-container {
+    min-height: 320px !important; /* exceed 2x1 viewport (260px) to enable scroll */
+  }
+  ::ng-deep app-breakdown-chart-widget .status-grid-rowed,
+  ::ng-deep app-breakdown-chart-widget .status-row {
+    min-height: 0 !important;
+  }
+
+  ::ng-deep app-world-map-widget .map-chart-container {
+    min-height: 220px !important;
+  }
+}
+/* Raise total data legend slightly across all charts in builder */
+.widget-card {
+  ::ng-deep .chart-legend {
+    top: 8px !important; /* was 10px in components; move up by ~2px */
+  }
+}
+
+/* Ensure pictorial chart host is not height: 100% so child can exceed and trigger parent scroll */
+.widget-card {
+  ::ng-deep app-pictorial-fraction-chart {
+    display: block !important;
+    height: auto !important;
+  }
 }
 
 // Styling for the placeholder (new, ensure it matches actual card size)

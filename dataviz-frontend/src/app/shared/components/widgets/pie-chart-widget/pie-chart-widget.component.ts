@@ -120,15 +120,28 @@ export class PieChartWidgetComponent
     this.zone.runOutsideAngular(() => {
       try {
         const root = am5.Root.new(chartDivId);
+        // Remove amCharts watermark to prevent overlap in compact layouts
+        const anyRoot = root as any;
+        if (anyRoot && anyRoot._logo && typeof anyRoot._logo.dispose === "function") {
+          anyRoot._logo.dispose();
+        }
         root.setThemes([am5themes_Animated.new(root)]);
+
+        const col = Number(this.widget.columnSize || 1);
+        const row = Number(this.widget.rowSize || 1);
+        const isOneByOne = col === 1 && row === 1;
 
         const chart = root.container.children.push(
           am5percent.PieChart.new(root, {
             layout: root.horizontalLayout,
             innerRadius: am5.percent(50),
-            radius: am5.percent(60)
+            radius: am5.percent(isOneByOne ? 30: 60)
           })
         );
+
+        if (isOneByOne) {
+          chart.set("centerY", am5.percent(30));
+        }
 
         const series = chart.series.push(
           am5percent.PieSeries.new(root, {
@@ -148,14 +161,18 @@ export class PieChartWidgetComponent
         // Format label with integer percentage
         series.labels.template.setAll({
           text: "{name}: {count} {percentage}%",
-          fontSize: "12px", // Adjust font size if needed
-          maxWidth: 125, // Set maximum width for labels
-          oversizedBehavior: "wrap", // Wrap long text
+          fontSize: "12px",
+          maxWidth: 125,
+          oversizedBehavior: "wrap",
           paddingBottom: 15,
           paddingRight: 10,
-          forceHidden: false, // allow hiding if overlap
-          radius: 20 // or experiment with am5.percent(80)
+          forceHidden: isOneByOne,
+          radius: isOneByOne ? 5 : 20
         });
+
+        if (isOneByOne) {
+          series.ticks.template.set("forceHidden", true);
+        }
         
         series.data.setAll(this.data);
         series.appear(1000, 100);
@@ -193,3 +210,5 @@ export class PieChartWidgetComponent
     this.disposeChart();
   }
 }
+
+

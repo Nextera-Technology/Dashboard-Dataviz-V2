@@ -46,7 +46,8 @@ interface Widget {
     }
     .radar-chart {
       width: 100%;
-      height: 300px;
+      height: 100%;
+      min-height: 150px;
     }
     .total-data {
       position: absolute;

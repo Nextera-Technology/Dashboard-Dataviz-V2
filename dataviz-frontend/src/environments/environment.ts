@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
-    apiGraphqlUrl: 'https://alumni-back-end-production.up.railway.app/graphql',
+    apiGraphqlUrl: 'https://a23be31f2618.ngrok-free.app/graphql',
     apiRestUrl: '',
     apiUrlTask: '',
     fileUrl: '',

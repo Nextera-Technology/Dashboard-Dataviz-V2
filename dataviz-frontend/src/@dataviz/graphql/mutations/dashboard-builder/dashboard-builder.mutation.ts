@@ -79,3 +79,11 @@ export const gqlWidgetSourceData = gql`
     }
   }
 `;
+
+export const gqlExportWidgetData = gql`
+  mutation getExportedWidgetData($widgetId: String!, $exportType: String!) {
+    getExportedWidgetData(widgetId: $widgetId, exportType: $exportType) {
+      filename
+    }
+  }
+`;
