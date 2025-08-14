@@ -39,6 +39,7 @@ interface Widget {
   template: `
     <div
       class="chart-box"
+      [ngClass]="{ 'short-row': (widget?.rowSize || 1) <= 1 }"
       [style.background-color]="widget?.background || '#ffffff'"
     >
       <!-- Action Buttons -->
@@ -48,11 +49,12 @@ interface Widget {
         <h3 class="chart-title">{{ widget.title }}</h3>
         <!-- Chart Container -->
         <div #chartContainer class="chart-container"></div>
-        <!-- Manual Legend -->
-        <div class="chart-legend" >
+        <!-- Total Data -->
+        <div class="chart-legend">
           Total Student : {{ data && data.length && data[0].totalData ?? data[0].totalData || 0 }}
         </div>
 
+        <!-- Manual Legend (sembunyikan untuk tile 1-row agar tidak overflow) -->
         <div class="manual-legend" *ngIf="data">
           <div *ngFor="let item of data" class="legend-item">
             <span class="legend-color"></span>
@@ -70,15 +72,27 @@ interface Widget {
   styles: [
     `
       .chart-box {
-      height:100%;
+        height: 100%;
         position: relative;
         text-align: center;
         border-radius: 12px;
         padding: 20px;
         transition: all 0.3s ease;
-        min-height: 300px;
+        min-height: 120px;
         display: flex;
         flex-direction: column;
+      }
+
+      /* Lebih rapat untuk tile 1-row (1x1, 2x1) agar tidak overflow */
+      .chart-box.short-row {
+        padding: 12px;
+      }
+      .chart-box.short-row .chart-title {
+        margin: 10px 0 8px 0;
+        font-size: 16px;
+      }
+      .chart-box.short-row .manual-legend {
+        display: none; /* sembunyikan legend manual pada tinggi pendek */
       }
 
       .chart-legend {
@@ -105,6 +119,7 @@ interface Widget {
         flex: 1;
         display: flex;
         flex-direction: column;
+        min-height: 0; /* penting agar child boleh menyusut */
       }
 
       .chart-title {
@@ -116,10 +131,16 @@ interface Widget {
         line-height: 1.3;
       }
 
+      /* Kunci: jadikan container fleksibel agar tidak overflow */
       .chart-container {
-        height: 300px;
+        height: 100%;
         width: 100%;
-        margin-bottom: 15px;
+        min-height: 120px;
+        max-height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
       }
 
       /* Manual Legend */
@@ -127,7 +148,8 @@ interface Widget {
         display: flex;
         flex-direction: column;
         gap: 8px;
-        margin-top: 10px;
+        margin-top: 6px;
+        overflow: hidden; /* no scroll default */
       }
 
       .legend-item {
@@ -166,7 +188,7 @@ interface Widget {
         }
 
         .chart-container {
-          height: 250px;
+          min-height: 180px;
         }
 
         .legend-item {
@@ -200,8 +222,8 @@ export class PictorialStackedChartWidgetComponent
         return;
       }
       const root = am5.Root.new(this.chartContainer.nativeElement);
-      root._logo.dispose();
-      
+      (root as any)._logo?.dispose();
+
       root.setThemes([am5themes_Animated.new(root)]);
 
       const chart = root.container.children.push(
@@ -225,21 +247,28 @@ export class PictorialStackedChartWidgetComponent
         })
       );
 
-      series.labelsContainer.set("width", 100);
-      // series.ticks.template.set("location", 0.6);
+      // Compact labels on small tiles similar to builder behavior
+      const colSize = Number(this.widget?.columnSize || 1);
+      const rowSize = Number(this.widget?.rowSize || 1);
+      const isSmall =
+        (colSize === 1 && rowSize === 1) ||
+        (colSize === 2 && rowSize === 1) ||
+        (colSize === 1 && rowSize === 2);
 
+      series.labelsContainer.set("width", isSmall ? 70 : 100);
       series.ticks.template.set("visible", false);
-      series.slices.template.setAll({
-        cornerRadiusTL: 5,
-        tooltipText: "{name}: {value} ({percentage}%)",
-        stroke: am5.color("#fff"),
-        strokeWidth: 1.5,
-      });
-      
-      series.labels.template.setAll({
-        text: "{name}: {value} {percentage}%",
-      });
-      
+      if (isSmall) {
+        series.labels.template.setAll({
+          fontSize: "9px",
+          maxWidth: 70,
+          oversizedBehavior: "truncate",
+        });
+      } else {
+        series.labels.template.setAll({
+          text: "{name}: {value} {percentage}%",
+        });
+      }
+
       series.data.setAll(this.data);
 
       series.appear(1000, 100);

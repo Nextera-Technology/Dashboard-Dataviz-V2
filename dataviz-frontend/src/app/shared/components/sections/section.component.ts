@@ -36,7 +36,7 @@ import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/brea
       </div>
 
       <div
-        class="widgets-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 auto-rows-[230px] gap-6 p-6 overflow-y-auto"
+        class="widgets-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 auto-rows-[250px] gap-6 p-6 overflow-y-auto"
       >
         <ng-container *ngFor="let widget of visibleWidgets">
           <!-- Metric Widget -->
