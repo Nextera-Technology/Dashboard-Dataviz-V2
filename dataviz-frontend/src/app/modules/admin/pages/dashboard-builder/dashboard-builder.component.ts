@@ -154,6 +154,9 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
     { originX: 'end', originY: 'top', overlayX: 'end', overlayY: 'bottom' },
   ];
 
+  // Per-widget state to hide/show the info (size + data source)
+  private widgetInfoHiddenState: Map<string, boolean> = new Map<string, boolean>();
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -663,6 +666,16 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
   // Check if data source tags are expanded for a specific widget
   isDataSourceExpanded(widgetId: string): boolean {
     return this.widgetDataSourceExpansionState.get(widgetId) || false;
+  }
+
+  // Toggle and read hidden-state for widget info block
+  toggleWidgetInfo(widgetId: string): void {
+    const current = this.widgetInfoHiddenState.get(widgetId) || false;
+    this.widgetInfoHiddenState.set(widgetId, !current);
+  }
+
+  isWidgetInfoHidden(widgetId: string): boolean {
+    return this.widgetInfoHiddenState.get(widgetId) || false;
   }
 
   // Returns the SVG icon string for a given widget type

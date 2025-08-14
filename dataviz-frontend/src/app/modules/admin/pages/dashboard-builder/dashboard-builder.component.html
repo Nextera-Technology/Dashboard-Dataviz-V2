@@ -189,7 +189,7 @@
                                             </div>
                                         </ng-container>
                                     </div>
-                                    <div class="widget-info text-sm text-gray-600 flex-shrink-0 pt-2 relative z-10">
+                                    <div class="widget-info text-sm text-gray-600 flex-shrink-0 pt-2 relative z-10" *ngIf="!isWidgetInfoHidden(widget._id!)">
                                         <span class="widget-size block mb-2">Size: {{ widget.columnSize }}x{{ widget.rowSize }}</span>
 
                                         <!-- If 1x1 (including PIE 1x1), use popup link like PIE 1x1 -->
@@ -260,6 +260,17 @@
                                             </ng-template>
                                         </div>
                                 </div>
+                                <!-- Bottom-right toggle button to show/hide widget description -->
+                                <button
+                                    mat-mini-fab
+                                    color="primary"
+                                    class="toggle-info-btn"
+                                    type="button"
+                                    aria-label="Toggle widget details"
+                                    [matTooltip]="isWidgetInfoHidden(widget._id!) ? 'Show details' : 'Hide details'"
+                                    (click)="toggleWidgetInfo(widget._id!)">
+                                    <mat-icon class="text-base">{{ isWidgetInfoHidden(widget._id!) ? 'unfold_more' : 'unfold_less' }}</mat-icon>
+                                </button>
                             </div>
                         </div>
                     </div>

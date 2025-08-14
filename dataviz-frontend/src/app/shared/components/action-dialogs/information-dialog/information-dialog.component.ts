@@ -114,13 +114,16 @@ export class InformationDialogComponent implements OnInit {
     // Build unique category per (name, wave) and aggregate duplicates
     const aggregatedMap: Map<string, any> = new Map();
     for (const src of this.dataSources) {
-      const waveLabel = (src?.wave ?? 'N/A');
-      const key = `${src?.name ?? 'Unknown'}__${waveLabel}`;
+      const hasWave = src?.wave !== undefined && src?.wave !== null && src?.wave !== '';
+      const waveLabel = hasWave ? src.wave : null;
+      const key = `${src?.name ?? 'Unknown'}__${hasWave ? waveLabel : 'NOWAVE'}`;
       if (!aggregatedMap.has(key)) {
         aggregatedMap.set(key, {
-          category: `${src?.name ?? 'Unknown'} (Wave ${waveLabel})`,
+          category: hasWave
+            ? `${src?.name ?? 'Unknown'} (Wave ${waveLabel})`
+            : `${src?.name ?? 'Unknown'}`,
           name: src?.name ?? 'Unknown',
-          wave: src?.wave ?? 'N/A',
+          wave: hasWave ? src?.wave : null,
           count: src?.count ?? 0
         });
       } else {
@@ -202,7 +205,7 @@ export class InformationDialogComponent implements OnInit {
       categoryYField: "category",
       tooltip: am5.Tooltip.new(this.root2, {
         pointerOrientation: "left",
-        labelText: "{name} (Wave {wave}): {valueX}"
+        labelText: "{category}: {valueX}"
       })
     }));
 

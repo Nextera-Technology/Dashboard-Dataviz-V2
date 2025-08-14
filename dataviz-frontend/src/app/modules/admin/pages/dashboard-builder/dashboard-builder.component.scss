@@ -94,6 +94,19 @@
     z-index: 2; /* keep above chart */
     background: transparent;
   }
+  /* ensure the card is a positioning context for the toggle btn */
+  position: relative;
+  .toggle-info-btn {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    z-index: 3; /* above chart & info */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    width: 32px;  /* lebih kecil dari default */
+    height: 32px; /* lebih kecil dari default */
+    min-width: 32px; /* override default material button */
+    padding: 0; /* hapus padding bawaan */
+  }
 }
 
 /* Small 1x1 widgets often need tighter spacing so info fits without overlap */
