@@ -16,7 +16,7 @@
             <div class="w-40"></div> <!-- Spacer to balance the left side -->
         </div>
         <div class="flex gap-4 px-4 mt-3 flex-1 min-h-0" [ngClass]="isNarrow ? 'flex-col' : 'flex-row'">
-            <ul *ngIf="!isOneByTwo && !isOneByOne" class="region-names-list p-0 flex-shrink-0 overflow-y-auto max-h-full" [ngClass]="isNarrow ? 'w-full' : 'w-64'">
+            <ul *ngIf="!isOneByTwo && !isOneByOne" class="region-names-list p-0 overflow-y-auto" [class.flex-shrink-0]="!isNarrow" [ngClass]="isNarrow ? 'w-full' : 'w-64'" [style.maxHeight]="isNarrow ? '40%' : '100%'">
                 <li *ngFor="let key of studentDataList" class="py-1" (mouseenter)="onLegendEnter('students', key.code)" (mouseleave)="onLegendLeave('students', key.code)">
                     <span 
                         class="font-medium inline-block align-middle mr-2" 
@@ -32,7 +32,7 @@
                     <span class="legend-label">{{ key.count }}</span>
                 </li>
             </ul>
-            <div class="map-and-legend-wrapper flex flex-grow min-h-0" [ngClass]="isOneByTwo ? 'w-full' : ''">
+            <div class="map-and-legend-wrapper flex flex-grow min-h-0" [ngClass]="isOneByTwo ? 'w-full' : ''" [style.minHeight]="isNarrow ? '200px' : null">
                 <div [id]="studentsMapId" class="map-chart-container h-full w-full"></div>
             </div>
         </div>
@@ -58,7 +58,7 @@
             <div class="w-40"></div> <!-- Spacer to balance the left side -->
         </div>
         <div class="flex gap-4 px-4 mt-3 flex-1 min-h-0" [ngClass]="isNarrow ? 'flex-col' : 'flex-row'">
-            <ul *ngIf="!isOneByTwo && !isOneByOne" class="region-names-list p-0 flex-shrink-0 overflow-y-auto max-h-full" [ngClass]="isNarrow ? 'w-full' : 'w-64'">
+            <ul *ngIf="!isOneByTwo && !isOneByOne" class="region-names-list p-0 overflow-y-auto" [class.flex-shrink-0]="!isNarrow" [ngClass]="isNarrow ? 'w-full' : 'w-64'" [style.maxHeight]="isNarrow ? '40%' : '100%'">
                 <li *ngFor="let key of salaryDataList " class="py-1" (mouseenter)="onLegendEnter('salary', key.code)" (mouseleave)="onLegendLeave('salary', key.code)">
                     <span 
                         class="font-medium inline-block align-middle mr-2" 
@@ -74,7 +74,7 @@
                     <span class="legend-label">{{ key.averageSalary | number}} €</span>
                 </li>
             </ul>
-            <div class="map-and-legend-wrapper flex flex-grow min-h-0" [ngClass]="isOneByTwo ? 'w-full' : ''">
+            <div class="map-and-legend-wrapper flex flex-grow min-h-0" [ngClass]="isOneByTwo ? 'w-full' : ''" [style.minHeight]="isNarrow ? '200px' : null">
                 <div [id]="salaryMapId" class="map-chart-container w-full h-full"></div>
             </div>
         </div>
