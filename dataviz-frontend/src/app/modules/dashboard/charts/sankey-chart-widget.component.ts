@@ -25,7 +25,7 @@ declare var am5flow: any;
   template: `
     <div
       class="chart-box"
-      [style.background-color]="widget.data?.background || '#ffffff'"
+      [style.background-color]="widget?.background || '#ffffff'"
     >
       <!-- Total Data label -->
       <div class="chart-legend">Total Data : {{ totalData }}</div>

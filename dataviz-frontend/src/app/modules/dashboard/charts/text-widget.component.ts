@@ -9,7 +9,7 @@ import { DashboardWidget, WidgetAction } from 'app/shared/services/dashboard.ser
   standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule],
   template: `
-    <div class="text-box" [style.background-color]="widget.data?.background || '#ffffff'">
+    <div class="text-box" [style.background-color]="widget?.background || '#ffffff'">
       <!-- Action Buttons -->
       <div class="button-container" *ngIf="widget.actions && widget.actions.length > 0">
         <button 

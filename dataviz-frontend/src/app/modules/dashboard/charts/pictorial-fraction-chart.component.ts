@@ -48,7 +48,7 @@ interface Widget {
       <div class="chart-content">
         <h3 class="chart-title">{{ widget.title }}</h3>
         <!-- Chart Container -->
-        <div #chartContainer class="chart-container"></div>
+        <div #chartContainer class="chart-container" [style.height.px]="getChartHeight()"></div>
         <!-- Total Data -->
         <div class="chart-legend">
           Total Student : {{ data && data.length && data[0].totalData ?? data[0].totalData || 0 }}
@@ -211,6 +211,16 @@ export class PictorialStackedChartWidgetComponent
   constructor(private zone: NgZone) {}
 
   ngOnInit(): void {}
+
+  // Match builder behavior: keep 1x2 height the same as 2x1
+  getChartHeight(): number {
+    const colSize = Number(this.widget?.columnSize || 0);
+    const rowSize = Number(this.widget?.rowSize || 0);
+    if (colSize === 1 && rowSize === 1) return 170;
+    // Apply 2x1 height profile to any wide 1-row tile (>= 2x1)
+    if ((rowSize === 1 && colSize >= 2) || (colSize === 1 && rowSize === 2)) return 220;
+    return 300;
+  }
 
   ngAfterViewInit(): void {
     this.zone.runOutsideAngular(() => {

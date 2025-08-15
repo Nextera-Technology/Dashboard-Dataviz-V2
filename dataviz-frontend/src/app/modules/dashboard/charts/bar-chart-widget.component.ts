@@ -25,7 +25,7 @@ declare var am5xy: any;
   template: `
     <div
       class="chart-box relative"
-      [style.background-color]="widget.data?.background || '#ffffff'"
+      [style.background-color]="widget?.background || '#ffffff'"
     >
       <div class="chart-legend">Total Data : {{ totalData }}</div>
       <!-- Action Buttons -->
@@ -274,10 +274,15 @@ export class BarChartWidgetComponent implements OnInit, OnDestroy {
     );
 
     // Step 4: Y Axis (Job Titles)
+    const yRenderer = am5xy.AxisRendererY.new(this.root, {});
+    yRenderer.labels.template.setAll({
+      oversizedBehavior: "truncate",
+      maxWidth: 100,
+    });
     const yAxis = this.chart.yAxes.push(
       am5xy.CategoryAxis.new(this.root, {
         categoryField: "name",
-        renderer: am5xy.AxisRendererY.new(this.root, {}),
+        renderer: yRenderer,
       })
     );
     yAxis.data.setAll(groupedData);
@@ -414,10 +419,15 @@ export class BarChartWidgetComponent implements OnInit, OnDestroy {
     );
 
     // Step 4: Y Axis (Job Titles)
+    const yRendererContrat = am5xy.AxisRendererY.new(this.root, {});
+    yRendererContrat.labels.template.setAll({
+      oversizedBehavior: "truncate",
+      maxWidth: 100,
+    });
     const yAxis = this.chart.yAxes.push(
       am5xy.CategoryAxis.new(this.root, {
         categoryField: "name",
-        renderer: am5xy.AxisRendererY.new(this.root, {}),
+        renderer: yRendererContrat,
       })
     );
     yAxis.data.setAll(groupedData);

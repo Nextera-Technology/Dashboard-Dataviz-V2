@@ -26,7 +26,7 @@ declare const am5geodata_franceLow: any;
   template: `
     <div
       class="widget-container"
-      [style.background-color]="widget.data?.background || '#ffffff'"
+      [style.background-color]="widget?.background || '#ffffff'"
     >
       <!-- Total Data label -->
       <div class="chart-legend">Total Data : {{ totalData }}</div>

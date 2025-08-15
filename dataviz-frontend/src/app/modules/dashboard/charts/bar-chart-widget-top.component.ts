@@ -20,7 +20,7 @@ declare var am5xy: any;
   template: `
     <div
       class="chart-box relative"
-      [style.background-color]="widget.data?.background || '#ffffff'"
+      [style.background-color]="widget?.background || '#ffffff'"
     >
       <div class="chart-legend">Total Data : {{ totalData }}</div>
       <!-- Action Buttons -->

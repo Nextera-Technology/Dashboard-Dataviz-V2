@@ -626,7 +626,8 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
 
   // Extra: detect 2x1 and 1x2 for scroll behavior in builder
   isTwoByOne(widget: Widget): boolean {
-    return Number(widget.columnSize) === 2 && Number(widget.rowSize) === 1;
+    // Treat any wide 1-row tile (2x1, 3x1, 4x1) as 2x1 behavior for scroll
+    return Number(widget.rowSize) === 1 && Number(widget.columnSize) >= 2;
   }
 
   isOneByTwo(widget: Widget): boolean {

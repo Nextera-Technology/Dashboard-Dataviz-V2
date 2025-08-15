@@ -41,6 +41,8 @@ export class WorldMapWidgetComponent
 
   private studentsRoot: am5.Root | null = null;
   private salaryRoot: am5.Root | null = null;
+  private studentsSeries: am5map.MapPolygonSeries | null = null;
+  private salarySeries: am5map.MapPolygonSeries | null = null;
 
   // Region names for tooltips
   private regionNames = {
@@ -234,12 +236,18 @@ export class WorldMapWidgetComponent
       `[FranceRegionalMapsComponent] createFranceMap called for ID: ${divId}. Div exists: ${!!chartDiv}. Current rootRef: ${!!rootRef}`
     );
 
-    if (rootRef) {
-      console.warn(
-        `[FranceRegionalMapsComponent] createFranceMap for ${divId}: Root already exists. Disposing defensively.`
-      );
-      rootRef.dispose();
-      rootRef = null;
+    // Dispose existing root for this map if present
+    if (divId === this.studentsMapId && this.studentsRoot) {
+      console.warn(`[FranceRegionalMapsComponent] Disposing existing studentsRoot for ${divId}.`);
+      this.studentsRoot.dispose();
+      this.studentsRoot = null;
+      this.studentsSeries = null;
+    }
+    if (divId === this.salaryMapId && this.salaryRoot) {
+      console.warn(`[FranceRegionalMapsComponent] Disposing existing salaryRoot for ${divId}.`);
+      this.salaryRoot.dispose();
+      this.salaryRoot = null;
+      this.salarySeries = null;
     }
 
     if (!chartDiv) {
@@ -316,6 +324,51 @@ export class WorldMapWidgetComponent
 
     polygonSeries.data.setAll(dataItems);
     chart.appear(1000, 100);
+
+    // Keep references for legend-hover interactions
+    if (divId === this.studentsMapId) {
+      this.studentsRoot = root;
+      this.studentsSeries = polygonSeries;
+    } else if (divId === this.salaryMapId) {
+      this.salaryRoot = root;
+      this.salarySeries = polygonSeries;
+    }
+  }
+
+  onLegendEnter(type: 'students' | 'salary', regionCode: string): void {
+    this._toggleRegionHover(type, regionCode, true);
+  }
+
+  onLegendLeave(type: 'students' | 'salary', regionCode: string): void {
+    this._toggleRegionHover(type, regionCode, false);
+  }
+
+  private _toggleRegionHover(
+    type: 'students' | 'salary',
+    regionCode: string,
+    isHover: boolean
+  ): void {
+    const series = type === 'students' ? this.studentsSeries : this.salarySeries;
+    if (!series) {
+      return;
+    }
+    const dataItem: any = (series as any).getDataItemById
+      ? (series as any).getDataItemById(regionCode)
+      : series.dataItems.find((di: any) => (di.get && di.get("id")) === regionCode || (di.dataContext && di.dataContext.id) === regionCode);
+    if (!dataItem) {
+      return;
+    }
+    const polygon: any = dataItem.get && dataItem.get("mapPolygon");
+    if (!polygon) {
+      return;
+    }
+    if (isHover) {
+      if (typeof polygon.hover === "function") polygon.hover();
+      if (typeof polygon.showTooltip === "function") polygon.showTooltip();
+    } else {
+      if (typeof polygon.unhover === "function") polygon.unhover();
+      if (typeof polygon.hideTooltip === "function") polygon.hideTooltip();
+    }
   }
 
   /**

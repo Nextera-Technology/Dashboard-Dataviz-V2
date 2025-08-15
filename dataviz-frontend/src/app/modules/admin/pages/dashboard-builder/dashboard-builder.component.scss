@@ -49,7 +49,6 @@
   border-width: 2px;
   border-radius: 8px;
   opacity: 0.9;
-  background: white;
   display: flex;
   flex-direction: column;
 }
@@ -57,7 +56,6 @@
 .widget-card.cdk-drag-placeholder {
   opacity: 0.3;
   border: 2px dashed #ccc;
-  background: #f0f0f0;
   border-radius: 8px;
 }
 
@@ -266,6 +264,84 @@
   ::ng-deep app-breakdown-chart-widget .chart-box,
   ::ng-deep app-breakdown-chart-widget .status-grid-container {
     min-height: 320px !important; /* exceed 2x1 viewport (260px) to enable scroll */
+  }
+  ::ng-deep app-breakdown-chart-widget .status-grid-rowed,
+  ::ng-deep app-breakdown-chart-widget .status-row {
+    min-height: 0 !important;
+  }
+
+  ::ng-deep app-world-map-widget .map-chart-container {
+    min-height: 220px !important;
+  }
+}
+/* Wide 1-row tiles 3x1 and 4x1: mirror 2x1 scroll/compact behavior */
+.widget-card.col-span-3.row-span-1,
+.widget-card.col-span-4.row-span-1 {
+  .widget-content {
+    overflow: hidden;
+  }
+  .widget-content > *:first-child {
+    overflow: hidden;
+  }
+  .widget-content > .flex-1,
+  .widget-content > .min-h-0 {
+    overflow: hidden;
+  }
+
+  .widget-content.content-scroll > .has-scroll {
+    overflow-y: auto !important;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    height: 260px; /* same viewport as 2x1 */
+    max-height: 260px;
+  }
+  .widget-content.content-scroll > .has-scroll::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+  }
+  .widget-content.content-scroll > .has-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.25);
+    border-radius: 6px;
+  }
+  .widget-content.content-scroll > .has-scroll::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.05);
+  }
+
+  /* Align pie and map chart containers with main dashboard scaling for wide tiles */
+  ::ng-deep app-pie-chart-widget .chart-box {
+    padding: 14px !important;
+  }
+  ::ng-deep app-pie-chart-widget .chart-title {
+    margin: 8px 0 8px 0 !important;
+  }
+  ::ng-deep app-pie-chart-widget .chart-container {
+    height: 220px !important;
+    min-height: 220px !important;
+    max-height: 220px !important;
+  }
+
+  /* Pictorial Fraction 3x1 / 4x1 in builder: allow scroll similar to 2x1 */
+  ::ng-deep app-pictorial-fraction-chart .pictorial-stacked-chart-widget {
+    height: auto !important;
+  }
+  ::ng-deep app-pictorial-fraction-chart .pictorial-stacked-chart-widget > div {
+    height: auto !important;
+    display: block !important;
+  }
+  ::ng-deep app-pictorial-fraction-chart .chart-container {
+    min-height: 300px !important; /* exceed viewport (260px) to enable scroll */
+    height: 320px !important;
+  }
+
+  /* Ensure Status By Wave (Breakdown) wide 1-row is taller than viewport to enable scroll */
+  ::ng-deep app-breakdown-chart-widget {
+    display: block !important;
+    height: auto !important;
+  }
+  ::ng-deep app-breakdown-chart-widget .chart-box,
+  ::ng-deep app-breakdown-chart-widget .status-grid-container {
+    min-height: 320px !important; /* exceed 1-row viewport (260px) */
   }
   ::ng-deep app-breakdown-chart-widget .status-grid-rowed,
   ::ng-deep app-breakdown-chart-widget .status-row {

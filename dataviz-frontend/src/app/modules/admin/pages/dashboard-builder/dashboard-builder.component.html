@@ -49,7 +49,8 @@
                     <div *ngFor="let section of dashboard?.sectionIds; let i = index" [hidden]="selectedTabIndex !== i"
                         class="h-full">
                         <div
-                            class="section-header flex justify-between items-center py-4 px-6 bg-white border-b border-gray-200 shadow-sm">
+                            class="section-header flex justify-between items-center py-4 px-6 border-b border-gray-200 shadow-sm"
+                            [style.background-color]="section?.background || '#ffffff'">
                             <div class="section-info">
                                 <h3 class="text-xl font-semibold text-gray-800">
                                     {{ section.title }}
@@ -73,9 +74,11 @@
                         </div>
 
                         <div class="widget-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 auto-rows-[230px] gap-6 p-6 overflow-y-auto"
+                            [style.background-color]="section?.background || '#ffffff'"
                             cdkDropList cdkDropListOrientation="mixed" [cdkDropListData]="section?.widgetIds"
                             (cdkDropListDropped)="onWidgetDrop($event, i)">
-                            <div class="widget-card bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-400 transition-all duration-300 ease-in-out cursor-grab flex flex-col"
+                            <div class="widget-card rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-400 transition-all duration-300 ease-in-out cursor-grab flex flex-col"
+                                [style.background-color]="widget?.background || '#ffffff'"
                                 *ngFor="let widget of section?.widgetIds; trackBy: trackById" cdkDrag
                                 [class.col-span-1]="widget.columnSize === 1"
                                 [class.col-span-2]="widget.columnSize === 2"

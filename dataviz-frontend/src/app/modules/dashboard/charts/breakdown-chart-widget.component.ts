@@ -14,7 +14,7 @@ declare var am5xy: any;
   template: `
      <div
       class="chart-box relative"
-      [style.background-color]="widget.data?.background || '#ffffff'"
+      [style.background-color]="widget?.background || '#ffffff'"
       [class.small-widget]="isSmall"
       [class.tiny-widget]="isTiny"
       [class.two-by-one]="isTwoByOne"
@@ -265,7 +265,8 @@ export class BreakDownChartWidgetComponent implements OnInit, OnDestroy {
     const colSize = this.widget?.columnSize || 1;
     this.isTiny = rowSize === 1 && colSize === 1;
     this.isSmall = rowSize <= 2 && !this.isTiny;
-    this.isTwoByOne = rowSize === 1 && colSize === 2;
+    // Apply 2x1 layout behavior to any wide 1-row tile (2x1, 3x1, 4x1)
+    this.isTwoByOne = rowSize === 1 && colSize >= 2;
   }
 
   ngOnDestroy(): void {

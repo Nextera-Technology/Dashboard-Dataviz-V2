@@ -13,7 +13,7 @@ declare var am5xy: any;
   standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule, ActionsButtonsComponent],
   template: `
-    <div class="chart-box" [ngClass]="{'one-by-one': isOneByOne()}" [style.background-color]="widget.data?.background || '#ffffff'">
+    <div class="chart-box" [ngClass]="{'one-by-one': isOneByOne()}" [style.background-color]="widget?.background || '#ffffff'">
       <!-- Total Data label -->
       <div class="chart-legend">Total Data : {{ totalData }}</div>
 

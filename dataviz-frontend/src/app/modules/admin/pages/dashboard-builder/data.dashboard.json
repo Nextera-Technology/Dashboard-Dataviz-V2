@@ -5,7 +5,7 @@
     {
       "name": "Poursuite d'études",
       "_id": "68731fee3433d1653a458be1",
-      "background": "#ffff",
+      "background": "#ffffff",
       "title": "Poursuite d'études",
       "widgetIds": [
         {
@@ -315,7 +315,7 @@
     {
       "name": "Global",
       "_id": "687326160b583066c043a6ed",
-      "background": "#ffff",
+      "background": "#f0f8ff",
       "title": "Global",
       "widgetIds": [
         {
@@ -358,7 +358,8 @@
           "widgetSubType": "POSITIONS_EVOLUTION",
           "columnSize": 1,
           "rowSize": 1,
-          "status": "ACTIVE"
+          "status": "ACTIVE",
+          "background": "#e6f3ff"
         },
         {
           "_id": "687326b10b583066c043a6fa",
@@ -428,7 +429,8 @@
           "widgetSubType": "DOMAIN_EVOLUTION",
           "columnSize": 1,
           "rowSize": 1,
-          "status": "ACTIVE"
+          "status": "ACTIVE",
+          "background": "#fff2e6"
         },
         {
           "_id": "687326ce0b583066c043a701",
@@ -722,7 +724,7 @@
     {
       "name": "Compétences",
       "_id": "687329700b583066c043a731",
-      "background": "#ffff",
+      "background": "#ffffff",
       "title": "Compétences",
       "widgetIds": [
         {
@@ -831,7 +833,7 @@
     {
       "name": "Emploi",
       "_id": "687329c50b583066c043a744",
-      "background": "#ffff",
+      "background": "#ffffff",
       "title": "Emploi",
       "widgetIds": [
         {
@@ -1188,7 +1190,7 @@
     {
       "name": "Parcours",
       "_id": "68732bb80b583066c043a77a",
-      "background": "#ffff",
+      "background": "#ffffff",
       "title": "Parcours",
       "widgetIds": [
         {
@@ -1325,7 +1327,7 @@
     {
       "name": "Répartition Géographique",
       "_id": "68732c060b583066c043a786",
-      "background": "#ffff",
+      "background": "#ffffff",
       "title": "Répartition Géographique",
       "widgetIds": [
         {
