@@ -22,6 +22,7 @@ import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { Subscription } from "rxjs";
 import { DashboardBuilderService } from "../../pages/dashboard-builder/dashboard-builder.service";
 import { ReplaceUnderscoresPipe } from "@dataviz/pipes/replace-underscores/replace-underscores.pipe";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 // Import the new chart selection dialog and its data interfaces
 import {
@@ -125,6 +126,7 @@ interface ChartTypeOption {
     MatSlideToggleModule,
     MatSnackBarModule,
     ReplaceUnderscoresPipe,
+    MatProgressSpinnerModule,
   ],
   templateUrl: "./widget-form-dialog.component.html",
   styleUrl: "./widget-form-dialog.component.scss",
@@ -237,6 +239,9 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
   allChartTypeOptions: ChartTypeOption[] = []; // Stores all chart type options from backend
   // filteredChartTypes is now an array of ChartOptionForDialog for the dialog
   filteredChartTypes: ChartOptionForDialog[] = [];
+
+  // State to prevent multiple submissions and show spinner
+  isSaving = false;
 
   constructor(
     private fb: FormBuilder,
@@ -466,8 +471,13 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
    * Handles the form submission. Calls the appropriate save method.
    */
   async onSubmit(): Promise<void> {
-    if (this.widgetForm.valid) {
-      await this._saveWidget();
+    if (this.widgetForm.valid && !this.isSaving) {
+      this.isSaving = true;
+      try {
+        await this._saveWidget();
+      } finally {
+        this.isSaving = false;
+      }
     }
   }
 

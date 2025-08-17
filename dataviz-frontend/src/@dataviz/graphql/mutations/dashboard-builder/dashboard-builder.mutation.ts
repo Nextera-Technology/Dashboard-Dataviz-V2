@@ -16,6 +16,12 @@ export const gqlUpdateDashboard = gql`
   }
 `;
 
+export const gqlRegenerateAutoAnalysisDashboard = gql`
+  mutation RegenerateAutoAnalysisDashboard($dashboardId: String!) {
+    regenerateAutoAnalysisDashboard(dashboardId: $dashboardId)
+  }
+`;
+
 export const gqlDeleteDashboard = gql`
   mutation DeleteDashboard($id: String!) {
     DeleteDashboard(_id: $id) {

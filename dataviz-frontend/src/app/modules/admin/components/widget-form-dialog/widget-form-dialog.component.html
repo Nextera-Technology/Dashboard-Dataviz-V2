@@ -166,9 +166,10 @@
                 class="px-6 py-2.5 text-gray-700 bg-white outline-none border border-gray-300 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500/15 transition-all duration-200 shadow-sm hover:shadow-md">
                 Cancel
             </button>
-            <button color="primary" type="submit" [disabled]="widgetForm.invalid"
-                class="px-6 py-2.5 bg-blue-600 text-white outline-none rounded-lg font-medium shadow-sm hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/15 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none transition-all duration-200">
-                {{ isEditMode ? 'Save Changes' : 'Add Widget' }}
+            <button color="primary" type="submit" [disabled]="widgetForm.invalid || isSaving"
+                class="px-6 py-2.5 bg-blue-600 text-white outline-none rounded-lg font-medium shadow-sm hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/15 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none transition-all duration-200 flex items-center justify-center">
+                <span>{{ isEditMode ? 'Save Changes' : 'Add Widget' }}</span>
+                <mat-spinner *ngIf="isSaving" diameter="20" class="inline-spinner ml-2"></mat-spinner>
             </button>
         </mat-dialog-actions>
     </form>

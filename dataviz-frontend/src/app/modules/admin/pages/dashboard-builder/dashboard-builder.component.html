@@ -12,6 +12,11 @@
                 </h1>
             </div>
             <div class="header-actions flex gap-3">
+                <button mat-button (click)="regenerateAnalysis()" matTooltip="Regenerate Analysis"
+                    class="flex items-center space-x-1 px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors duration-200">
+                    <mat-icon>refresh</mat-icon>
+                    <span>Regenerate Analysis</span>
+                </button>
                 <button mat-button (click)="addSection()" matTooltip="Add New Section"
                     class="flex items-center space-x-1 px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors duration-200">
                     <mat-icon>add</mat-icon>
@@ -44,12 +49,12 @@
             </div>
 
             <!-- Tab content -->
-            <div class="tab-content flex-1 overflow-auto">
+            <div class="tab-content flex-1">
                 <ng-container *ngIf="dashboard?.sectionIds && dashboard?.sectionIds.length > 0">
                     <div *ngFor="let section of dashboard?.sectionIds; let i = index" [hidden]="selectedTabIndex !== i"
-                        class="h-full">
+                        class="h-full overflow-y-auto">
                         <div
-                            class="section-header flex justify-between items-center py-4 px-6 border-b border-gray-200 shadow-sm"
+                            class="section-header flex justify-between items-center py-4 px-6 border-b border-gray-200 shadow-sm sticky top-0 z-10"
                             [style.background-color]="section?.background || '#ffffff'">
                             <div class="section-info">
                                 <h3 class="text-xl font-semibold text-gray-800">
@@ -73,7 +78,7 @@
                             </div>
                         </div>
 
-                        <div class="widget-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 auto-rows-[230px] gap-6 p-6 overflow-y-auto"
+                        <div class="widget-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 auto-rows-[230px] gap-6 p-6"
                             [style.background-color]="section?.background || '#ffffff'"
                             cdkDropList cdkDropListOrientation="mixed" [cdkDropListData]="section?.widgetIds"
                             (cdkDropListDropped)="onWidgetDrop($event, i)">

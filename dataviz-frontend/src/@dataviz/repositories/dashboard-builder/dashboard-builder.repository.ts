@@ -3,7 +3,7 @@
  * It uses GraphQL and REST clients to handle login, password reset, and other authentication tasks.
  * This repository is used by the AuthenticationService to manage user authentication.
  */
-import { inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { GraphqlClient } from "@dataviz/graphql/client";
 import {
   gqlCreateDashboard,
@@ -16,7 +16,8 @@ import {
   gqlUpdateWidget,
   gqlDeleteWidget,
   gqlWidgetSourceData,
-  gqlExportWidgetData
+  gqlExportWidgetData,
+  gqlRegenerateAutoAnalysisDashboard
 } from "@dataviz/graphql/mutations/dashboard-builder/dashboard-builder.mutation";
 import {
   gqlGetAllDashboard,
@@ -25,6 +26,9 @@ import {
 
 } from "@dataviz/graphql/queries/dashboard-builder/dashboard-builder.query";
 
+@Injectable({
+  providedIn: "root",
+})
 export class DashboardBuilderRepository {
   _client = inject(GraphqlClient);
 
@@ -406,6 +410,35 @@ export class DashboardBuilderRepository {
     } catch (error) {
       throw {
         message: "Failed to export widget data.",
+        originalError: error,
+        queryOrMutation: mutation,
+        input: JSON.stringify(variables),
+      };
+    }
+  }
+
+  /**
+   * Regenerate auto analysis for a dashboard using GraphQL.
+   * @param {string} dashboardId - The ID of the dashboard to regenerate.
+   * @returns {Promise<any>} - The regeneration result.
+   */
+  async regenerateAutoAnalysisDashboard(dashboardId: string) {
+    if (!dashboardId) {
+      throw new Error("Dashboard ID is required");
+    }
+    const mutation = gqlRegenerateAutoAnalysisDashboard;
+    const variables = { dashboardId };
+
+    try {
+      const mutationResult = await this._client.GraphqlMutate(
+        mutation,
+        variables
+      );
+
+      return mutationResult.regenerateAutoAnalysisDashboard;
+    } catch (error) {
+      throw {
+        message: "Failed to regenerate dashboard auto analysis.",
         originalError: error,
         queryOrMutation: mutation,
         input: JSON.stringify(variables),

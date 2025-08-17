@@ -92,10 +92,8 @@ export class AuthService {
         userData['role'] = 'operator'
         userData['status'] = 'active'
         this.currentUserSubject.next(userData);
-        sessionStorage.setItem("currentUser", JSON.stringify(userData));
         localStorage.setItem("currentUser", JSON.stringify(userData));
       }
-      sessionStorage.setItem("token", JSON.stringify(result?.accessToken));
       localStorage.setItem("token", JSON.stringify(result?.accessToken));
       return result;
     } catch (error) {
@@ -133,7 +131,9 @@ export class AuthService {
    */
   logout(): void {
     this.currentUserSubject.next(null);
-    sessionStorage.removeItem("currentUser");
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("token");
+    sessionStorage.clear(); // Clear any residual session data
   }
 
   /**
@@ -230,21 +230,21 @@ export class AuthService {
    */
   private setCurrentUser(user: User): void {
     this.currentUserSubject.next(user);
-    sessionStorage.setItem("currentUser", JSON.stringify(user));
+    localStorage.setItem("currentUser", JSON.stringify(user));
   }
 
   /**
    * Load user from session storage on app initialization
    */
   private loadUserFromSession(): void {
-    const userStr = sessionStorage.getItem("currentUser");
+    const userStr = localStorage.getItem("currentUser");
     if (userStr) {
       try {
         const user = JSON.parse(userStr) as User;
         this.currentUserSubject.next(user);
       } catch (error) {
         console.error("Error loading user from session:", error);
-        sessionStorage.removeItem("currentUser");
+        localStorage.removeItem("currentUser");
       }
     }
   }

@@ -50,6 +50,8 @@ import { SankeyChartWidgetComponent } from "app/modules/dashboard/charts/sankey-
 import { ColumnChartWidgetComponent } from "app/modules/dashboard/charts/column-chart-widget.component";
 import { InformationDialogComponent } from "app/shared/components/action-dialogs/information-dialog/information-dialog.component";
 import { DataSourceQuickInfoDialogComponent } from "app/shared/components/action-dialogs/data-source-quick-info-dialog/data-source-quick-info-dialog.component";
+import { DashboardBuilderRepository } from "@dataviz/repositories/dashboard-builder/dashboard-builder.repository";
+import Swal from 'sweetalert2'; // Add this import
 
 // Define interfaces for better type safety based on your GraphQL queries
 interface WidgetData {
@@ -157,13 +159,17 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
   // Per-widget state to hide/show the info (size + data source)
   private widgetInfoHiddenState: Map<string, boolean> = new Map<string, boolean>();
 
+  // Flag to prevent multiple dialog opens
+  isOpeningDialog = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private dashboardService: DashboardBuilderService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private shareDataService: ShareDataService  
+    private shareDataService: ShareDataService,
+    private dashboardBuilderRepository: DashboardBuilderRepository
   ) {
      shareDataService.setIsDashboard(false);
   }
@@ -400,30 +406,44 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
     * Deletes a section from the dashboard and updates the widgetSectionList.
     * This method is called when the user confirms deletion of a section.
     */
-  deleteSection(section: Section): void {
-     if (!this.dashboard || !this.dashboard.sectionIds) return;
+  async deleteSection(section: Section): Promise<void> {
+    if (!this.dashboard || !this.dashboard.sectionIds || !section._id) return;
+
     if (confirm(`Are you sure you want to delete the section "${section.title}"?`)) {
-      const index = this.dashboard.sectionIds.findIndex(
-        (s) => s._id === section._id
-      );
-      if (index !== -1) {
-        // Create a new dashboard object with updated sectionIds immutably
-        this.dashboard = {
-          ...this.dashboard,
-          sectionIds: [
-            ...this.dashboard.sectionIds.slice(0, index),
-            ...this.dashboard.sectionIds.slice(index + 1)
-          ]
-        };
-        // Also update the widgetSectionList to reflect the change in the UI
-        this.widgetSectionList = [];
-        this.selectedTabIndex = 0; // Reset to first tab
+      try {
+        await this.dashboardBuilderRepository.deleteSection(section._id);
+        
+        const index = this.dashboard.sectionIds.findIndex(
+          (s) => s._id === section._id
+        );
+
+        if (index !== -1) {
+          // Create a new dashboard object with updated sectionIds immutably
+          this.dashboard = {
+            ...this.dashboard,
+            sectionIds: [
+              ...this.dashboard.sectionIds.slice(0, index),
+              ...this.dashboard.sectionIds.slice(index + 1)
+            ]
+          };
+          
+          // Also update the widgetSectionList to reflect the change in the UI
+          this.widgetSectionList = [];
+          this.selectedTabIndex = 0; // Reset to first tab
+        }
+        
         this.snackBar.open("Section deleted successfully.", "Close", {
+          duration: 3000,
+        });
+
+      } catch (error) {
+        console.error("Error deleting section:", error);
+        this.snackBar.open("Error deleting section. Please try again.", "Close", {
           duration: 3000,
         });
       }
     }
-  }   
+  }
 
   /**
    * Deletes a widget from the current section of the dashboard.
@@ -433,42 +453,52 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
    * @param widget The widget to delete.
    * @returns void
    */
-  deleteWidget(widget: Widget): void {
-    if (!this.dashboard || !this.dashboard.sectionIds) return;
+  async deleteWidget(widget: Widget): Promise<void> {
+    if (!this.dashboard || !this.dashboard.sectionIds || !widget._id) return;
 
     if (confirm(`Are you sure you want to delete "${widget.title}"?`)) {
-      let currentSection = this.dashboard.sectionIds[this.selectedTabIndex];
-      if (currentSection && currentSection.widgetIds) {
-        const index = currentSection.widgetIds.findIndex(
-          (w) => w._id === widget._id
-        );
-        if (index !== -1) {
-          debugger;
-          // Create a new section object with updated widgetIds immutably
-          const updatedSection = {
-            ...currentSection,
-            widgetIds: [
-              ...currentSection.widgetIds.slice(0, index),
-              ...currentSection.widgetIds.slice(index + 1)
-            ]
-          };
-          // Replace the section in the dashboard's sectionIds array immutably
-          if (this.dashboard && this.dashboard.sectionIds) {
+      try {
+        // First, delete the widget via the repository
+        await this.dashboardBuilderRepository.deleteWidget(widget._id);
+
+        // Then, update the local state to reflect the deletion
+        const currentSection = this.dashboard.sectionIds[this.selectedTabIndex];
+        if (currentSection && currentSection.widgetIds) {
+          const index = currentSection.widgetIds.findIndex(
+            (w) => w._id === widget._id
+          );
+
+          if (index !== -1) {
+            // Create a new section object with updated widgetIds immutably
+            const updatedSection = {
+              ...currentSection,
+              widgetIds: [
+                ...currentSection.widgetIds.slice(0, index),
+                ...currentSection.widgetIds.slice(index + 1)
+              ]
+            };
+            
+            // Replace the section in the dashboard's sectionIds array immutably
             this.dashboard = {
               ...this.dashboard,
               sectionIds: this.dashboard.sectionIds.map((section, idx) =>
                 idx === this.selectedTabIndex ? updatedSection : section
               )
             };
+
             // Also update the widgetSectionList to reflect the change in the UI
             this.widgetSectionList = [...updatedSection.widgetIds];
+            
+            this.snackBar.open("Widget deleted successfully.", "Close", {
+              duration: 3000,
+            });
           }
-          this.snackBar.open(
-            "Widget deleted locally. Remember to save dashboard.",
-            "Close",
-            { duration: 3000 }
-          );
         }
+      } catch (error) {
+        console.error("Error deleting widget:", error);
+        this.snackBar.open("Error deleting widget. Please try again.", "Close", {
+          duration: 3000,
+        });
       }
     }
   }
@@ -561,16 +591,17 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
   }
 
   addWidget(section: Section): void {
-    if (!this.dashboard) {
-      this.snackBar.open("Cannot add widget: Dashboard not loaded.", "Close", {
-        duration: 3000,
-      });
+    if (!this.dashboard || this.isOpeningDialog) {
+      if (this.isOpeningDialog) {
+        this.snackBar.open("Please wait, dialog is opening.", "Close", { duration: 3000 });
+      } else {
+        this.snackBar.open("Cannot add widget: Dashboard not loaded.", "Close", { duration: 3000 });
+      }
       return;
     }
 
-    // CORRECTED COMPONENT NAME:
+    this.isOpeningDialog = true;
     const dialogRef = this.dialog.open(WidgetFormDialogComponent, {
-      // Changed to WidgetFormDialogComponent
       width: "600px",
       data: {
         dashboard: this.dashboard,
@@ -580,6 +611,7 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      this.isOpeningDialog = false;
       if (result?._id) {
         this.loadDashboard(this.dashboard!._id!);
       }
@@ -588,6 +620,41 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
 
   goBack(): void {
     this.router.navigate(["/admin/dashboard-list"]);
+  }
+
+  async regenerateAnalysis(): Promise<void> {
+    if (!this.dashboard?._id) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No dashboard loaded.',
+      });
+      return;
+    }
+
+    try {
+      const regenerationResult = await this.dashboardService.regenerateAutoAnalysisDashboard(this.dashboard._id);
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: regenerationResult || 'Dashboard analysis regenerated successfully!',
+        timer: 3000,
+        timerProgressBar: true,
+      });
+      
+      // Reload the dashboard to reflect changes
+      this.loadDashboard(this.dashboard._id);
+    } catch (error) {
+      console.error('Error regenerating dashboard analysis:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Error regenerating analysis. Please try again.',
+        timer: 3000,
+        timerProgressBar: true,
+      });
+    }
   }
 
   // New method to get unique data source names for display

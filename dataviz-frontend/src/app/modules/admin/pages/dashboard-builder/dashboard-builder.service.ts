@@ -78,6 +78,10 @@ export class DashboardBuilderService {
     return await this.dashboardBuilderRepository.getWidgetDataSource(id);
   }
 
+  async regenerateAutoAnalysisDashboard(dashboardId: string) {
+    return await this.dashboardBuilderRepository.regenerateAutoAnalysisDashboard(dashboardId);
+  }
+
   replaceUnderscoresPipe(value: string | null | undefined): string {
     if (value === null || value === undefined) {
       return "";

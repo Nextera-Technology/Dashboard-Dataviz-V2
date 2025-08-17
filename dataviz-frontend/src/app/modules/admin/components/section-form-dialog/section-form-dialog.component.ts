@@ -59,6 +59,13 @@ export interface SectionFormDialogData {
   section?: Section; // The specific section to edit (optional, for add mode)
 }
 
+export interface SectionFormData {
+  id?: string;
+  title: string;
+  name: string;
+  background: string;
+}
+
 @Component({
   selector: "app-section-form-dialog",
   standalone: true,
