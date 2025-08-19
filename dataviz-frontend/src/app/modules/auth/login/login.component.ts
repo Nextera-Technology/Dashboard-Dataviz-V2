@@ -74,6 +74,7 @@ export class LoginComponent implements OnInit {
       this.isLoading = true;
       this.errorMessage = "";
       const credentials: LoginCredentials = this.loginForm.value;
+      const previousValues = { ...credentials }; // simpan nilai saat submit
 
       try {
         const user = await this.authService.userLogin(credentials?.email, credentials?.password);
@@ -96,6 +97,11 @@ export class LoginComponent implements OnInit {
         this.router.navigate(["/admin/dashboard-list"]);
       } catch (error) {
         this.isLoading = false;
+        
+        // restore nilai dulu (jika komponen sempat di-reset/reinitialized)
+        this.loginForm.patchValue(previousValues);
+        
+        // lalu set errorMessage setelah patchValue, agar tidak ter-clear oleh valueChanges
         this.errorMessage =
           error.message ||
           "Login failed. Please check your credentials and try again.";
@@ -110,6 +116,14 @@ export class LoginComponent implements OnInit {
     } else {
       // Mark all fields as touched to show validation errors
       this.markFormGroupTouched();
+
+      // Show a consistent login-failed message and snackbar even when the form is invalid
+      this.errorMessage = "Login failed. Please check your credentials.";
+      this.snackBar.open(this.errorMessage, "Close", {
+        duration: 5000,
+        horizontalPosition: "center",
+        verticalPosition: "top",
+      });
     }
   }
 

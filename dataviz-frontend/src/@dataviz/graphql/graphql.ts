@@ -48,7 +48,7 @@ export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
   });
 
   // Handling an error for message if the jwt token got expired or any error about authorization
-  const errorLink = onError(({ graphQLErrors, networkError }) => {
+  const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
     // Removed 'response' as it's not used
     if (graphQLErrors) {
       graphQLErrors.forEach(({ message, extensions }) => {
@@ -59,6 +59,11 @@ export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
         // Check if the error is specifically due to UNAUTHENTICATED or similar codes
         const code = extensions?.code;
         if (message?.toLowerCase().includes('unauthorized') || code === 'UNAUTHENTICATED') {
+            // Skip reload for login mutation
+            if (operation.operationName === 'Login') {
+                console.log('Unauthorized error during login - skipping reload');
+                return;
+            }
             console.warn('Unauthorized access detected. Clearing token and reloading.');
             localStorage.removeItem(TOKEN_KEY);
             // Also clear the stored user profile if it exists

@@ -54,3 +54,22 @@
     margin-top: 30%;
   }
 }
+
+/* Ensure the Sign in button always shows a pointer cursor on hover,
+   even when the button is disabled by form validation. */
+button[type="submit"],
+button[type="submit"]:hover,
+button[type="submit"][disabled],
+.mat-mdc-button-disabled {
+  cursor: pointer !important;
+}
+
+/* Some Material styles set pointer-events: none on disabled buttons which prevents
+   the cursor from changing. Re-enable pointer events for visual feedback only. */
+button[type="submit"][disabled],
+button[type="submit"].mat-mdc-button-disabled,
+.mat-mdc-button-base.mat-mdc-button-disabled {
+  pointer-events: auto !important;
+  -webkit-pointer-events: auto !important;
+  cursor: pointer !important;
+}

@@ -180,8 +180,8 @@ export class InformationDialogComponent implements OnInit {
     var yAxis2 = chart2.yAxes.push(am5xy.CategoryAxis.new(this.root2, {
       maxDeviation: 0,
       categoryField: "category",
-      renderer: yRenderer2,
-      tooltip: am5.Tooltip.new(this.root2, { themeTags: ["axis"] })
+      renderer: yRenderer2
+      // Removed: tooltip: am5.Tooltip.new(this.root2, { themeTags: ["axis"] })
     }));
     var xAxis2 = chart2.xAxes.push(am5xy.ValueAxis.new(this.root2, {
       maxDeviation: 0,
@@ -215,6 +215,16 @@ export class InformationDialogComponent implements OnInit {
       cornerRadiusBR: 5,
       strokeOpacity: 0
     });
+
+    // Add wrapping to tooltip label to prevent text cutoff
+    let tooltip = series2.get("tooltip");
+    if (tooltip) {
+      tooltip.label.setAll({
+        oversizedBehavior: "wrap",
+        maxWidth: 250,
+        textAlign: "left"
+      });
+    }
 
     // Make each column to be of a different color
     series2.columns.template.adapters.add("fill", function (fill, target) {
