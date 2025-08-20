@@ -1,3 +1,19 @@
+.section {
+    /* beri padding di sekitar section agar judul tidak terlalu menempel di kiri */
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 16px;
+}
+
+.section-header h2 {
+    margin: 0;
+    /* geser sedikit dari kiri dan perbesar font */
+    padding-left: 8px;
+    font-size: 20px; /* sedikit lebih besar dari default */
+    font-weight: 600;
+    color: #0f172a; /* warna teks yang cukup gelap */
+}
+
 .status-grid-rowed {
       display: flex;
       flex-direction: column;

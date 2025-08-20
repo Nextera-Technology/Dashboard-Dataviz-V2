@@ -73,8 +73,6 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
     { certification: "RDC 2023", classes: [] },
     { certification: "RDC 2024", classes: [] },
     { certification: "RDC 2025", classes: [] },
-    { certification: "Classe 2022", classes: [] },
-    { certification: "Classe Excellence 2022", classes: [] },
     { certification: "CDRH 2022", classes: [] },
     { certification: "CDRH 2023", classes: [] },
     { certification: "CDRH 2024", classes: [] },
@@ -88,6 +86,9 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
 
   // Map to store filtered classes for each source FormGroup
   filteredClassesMap: Map<FormGroup, string[]> = new Map();
+
+  // Keep track of the certification/title selected for the first source
+  private firstSourceCertification: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -113,6 +114,12 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
       this.currentDashboard.sources.forEach(source => {
         this.addSource(source);
       });
+      // After populating, set reference to the first source certification
+      if (this.sourcesFormArray.length > 0) {
+        const firstGroup = this.sourcesFormArray.at(0) as FormGroup;
+        this.firstSourceCertification = firstGroup.get('certification')?.value || null;
+        this.refreshAllFilteredClasses();
+      }
     } else {
       // For new dashboards, add at least one source entry by default
       this.addSource();
@@ -153,6 +160,24 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
     // Subscribe to certification changes for this specific source group
     const sub = newSourceGroup.get('certification')?.valueChanges.subscribe(selectedCert => {
       this.updateFilteredClassesForGroup(newSourceGroup, selectedCert);
+
+      const currentIndex = this.sourcesFormArray.controls.indexOf(newSourceGroup);
+
+      // If this is the first group (index 0), update the reference certification and refresh others
+      if (currentIndex === 0) {
+        this.firstSourceCertification = selectedCert || null;
+        this.refreshAllFilteredClasses();
+      } else {
+        // For other groups, enforce the certification to match the first if set
+        if (this.firstSourceCertification) {
+          if (selectedCert && selectedCert !== this.firstSourceCertification) {
+            // Reset to the allowed certification without emitting event to avoid loops
+            if (newSourceGroup.get('certification')?.value !== this.firstSourceCertification) {
+              newSourceGroup.get('certification')?.setValue(this.firstSourceCertification, { emitEvent: false });
+            }
+          }
+        }
+      }
     });
     if (sub) {
       this.certificationSubscriptions.set(newSourceGroup, sub);
@@ -173,6 +198,17 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
       this.certificationSubscriptions.delete(groupToRemove);
     }
     this.filteredClassesMap.delete(groupToRemove);
+
+    // If we removed the first source, clear firstSourceCertification and re-evaluate
+    if (index === 0) {
+      this.firstSourceCertification = null;
+      // If there are still sources, set the first one as the reference
+      if (this.sourcesFormArray.length > 0) {
+        const newFirst = this.sourcesFormArray.at(0) as FormGroup;
+        this.firstSourceCertification = newFirst.get('certification')?.value || null;
+      }
+      this.refreshAllFilteredClasses();
+    }
   }
 
   /**
@@ -191,6 +227,33 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
         sourceGroup.get('classes')?.setValue([]);
       }
     }
+  }
+
+  /**
+   * Refresh filtered classes for all source groups, used after changes to the first source.
+   */
+  refreshAllFilteredClasses(): void {
+    this.sourcesFormArray.controls.forEach(control => {
+      const group = control as FormGroup;
+      const cert = group.get('certification')?.value;
+      // If a firstSourceCertification is set, enforce it on all groups
+      if (this.firstSourceCertification) {
+        if (cert !== this.firstSourceCertification) {
+          group.get('certification')?.setValue(this.firstSourceCertification, { emitEvent: false });
+        }
+      }
+      const selectedSourceOption = this.allSources.find(s => s.certification === group.get('certification')?.value);
+      const classesForThisCert = selectedSourceOption?.classes || [];
+      this.filteredClassesMap.set(group, classesForThisCert);
+      // Reset classes if invalid
+      const currentSelectedClasses = group.get('classes')?.value;
+      if (currentSelectedClasses && currentSelectedClasses.length > 0) {
+        const invalidClasses = currentSelectedClasses.filter((c: string) => !classesForThisCert.includes(c));
+        if (invalidClasses.length > 0) {
+          group.get('classes')?.setValue([]);
+        }
+      }
+    });
   }
 
   /**

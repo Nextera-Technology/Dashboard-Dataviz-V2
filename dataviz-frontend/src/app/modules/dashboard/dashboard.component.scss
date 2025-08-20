@@ -180,6 +180,20 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
+/* Make label element fill the row so clicking edges triggers the input */
+.checkbox-item > label,
+.checkbox-item > input[type="checkbox"] + span {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.checkbox-item input[type="checkbox"] {
+  margin-right: 10px;
+  transform: scale(1.1);
+  accent-color: #4caf50;
+}
+
 /* Clear Filters Button */
 .clear-filters {
   background: rgba(255, 255, 255, 0.2);

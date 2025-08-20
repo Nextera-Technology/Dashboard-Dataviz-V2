@@ -260,6 +260,32 @@ body {
     display: block !important;
 }
 
+/* Make action icons appear muted/gray by default and turn dark on hover/focus
+   This keeps backgrounds from existing hover rules but ensures icon color
+   and opacity are consistent across Information / Export / Scope buttons. */
+.chart-box .info-button img,
+.text-box .info-button img,
+.widget-container .info-button img,
+.chart-box button.info-button img,
+.text-box button.info-button img,
+.widget-container button.info-button img {
+    filter: grayscale(100%) opacity(0.7);
+    transition: filter 0.18s ease, opacity 0.18s ease, transform 0.18s ease;
+}
+
+.chart-box .info-button:hover img,
+.text-box .info-button:hover img,
+.widget-container .info-button:hover img,
+.chart-box button.info-button:hover img,
+.text-box button.info-button:hover img,
+.widget-container button.info-button:hover img,
+.chart-box .info-button:focus img,
+.text-box .info-button:focus img,
+.widget-container .info-button:focus img {
+    /* "Menghitam": make the icon appear black/dark on hover/focus */
+    filter: brightness(0) opacity(1) !important;
+}
+
 .chart-box .info-button.primary:hover,
 .text-box .info-button.primary:hover,
 .widget-container .info-button.primary:hover,
@@ -286,3 +312,68 @@ body {
 .widget-container button.info-button.danger:hover {
     background: #d32f2f !important;
 } 
+
+/* --- Unified idle and hover circle colors for widget action buttons --- */
+/* Make the idle circle a subtle gray for all action buttons so Audience matches others */
+.chart-box .info-button,
+.text-box .info-button,
+.widget-container .info-button,
+.chart-box button.info-button,
+.text-box button.info-button,
+.widget-container button.info-button {
+    background-color: rgba(16, 24, 32, 0.04) !important; /* subtle gray */
+}
+
+/* Force hover/focus circle to purple for all action buttons (unify purple/green variations) */
+.chart-box .info-button:hover,
+.text-box .info-button:hover,
+.widget-container .info-button:hover,
+.chart-box button.info-button:hover,
+.text-box button.info-button:hover,
+.widget-container button.info-button:hover,
+.chart-box .info-button:focus,
+.text-box .info-button:focus,
+.widget-container .info-button:focus,
+.chart-box button.info-button:focus,
+.text-box button.info-button:focus,
+.widget-container button.info-button:focus {
+    background: #bbaafa !important; /* purple */
+}
+
+/* Override more-specific primary/variant hover rules so Information button is purple too */
+.chart-box .info-button.primary:hover,
+.text-box .info-button.primary:hover,
+.widget-container .info-button.primary:hover,
+.chart-box button.info-button.primary:hover,
+.text-box button.info-button.primary:hover,
+.widget-container button.info-button.primary:hover,
+.chart-box .info-button.primary:focus,
+.text-box .info-button.primary:focus,
+.widget-container .info-button.primary:focus,
+.chart-box button.info-button.primary:focus,
+.text-box button.info-button.primary:focus,
+.widget-container button.info-button.primary:focus {
+    background: #bbaafa !important; /* force purple for primary variant */
+}
+
+/* Audience-specific tuning: same idle circle but make its icon more faded
+   so the Audience button looks visually lighter than the others while hover stays purple. */
+.info-button[title="Audience"],
+button.info-button[title="Audience"] {
+    background-color: rgba(16, 24, 32, 0.04) !important; /* keep subtle gray circle */
+}
+
+.info-button[title="Audience"] img,
+button.info-button[title="Audience"] img {
+    /* lower default icon opacity for Audience specifically */
+    filter: grayscale(100%) opacity(0.35) !important;
+    transition: filter 0.18s ease, opacity 0.18s ease, transform 0.18s ease;
+}
+
+.info-button[title="Audience"]:hover img,
+button.info-button[title="Audience"]:hover img,
+.info-button[title="Audience"]:focus img,
+button.info-button[title="Audience"]:focus img {
+    /* on hover/focus, icon becomes dark like others */
+    filter: brightness(0) opacity(1) !important;
+}

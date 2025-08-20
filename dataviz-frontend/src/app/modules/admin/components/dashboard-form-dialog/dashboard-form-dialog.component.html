@@ -30,7 +30,6 @@
             </label>
             <input 
               formControlName="name" 
-              placeholder="e.g., sales-report-2024"
               class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 
                      focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
                      hover:border-gray-400 text-sm" 
@@ -51,7 +50,6 @@
             </label>
             <input 
               formControlName="title" 
-              placeholder="e.g., 2024 Annual Sales Report"
               class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none shadow-sm placeholder-gray-400 
                      focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
                      hover:border-gray-400 text-sm" 
@@ -102,14 +100,22 @@
                   </label>
                   <select 
                     formControlName="certification"
-                    (change)="onCertificationChange(sourceGroup, $event.target.value)"
                     class="w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm 
                            focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
                            hover:border-gray-400 text-sm bg-white">
                     <option value="">Select certification...</option>
-                    <option *ngFor="let source of allSources" [value]="source.certification">
-                      {{ source.certification }}
-                    </option>
+                    <!-- For first source (i === 0): Show all options -->
+                    <ng-container *ngIf="i === 0">
+                      <option *ngFor="let source of allSources" [value]="source.certification">
+                        {{ source.certification }}
+                      </option>
+                    </ng-container>
+                    <!-- For additional sources (i > 0): Show only matching option if firstSourceCertification is set -->
+                    <ng-container *ngIf="i > 0">
+                      <option *ngFor="let source of allSources" [value]="source.certification" [hidden]="firstSourceCertification && source.certification !== firstSourceCertification">
+                        {{ source.certification }}
+                      </option>
+                    </ng-container>
                   </select>
                   <div *ngIf="sourceGroup.get('certification')?.hasError('required') && sourceGroup.get('certification')?.touched" 
                        class="mt-2 text-sm text-red-600 flex items-center">

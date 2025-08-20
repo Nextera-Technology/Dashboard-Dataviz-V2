@@ -80,13 +80,13 @@ export class LoginComponent implements OnInit {
         const user = await this.authService.userLogin(credentials?.email, credentials?.password);
         this.isLoading = false;
         if (!user || !user.user) {
-          this.snackBar.open(`Login failed. Please check your credentials.`, "Close", {
+          this.snackBar.open(`Oops! That email or password doesn’t match. Try again`, "Close", {
             duration: 3000,
             horizontalPosition: "center",
             verticalPosition: "top",
           });
 
-          throw new Error("Login failed. Please check your credentials.");
+          throw new Error("Oops! That email or password doesn’t match. Try again");
         }
 
         this.snackBar.open(`Welcome back, ${user.user.lastName} ${user.user.firstName}!`, "Close", {
@@ -104,7 +104,7 @@ export class LoginComponent implements OnInit {
         // lalu set errorMessage setelah patchValue, agar tidak ter-clear oleh valueChanges
         this.errorMessage =
           error.message ||
-          "Login failed. Please check your credentials and try again.";
+          "Oops! That email or password doesn’t match. Try again";
 
         // Show snackbar for additional feedback
         this.snackBar.open(this.errorMessage, "Close", {
@@ -118,7 +118,7 @@ export class LoginComponent implements OnInit {
       this.markFormGroupTouched();
 
       // Show a consistent login-failed message and snackbar even when the form is invalid
-      this.errorMessage = "Login failed. Please check your credentials.";
+      this.errorMessage = "Oops! That email or password doesn’t match. Try again";
       this.snackBar.open(this.errorMessage, "Close", {
         duration: 5000,
         horizontalPosition: "center",
