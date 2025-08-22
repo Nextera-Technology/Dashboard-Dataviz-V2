@@ -93,3 +93,15 @@ export const gqlExportWidgetData = gql`
     }
   }
 `;
+
+export const gqlDuplicateDashboardFromOther = gql`
+  mutation duplicateDashboardFromOther($input: DuplicateDashboardInput!) {
+    duplicateDashboardFromOther(input: $input) {
+      dashboard {
+        _id
+        name
+      }
+      message
+    }
+  }
+`;

@@ -17,13 +17,14 @@ import {
   gqlDeleteWidget,
   gqlWidgetSourceData,
   gqlExportWidgetData,
-  gqlRegenerateAutoAnalysisDashboard
+  gqlRegenerateAutoAnalysisDashboard,
+  gqlDuplicateDashboardFromOther
 } from "@dataviz/graphql/mutations/dashboard-builder/dashboard-builder.mutation";
 import {
   gqlGetAllDashboard,
   gqlGetChartOptions,
   gqlGetOneDashboard,
-
+  gqlGetDashboardTemplates
 } from "@dataviz/graphql/queries/dashboard-builder/dashboard-builder.query";
 
 @Injectable({
@@ -441,6 +442,40 @@ export class DashboardBuilderRepository {
         message: "Failed to regenerate dashboard auto analysis.",
         originalError: error,
         queryOrMutation: mutation,
+        input: JSON.stringify(variables),
+      };
+    }
+  }
+
+  async getDashboardTemplates(type: string) {
+    const query = gqlGetDashboardTemplates;
+    const variables = { type };
+
+    try {
+      const result = await this._client.GraphqlQuery(query, variables);
+      return result.getDashboardTemplates;
+    } catch (error) {
+      throw {
+        message: "Failed to fetch dashboard templates.",
+        originalError: error,
+        query: query,
+        input: JSON.stringify(variables),
+      };
+    }
+  }
+
+  async duplicateDashboardFromOther(input: any) {
+    const mutation = gqlDuplicateDashboardFromOther;
+    const variables = { input };
+
+    try {
+      const mutationResult = await this._client.GraphqlMutate(mutation, variables);
+      return mutationResult.duplicateDashboardFromOther;
+    } catch (error) {
+      throw {
+        message: "Failed to duplicate dashboard.",
+        originalError: error,
+        mutation: mutation,
         input: JSON.stringify(variables),
       };
     }

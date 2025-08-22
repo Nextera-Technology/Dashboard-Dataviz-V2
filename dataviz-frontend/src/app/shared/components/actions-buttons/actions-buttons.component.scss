@@ -149,3 +149,72 @@
     transform: rotate(360deg);
   }
 }
+
+/* Action buttons sizing and layout to avoid overflowing widgets */
+.actions-buttons {
+  display: inline-block; /* avoid stretching in flex containers */
+}
+
+.actions-buttons .button-container {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.actions-buttons .info-button {
+  appearance: none;
+  border: none;
+  background: transparent;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  min-height: 34px;
+  border-radius: 50%;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.actions-buttons .info-button img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  display: block;
+}
+
+.actions-buttons .info-button.secondary {
+  opacity: 0.95;
+}
+
+.actions-buttons .info-button.primary {
+  opacity: 1;
+}
+
+/* Match other widget action buttons: idle circle, hover dark icon, purple background */
+.actions-buttons .info-button {
+  background-color: rgba(16, 24, 32, 0.04) !important; /* subtle gray idle */
+  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.actions-buttons .info-button img {
+  filter: grayscale(100%) opacity(0.7);
+}
+
+.actions-buttons .info-button:hover,
+.actions-buttons .info-button:focus {
+  transform: scale(1.08);
+  background: #bbaafa !important; /* purple on hover */
+}
+
+.actions-buttons .info-button:hover img,
+.actions-buttons .info-button:focus img {
+  filter: brightness(0) opacity(1) !important; /* icon becomes dark */
+}
+
+.actions-buttons .info-button:focus {
+  outline: 2px solid rgba(21, 97, 109, 0.12);
+  outline-offset: 2px;
+}

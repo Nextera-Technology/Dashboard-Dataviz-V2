@@ -13,6 +13,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AdminLayoutComponent } from '../../components/admin-layout/admin-layout.component';
 import { DashboardService, Widget, CreateWidgetData, UpdateWidgetData } from '../../../../shared/services/dashboard.service';
 import { WidgetSettingDialogComponent } from '../../components/widget-setting-dialog/widget-setting-dialog.component';
@@ -46,6 +47,7 @@ interface WidgetDisplay {
     MatSnackBarModule,
     MatChipsModule,
     MatMenuModule,
+    MatProgressSpinnerModule,
     AdminLayoutComponent
   ],
   template: `
@@ -260,6 +262,8 @@ interface WidgetDisplay {
 export class WidgetSettingsComponent implements OnInit {
   displayedColumns: string[] = ['title', 'type', 'dataSource', 'size', 'section', 'visible', 'actions'];
   dataSource: MatTableDataSource<WidgetDisplay>;
+  // Prevent opening multiple dialogs at once
+  isOpeningDialog = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -312,12 +316,16 @@ export class WidgetSettingsComponent implements OnInit {
   }
 
   openWidgetDialog(widget?: WidgetDisplay) {
+    if (this.isOpeningDialog) return;
+    this.isOpeningDialog = true;
+
     const dialogRef = this.dialog.open(WidgetSettingDialogComponent, {
       width: '500px',
       data: widget || {}
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      this.isOpeningDialog = false;
       if (result) {
         if (widget) {
           this.editWidgetInList(widget, result);

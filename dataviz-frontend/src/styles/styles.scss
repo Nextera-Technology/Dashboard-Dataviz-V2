@@ -12,6 +12,17 @@ body {
     padding: 0;
 }
 
+/* Global: ensure buttons and small UI labels use Inter explicitly */
+button, .mat-button, .mat-mdc-button, .btn-primary, .btn-secondary, .dataviz-btn, .top-button {
+    font-family: 'Inter', sans-serif !important;
+}
+
+/* Tooltip small text sizing */
+.mat-mdc-tooltip-panel, .mat-tooltip {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 13px !important;
+}
+
 /* Material Icons */
 .material-icons {
     font-family: 'Material Icons';
@@ -282,7 +293,7 @@ body {
 .chart-box .info-button:focus img,
 .text-box .info-button:focus img,
 .widget-container .info-button:focus img {
-    /* "Menghitam": make the icon appear black/dark on hover/focus */
+    /*  make the icon appear black/dark on hover/focus */
     filter: brightness(0) opacity(1) !important;
 }
 

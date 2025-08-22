@@ -169,6 +169,37 @@
             </div>
           </div>
         </div>
+
+        <!-- Duplicate Panel - Added below data sources container -->
+        <div *ngIf="!isEditMode" class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+          <div class="flex justify-between items-center mb-4 gap-3">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">Create from existing dashboard</h3>
+              <p class="text-sm text-gray-500 mt-1">Clone sections, widgets, and sources from another dashboard</p>
+            </div>
+            <div>
+              <mat-checkbox formControlName="duplicateEnabled" (change)="loadTemplates()" color="primary"></mat-checkbox>
+            </div>
+          </div>
+
+          <div *ngIf="dashboardForm.get('duplicateEnabled')?.value" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Source Type</label>
+              <select formControlName="duplicateType" (change)="loadTemplates()" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200 hover:border-gray-400 text-sm bg-white">
+                <option value="LIVE">Live</option>
+                <option value="TEMPLATE_AND_LIVE">Template and Live</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Choose Dashboard</label>
+              <select formControlName="templateId" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200 hover:border-gray-400 text-sm bg-white">
+                <option value="">Select dashboard...</option>
+                <option *ngFor="let template of dashboardTemplates" [value]="template._id">{{ template.name }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 

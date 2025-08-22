@@ -174,6 +174,24 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
      shareDataService.setIsDashboard(false);
   }
 
+  /**
+   * Opens the main dashboard view in a new browser tab.
+   * Sets the dashboard id in ShareDataService so the dashboard page can load the correct dashboard.
+   */
+  viewDashboard(): void {
+    if (!this.dashboard || !this.dashboard._id) {
+      this.snackBar.open('No dashboard to view.', 'Close', { duration: 3000 });
+      return;
+    }
+
+    // Persist id for the dashboard page to read
+    this.shareDataService.setDashboardId(this.dashboard._id);
+
+    // Build the URL for the dashboard route and open in new tab
+    const url = `${window.location.origin}/#/dashboard`;
+    window.open(url, '_blank');
+  }
+
   ngOnInit(): void {
     const dashboardId = this.route.snapshot.paramMap.get("id");
     if (dashboardId) {

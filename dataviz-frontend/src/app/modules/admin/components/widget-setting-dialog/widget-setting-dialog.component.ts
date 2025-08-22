@@ -11,6 +11,7 @@ import {
   MAT_DIALOG_DATA,
   MatDialogModule,
 } from "@angular/material/dialog";
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
@@ -45,6 +46,7 @@ export interface WidgetFormData {
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
   ],
   template: `
     <h2 mat-dialog-title>
@@ -168,6 +170,8 @@ export interface WidgetFormData {
 export class WidgetSettingDialogComponent implements OnInit {
   widgetForm: FormGroup;
   isEditMode: boolean = false;
+  // Prevent double submit inside dialog
+  isSaving = false;
 
   constructor(
     private fb: FormBuilder,
@@ -197,12 +201,14 @@ export class WidgetSettingDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.widgetForm.valid) {
+    if (this.widgetForm.valid && !this.isSaving) {
+      this.isSaving = true;
       const formData: WidgetFormData = {
         ...this.widgetForm.value,
         id: this.data.id,
       };
       this.dialogRef.close(formData);
+      // dialog is closed immediately; parent handles persistence
     }
   }
 

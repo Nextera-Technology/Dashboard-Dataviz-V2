@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { DashboardBuilderService } from '../../pages/dashboard-builder/dashboard-builder.service'; // Adjust path if needed
 import { Subscription } from 'rxjs';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 // Re-using Section interface for consistency
 interface Section {
@@ -55,6 +56,7 @@ export interface DashboardFormDialogData {
     MatButtonModule,
     MatIconModule,
     MatSnackBarModule,
+    MatCheckboxModule,
   ],
   templateUrl: './dashboard-form-dialog.component.html',
   styleUrl: './dashboard-form-dialog.component.scss',
@@ -90,6 +92,8 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
   // Keep track of the certification/title selected for the first source
   private firstSourceCertification: string | null = null;
 
+  dashboardTemplates: any[] = [];
+
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<DashboardFormDialogComponent>,
@@ -102,7 +106,10 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
     this.dashboardForm = this.fb.group({
       name: [this.currentDashboard?.name || '', Validators.required],
       title: [this.currentDashboard?.title || '', Validators.required],
-      sourcesFormArray: this.fb.array([]) // Initialize with an empty FormArray
+      sourcesFormArray: this.fb.array([]),
+      duplicateEnabled: [false],
+      duplicateType: ['LIVE'],
+      templateId: [''],
     });
   }
 
@@ -264,6 +271,15 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
     return this.filteredClassesMap.get(sourceGroup) || [];
   }
 
+  async loadTemplates() {
+    const type = this.dashboardForm.get('duplicateType')?.value;
+    try {
+      this.dashboardTemplates = await this.dashboardService.getDashboardTemplates(type);
+    } catch (error) {
+      this.snackBar.open('Error loading templates', 'Close', { duration: 3000 });
+    }
+  }
+
   /**
    * Handles form submission, calling either create or update dashboard service.
    */
@@ -278,55 +294,66 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const formValues = this.dashboardForm.value;
+    const formValue = this.dashboardForm.value;
 
     // Construct the 'sources' array payload from the FormArray
-    const sourcesPayload: { certification: string | null; classes: string[] | null; }[] =
-      this.sourcesFormArray.controls.map(control => {
-        const sourceGroupValue = control.value;
-        return {
-          certification: sourceGroupValue.certification,
-          classes: (sourceGroupValue.classes && sourceGroupValue.classes.length > 0)
-                   ? sourceGroupValue.classes
-                   : null // Set to null if no classes are selected
-        };
-      });
+    const sources = formValue.sourcesFormArray.map((source: any) => ({
+      certification: source.certification,
+      classes: source.classes || [],
+    }));
 
-    try {
-      if (this.isEditMode && this.currentDashboard?._id) {
-        // Update existing dashboard
-        const dashboardToUpdate: Dashboard = {
-          name: formValues.name,
-          title: formValues.title,
-          sources: sourcesPayload, // Assign the new sources array
-        };
-
-        await this.dashboardService.updateDashboard(
-          this.currentDashboard._id,
-          dashboardToUpdate
-        );
-        this.snackBar.open("Dashboard updated successfully!", "Close", { duration: 3000 });
-        this.dialogRef.close(true); // Indicate success
-      } else {
-        // Create new dashboard
-        const newDashboard: Dashboard = {
-          name: formValues.name,
-          title: formValues.title,
-          sources: sourcesPayload, // Assign the new sources array
-        };
-
-        const result = await this.dashboardService.createDashboard(newDashboard);
-        if (result?._id) {
-          this.snackBar.open("Dashboard created successfully!", "Close", { duration: 3000 });
-          this.dialogRef.close(true); // Indicate success
-        } else {
-          throw new Error("Failed to get ID for new dashboard.");
-        }
+    if (formValue.duplicateEnabled) {
+      if (!formValue.templateId) {
+        this.snackBar.open('Please select a template', 'Close', { duration: 3000 });
+        return;
       }
-    } catch (error) {
-      console.error("Error saving dashboard:", error);
-      this.snackBar.open("Failed to save dashboard. Please try again.", "Close", { duration: 3000 });
-      this.dialogRef.close(false); // Indicate failure
+
+      const duplicateInput = {
+        dashboardOriginId: formValue.templateId,
+        name: formValue.name,
+        title: formValue.title,
+        sources,
+      };
+
+      try {
+        // Debug: inspect payload
+        console.debug('Duplicate dashboard input:', duplicateInput);
+        const result = await this.dashboardService.duplicateDashboardFromOther(duplicateInput);
+        console.debug('Duplicate result:', result);
+        this.snackBar.open('Dashboard duplicated successfully', 'Close', { duration: 3000 });
+        this.dialogRef.close(true);
+      } catch (error) {
+        console.error('Error duplicating dashboard:', error);
+        this.snackBar.open('Error duplicating dashboard', 'Close', { duration: 3000 });
+      }
+    } else {
+      const dashboardInput: any = {
+        name: formValue.name,
+        title: formValue.title,
+        sources,
+        status: 'Draft',
+        sectionIds: [],
+      };
+
+      try {
+        let result;
+        if (this.isEditMode && this.currentDashboard?._id) {
+          // Prepare update payload with fields allowed by UpdateDashboardInput (omit status/sectionIds)
+          const updateInput: any = {
+            name: formValue.name,
+            title: formValue.title,
+            sources,
+          };
+          result = await this.dashboardService.updateDashboard(this.currentDashboard._id, updateInput);
+        } else {
+          result = await this.dashboardService.createDashboard(dashboardInput);
+        }
+        this.snackBar.open(this.isEditMode ? 'Dashboard updated successfully' : 'Dashboard created successfully', 'Close', { duration: 3000 });
+        this.dialogRef.close(true);
+      } catch (error) {
+        console.error('Error saving dashboard:', error);
+        this.snackBar.open('Error saving dashboard', 'Close', { duration: 3000 });
+      }
     }
   }
 

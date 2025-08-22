@@ -124,3 +124,42 @@
 .dark .mat-mdc-form-field-outline-thick {
     color: #3b82f6 !important;
 } 
+
+/* Force Inter font for Angular Material tooltips and overlays */
+.mat-mdc-tooltip-panel,
+.mat-tooltip,
+.mat-mdc-tooltip,
+.mat-mdc-tooltip .mat-mdc-tooltip-content,
+.cdk-overlay-container .mat-mdc-tooltip-panel,
+.mat-mdc-tooltip .mat-mdc-tooltip-content,
+.mat-mdc-tooltip-panel .mat-mdc-tooltip-content {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+}
+
+/* Ensure AmCharts tooltips use Inter as well */
+.am5-tooltip,
+.am5-tooltip > * {
+    font-family: 'Inter', sans-serif !important;
+} 
+
+/* Stronger overlay tooltip font override (include all descendants) */
+.cdk-overlay-container [role="tooltip"],
+.cdk-overlay-container [role="tooltip"] *,
+.cdk-overlay-container .mat-mdc-tooltip-panel,
+.cdk-overlay-container .mat-mdc-tooltip-panel *,
+.cdk-overlay-container .mat-tooltip,
+.cdk-overlay-container .mat-tooltip * {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+} 
+
+/* Tooltip class applied via Angular Material's matTooltipClass binding */
+.inter-tooltip,
+.inter-tooltip * {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+}

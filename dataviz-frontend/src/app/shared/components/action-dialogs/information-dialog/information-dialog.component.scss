@@ -9,24 +9,31 @@
   max-height: 80vh;
   overflow-y: auto;
   position: relative;
+  display: flex;
+  flex-direction: column;
   // transform: scale(0.8);
   animation: modalSlideIn 0.3s ease-out forwards;
 }
 
 .close-button {
-  position: absolute;
+  position: sticky;
   top: 15px;
-  right: 15px;
+  align-self: flex-end;
   background: #ff4757;
   border: none;
   border-radius: 50%;
   width: 30px;
   height: 30px;
+  padding: 0;
+  box-sizing: border-box;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
+  z-index: 20;
+  aspect-ratio: 1 / 1;
+  line-height: 0;
 }
 
 .close-button:hover {

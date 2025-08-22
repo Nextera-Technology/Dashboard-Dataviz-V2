@@ -134,6 +134,15 @@ export const gqlGetChartOptions = gql`
   }
 `;
 
+export const gqlGetDashboardTemplates = gql`
+  query getDashboardTemplates($type: String!) {
+    getDashboardTemplates(type: $type) {
+      _id
+      name
+    }
+  }
+`;
+
 
 
 

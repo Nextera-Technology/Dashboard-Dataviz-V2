@@ -82,6 +82,14 @@ export class DashboardBuilderService {
     return await this.dashboardBuilderRepository.regenerateAutoAnalysisDashboard(dashboardId);
   }
 
+  async getDashboardTemplates(type: string) {
+    return await this.dashboardBuilderRepository.getDashboardTemplates(type);
+  }
+
+  async duplicateDashboardFromOther(input: any) {
+    return await this.dashboardBuilderRepository.duplicateDashboardFromOther(input);
+  }
+
   replaceUnderscoresPipe(value: string | null | undefined): string {
     if (value === null || value === undefined) {
       return "";
