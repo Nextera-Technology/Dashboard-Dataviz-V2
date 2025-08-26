@@ -64,10 +64,10 @@
 
 
                 <!-- Error Message -->
-                <div *ngIf="errorMessage" class="p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <div class="flex items-center">
-                        <mat-icon class="text-red-500 mr-2">error</mat-icon>
-                        <span class="text-sm text-red-700">{{ errorMessage }}</span>
+                <div *ngIf="errorMessage" class="p-3 bg-red-50 border border-red-200 rounded-lg w-full">
+                    <div class="flex items-center gap-3">
+                        <mat-icon class="text-red-500">error</mat-icon>
+                        <span class="text-sm text-red-700 flex-1 break-words">{{ errorMessage }}</span>
                     </div>
                 </div>
 

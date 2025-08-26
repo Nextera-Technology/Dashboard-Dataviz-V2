@@ -64,13 +64,36 @@ export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
                 console.log('Unauthorized error during login - skipping reload');
                 return;
             }
-            console.warn('Unauthorized access detected. Clearing token and reloading.');
+            console.warn('Unauthorized access detected. Clearing token and redirecting to login.');
+            // Clear auth data
             localStorage.removeItem(TOKEN_KEY);
-            // Also clear the stored user profile if it exists
             localStorage.removeItem(environment?.userProfileKey ?? 'currentUser');
             sessionStorage.clear();
-            // Force reload so the route guard (if any) can redirect to login page
-            window.location.reload();
+
+            // Use NotificationService to show session-expired message, then redirect.
+            import('@dataviz/services/notification/notification.service').then(({ NotificationService }) => {
+              const notifier = new NotificationService();
+              notifier.confirm({
+                icon: 'warning',
+                title: 'Session Expired',
+                text: 'Your session has expired. Please login again.',
+                confirmButtonText: 'OK',
+                showCancelButton: false
+              }).then(() => {
+                window.location.href = '/auth/login';
+              });
+            }).catch(err => {
+              console.error('Failed to load NotificationService:', err);
+              // Fallback: dynamic sweetalert import
+              import('sweetalert2').then(({ default: Swal }) => {
+                Swal.fire({ icon: 'warning', title: 'Session Expired', text: 'Your session has expired. Please login again.', confirmButtonText: 'OK' }).then(() => {
+                  window.location.href = '/auth/login';
+                });
+              }).catch(err2 => {
+                console.error('Failed to load Swal fallback:', err2);
+                window.location.href = '/auth/login';
+              });
+            });
         }
       });
     }

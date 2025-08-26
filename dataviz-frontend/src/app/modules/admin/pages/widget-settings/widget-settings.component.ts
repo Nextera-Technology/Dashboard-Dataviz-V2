@@ -17,6 +17,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AdminLayoutComponent } from '../../components/admin-layout/admin-layout.component';
 import { DashboardService, Widget, CreateWidgetData, UpdateWidgetData } from '../../../../shared/services/dashboard.service';
 import { WidgetSettingDialogComponent } from '../../components/widget-setting-dialog/widget-setting-dialog.component';
+import { NotificationService } from '@dataviz/services/notification/notification.service';
 
 interface WidgetDisplay {
   id: string;
@@ -271,7 +272,8 @@ export class WidgetSettingsComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private dashboardService: DashboardService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private notifier: NotificationService
   ) {
     this.dataSource = new MatTableDataSource<WidgetDisplay>([]);
   }
@@ -309,8 +311,8 @@ export class WidgetSettingsComponent implements OnInit {
         }));
         this.dataSource.data = displayWidgets;
       },
-      error: (error) => {
-        this.snackBar.open('Error loading widgets: ' + error.message, 'Close', { duration: 3000 });
+      error: async (error) => {
+        await this.notifier.error('Error', 'Error loading widgets: ' + (error?.message || ''));
       }
     });
   }
@@ -340,17 +342,24 @@ export class WidgetSettingsComponent implements OnInit {
     this.openWidgetDialog(widget);
   }
 
-  deleteWidget(widget: WidgetDisplay) {
-    if (confirm(`Are you sure you want to delete "${widget.title}"?`)) {
+  async deleteWidget(widget: WidgetDisplay) {
+    const confirmation = await this.notifier.confirm({
+      title: 'Are you sure?',
+      text: `Are you sure you want to delete "${widget.title}"?`,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (confirmation.isConfirmed) {
       this.dashboardService.deleteWidget(widget.id).subscribe({
-        next: (success) => {
+        next: async (success) => {
           if (success) {
-            this.snackBar.open('Widget deleted successfully', 'Close', { duration: 3000 });
+            await this.notifier.success('Deleted', 'Widget deleted successfully');
             this.loadWidgets(); // Reload the list
           }
         },
-        error: (error) => {
-          this.snackBar.open('Error deleting widget: ' + error.message, 'Close', { duration: 3000 });
+        error: async (error) => {
+          await this.notifier.error('Error', 'Error deleting widget: ' + (error?.message || '')); 
         }
       });
     }
@@ -378,12 +387,12 @@ export class WidgetSettingsComponent implements OnInit {
     };
 
     this.dashboardService.createWidget(createData).subscribe({
-      next: (newWidget) => {
-        this.snackBar.open('Widget added successfully', 'Close', { duration: 3000 });
+      next: async (newWidget) => {
+        await this.notifier.success('Created', 'Widget added successfully');
         this.loadWidgets(); // Reload the list
       },
-      error: (error) => {
-        this.snackBar.open('Error creating widget: ' + error.message, 'Close', { duration: 3000 });
+      error: async (error) => {
+        await this.notifier.error('Error', 'Error creating widget: ' + (error?.message || ''));
       }
     });
   }
@@ -399,12 +408,12 @@ export class WidgetSettingsComponent implements OnInit {
     };
 
     this.dashboardService.updateWidget(updateData).subscribe({
-      next: (updatedWidget) => {
-        this.snackBar.open('Widget updated successfully', 'Close', { duration: 3000 });
+      next: async (updatedWidget) => {
+        await this.notifier.success('Updated', 'Widget updated successfully');
         this.loadWidgets(); // Reload the list
       },
-      error: (error) => {
-        this.snackBar.open('Error updating widget: ' + error.message, 'Close', { duration: 3000 });
+      error: async (error) => {
+        await this.notifier.error('Error', 'Error updating widget: ' + (error?.message || ''));
       }
     });
   }

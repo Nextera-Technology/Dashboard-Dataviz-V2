@@ -11,6 +11,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { NotificationService } from '@dataviz/services/notification/notification.service';
 import { SectionFormDialogComponent, SectionFormData } from '../../components/section-form-dialog/section-form-dialog.component';
 import { AdminLayoutComponent } from '../../components/admin-layout/admin-layout.component';
 import { DashboardService, Section, CreateSectionData, UpdateSectionData } from '../../../../shared/services/dashboard.service';
@@ -181,7 +182,8 @@ export class SectionSettingsComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private dashboardService: DashboardService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private notifier: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -204,8 +206,8 @@ export class SectionSettingsComponent implements OnInit {
         }));
         this.dataSource.data = displaySections;
       },
-      error: (error) => {
-        this.snackBar.open('Error loading sections: ' + error.message, 'Close', { duration: 3000 });
+      error: async (error) => {
+        await this.notifier.error('Error', 'Error loading sections: ' + (error?.message || ''));
       }
     });
   }
@@ -243,12 +245,12 @@ export class SectionSettingsComponent implements OnInit {
     };
 
     this.dashboardService.createSection(createData).subscribe({
-      next: (newSection) => {
-        this.snackBar.open('Section created successfully', 'Close', { duration: 3000 });
+      next: async (newSection) => {
+        await this.notifier.success('Created', 'Section created successfully');
         this.loadSections(); // Reload the list
       },
-      error: (error) => {
-        this.snackBar.open('Error creating section: ' + error.message, 'Close', { duration: 3000 });
+      error: async (error) => {
+        await this.notifier.error('Error', 'Error creating section: ' + (error?.message || ''));
       }
     });
   }
@@ -261,27 +263,36 @@ export class SectionSettingsComponent implements OnInit {
     };
 
     this.dashboardService.updateSection(updateData).subscribe({
-      next: (updatedSection) => {
-        this.snackBar.open('Section updated successfully', 'Close', { duration: 3000 });
+      next: async (updatedSection) => {
+        await this.notifier.success('Updated', 'Section updated successfully');
         this.loadSections(); // Reload the list
       },
-      error: (error) => {
-        this.snackBar.open('Error updating section: ' + error.message, 'Close', { duration: 3000 });
+      error: async (error) => {
+        await this.notifier.error('Error', 'Error updating section: ' + (error?.message || ''));
       }
     });
   }
 
-  deleteSection(section: SectionDisplay): void {
-    if (confirm(`Are you sure you want to delete section "${section.title}"?`)) {
+  async deleteSection(section: SectionDisplay): Promise<void> {
+    const confirmed = await this.notifier.confirm({
+      title: 'Are you sure?',
+      text: `Are you sure you want to delete section "${section.title}"?`,
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#d33'
+    });
+
+    if (confirmed && confirmed.isConfirmed) {
       this.dashboardService.deleteSection(section.id).subscribe({
-        next: (success) => {
+        next: async (success) => {
           if (success) {
-            this.snackBar.open('Section deleted successfully', 'Close', { duration: 3000 });
+            await this.notifier.success('Deleted', 'Section deleted successfully');
             this.loadSections(); // Reload the list
           }
         },
-        error: (error) => {
-          this.snackBar.open('Error deleting section: ' + error.message, 'Close', { duration: 3000 });
+        error: async (error) => {
+          await this.notifier.error('Error', 'Error deleting section: ' + (error?.message || ''));
         }
       });
     }

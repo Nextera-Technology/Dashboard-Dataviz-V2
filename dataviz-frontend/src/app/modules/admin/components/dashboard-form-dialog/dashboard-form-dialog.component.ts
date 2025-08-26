@@ -8,6 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { NotificationService } from '@dataviz/services/notification/notification.service';
 import { DashboardBuilderService } from '../../pages/dashboard-builder/dashboard-builder.service'; // Adjust path if needed
 import { Subscription } from 'rxjs';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -99,7 +100,8 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
     private dialogRef: MatDialogRef<DashboardFormDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DashboardFormDialogData,
     private dashboardService: DashboardBuilderService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private notifier: NotificationService
   ) {
     this.currentDashboard = data.dashboard;
 
@@ -276,7 +278,7 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
     try {
       this.dashboardTemplates = await this.dashboardService.getDashboardTemplates(type);
     } catch (error) {
-      this.snackBar.open('Error loading templates', 'Close', { duration: 3000 });
+      await this.notifier.error('Error', 'Error loading templates');
     }
   }
 
@@ -290,7 +292,7 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
 
 
     if (this.dashboardForm.invalid) {
-      this.snackBar.open("Please fill all required fields correctly.", "Close", { duration: 3000 });
+      await this.notifier.error('Validation', 'Please fill all required fields correctly.');
       return;
     }
 
@@ -304,7 +306,7 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
 
     if (formValue.duplicateEnabled) {
       if (!formValue.templateId) {
-        this.snackBar.open('Please select a template', 'Close', { duration: 3000 });
+        await this.notifier.error('Validation', 'Please select a template');
         return;
       }
 
@@ -320,19 +322,20 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
         console.debug('Duplicate dashboard input:', duplicateInput);
         const result = await this.dashboardService.duplicateDashboardFromOther(duplicateInput);
         console.debug('Duplicate result:', result);
-        this.snackBar.open('Dashboard duplicated successfully', 'Close', { duration: 3000 });
+        await this.notifier.success('Dashboard duplicated', result?.message || 'Dashboard duplicated successfully');
         this.dialogRef.close(true);
       } catch (error) {
         console.error('Error duplicating dashboard:', error);
-        this.snackBar.open('Error duplicating dashboard', 'Close', { duration: 3000 });
+        await this.notifier.error('Duplication failed', error?.message || 'Failed to duplicate dashboard. Please try again.');
+        // Do NOT refresh; keep dialog open for user to retry or cancel
       }
     } else {
+      // NOTE: Do NOT include `status` and `sectionIds` in the create payload because
+      // the GraphQL `CreateDashboardInput` does not accept those fields.
       const dashboardInput: any = {
         name: formValue.name,
         title: formValue.title,
         sources,
-        status: 'Draft',
-        sectionIds: [],
       };
 
       try {
@@ -348,11 +351,12 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
         } else {
           result = await this.dashboardService.createDashboard(dashboardInput);
         }
-        this.snackBar.open(this.isEditMode ? 'Dashboard updated successfully' : 'Dashboard created successfully', 'Close', { duration: 3000 });
+        await this.notifier.success(this.isEditMode ? 'Dashboard updated' : 'Dashboard created', result?.message || (this.isEditMode ? 'Dashboard updated successfully' : 'Dashboard created successfully'));
         this.dialogRef.close(true);
       } catch (error) {
         console.error('Error saving dashboard:', error);
-        this.snackBar.open('Error saving dashboard', 'Close', { duration: 3000 });
+        await this.notifier.error('Save failed', error?.message || 'Failed to save dashboard. Please try again.');
+        // Do NOT refresh; keep dialog open for user to fix inputs or retry
       }
     }
   }

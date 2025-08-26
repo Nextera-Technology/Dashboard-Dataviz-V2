@@ -17,6 +17,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar"; // Import MatSnackBar
+import { NotificationService } from '@dataviz/services/notification/notification.service';
 import { DashboardBuilderService } from "../../pages/dashboard-builder/dashboard-builder.service";
 
 // Re-using interfaces from dashboard-builder.component.ts for consistency
@@ -94,7 +95,8 @@ export class SectionFormDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<SectionFormDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SectionFormDialogData, // Data received from parent component
     private dashboardService: DashboardBuilderService, // Inject service
-    private snackBar: MatSnackBar // Inject snackBar
+    private snackBar: MatSnackBar, // Inject snackBar
+    private notifier: NotificationService
   ) {
     this.dashboard = data.dashboard;
     this.currentSection = data.section;
@@ -142,9 +144,7 @@ export class SectionFormDialogComponent implements OnInit {
           this.currentSection?._id,
           sectionPayload
         );
-        this.snackBar.open("Section changes saved successfully!", "Close", {
-          duration: 3000,
-        });
+        await this.notifier.success('Section saved', 'Section changes saved successfully!');
         this.dialogRef.close(result); // Indicate success
       } else {
         // Add new section
@@ -156,16 +156,12 @@ export class SectionFormDialogComponent implements OnInit {
         };
         // Update existing dashboard with modified sections
         const result = await this.dashboardService.createSection(newSection);
-        this.snackBar.open("Section changes saved successfully!", "Close", {
-          duration: 3000,
-        });
+        await this.notifier.success('Section saved', 'Section changes saved successfully!');
         this.dialogRef.close(result); // Indicate success
       }
     } catch (error) {
       console.error("Error saving section:", error);
-      this.snackBar.open("Failed to save section. Please try again.", "Close", {
-        duration: 3000,
-      });
+      await this.notifier.error('Save failed', 'Failed to save section. Please try again.');
       this.dialogRef.close(false); // Indicate failure
     }
   }

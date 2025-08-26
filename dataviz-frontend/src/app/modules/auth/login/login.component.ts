@@ -14,6 +14,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { NotificationService } from '@dataviz/services/notification/notification.service';
 
 import { AuthService, LoginCredentials } from "../../../core/auth/auth.service";
 
@@ -44,7 +45,8 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private notifier: NotificationService
   ) {
     this.loginForm = this.fb.group({
       email: ["", [Validators.required, Validators.email]],
@@ -80,20 +82,12 @@ export class LoginComponent implements OnInit {
         const user = await this.authService.userLogin(credentials?.email, credentials?.password);
         this.isLoading = false;
         if (!user || !user.user) {
-          this.snackBar.open(`Oops! That email or password doesn’t match. Try again`, "Close", {
-            duration: 3000,
-            horizontalPosition: "center",
-            verticalPosition: "top",
-          });
+          await this.notifier.error('Login failed', `Oops! That email or password doesn’t match. Try again`);
 
           throw new Error("Oops! That email or password doesn’t match. Try again");
         }
 
-        this.snackBar.open(`Welcome back, ${user.user.lastName} ${user.user.firstName}!`, "Close", {
-          duration: 3000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-        });
+        await this.notifier.success('Welcome', `Welcome back, ${user.user.lastName} ${user.user.firstName}!`);
         this.router.navigate(["/admin/dashboard-list"]);
       } catch (error) {
         this.isLoading = false;
@@ -107,11 +101,7 @@ export class LoginComponent implements OnInit {
           "Oops! That email or password doesn’t match. Try again";
 
         // Show snackbar for additional feedback
-        this.snackBar.open(this.errorMessage, "Close", {
-          duration: 5000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-        });
+        await this.notifier.error('Login failed', this.errorMessage);
       }
     } else {
       // Mark all fields as touched to show validation errors
@@ -119,11 +109,7 @@ export class LoginComponent implements OnInit {
 
       // Show a consistent login-failed message and snackbar even when the form is invalid
       this.errorMessage = "Oops! That email or password doesn’t match. Try again";
-      this.snackBar.open(this.errorMessage, "Close", {
-        duration: 5000,
-        horizontalPosition: "center",
-        verticalPosition: "top",
-      });
+      await this.notifier.error('Login failed', this.errorMessage);
     }
   }
 

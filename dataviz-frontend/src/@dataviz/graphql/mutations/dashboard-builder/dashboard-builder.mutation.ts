@@ -24,7 +24,7 @@ export const gqlRegenerateAutoAnalysisDashboard = gql`
 
 export const gqlDeleteDashboard = gql`
   mutation DeleteDashboard($id: String!) {
-    DeleteDashboard(_id: $id) {
+    deleteDashboard(_id: $id) {
       _id
     }
   }

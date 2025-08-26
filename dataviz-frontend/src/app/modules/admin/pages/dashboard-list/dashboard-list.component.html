@@ -237,6 +237,15 @@
                 <span>Edit</span>
               </div>
             </button>
+            <button 
+              (click)="deleteDashboard(dashboard, $event)"
+              class="flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r from-red-500 to-rose-600 text-white font-semibold hover:from-red-600 hover:to-rose-700 transform hover:scale-105 transition ease-in-out duration-300 shadow-md"
+            >
+              <div class="flex items-center justify-center space-x-2">
+                <mat-icon class="text-xl mb-1">delete</mat-icon>
+                <span>Delete</span>
+              </div>
+            </button>
           </div>
         </div>
       </div>

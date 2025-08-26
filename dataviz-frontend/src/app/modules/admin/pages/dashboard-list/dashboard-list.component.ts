@@ -172,6 +172,8 @@ import {
   DashboardFormDialogData,
 } from "../../components/dashboard-form-dialog/dashboard-form-dialog.component";
 import { ShareDataService } from "app/shared/services/share-data.service";
+import Swal from 'sweetalert2';
+import { NotificationService } from '@dataviz/services/notification/notification.service';
 
 // UPDATED: Dashboard interface to reflect the new 'sources' array structure
 interface Section {
@@ -218,7 +220,8 @@ export class DashboardListComponent implements OnInit {
     private dashboardService: DashboardBuilderService,
     private router: Router,
     private dialog: MatDialog,
-    private shareDataService: ShareDataService
+    private shareDataService: ShareDataService,
+    private notifier: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -338,24 +341,34 @@ export class DashboardListComponent implements OnInit {
 
   async deleteDashboard(dashboard: Dashboard, event: Event) {
     event.stopPropagation();
-    
-    // Modern confirmation dialog would be better, but keeping original functionality
-    if (confirm(`Are you sure you want to delete "${dashboard.title}"?`)) {
+
+    const confirmation = await this.notifier.confirm({
+      title: 'Are you sure?',
+      text: `Are you sure you want to delete "${dashboard.title}"?`,
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#d33'
+    });
+
+    if (confirmation.isConfirmed) {
       try {
         this.isLoading = true;
         const result = await this.dashboardService.deleteDashboard(dashboard._id);
-        
+
         if (result) {
           // Remove from local array with smooth animation
           this.dashboards = this.dashboards.filter(d => d._id !== dashboard._id);
-          
+
           // Clean up expansion state
           if (dashboard._id) {
             this.dashboardSourcesExpansionState.delete(dashboard._id);
           }
-          
+
           console.log(`Dashboard "${dashboard.title}" deleted successfully.`);
-          
+
+          await this.notifier.success('Deleted', `Dashboard "${dashboard.title}" has been deleted.`);
+
           // Refresh the list to ensure consistency
           setTimeout(() => {
             this.loadDashboards();
@@ -363,6 +376,7 @@ export class DashboardListComponent implements OnInit {
         }
       } catch (error) {
         console.error(`Error deleting dashboard "${dashboard.title}":`, error);
+        await this.notifier.error('Error', 'Failed to delete dashboard. Please try again.');
       } finally {
         this.isLoading = false;
       }

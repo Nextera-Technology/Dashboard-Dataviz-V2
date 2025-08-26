@@ -11,6 +11,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { NotificationService } from '@dataviz/services/notification/notification.service';
 
 import { AuthService, User } from '../../core/auth/auth.service';
 import { DashboardService, DashboardData, FilterData, CertificationFilter, SectionFilter, Section } from '../../shared/services/dashboard.service';
@@ -111,6 +112,7 @@ getChildModel(childName: string): boolean {
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
+    private notifier: NotificationService,
     private shareDataService: ShareDataService
   ) {
     shareDataService.setIsDashboard(true);
@@ -171,15 +173,11 @@ getChildModel(childName: string): boolean {
     this.updateCounts();
   }
 
-  applyCertificationFilters(): void {
-    this.snackBar.open('Certification filters applied', 'Close', {
-      duration: 2000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top'
-    });
+  async applyCertificationFilters(): Promise<void> {
+    await this.notifier.toast('Certification filters applied', 'success', 2000);
   }
 
-  applySectionFilters(): void {
+  async applySectionFilters(): Promise<void> {
     if (this.selectedSections.length === 0) {
       this.dashboard = this.dashboardOriginal;
       return;
@@ -190,11 +188,7 @@ getChildModel(childName: string): boolean {
       (section: Section) => this.selectedSections.includes(section.name)
     )
   };
-    this.snackBar.open('Section filters applied', 'Close', {
-      duration: 2000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top'
-    });
+    await this.notifier.toast('Section filters applied', 'success', 2000);
   }
 
   updateCounts(): void {
@@ -214,13 +208,9 @@ getChildModel(childName: string): boolean {
     this.updateSelectionCounts();
   }
 
-  logout(): void {
+  async logout(): Promise<void> {
     this.authService.logout();
-    this.snackBar.open('Logged out successfully', 'Close', {
-      duration: 3000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top'
-    });
+    await this.notifier.success('Logged out', 'Logged out successfully');
     this.router.navigate(['/auth/login']);
   }
 

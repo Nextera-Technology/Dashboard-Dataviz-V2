@@ -19,6 +19,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { NotificationService } from '@dataviz/services/notification/notification.service';
 import { Subscription } from "rxjs";
 import { DashboardBuilderService } from "../../pages/dashboard-builder/dashboard-builder.service";
 import { ReplaceUnderscoresPipe } from "@dataviz/pipes/replace-underscores/replace-underscores.pipe";
@@ -243,13 +244,29 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
   // State to prevent multiple submissions and show spinner
   isSaving = false;
 
+  // Tambahan: Array template background colors yang memastikan kontras baik dengan teks
+  templateColors: string[] = [
+    '#FFD79A', // Warm peach
+    '#FECACA', // Soft coral
+    '#FBCFE8', // Light pink
+    '#C7F9CC', // Mint green
+    '#93C5FD', // Soft blue
+    '#FDE68A'  // Warm yellow
+  ];
+
+  // Tambahan: Method untuk set background color dari template
+  setTemplateColor(color: string): void {
+    this.widgetForm.get('background')?.setValue(color);
+  }
+
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<WidgetFormDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: WidgetConfigData,
     private dashboardService: DashboardBuilderService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog // Inject MatDialog for opening new dialogs
+    private dialog: MatDialog, // Inject MatDialog for opening new dialogs
+    private notifier: NotificationService
   ) {
     this.dashboard = data.dashboard;
     this.currentSection = data.section;
@@ -428,22 +445,16 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.error("Error loading chart type options:", error);
-      this.snackBar.open("Error loading chart type options.", "Close", {
-        duration: 3000,
-      });
+      await this.notifier.error('Error', 'Error loading chart type options.');
     }
   }
 
   /**
    * Opens the chart type selection dialog.
    */
-  openChartTypeSelection(): void {
+  async openChartTypeSelection(): Promise<void> {
     if (!this.filteredChartTypes || this.filteredChartTypes.length === 0) {
-      this.snackBar.open(
-        "No chart types available for current widget configuration.",
-        "Close",
-        { duration: 3000 }
-      );
+      await this.notifier.error('No chart types', 'No chart types available for current widget configuration.');
       return;
     }
 
@@ -505,9 +516,7 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
           this.currentWidget?._id,
           widgetPayload
         );
-        this.snackBar.open("Widget changes saved successfully!", "Close", {
-          duration: 3000,
-        });
+        await this.notifier.success('Widget saved', 'Widget changes saved successfully!');
         this.dialogRef.close(result); // Indicate success
       } else {
         // Add new section
@@ -519,16 +528,12 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
 
         // Update existing dashboard with modified sections
         const result = await this.dashboardService.createWidget(widgetPayload);
-        this.snackBar.open("Widget changes saved successfully!", "Close", {
-          duration: 3000,
-        });
+        await this.notifier.success('Widget saved', 'Widget changes saved successfully!');
         this.dialogRef.close(result); // Indicate success
       }
     } catch (error) {
       console.error("Error saving widget:", error);
-      this.snackBar.open("Failed to save widget. Please try again.", "Close", {
-        duration: 3000,
-      });
+      await this.notifier.error('Save failed', 'Failed to save widget. Please try again.');
       this.dialogRef.close(false); // Indicate failure
     }
   }

@@ -71,9 +71,25 @@ export class DatavizConfirmationService {
         // TODO: Implement confirmation dialog component
         // For now, return a simple confirmation
         return new Observable(observer => {
-            const confirmed = confirm(finalConfig.message || 'Are you sure?');
-            observer.next(confirmed);
-            observer.complete();
+            // Use NotificationService.confirm instead of window.confirm for better UX.
+            // Dynamically import NotificationService to avoid circular DI issues in providers.
+            import('@dataviz/services/notification/notification.service').then(({ NotificationService }) => {
+                const svc = new NotificationService();
+                svc.confirm({ title: finalConfig.title, text: finalConfig.message }).then(res => {
+                    observer.next(!!res.isConfirmed);
+                    observer.complete();
+                }).catch(err => {
+                    console.error('Confirmation error:', err);
+                    observer.next(false);
+                    observer.complete();
+                });
+            }).catch(err => {
+                console.error('Failed to load NotificationService:', err);
+                // Fallback to window.confirm but keep it synchronous for backwards compat
+                const confirmed = window.confirm(finalConfig.message || 'Are you sure?');
+                observer.next(confirmed);
+                observer.complete();
+            });
         });
     }
 
