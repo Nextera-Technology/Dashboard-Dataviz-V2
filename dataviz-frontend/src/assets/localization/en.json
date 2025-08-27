@@ -126,6 +126,9 @@
         "no_data_source_defined": "No data source defined.",
         "toggle_details_show": "Show details",
         "toggle_details_hide": "Hide details",
+        "edit_widget_tooltip": "Edit Widget",
+        "delete_widget_tooltip": "Delete Widget",
+        "move_widget_tooltip": "Move Widget",
         "empty_state_title": "No sections added yet!",
         "empty_state_subtitle": "Start building your dashboard by adding a new section.",
         "empty_state_cta": "Add Your First Section"
@@ -166,7 +169,142 @@
         "AFTER_SECOND_WAVE": "After second wave",
         "AFTER_THIRD_WAVE": "After third wave",
         "AFTER_FOURTH_WAVE": "After fourth wave"
+      },
+      "widgetTypes": {
+        "FURTHER_STUDIES": "Further Studies",
+        "DOMAINS": "Domains",
+        "MANAGER_LEVEL": "Manager Level",
+        "SAME_DIFFERENT_SCHOOL": "Same/Different School",
+        "PROFESSIONAL_SITUATION": "Professional Situation",
+        "STATUS_BY_WAVE": "Status By Wave",
+        "POSITIONS_FUNCTIONS": "Positions / Functions",
+        "SALARIES": "Salaries",
+        "SKILLS": "Skills",
+        "SATISFACTION": "Satisfaction",
+        "GRADUATION_SUCCESS": "Graduation Success",
+        "SURVEY_COMPLETION": "Survey Completion",
+        "SURVEY_DISTRIBUTION": "Survey Distribution",
+        "COMPANIES": "Companies",
+        "CONTRACT_TYPES": "Contract Types",
+        "REGION": "Region",
+        "GENDER": "Gender",
+        "EDUCATION_LEVEL_TARGET": "Education Level Target",
+        "FLOW": "Flow"
+      },
+      "widgetSubTypes": {
+        "STUDY_RATE": "Study Rate",
+        "STUDY_COMPARISON": "Study Comparison",
+        "DOMAIN_PERCENTAGE": "Domain Percentage",
+        "DOMAIN_TOP3_COMPARISON": "Domain Top 3 Comparison",
+        "DOMAIN_EVOLUTION": "Domain Evolution",
+        "STATUS_WAVE_BREAKDOWN": "Status Wave Breakdown",
+        "STATUS_EVOLUTION": "Status Evolution",
+        "TOP_8_POSITIONS": "Top 8 Positions",
+        "POSITIONS_EVOLUTION": "Positions Evolution",
+        "POSITION_TOP3_COMPARISON": "Position Top 3 Comparison",
+        "SALARY_AVERAGE": "Salary Average",
+        "SALARY_EVOLUTION": "Salary Evolution",
+        "TARGETED_JOB_SKILLS": "Targeted Job Skills",
+        "NON_TARGETED_JOB_SKILLS": "Non-Targeted Job Skills",
+        "OVERALL_COMPETENCIES": "Overall Competencies",
+        "TARGETED_COMPANY_SIZE": "Targeted Company Size",
+        "NON_TARGETED_COMPANY_SIZE": "Non-Targeted Company Size",
+        "STUDENT_REGION_DISTRIBUTION": "Student Region Distribution",
+        "REGION_SALARY_AVERAGE": "Region Salary Average"
       }
+    },
+    "dashboard": {
+      "sidebar": {
+        "certification": "Certification",
+        "search_placeholder": "Search Certification...",
+        "select_all": "Select all",
+        "selected_certifications": "certification(s) selected",
+        "apply_filters": "Apply Filters",
+        "sections": "Sections",
+        "selected_sections": "section(s) selected"
+      }
+    },
+    "notifications": {
+      "widget_deleted": { "title": "Deleted", "message": "Widget deleted successfully" },
+      "widget_delete_error": { "title": "Error", "message": "Error deleting widget: {error}" },
+      "widget_created": { "title": "Created", "message": "Widget added successfully" },
+      "widget_create_error": { "title": "Error", "message": "Error creating widget: {error}" },
+      "widget_updated": { "title": "Updated", "message": "Widget updated successfully" },
+      "widget_update_error": { "title": "Error", "message": "Error updating widget: {error}" },
+
+      "section_created": { "title": "Created", "message": "Section created successfully" },
+      "section_create_error": { "title": "Error", "message": "Error creating section: {error}" },
+      "section_updated": { "title": "Updated", "message": "Section updated successfully" },
+      "section_update_error": { "title": "Error", "message": "Error updating section: {error}" },
+      "section_deleted": { "title": "Deleted", "message": "Section deleted successfully" },
+      "section_delete_error": { "title": "Error", "message": "Error deleting section: {error}" },
+
+      "dashboard_deleted": { "title": "Deleted", "message": "Dashboard \"{title}\" has been deleted." },
+      "dashboard_delete_error": { "title": "Error", "message": "Failed to delete dashboard. Please try again." },
+
+      "no_dashboard_data": { "title": "No data", "message": "No dashboard data to save." },
+      "cannot_edit": { "title": "Cannot edit", "message": "{detail}" },
+
+      "saved": { "title": "Saved", "message": "Dashboard updated successfully!" },
+      "created": { "title": "Created", "message": "Dashboard created successfully!" },
+      "save_error": { "title": "Error", "message": "Error saving dashboard. Please try again." },
+
+      "dialog_opening": { "title": "Please wait", "message": "Dialog is opening..." },
+      "cannot_add_widget": { "title": "Cannot add widget", "message": "Cannot add widget: Dashboard not loaded." },
+
+      "regenerate_success": { "title": "Success!", "message": "Dashboard analysis regenerated successfully!" },
+      "regenerate_error": { "title": "Error", "message": "Error regenerating analysis. Please try again." },
+
+      "login_failed": { "title": "Login failed", "message": "Oops! That email or password doesn’t match. Try again" },
+      "welcome_back": { "title": "Welcome", "message": "Welcome back, {name}!" },
+
+      "filters_applied": { "title": "Filters applied", "message": "Filters applied" }
+      ,
+      "logged_out": { "title": "Logged out", "message": "Logged out successfully" },
+      "widget_saved": { "title": "Widget saved", "message": "Widget changes saved successfully!" },
+      "widget_visibility_error": { "title": "Error", "message": "Error updating widget visibility: {error}" },
+      "section_visibility_error": { "title": "Error", "message": "Error updating section visibility: {error}" },
+      "no_dashboard_to_view": { "title": "No dashboard", "message": "No dashboard to view." },
+      "dashboard_not_found": { "title": "Not found", "message": "Dashboard not found." },
+      "error_loading_dashboard": { "title": "Error", "message": "Error loading dashboard." },
+      "section_order_updated": { "title": "Updated", "message": "Section order updated!" },
+      "dashboard_created_section_order": { "title": "Created", "message": "Dashboard created with new section order!" },
+      "section_saved": { "title": "Section saved", "message": "Section changes saved successfully!" },
+      "save_failed": { "title": "Save failed", "message": "Failed to save section. Please try again." },
+      "user_created": { "title": "Created", "message": "User created successfully" },
+      "user_create_error": { "title": "Error", "message": "Error creating user: {error}" },
+      "user_updated": { "title": "Updated", "message": "User updated successfully" },
+      "user_update_error": { "title": "Error", "message": "Error updating user: {error}" },
+      "user_deleted": { "title": "Deleted", "message": "User deleted successfully" },
+      "user_delete_error": { "title": "Error", "message": "Error deleting user: {error}" },
+      "user_status_changed": { "title": "Updated", "message": "User {status} successfully" },
+      "user_status_error": { "title": "Error", "message": "Error updating user status: {error}" },
+      "confirm_delete_widget": {
+        "title": "Are you sure?",
+        "message": "Are you sure you want to delete \"{title}\"?",
+        "confirmButtonText": "Yes, delete it!",
+        "cancelButtonText": "Cancel"
+      },
+      "confirm_delete_section": {
+        "title": "Are you sure?",
+        "message": "Are you sure you want to delete section \"{title}\"?",
+        "confirmButtonText": "Yes, delete it!",
+        "cancelButtonText": "Cancel"
+      },
+      "confirm_delete_dashboard": {
+        "title": "Are you sure?",
+        "message": "Are you sure you want to delete \"{title}\"?",
+        "confirmButtonText": "Yes, delete it!",
+        "cancelButtonText": "Cancel"
+      },
+      "confirm_delete_user": {
+        "title": "Are you sure?",
+        "message": "Are you sure you want to delete user \"{title}\"?",
+        "confirmButtonText": "Yes, delete it!",
+        "cancelButtonText": "Cancel"
+      },
+      "no_chart_types": { "title": "No chart types", "message": "No chart types available for current widget configuration." },
+      "duplication_failed": { "title": "Duplication failed", "message": "Failed to duplicate dashboard. Please try again. {error}" }
     },
     "shared": {
       "language_changed": "Language changed",

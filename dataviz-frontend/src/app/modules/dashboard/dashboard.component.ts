@@ -12,6 +12,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { NotificationService } from '@dataviz/services/notification/notification.service';
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 
 import { AuthService, User } from '../../core/auth/auth.service';
 import { DashboardService, DashboardData, FilterData, CertificationFilter, SectionFilter, Section } from '../../shared/services/dashboard.service';
@@ -41,6 +42,7 @@ declare var am5geodata_worldLow: any;
     MatSlideToggleModule,
     MatMenuModule,
     MatSnackBarModule,
+    TranslatePipe,
     SectionComponent
   ],
   templateUrl: "./dashboard.component.html",
@@ -174,7 +176,7 @@ getChildModel(childName: string): boolean {
   }
 
   async applyCertificationFilters(): Promise<void> {
-    await this.notifier.toast('Certification filters applied', 'success', 2000);
+    await this.notifier.toastKey('notifications.filters_applied', 'success', undefined, 2000);
   }
 
   async applySectionFilters(): Promise<void> {
@@ -188,7 +190,7 @@ getChildModel(childName: string): boolean {
       (section: Section) => this.selectedSections.includes(section.name)
     )
   };
-    await this.notifier.toast('Section filters applied', 'success', 2000);
+    await this.notifier.toastKey('notifications.filters_applied', 'success', undefined, 2000);
   }
 
   updateCounts(): void {
@@ -210,7 +212,7 @@ getChildModel(childName: string): boolean {
 
   async logout(): Promise<void> {
     this.authService.logout();
-    await this.notifier.success('Logged out', 'Logged out successfully');
+    await this.notifier.successKey('notifications.logged_out');
     this.router.navigate(['/auth/login']);
   }
 

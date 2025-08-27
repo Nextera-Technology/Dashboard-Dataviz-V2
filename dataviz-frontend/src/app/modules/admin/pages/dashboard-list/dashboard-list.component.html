@@ -49,7 +49,7 @@
                     <span
                       *ngIf="!sourceEntry.classes || sourceEntry.classes.length === 0"
                       class="text-xs text-gray-500"
-                    >No classes</span>
+                    >{{ 'admin.dashboardList.no_classes' | translate }}</span>
                   </div>
                 </div>
                 
@@ -109,7 +109,7 @@
           >
             <div class="relative flex items-center space-x-3">
               <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-plus text-white"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
-              <span class="text-base">Create Dashboard</span>
+              <span class="text-base">{{ 'admin.dashboardList.create_button' | translate }}</span>
             </div>
           </button>
         </div>
@@ -140,11 +140,12 @@
                 <span class="text-xs text-green-600 font-medium">{{ 'admin.dashboardList.active_badge' | translate }}</span>
               </div>
             </div>
-            
+
             <h2 class="text-2xl font-bold text-slate-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">
               {{ dashboard.title }}
             </h2>
             <p class="text-slate-600 font-medium">{{ dashboard.name }}</p>
+
           </div>
 
           <!-- Sources Section with Modern Design -->
@@ -158,14 +159,14 @@
               <div 
                 *ngFor="let sourceEntry of dashboard.sources | slice:0: (isSourcesExpanded(dashboard._id!) ? (dashboard.sources.length) : initialVisibleSources)" 
                 class="source-item p-4 rounded-2xl bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 hover:border-blue-300 transition-all duration-300"
-              >
+                >
                 <div class="flex items-center mb-3">
                   <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mr-3">
                     <mat-icon class="text-white text-sm">folder_open</mat-icon>
                   </div>
                   <span class="font-bold text-slate-800">{{ sourceEntry.certification }}</span>
                 </div>
-                
+
                 <div class="classes-tags flex flex-wrap gap-2">
                   <span
                     *ngFor="let cls of sourceEntry.classes"
@@ -176,7 +177,7 @@
                   <span
                     *ngIf="!sourceEntry.classes || sourceEntry.classes.length === 0"
                     class="px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-sm italic"
-                  >{{ 'admin.dashboardList.no_classes' | translate }}</span>
+                    >{{ 'admin.dashboardList.no_classes' | translate }}</span>
                 </div>
               </div>
               
@@ -211,7 +212,7 @@
           >
             <div class="flex items-center justify-center space-x-2">
             <mat-icon class="text-xl mb-1">settings</mat-icon>
-            <span>Manage</span>
+            <span>{{ 'admin.dashboardList.manage' | translate }}</span>
             </div>
           </button>
             </div>
@@ -243,7 +244,7 @@
             >
               <div class="flex items-center justify-center space-x-2">
                 <mat-icon class="text-xl mb-1">delete</mat-icon>
-                <span>Delete</span>
+                <span>{{ 'admin.dashboardList.delete' | translate }}</span>
               </div>
             </button>
           </div>

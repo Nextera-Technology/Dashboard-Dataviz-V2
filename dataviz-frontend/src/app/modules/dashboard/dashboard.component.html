@@ -22,12 +22,12 @@
         <div class="filter-section">
             <div class="section-title">
                 <span class="section-icon">📊</span>
-                Certification
+                {{ 'dashboard.sidebar.certification' | translate }}
             </div>
 
             <!-- Search Input -->
             <div class="typeahead-container">
-                <input type="text" class="typeahead-input" placeholder="Rechercher une Certification..."
+                <input type="text" class="typeahead-input" placeholder="{{ 'dashboard.sidebar.search_placeholder' | translate }}"
                     [(ngModel)]="certificationSearch" (input)="onCertificationSearch()" />
             </div>
 
@@ -37,7 +37,7 @@
                 <!-- Select All -->
                 <label class="checkbox-item select-all">
                     <input type="checkbox" id="cert_select_all" (change)="toggleCertificationSelectAll()" />
-                    Sélectionner tout
+                    {{ 'dashboard.sidebar.select_all' | translate }}
                 </label>
 
                 <!-- Each Certification Item -->
@@ -69,12 +69,12 @@
 
                 <!-- Selected Count -->
                 <div class="selected-count">
-                    {{ selectedCertificationsCount }} certification(s) sélectionnée(s)
+                    {{ selectedCertificationsCount }} {{ 'dashboard.sidebar.selected_certifications' | translate }}
                 </div>
 
                 <!-- Apply Button -->
                 <button class="clear-filters" (click)="applyCertificationFilters()">
-                    Appliquer les Filtres
+                    {{ 'dashboard.sidebar.apply_filters' | translate }}
                 </button>
             </div>
         </div>
@@ -84,7 +84,7 @@
         <div class="filter-section">
             <div class="section-title sections-title">
                 <span class="section-icon">📋</span>
-                Sections
+                {{ 'dashboard.sidebar.sections' | translate }}
             </div>
             <div class="checkbox-list">
                 <label class="checkbox-item" *ngFor="let section of sectionsList; let i = index">
@@ -93,8 +93,8 @@
                     {{ section.name }}
                 </label>
             </div>
-            <div class="selected-count">{{ selectedSectionsCount }} section(s) sélectionnée(s)</div>
-            <button class="clear-filters" (click)="applySectionFilters()">Appliquer les Filtres</button>
+            <div class="selected-count">{{ selectedSectionsCount }} {{ 'dashboard.sidebar.selected_sections' | translate }}</div>
+            <button class="clear-filters" (click)="applySectionFilters()">{{ 'dashboard.sidebar.apply_filters' | translate }}</button>
         </div>
 
         <!-- Admin Navigation Section -->
@@ -106,11 +106,11 @@
             <div class="admin-menu">
                 <a routerLink="/admin/dashboard-list" class="admin-menu-item">
                     <mat-icon>dashboard</mat-icon>
-                    <span>Dashboard Builder</span>
+                    <span>{{ 'admin.dashboardList.header_title' | translate }}</span>
                 </a>
                 <a routerLink="/admin/user-management" class="admin-menu-item">
                     <mat-icon>people</mat-icon>
-                    <span>User Management</span>
+                    <span>{{ 'admin.layout.userManagement' | translate }}</span>
                 </a>
             </div>
         </div>

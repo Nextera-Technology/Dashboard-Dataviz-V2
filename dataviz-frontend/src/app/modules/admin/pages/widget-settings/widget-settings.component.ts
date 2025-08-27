@@ -312,7 +312,7 @@ export class WidgetSettingsComponent implements OnInit {
         this.dataSource.data = displayWidgets;
       },
       error: async (error) => {
-        await this.notifier.error('Error', 'Error loading widgets: ' + (error?.message || ''));
+        await this.notifier.errorKey('notifications.widget_delete_error', { error: error?.message || '' });
       }
     });
   }
@@ -343,23 +343,18 @@ export class WidgetSettingsComponent implements OnInit {
   }
 
   async deleteWidget(widget: WidgetDisplay) {
-    const confirmation = await this.notifier.confirm({
-      title: 'Are you sure?',
-      text: `Are you sure you want to delete "${widget.title}"?`,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel'
-    });
+    const confirmation = await this.notifier.confirmKey('notifications.confirm_delete_widget', { title: widget.title });
 
     if (confirmation.isConfirmed) {
       this.dashboardService.deleteWidget(widget.id).subscribe({
         next: async (success) => {
           if (success) {
-            await this.notifier.success('Deleted', 'Widget deleted successfully');
+            await this.notifier.successKey('notifications.widget_deleted');
             this.loadWidgets(); // Reload the list
           }
         },
         error: async (error) => {
-          await this.notifier.error('Error', 'Error deleting widget: ' + (error?.message || '')); 
+          await this.notifier.errorKey('notifications.widget_delete_error', { error: error?.message || '' });
         }
       });
     }
@@ -367,12 +362,12 @@ export class WidgetSettingsComponent implements OnInit {
 
   toggleVisibility(widget: WidgetDisplay) {
     this.dashboardService.toggleWidgetVisibility(widget.id).subscribe({
-      next: (updatedWidget) => {
-        this.snackBar.open(`Widget ${updatedWidget.visible ? 'shown' : 'hidden'} successfully`, 'Close', { duration: 2000 });
+      next: async (updatedWidget) => {
+        await this.notifier.toastKey(`notifications.widget_${updatedWidget.visible ? 'shown' : 'hidden'}`, 'success', undefined, 2000);
         this.loadWidgets(); // Reload the list
       },
-      error: (error) => {
-        this.snackBar.open('Error updating widget visibility: ' + error.message, 'Close', { duration: 3000 });
+      error: async (error) => {
+        await this.notifier.errorKey('notifications.widget_visibility_error', { error: error.message || '' });
       }
     });
   }
@@ -388,11 +383,11 @@ export class WidgetSettingsComponent implements OnInit {
 
     this.dashboardService.createWidget(createData).subscribe({
       next: async (newWidget) => {
-        await this.notifier.success('Created', 'Widget added successfully');
+        await this.notifier.successKey('notifications.widget_created');
         this.loadWidgets(); // Reload the list
       },
       error: async (error) => {
-        await this.notifier.error('Error', 'Error creating widget: ' + (error?.message || ''));
+        await this.notifier.errorKey('notifications.widget_create_error', { error: error?.message || '' });
       }
     });
   }
@@ -409,11 +404,11 @@ export class WidgetSettingsComponent implements OnInit {
 
     this.dashboardService.updateWidget(updateData).subscribe({
       next: async (updatedWidget) => {
-        await this.notifier.success('Updated', 'Widget updated successfully');
+        await this.notifier.successKey('notifications.widget_updated');
         this.loadWidgets(); // Reload the list
       },
       error: async (error) => {
-        await this.notifier.error('Error', 'Error updating widget: ' + (error?.message || ''));
+        await this.notifier.errorKey('notifications.widget_update_error', { error: error?.message || '' });
       }
     });
   }

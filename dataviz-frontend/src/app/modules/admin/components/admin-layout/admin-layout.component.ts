@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
+import { NotificationService } from '../../../../../@dataviz/services/notification/notification.service';
 import { TranslationService } from '../../../../shared/services/translation/translation.service';
 import { Router } from '@angular/router';
 import { AuthService, User } from '../../../../core/auth/auth.service';
@@ -82,14 +83,22 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
           
           <!-- User Menu -->
           <div class="user-menu" style="display:flex; align-items:center; gap:8px;">
-            <!-- Language selector -->
-            <div class="lang-selector" style="display:flex; align-items:center; gap:6px;">
-              <button class="info-button" (click)="setLanguage('en')" title="English">
-                <img src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/gb.svg" alt="EN" style="width:20px;height:14px;object-fit:cover;" />
+            <!-- Language dropdown -->
+            <div class="lang-dropdown" style="position:relative;" (click)="$event.stopPropagation()">
+              <button mat-button class="lang-toggle" aria-haspopup="true" (click)="openLangMenu($event)" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;">
+                <img [src]="currentFlag()" alt="lang" style="width:22px;height:16px;object-fit:cover;border-radius:2px;box-shadow:0 1px 2px rgba(0,0,0,0.1)" />
+                <span style="font-size:11px;font-weight:600;line-height:1">{{ translation.getCurrentLanguage() | uppercase }}</span>
               </button>
-              <button class="info-button" (click)="setLanguage('fr')" title="Français">
-                <img src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/fr.svg" alt="FR" style="width:20px;height:14px;object-fit:cover;" />
-              </button>
+              <div *ngIf="langMenuOpen" class="lang-menu" style="position:absolute;right:0;top:36px;background:#fff;border:1px solid #e6e6e6;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.08);overflow:hidden;min-width:140px;z-index:200">
+                <button class="lang-item" (click)="setLanguage('en')" style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:transparent;border:none;width:100%;text-align:left"> 
+                  <img src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/gb.svg" alt="EN" style="width:20px;height:14px;object-fit:cover" />
+                  <span>English</span>
+                </button>
+                <button class="lang-item" (click)="setLanguage('fr')" style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:transparent;border:none;width:100%;text-align:left"> 
+                  <img src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/fr.svg" alt="FR" style="width:20px;height:14px;object-fit:cover" />
+                  <span>Français</span>
+                </button>
+              </div>
             </div>
 
             
@@ -363,7 +372,7 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
               </div>
               <button mat-menu-item (click)="logout()">
                 <mat-icon>logout</mat-icon>
-                <span>Logout</span>
+                <span>{{ 'shared.logout' | translate }}</span>
               </button>
             </mat-menu>
           </div>
@@ -664,18 +673,37 @@ export class AdminLayoutComponent implements OnInit {
   currentUser: User | null = null;
   pageTitle: string = 'admin.layout.title';
   breadcrumb: string = 'admin.layout.title';
+  langMenuOpen: boolean = false;
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private snackBar: MatSnackBar,
-    private translation: TranslationService
+    public translation: TranslationService,
+    private notifier: NotificationService
   ) {}
 
   setLanguage(lang: string): void {
     this.translation.setLanguage(lang);
     const msg = this.translation.translate('shared.language_changed') || 'Language changed';
     this.snackBar.open(msg, 'Close', { duration: 1500 });
+    this.langMenuOpen = false;
+  }
+
+  @HostListener('document:click')
+  closeLangMenu(): void {
+    this.langMenuOpen = false;
+  }
+
+  openLangMenu(event: Event): void {
+    event.stopPropagation();
+    this.langMenuOpen = !this.langMenuOpen;
+  }
+
+  currentFlag(): string {
+    const lang = this.translation.getCurrentLanguage?.() || this.translation.getCurrentLanguage();
+    if (lang === 'fr') return 'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/fr.svg';
+    return 'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/gb.svg';
   }
 
   ngOnInit(): void {
@@ -718,13 +746,9 @@ export class AdminLayoutComponent implements OnInit {
     }
   }
 
-  logout(): void {
+  async logout(): Promise<void> {
     this.authService.logout();
-    this.snackBar.open('Logged out successfully', 'Close', {
-      duration: 3000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top'
-    });
+    await this.notifier.toastKey('notifications.logged_out', 'success', undefined, 3000).catch(()=>{});
     this.router.navigate(['/auth/login']);
   }
 } 

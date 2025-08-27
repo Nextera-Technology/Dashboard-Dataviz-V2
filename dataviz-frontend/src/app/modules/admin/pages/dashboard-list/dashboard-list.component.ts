@@ -359,8 +359,9 @@ export class DashboardListComponent implements OnInit {
       backdropClass: 'modern-backdrop',
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === true) {
+    dialogRef.afterClosed().subscribe((result: any) => {
+      // Reload when dialog returns truthy (true or updated id string)
+      if (result === true || (typeof result === 'string' && (result as string).length > 0)) {
         this.loadDashboards();
       }
     });
@@ -369,14 +370,7 @@ export class DashboardListComponent implements OnInit {
   async deleteDashboard(dashboard: Dashboard, event: Event) {
     event.stopPropagation();
 
-    const confirmation = await this.notifier.confirm({
-      title: 'Are you sure?',
-      text: `Are you sure you want to delete "${dashboard.title}"?`,
-      showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel',
-      confirmButtonColor: '#d33'
-    });
+    const confirmation = await this.notifier.confirmKey('notifications.confirm_delete_dashboard', { title: dashboard.title }, { showCancelButton: true, confirmButtonColor: '#d33' });
 
     if (confirmation.isConfirmed) {
       try {
@@ -394,7 +388,7 @@ export class DashboardListComponent implements OnInit {
 
           console.log(`Dashboard "${dashboard.title}" deleted successfully.`);
 
-          await this.notifier.success('Deleted', `Dashboard "${dashboard.title}" has been deleted.`);
+          await this.notifier.successKey('notifications.dashboard_deleted', { title: dashboard.title });
 
           // Refresh the list to ensure consistency
           setTimeout(() => {
@@ -403,7 +397,7 @@ export class DashboardListComponent implements OnInit {
         }
       } catch (error) {
         console.error(`Error deleting dashboard "${dashboard.title}":`, error);
-        await this.notifier.error('Error', 'Failed to delete dashboard. Please try again.');
+        await this.notifier.errorKey('notifications.dashboard_delete_error');
       } finally {
         this.isLoading = false;
       }

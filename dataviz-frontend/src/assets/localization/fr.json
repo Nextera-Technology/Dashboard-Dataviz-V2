@@ -125,6 +125,9 @@
         "no_data_source_defined": "Aucune source de données définie.",
         "toggle_details_show": "Afficher les détails",
         "toggle_details_hide": "Masquer les détails",
+        "edit_widget_tooltip": "Modifier le widget",
+        "delete_widget_tooltip": "Supprimer le widget",
+        "move_widget_tooltip": "Déplacer le widget",
         "empty_state_title": "Aucune section ajoutée pour l’instant !",
         "empty_state_subtitle": "Commencez à créer votre tableau de bord en ajoutant une nouvelle section.",
         "empty_state_cta": "Ajouter votre première section"
@@ -165,6 +168,140 @@
         "AFTER_SECOND_WAVE": "Après la deuxième vague",
         "AFTER_THIRD_WAVE": "Après la troisième vague",
         "AFTER_FOURTH_WAVE": "Après la quatrième vague"
+      },
+      "widgetTypes": {
+        "FURTHER_STUDIES": "Études complémentaires",
+        "DOMAINS": "Domaines",
+        "MANAGER_LEVEL": "Niveau de direction",
+        "SAME_DIFFERENT_SCHOOL": "Même/Différente École",
+        "PROFESSIONAL_SITUATION": "Situation professionnelle",
+        "STATUS_BY_WAVE": "Statut par vague",
+        "POSITIONS_FUNCTIONS": "Postes / Fonctions",
+        "SALARIES": "Salaires",
+        "SKILLS": "Compétences",
+        "SATISFACTION": "Satisfaction",
+        "GRADUATION_SUCCESS": "Réussite diplômante",
+        "SURVEY_COMPLETION": "Achèvement de l'enquête",
+        "SURVEY_DISTRIBUTION": "Répartition de l'enquête",
+        "COMPANIES": "Entreprises",
+        "CONTRACT_TYPES": "Types de contrat",
+        "REGION": "Région",
+        "GENDER": "Genre",
+        "EDUCATION_LEVEL_TARGET": "Niveau d'éducation cible",
+        "FLOW": "Flux"
+      },
+      "widgetSubTypes": {
+        "STUDY_RATE": "Taux d'études",
+        "STUDY_COMPARISON": "Comparaison des études",
+        "DOMAIN_PERCENTAGE": "Pourcentage par domaine",
+        "DOMAIN_TOP3_COMPARISON": "Comparaison Top 3 domaines",
+        "DOMAIN_EVOLUTION": "Évolution par domaine",
+        "STATUS_WAVE_BREAKDOWN": "Répartition du statut par vague",
+        "STATUS_EVOLUTION": "Évolution du statut",
+        "TOP_8_POSITIONS": "Top 8 postes",
+        "POSITIONS_EVOLUTION": "Évolution des postes",
+        "POSITION_TOP3_COMPARISON": "Comparaison Top 3 postes",
+        "SALARY_AVERAGE": "Salaire moyen",
+        "SALARY_EVOLUTION": "Évolution des salaires",
+        "TARGETED_JOB_SKILLS": "Compétences ciblées",
+        "NON_TARGETED_JOB_SKILLS": "Compétences non ciblées",
+        "OVERALL_COMPETENCIES": "Compétences globales",
+        "TARGETED_COMPANY_SIZE": "Taille d'entreprise ciblée",
+        "NON_TARGETED_COMPANY_SIZE": "Taille d'entreprise non ciblée",
+        "STUDENT_REGION_DISTRIBUTION": "Répartition régionale des étudiants",
+        "REGION_SALARY_AVERAGE": "Salaire moyen par région"
+      }
+    },
+    "notifications": {
+      "widget_deleted": { "title": "Supprimé", "message": "Widget supprimé avec succès" },
+      "widget_delete_error": { "title": "Erreur", "message": "Erreur lors de la suppression du widget : {error}" },
+      "widget_created": { "title": "Créé", "message": "Widget ajouté avec succès" },
+      "widget_create_error": { "title": "Erreur", "message": "Erreur lors de la création du widget : {error}" },
+      "widget_updated": { "title": "Mis à jour", "message": "Widget mis à jour avec succès" },
+      "widget_update_error": { "title": "Erreur", "message": "Erreur lors de la mise à jour du widget : {error}" },
+
+      "section_created": { "title": "Créé", "message": "Section créée avec succès" },
+      "section_create_error": { "title": "Erreur", "message": "Erreur lors de la création de la section : {error}" },
+      "section_updated": { "title": "Mis à jour", "message": "Section mise à jour avec succès" },
+      "section_update_error": { "title": "Erreur", "message": "Erreur lors de la mise à jour de la section : {error}" },
+      "section_deleted": { "title": "Supprimé", "message": "Section supprimée avec succès" },
+      "section_delete_error": { "title": "Erreur", "message": "Erreur lors de la suppression de la section : {error}" },
+
+      "dashboard_deleted": { "title": "Supprimé", "message": "Le tableau de bord \"{title}\" a été supprimé." },
+      "dashboard_delete_error": { "title": "Erreur", "message": "Échec de la suppression du tableau de bord. Veuillez réessayer." },
+
+      "no_dashboard_data": { "title": "Pas de données", "message": "Aucune donnée de tableau de bord à enregistrer." },
+      "cannot_edit": { "title": "Impossible de modifier", "message": "{detail}" },
+
+      "saved": { "title": "Enregistré", "message": "Tableau de bord mis à jour avec succès !" },
+      "created": { "title": "Créé", "message": "Tableau de bord créé avec succès !" },
+      "save_error": { "title": "Erreur", "message": "Erreur lors de l'enregistrement du tableau de bord. Veuillez réessayer." },
+
+      "dialog_opening": { "title": "Veuillez patienter", "message": "La boîte de dialogue s'ouvre..." },
+      "cannot_add_widget": { "title": "Impossible d'ajouter le widget", "message": "Impossible d'ajouter le widget : le tableau de bord n'est pas chargé." },
+
+      "regenerate_success": { "title": "Succès !", "message": "Analyse du tableau de bord régénérée avec succès !" },
+      "regenerate_error": { "title": "Erreur", "message": "Erreur lors de la régénération de l'analyse. Veuillez réessayer." },
+
+      "login_failed": { "title": "Échec de la connexion", "message": "Oops ! Cet e‑mail ou mot de passe ne correspond pas. Réessayez" },
+      "welcome_back": { "title": "Bienvenue", "message": "Bon retour, {name} !" },
+
+      "filters_applied": { "title": "Filtres appliqués", "message": "Filtres appliqués" },
+      "logged_out": { "title": "Déconnecté", "message": "Déconnexion réussie" },
+      "widget_saved": { "title": "Widget enregistré", "message": "Modifications du widget enregistrées avec succès !" },
+      "widget_visibility_error": { "title": "Erreur", "message": "Erreur lors de la mise à jour de la visibilité du widget : {error}" },
+      "section_visibility_error": { "title": "Erreur", "message": "Erreur lors de la mise à jour de la visibilité de la section : {error}" },
+      "no_dashboard_to_view": { "title": "Pas de tableau de bord", "message": "Aucun tableau de bord à afficher." },
+      "dashboard_not_found": { "title": "Introuvable", "message": "Tableau de bord introuvable." },
+      "error_loading_dashboard": { "title": "Erreur", "message": "Erreur lors du chargement du tableau de bord." },
+      "section_order_updated": { "title": "Mis à jour", "message": "Ordre des sections mis à jour !" },
+      "dashboard_created_section_order": { "title": "Créé", "message": "Tableau de bord créé avec le nouvel ordre des sections !" },
+      "section_saved": { "title": "Section enregistrée", "message": "Modifications de la section enregistrées avec succès !" },
+      "save_failed": { "title": "Échec de l'enregistrement", "message": "Échec de l'enregistrement de la section. Veuillez réessayer." },
+      "user_created": { "title": "Créé", "message": "Utilisateur créé avec succès" },
+      "user_create_error": { "title": "Erreur", "message": "Erreur lors de la création de l'utilisateur : {error}" },
+      "user_updated": { "title": "Mis à jour", "message": "Utilisateur mis à jour avec succès" },
+      "user_update_error": { "title": "Erreur", "message": "Erreur lors de la mise à jour de l'utilisateur : {error}" },
+      "user_deleted": { "title": "Supprimé", "message": "Utilisateur supprimé avec succès" },
+      "user_delete_error": { "title": "Erreur", "message": "Erreur lors de la suppression de l'utilisateur : {error}" },
+      "user_status_changed": { "title": "Mis à jour", "message": "Utilisateur {status} avec succès" },
+      "user_status_error": { "title": "Erreur", "message": "Erreur lors de la mise à jour du statut de l'utilisateur : {error}" },
+      "confirm_delete_widget": {
+        "title": "Êtes-vous sûr ?",
+        "message": "Êtes-vous sûr de vouloir supprimer \"{title}\" ?",
+        "confirmButtonText": "Oui, supprimez-le !",
+        "cancelButtonText": "Annuler"
+      },
+      "confirm_delete_section": {
+        "title": "Êtes-vous sûr ?",
+        "message": "Êtes-vous sûr de vouloir supprimer la section \"{title}\" ?",
+        "confirmButtonText": "Oui, supprimez-la !",
+        "cancelButtonText": "Annuler"
+      },
+      "confirm_delete_dashboard": {
+        "title": "Êtes-vous sûr ?",
+        "message": "Êtes-vous sûr de vouloir supprimer \"{title}\" ?",
+        "confirmButtonText": "Oui, supprimez-le !",
+        "cancelButtonText": "Annuler"
+      },
+      "confirm_delete_user": {
+        "title": "Êtes-vous sûr ?",
+        "message": "Êtes-vous sûr de vouloir supprimer l'utilisateur \"{title}\" ?",
+        "confirmButtonText": "Oui, supprimez-le !",
+        "cancelButtonText": "Annuler"
+      },
+      "no_chart_types": { "title": "Aucun type de graphique", "message": "Aucun type de graphique disponible pour la configuration actuelle du widget." },
+      "duplication_failed": { "title": "Échec de la duplication", "message": "Échec de la duplication du tableau de bord. Veuillez réessayer. {error}" }
+    },
+    "dashboard": {
+      "sidebar": {
+        "certification": "Certification",
+        "search_placeholder": "Rechercher une Certification...",
+        "select_all": "Sélectionner tout",
+        "selected_certifications": "certification(s) sélectionnée(s)",
+        "apply_filters": "Appliquer les Filtres",
+        "sections": "Sections",
+        "selected_sections": "section(s) sélectionnée(s)"
       }
     },
     "shared": {

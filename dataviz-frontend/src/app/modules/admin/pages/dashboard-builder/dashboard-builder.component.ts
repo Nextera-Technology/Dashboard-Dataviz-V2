@@ -182,9 +182,9 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
    * Opens the main dashboard view in a new browser tab.
    * Sets the dashboard id in ShareDataService so the dashboard page can load the correct dashboard.
    */
-  viewDashboard(): void {
+  async viewDashboard(): Promise<void> {
     if (!this.dashboard || !this.dashboard._id) {
-      this.snackBar.open('No dashboard to view.', 'Close', { duration: 3000 });
+      await this.notifier.toastKey('notifications.no_dashboard_to_view', 'info', undefined, 3000);
       return;
     }
 
@@ -227,6 +227,9 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
       return;
     }
     try {
+      // Preserve currently selected section to restore selection after reload
+      const prevSelectedSectionId = this.dashboard?.sectionIds?.[this.selectedTabIndex]?._id;
+
       const result = await this.dashboardService.getOneDashboard(id);
       if (result) {
         this.dashboard = result;
@@ -250,21 +253,26 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
           });
         });
 
-      if(this.dashboard.sectionIds.length > 0) {
+      if (this.dashboard.sectionIds.length > 0) {
+        // Try to restore previously selected section index
+        let nextIndex = 0;
+        if (prevSelectedSectionId) {
+          const foundIndex = this.dashboard.sectionIds.findIndex(sec => sec._id === prevSelectedSectionId);
+          nextIndex = foundIndex !== -1 ? foundIndex : 0;
+        }
+        this.selectedTabIndex = nextIndex;
         this.widgetSectionList = [
-          ...this.dashboard?.sectionIds?.[0]?.widgetIds,
+          ...this.dashboard.sectionIds[this.selectedTabIndex].widgetIds,
         ];
         console.log("Loaded dashboard:", this.dashboard);
       }
       } else {
-        this.snackBar.open("Dashboard not found.", "Close", { duration: 3000 });
+        await this.notifier.toastKey('notifications.dashboard_not_found', 'error', undefined, 3000);
         this.router.navigate(["/admin/dashboard-list"]);
       }
     } catch (error) {
       console.error("Error loading dashboard:", error);
-      this.snackBar.open("Error loading dashboard.", "Close", {
-        duration: 3000,
-      });
+      await this.notifier.errorKey('notifications.error_loading_dashboard');
       this.router.navigate(["/admin/dashboard-list"]);
     }
   }
@@ -360,7 +368,7 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
           updateInput
         );
         console.log("Dashboard updated with new section order:", result);
-        this.snackBar.open("Section order updated!", "Close", { duration: 2000 });
+        await this.notifier.toastKey('notifications.section_order_updated', 'success', undefined, 2000);
       } else {
         result = await this.dashboardService.createDashboard(updateInput);
         if (result?._id) {
@@ -369,14 +377,12 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
             ...this.dashboard,
             _id: result._id
           };
-          this.snackBar.open("Dashboard created with new section order!", "Close", { duration: 2000 });
+          await this.notifier.toastKey('notifications.dashboard_created_section_order', 'success', undefined, 2000);
         }
       }
     } catch (error) {
       console.error("Error saving dashboard section order:", error);
-      this.snackBar.open("Error saving section order. Please try again.", "Close", {
-        duration: 3000
-      });
+      await this.notifier.errorKey('notifications.save_error');
     }
   }
 
@@ -409,7 +415,8 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
    
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result?._id) {
+      // If dialog returned a truthy result, refresh dashboard
+      if (result !== false && this.dashboard?._id) {
         this.loadDashboard(this.dashboard!._id!);
       }
     });
@@ -422,12 +429,7 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
   async deleteSection(section: Section): Promise<void> {
     if (!this.dashboard || !this.dashboard.sectionIds || !section._id) return;
 
-    const confirmation = await this.notifier.confirm({
-      title: 'Are you sure?',
-      text: `Are you sure you want to delete the section "${section.title}"?`,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel'
-    });
+    const confirmation = await this.notifier.confirmKey('notifications.confirm_delete_section', { title: section.title });
 
     if (confirmation.isConfirmed) {
       try {
@@ -452,7 +454,7 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
           this.selectedTabIndex = 0; // Reset to first tab
         }
 
-        await this.notifier.success('Deleted', 'Section deleted successfully!');
+        await this.notifier.successKey('notifications.section_deleted');
 
       } catch (error) {
         console.error("Error deleting section:", error);
@@ -472,7 +474,8 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
   async deleteWidget(widget: Widget): Promise<void> {
     if (!this.dashboard || !this.dashboard.sectionIds || !widget._id) return;
 
-    if (confirm(`Are you sure you want to delete "${widget.title}"?`)) {
+    const confirmation = await this.notifier.confirmKey('notifications.confirm_delete_widget', { title: widget.title });
+    if (confirmation.isConfirmed) {
       try {
         // First, delete the widget via the repository
         await this.dashboardBuilderRepository.deleteWidget(widget._id);
@@ -505,21 +508,19 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
             // Also update the widgetSectionList to reflect the change in the UI
             this.widgetSectionList = [...updatedSection.widgetIds];
             
-            await this.notifier.success('Deleted', 'Widget deleted successfully.');
+            await this.notifier.successKey('notifications.widget_deleted');
           }
         }
       } catch (error) {
         console.error("Error deleting widget:", error);
-        await this.notifier.error('Error', 'Error deleting widget. Please try again.');
+        await this.notifier.errorKey('notifications.widget_delete_error', { error: error?.message || '' });
       }
     }
   }
 
   async saveDashboard(): Promise<void> {
     if (!this.dashboard) {
-      this.snackBar.open("No dashboard data to save.", "Close", {
-        duration: 3000,
-      });
+      await this.notifier.toastKey('notifications.no_dashboard_data', 'info', undefined, 3000);
       return;
     }
 
@@ -540,7 +541,9 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
           this.dashboard._id,
           updateInput
         );
-        await this.notifier.success('Saved', 'Dashboard updated successfully!');
+        await this.notifier.successKey('notifications.saved');
+        // Ensure latest server state is reflected immediately
+        await this.loadDashboard(this.dashboard._id);
       } else {
         result = await this.dashboardService.createDashboard(updateInput);
         if (result?._id) {
@@ -549,7 +552,8 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
             "/admin/dashboard-builder",
             this.dashboard._id,
           ]);
-          await this.notifier.success('Created', 'Dashboard created successfully!');
+          await this.notifier.successKey('notifications.created');
+          await this.loadDashboard(this.dashboard._id);
         } else {
           throw new Error("Failed to get ID for new dashboard.");
         }
@@ -557,7 +561,7 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
       console.log("Dashboard save result:", result);
     } catch (error) {
       console.error("Error saving dashboard:", error);
-      await this.notifier.error('Error', 'Error saving dashboard. Please try again.');
+      await this.notifier.errorKey('notifications.save_error', { error: error?.message || '' });
     }
   }
 
@@ -607,7 +611,8 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result?._id) {
+      // Refresh when dialog returns a truthy value (some dialogs return boolean)
+      if (result !== false && this.dashboard?._id) {
         this.loadDashboard(this.dashboard!._id!);
       }
     });
@@ -616,9 +621,9 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
   async addWidget(section: Section): Promise<void> {
     if (!this.dashboard || this.isOpeningDialog) {
       if (this.isOpeningDialog) {
-        await this.notifier.info('Please wait', 'Dialog is opening...', 2000);
+        await this.notifier.infoKey('notifications.dialog_opening', undefined, 2000);
       } else {
-        await this.notifier.error('Cannot add widget', 'Cannot add widget: Dashboard not loaded.');
+        await this.notifier.errorKey('notifications.cannot_add_widget');
       }
       return;
     }
@@ -636,7 +641,8 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       this.isOpeningDialog = false;
-      if (result?._id) {
+      // If dialog returned a truthy result, refresh dashboard
+      if (result !== false && this.dashboard?._id) {
         this.loadDashboard(this.dashboard!._id!);
       }
     });
@@ -648,20 +654,20 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
 
   async regenerateAnalysis(): Promise<void> {
     if (!this.dashboard?._id) {
-      await this.notifier.error('Error', 'No dashboard loaded.');
+      await this.notifier.errorKey('notifications.no_dashboard_data');
       return;
     }
 
     try {
       const regenerationResult = await this.dashboardService.regenerateAutoAnalysisDashboard(this.dashboard._id);
       
-      await this.notifier.success('Success!', regenerationResult || 'Dashboard analysis regenerated successfully!');
+      await this.notifier.successKey('notifications.regenerate_success', undefined, 2000);
       
       // Reload the dashboard to reflect changes
       this.loadDashboard(this.dashboard._id);
     } catch (error) {
       console.error('Error regenerating dashboard analysis:', error);
-      await this.notifier.error('Oops...', 'Error regenerating analysis. Please try again.');
+      await this.notifier.errorKey('notifications.regenerate_error');
     }
   }
 

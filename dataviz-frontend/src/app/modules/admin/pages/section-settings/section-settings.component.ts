@@ -209,7 +209,7 @@ export class SectionSettingsComponent implements OnInit {
         this.dataSource.data = displaySections;
       },
       error: async (error) => {
-        await this.notifier.error('Error', 'Error loading sections: ' + (error?.message || ''));
+        await this.notifier.errorKey('notifications.section_update_error', { error: error?.message || '' });
       }
     });
   }
@@ -248,11 +248,11 @@ export class SectionSettingsComponent implements OnInit {
 
     this.dashboardService.createSection(createData).subscribe({
       next: async (newSection) => {
-        await this.notifier.success('Created', 'Section created successfully');
+        await this.notifier.successKey('notifications.section_created');
         this.loadSections(); // Reload the list
       },
       error: async (error) => {
-        await this.notifier.error('Error', 'Error creating section: ' + (error?.message || ''));
+        await this.notifier.errorKey('notifications.section_create_error', { error: error?.message || '' });
       }
     });
   }
@@ -266,35 +266,28 @@ export class SectionSettingsComponent implements OnInit {
 
     this.dashboardService.updateSection(updateData).subscribe({
       next: async (updatedSection) => {
-        await this.notifier.success('Updated', 'Section updated successfully');
+        await this.notifier.successKey('notifications.section_updated');
         this.loadSections(); // Reload the list
       },
       error: async (error) => {
-        await this.notifier.error('Error', 'Error updating section: ' + (error?.message || ''));
+        await this.notifier.errorKey('notifications.section_update_error', { error: error?.message || '' });
       }
     });
   }
 
   async deleteSection(section: SectionDisplay): Promise<void> {
-    const confirmed = await this.notifier.confirm({
-      title: 'Are you sure?',
-      text: `Are you sure you want to delete section "${section.title}"?`,
-      showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel',
-      confirmButtonColor: '#d33'
-    });
+    const confirmed = await this.notifier.confirmKey('notifications.confirm_delete_section', { title: section.title }, { confirmButtonColor: '#d33' });
 
     if (confirmed && confirmed.isConfirmed) {
       this.dashboardService.deleteSection(section.id).subscribe({
         next: async (success) => {
           if (success) {
-            await this.notifier.success('Deleted', 'Section deleted successfully');
+            await this.notifier.successKey('notifications.section_deleted');
             this.loadSections(); // Reload the list
           }
         },
         error: async (error) => {
-          await this.notifier.error('Error', 'Error deleting section: ' + (error?.message || ''));
+          await this.notifier.errorKey('notifications.section_delete_error', { error: error?.message || '' });
         }
       });
     }
@@ -302,12 +295,12 @@ export class SectionSettingsComponent implements OnInit {
 
   toggleVisibility(section: SectionDisplay): void {
     this.dashboardService.toggleSectionVisibility(section.id).subscribe({
-      next: (updatedSection) => {
-        this.snackBar.open(`Section ${updatedSection.visible ? 'shown' : 'hidden'} successfully`, 'Close', { duration: 3000 });
+      next: async (updatedSection) => {
+        await this.notifier.toastKey(`notifications.section_${updatedSection.visible ? 'shown' : 'hidden'}`, 'success', undefined, 3000);
         this.loadSections(); // Reload the list
       },
-      error: (error) => {
-        this.snackBar.open('Error updating section visibility: ' + error.message, 'Close', { duration: 3000 });
+      error: async (error) => {
+        await this.notifier.errorKey('notifications.section_visibility_error', { error: error.message || '' });
       }
     });
   }

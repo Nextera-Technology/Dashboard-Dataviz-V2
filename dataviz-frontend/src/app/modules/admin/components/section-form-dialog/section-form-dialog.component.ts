@@ -146,7 +146,7 @@ export class SectionFormDialogComponent implements OnInit {
           this.currentSection?._id,
           sectionPayload
         );
-        await this.notifier.success('Section saved', 'Section changes saved successfully!');
+        await this.notifier.successKey('notifications.section_saved');
         this.dialogRef.close(result); // Indicate success
       } else {
         // Add new section
@@ -158,12 +158,12 @@ export class SectionFormDialogComponent implements OnInit {
         };
         // Update existing dashboard with modified sections
         const result = await this.dashboardService.createSection(newSection);
-        await this.notifier.success('Section saved', 'Section changes saved successfully!');
+        await this.notifier.successKey('notifications.section_saved');
         this.dialogRef.close(result); // Indicate success
       }
     } catch (error) {
       console.error("Error saving section:", error);
-      await this.notifier.error('Save failed', 'Failed to save section. Please try again.');
+      await this.notifier.errorKey('notifications.save_failed');
       this.dialogRef.close(false); // Indicate failure
     }
   }

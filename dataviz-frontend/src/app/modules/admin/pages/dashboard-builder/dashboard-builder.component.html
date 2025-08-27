@@ -13,22 +13,22 @@
                     </button>
                 </div>
                 <div class="header-actions flex gap-3">
-                    <button mat-button (click)="viewDashboard()" matTooltip="View Dashboard" [matTooltipClass]="'inter-tooltip'"
+                    <button mat-button (click)="viewDashboard()" [matTooltip]="('admin.dashboardBuilder.view_dashboard' | translate)" [matTooltipClass]="'inter-tooltip'"
                         class="flex items-center space-x-1 px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors duration-200">
                         <mat-icon>visibility</mat-icon>
                         <span>{{ 'admin.dashboardBuilder.view_dashboard' | translate }}</span>
                     </button>
-                    <button mat-button (click)="regenerateAnalysis()" matTooltip="Regenerate Analysis" [matTooltipClass]="'inter-tooltip'"
+                    <button mat-button (click)="regenerateAnalysis()" [matTooltip]="('admin.dashboardBuilder.regenerate_analysis' | translate)" [matTooltipClass]="'inter-tooltip'"
                         class="flex items-center space-x-1 px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors duration-200">
                         <mat-icon>refresh</mat-icon>
                         <span>{{ 'admin.dashboardBuilder.regenerate_analysis' | translate }}</span>
                     </button>
-                    <button mat-button (click)="addSection()" matTooltip="Add New Section" [matTooltipClass]="'inter-tooltip'"
+                    <button mat-button (click)="addSection()" [matTooltip]="('admin.dashboardBuilder.add_section' | translate)" [matTooltipClass]="'inter-tooltip'"
                         class="flex items-center space-x-1 px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors duration-200">
                         <mat-icon>add</mat-icon>
                         <span>{{ 'admin.dashboardBuilder.add_section' | translate }}</span>
                     </button>
-                    <button mat-raised-button color="primary" (click)="saveDashboard()" matTooltip="Save Dashboard" [matTooltipClass]="'inter-tooltip'"
+                    <button mat-raised-button color="primary" (click)="saveDashboard()" [matTooltip]="('admin.dashboardBuilder.save_dashboard' | translate)" [matTooltipClass]="'inter-tooltip'"
                         class="flex items-center space-x-2 px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
                         <mat-icon>save</mat-icon>
                         <span>{{ 'admin.dashboardBuilder.save_dashboard' | translate }}</span>
@@ -72,15 +72,15 @@
                                 <span class="text-sm text-gray-500">{{ section?.widgetIds.length }} widgets</span>
                             </div>
                             <div class="section-actions flex gap-2">
-                                <button mat-icon-button (click)="editSection(section)" matTooltip="Edit Section"
+                                <button mat-icon-button (click)="editSection(section)" [matTooltip]="('admin.dashboardBuilder.edit_section_tooltip' | translate)"
                                     class="text-gray-600 hover:text-blue-600">
                                     <mat-icon>edit</mat-icon>
                                 </button>
-                                <button mat-icon-button (click)="deleteSection(section)" matTooltip="Delete Section"
+                                <button mat-icon-button (click)="deleteSection(section)" [matTooltip]="('admin.dashboardBuilder.delete_section_tooltip' | translate)"
                                     class="text-gray-600 hover:text-red-600">
                                     <mat-icon>delete</mat-icon>
                                 </button>
-                                <button mat-icon-button (click)="addWidget(section)" matTooltip="Add Widget to Section"
+                                <button mat-icon-button (click)="addWidget(section)" [matTooltip]="('admin.dashboardBuilder.add_widget_tooltip' | translate)"
                                     class="text-gray-600 hover:text-green-600">
                                     <mat-icon>add_box</mat-icon>
                                 </button>
@@ -118,15 +118,15 @@
                                     class="widget-header flex justify-between items-center p-4 border-b border-gray-100">
                                     <h3 class="text-base font-medium text-gray-900 truncate">{{ widget.title }}</h3>
                                     <div class="widget-actions flex gap-1">
-                                        <button mat-icon-button matTooltip="Edit Widget" (click)="editWidget(widget)"
+                                        <button mat-icon-button [matTooltip]="('admin.dashboardBuilder.edit_widget_tooltip' | translate)" (click)="editWidget(widget)"
                                             class="text-gray-500 hover:text-blue-600">
                                             <mat-icon>edit</mat-icon>
                                         </button>
-                                        <button mat-icon-button matTooltip="Delete Widget"
+                                        <button mat-icon-button [matTooltip]="('admin.dashboardBuilder.delete_widget_tooltip' | translate)"
                                             (click)="deleteWidget(widget)" class="text-gray-500 hover:text-red-600">
                                             <mat-icon>delete</mat-icon>
                                         </button>
-                                        <button mat-icon-button cdkDragHandle matTooltip="Move Widget"
+                                        <button mat-icon-button cdkDragHandle [matTooltip]="('admin.dashboardBuilder.move_widget_tooltip' | translate)"
                                             class="text-gray-500 hover:text-gray-800 cursor-grab">
                                             <mat-icon>drag_indicator</mat-icon>
                                         </button>
@@ -201,22 +201,22 @@
                                             ) || !widget.chartType"
                                                 class="flex flex-col items-center justify-center h-full text-gray-500 bg-gray-50 p-4 rounded-lg">
                                                 <mat-icon class="text-6xl text-gray-400" svgIcon="mat_solid:widgets">widgets</mat-icon>
-                                                <p class="text-lg font-medium mt-2">No Chart or Data</p>
-                                                <p class="text-sm text-center">Configure widget type or add data.</p>
+                                                <p class="text-lg font-medium mt-2">{{ 'admin.dashboardBuilder.no_chart_or_data' | translate }}</p>
+                                                <p class="text-sm text-center">{{ 'admin.dashboardBuilder.configure_widget_or_data' | translate }}</p>
                                             </div>
                                         </ng-container>
                                     </div>
                                     <div class="widget-info text-sm text-gray-600 flex-shrink-0 pt-2 relative z-10" *ngIf="!isWidgetInfoHidden(widget._id!)">
-                                        <span class="widget-size block mb-2">Size: {{ widget.columnSize }}x{{ widget.rowSize }}</span>
+                                        <span class="widget-size block mb-2">{{ 'admin.dashboardBuilder.size_label' | translate }} {{ widget.columnSize }}x{{ widget.rowSize }}</span>
 
                                         <!-- If 1x1 (including PIE 1x1), use popup link like PIE 1x1 -->
                                         <div *ngIf="isPieChartOneByOne(widget) || isNonPieChartOneByOne(widget); else defaultDataSourceBlock">
                                             <div class="widget-source-container" *ngIf="getUniqueDataSourceNames(widget).length > 0">
-                                                <span class="font-medium">Data Source:</span>
+                                                <span class="font-medium">{{ 'admin.dashboardBuilder.data_source_label' | translate }}</span>
                                                 <span cdkOverlayOrigin #origin="cdkOverlayOrigin"></span>
                                                 <button type="button" (click)="openQuickInfo(origin, widget, $event)"
                                                     class="text-blue-600 hover:text-blue-800 text-xs px-2 relative z-10">
-                                                    Show more...
+                                                    {{ 'admin.dashboardBuilder.show_more' | translate }}
                                                 </button>
 
                                                 <!-- Popover overlay -->
@@ -284,7 +284,7 @@
                                     class="toggle-info-btn"
                                     type="button"
                                     aria-label="Toggle widget details"
-                                    [matTooltip]="isWidgetInfoHidden(widget._id!) ? 'Show details' : 'Hide details'"
+                                    [matTooltip]="isWidgetInfoHidden(widget._id!) ? ('admin.dashboardBuilder.toggle_details_show' | translate) : ('admin.dashboardBuilder.toggle_details_hide' | translate)"
                                     (click)="toggleWidgetInfo(widget._id!)">
                                     <mat-icon class="text-base">{{ isWidgetInfoHidden(widget._id!) ? 'unfold_more' : 'unfold_less' }}</mat-icon>
                                 </button>

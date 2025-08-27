@@ -300,7 +300,7 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
     try {
       this.dashboardTemplates = await this.dashboardService.getDashboardTemplates(type);
     } catch (error) {
-      await this.notifier.error('Error', 'Error loading templates');
+      await this.notifier.errorKey('notifications.error_loading_dashboard');
     }
   }
 
@@ -314,7 +314,7 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
 
 
     if (this.dashboardForm.invalid) {
-      await this.notifier.error('Validation', 'Please fill all required fields correctly.');
+      await this.notifier.errorKey('notifications.save_error');
       return;
     }
 
@@ -328,7 +328,7 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
 
     if (formValue.duplicateEnabled) {
       if (!formValue.templateId) {
-        await this.notifier.error('Validation', 'Please select a template');
+        await this.notifier.errorKey('notifications.save_error');
         return;
       }
 
@@ -344,12 +344,12 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
         console.debug('Duplicate dashboard input:', duplicateInput);
         const result = await this.dashboardService.duplicateDashboardFromOther(duplicateInput);
         console.debug('Duplicate result:', result);
-        await this.notifier.success('Dashboard duplicated', result?.message || 'Dashboard duplicated successfully');
+        await this.notifier.successKey('notifications.created', undefined, 2000);
         // Return the created dashboard id so caller can scroll/select it
         this.dialogRef.close(result?.dashboard?._id || result?._id || true);
       } catch (error) {
         console.error('Error duplicating dashboard:', error);
-        await this.notifier.error('Duplication failed', error?.message || 'Failed to duplicate dashboard. Please try again.');
+        await this.notifier.errorKey('notifications.duplication_failed', { error: error?.message || '' });
         // Do NOT refresh; keep dialog open for user to retry or cancel
       }
     } else {
@@ -374,7 +374,7 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
         } else {
           result = await this.dashboardService.createDashboard(dashboardInput);
         }
-        await this.notifier.success(this.isEditMode ? 'Dashboard updated' : 'Dashboard created', result?.message || (this.isEditMode ? 'Dashboard updated successfully' : 'Dashboard created successfully'));
+        await this.notifier.successKey(this.isEditMode ? 'notifications.saved' : 'notifications.created', undefined, 2000);
         // If create, return the new dashboard id to caller so it can be focused/scrolled
         this.dialogRef.close(result?.dashboard?._id || result?._id || true);
       } catch (error) {

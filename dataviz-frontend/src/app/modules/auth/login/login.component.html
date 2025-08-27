@@ -7,7 +7,7 @@
                 <img src="	https://angular-material.fusetheme.com/images/logo/logo.svg" class="ng-tns-c2381817493-1">
             </div>
             <div class="mt-8 text-4xl font-extrabold leading-tight tracking-tight">
-                Sign In
+                {{ 'auth.login.title' | translate }}
             </div>
             <!-- <div class="mt-0.5 flex items-baseline font-medium">
                 <div class="">Don't have an account?</div>
@@ -17,7 +17,7 @@
                 <div class="fuse-alert-container ng-trigger ng-trigger-fadeIn" style="opacity: 1;"><!----><!---->
                     <div class="fuse-alert-content ifss-box">
                         <div class="fuse-alert-title">
-                        <div class="fuse-alert-message ifuss-text"> Welcome! Please sign in to access your Data Visualization Dashboard and explore insightful analytics.</div>
+                        <div class="fuse-alert-message ifuss-text">{{ 'auth.login.welcome_banner' | translate }}</div>
                         </div>
                     </div>
                     <button mat-icon-button=""
@@ -36,19 +36,19 @@
                 <!-- Email Label -->
 
                 <div class="LoginFields">
-                    <label>Email address *</label>
-                    <input class="form-control login__input" type="text" placeholder="Enter Email" [autofocus]="false"
+                    <label>{{ 'auth.login.email_label' | translate }}</label>
+                    <input class="form-control login__input" type="text" placeholder="{{ 'auth.login.email_placeholder' | translate }}" [autofocus]="false"
                         formControlName="email">
                     <small *ngIf="loginForm.get('email')?.hasError('required')" class="text-red-500">
-                        Email is required
+                        {{ 'auth.login.email_required' | translate }}
                     </small>
                     <small *ngIf="loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched && !loginForm.get('email')?.dirty" class="text-red-500">
-                        Please enter a valid email address
+                        {{ 'auth.login.email_invalid' | translate }}
                     </small>
                 </div>
                 <div class="LoginFields position-relative">
-                    <label>Password *</label>
-                    <input class="form-control login__input" type="password" placeholder="Password" required="true"
+                    <label>{{ 'auth.login.password_label' | translate }}</label>
+                    <input class="form-control login__input" type="password" placeholder="{{ 'auth.login.password_placeholder' | translate }}" required="true"
                         [type]="showPassword ? 'text' : 'password'" formControlName="password">
                     <button mat-icon-button type="button" (click)="togglePasswordVisibility()" matSuffix
                         class="cursor-pointer mt-1 absolute-icon">
@@ -58,7 +58,7 @@
                     </button>
 
                     <small *ngIf="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched" class="text-red-500">
-                        Password is required
+                        {{ 'auth.login.password_required' | translate }}
                     </small>
                 </div>
 
@@ -78,9 +78,9 @@
                     <div class="flex items-center justify-center">
                         <mat-spinner style="color: #fff;" *ngIf="isLoading" diameter="20" class="mr-2"></mat-spinner>
 
-                        <span *ngIf="isLoading">Signing in...</span>
+                        <span *ngIf="isLoading">{{ 'auth.login.signing_in' | translate }}</span>
                     </div>
-                    <span *ngIf="!isLoading">Sign in</span>
+                    <span *ngIf="!isLoading">{{ 'auth.login.sign_in' | translate }}</span>
                 </button>
             </form>
         </div>
@@ -109,10 +109,10 @@
 
             </svg>
             <div class="text-6xl font-bold leading-none text-gray-100">
-                <div>Welcome to</div>
-                <div>your Data Dashboard</div>
+                <div>{{ 'auth.login.right_panel_title_line1' | translate }}</div>
+                <div>{{ 'auth.login.right_panel_title_line2' | translate }}</div>
             </div>
-            <div class="mt-6 text-lg leading-6 tracking-tight text-gray-400"> Our dashboard platform empowers you to create interactive and insightful visualizations. Dive into your data and unlock powerful insights today. </div>
+            <div class="mt-6 text-lg leading-6 tracking-tight text-gray-400">{{ 'auth.login.right_panel_subtitle' | translate }}</div>
         </div>
     </div>
 </div>

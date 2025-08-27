@@ -15,6 +15,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { NotificationService } from '@dataviz/services/notification/notification.service';
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 
 import { AuthService, LoginCredentials } from "../../../core/auth/auth.service";
 
@@ -31,6 +32,7 @@ import { AuthService, LoginCredentials } from "../../../core/auth/auth.service";
     MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    TranslatePipe,
   ],
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.scss"],
@@ -82,12 +84,12 @@ export class LoginComponent implements OnInit {
         const user = await this.authService.userLogin(credentials?.email, credentials?.password);
         this.isLoading = false;
         if (!user || !user.user) {
-          await this.notifier.error('Login failed', `Oops! That email or password doesn’t match. Try again`);
+          await this.notifier.errorKey('notifications.login_failed');
 
-          throw new Error("Oops! That email or password doesn’t match. Try again");
+          throw new Error("Login failed");
         }
 
-        await this.notifier.success('Welcome', `Welcome back, ${user.user.lastName} ${user.user.firstName}!`);
+        await this.notifier.successKey('notifications.welcome_back', { name: `${user.user.lastName} ${user.user.firstName}` });
         this.router.navigate(["/admin/dashboard-list"]);
       } catch (error) {
         this.isLoading = false;
@@ -101,7 +103,7 @@ export class LoginComponent implements OnInit {
           "Oops! That email or password doesn’t match. Try again";
 
         // Show snackbar for additional feedback
-        await this.notifier.error('Login failed', this.errorMessage);
+        await this.notifier.errorKey('notifications.login_failed');
       }
     } else {
       // Mark all fields as touched to show validation errors
@@ -109,7 +111,7 @@ export class LoginComponent implements OnInit {
 
       // Show a consistent login-failed message and snackbar even when the form is invalid
       this.errorMessage = "Oops! That email or password doesn’t match. Try again";
-      await this.notifier.error('Login failed', this.errorMessage);
+      await this.notifier.errorKey('notifications.login_failed');
     }
   }
 

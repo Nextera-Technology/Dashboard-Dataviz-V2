@@ -11,6 +11,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { NotificationService } from '@dataviz/services/notification/notification.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { UserFormDialogComponent, UserFormData } from '../../components/user-form-dialog/user-form-dialog.component';
@@ -361,7 +362,8 @@ export class UserManagementComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private authService: AuthService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private notifier: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -396,7 +398,7 @@ export class UserManagementComponent implements OnInit {
         this.dataSource.data = users;
       },
       error: (error) => {
-        this.snackBar.open('Error loading users: ' + error.message, 'Close', { duration: 3000 });
+        this.notifier.errorKey('notifications.user_create_error', { error: error.message || '' });
       }
     });
   }
@@ -437,11 +439,11 @@ export class UserManagementComponent implements OnInit {
 
     this.authService.createUser(createData).subscribe({
       next: (newUser) => {
-        this.snackBar.open('User created successfully', 'Close', { duration: 3000 });
+        this.notifier.successKey('notifications.user_created');
         this.loadUsers(); // Reload the list
       },
       error: (error) => {
-        this.snackBar.open('Error creating user: ' + error.message, 'Close', { duration: 3000 });
+        this.notifier.errorKey('notifications.user_create_error', { error: error.message || '' });
       }
     });
   }
@@ -456,26 +458,27 @@ export class UserManagementComponent implements OnInit {
 
     this.authService.updateUser(updateData).subscribe({
       next: (updatedUser) => {
-        this.snackBar.open('User updated successfully', 'Close', { duration: 3000 });
+        this.notifier.successKey('notifications.user_updated');
         this.loadUsers(); // Reload the list
       },
       error: (error) => {
-        this.snackBar.open('Error updating user: ' + error.message, 'Close', { duration: 3000 });
+        this.notifier.errorKey('notifications.user_update_error', { error: error.message || '' });
       }
     });
   }
 
-  deleteUser(user: User): void {
-    if (confirm(`Are you sure you want to delete user "${user.name}"?`)) {
+  async deleteUser(user: User): Promise<void> {
+    const confirmation = await this.notifier.confirmKey('notifications.confirm_delete_user', { title: user.name });
+    if (confirmation.isConfirmed) {
       this.authService.deleteUser(user.id).subscribe({
         next: (success) => {
           if (success) {
-            this.snackBar.open('User deleted successfully', 'Close', { duration: 3000 });
+            this.notifier.successKey('notifications.user_deleted');
             this.loadUsers(); // Reload the list
           }
         },
         error: (error) => {
-          this.snackBar.open('Error deleting user: ' + error.message, 'Close', { duration: 3000 });
+          this.notifier.errorKey('notifications.user_delete_error', { error: error.message || '' });
         }
       });
     }
@@ -484,11 +487,11 @@ export class UserManagementComponent implements OnInit {
   toggleUserStatus(user: User): void {
     this.authService.toggleUserStatus(user.id).subscribe({
       next: (updatedUser) => {
-        this.snackBar.open(`User ${updatedUser.status === 'active' ? 'activated' : 'deactivated'} successfully`, 'Close', { duration: 3000 });
+        this.notifier.toastKey('notifications.user_status_changed', 'success', { status: updatedUser.status === 'active' ? 'activated' : 'deactivated' }, 3000);
         this.loadUsers(); // Reload the list
       },
       error: (error) => {
-        this.snackBar.open('Error updating user status: ' + error.message, 'Close', { duration: 3000 });
+        this.notifier.errorKey('notifications.user_status_error', { error: error.message || '' });
       }
     });
   }

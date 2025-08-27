@@ -283,7 +283,7 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
           ? this.currentWidget.visible
           : true,
       ],
-      followUpStage: [this.currentWidget?.followUpStage || null],
+      followUpStage: [this.currentWidget?.followUpStage || null, Validators.required],
       widgetType: [this.currentWidget?.widgetType || "", Validators.required],
       widgetSubType: [this.currentWidget?.widgetSubType || null],
       columnSize: [
@@ -403,6 +403,15 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
     // Update filteredChartTypes for the dialog
     this.filteredChartTypes = matchedChartOptionData?.chartOptions || [];
 
+    // Special-case: for FLOW widget type prefer Sankey if available
+    if (selectedWidgetType === 'FLOW') {
+      const sankeyOption = this.filteredChartTypes.find(c => c.chartType && c.chartType.toLowerCase().includes('sankey'));
+      if (sankeyOption) {
+        this.widgetForm.get("chartType")?.setValue(sankeyOption.chartType);
+        return;
+      }
+    }
+
     // Always update the chartType when widgetType or widgetSubType changes.
     // Behavior: prefer configured defaultChart (if present in options), else pick the first available option.
     if (matchedChartOptionData?.defaultChart && this.filteredChartTypes.some((c) => c.chartType === matchedChartOptionData!.defaultChart)) {
@@ -430,7 +439,7 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.error("Error loading chart type options:", error);
-      await this.notifier.error('Error', 'Error loading chart type options.');
+      await this.notifier.errorKey('notifications.error_loading_dashboard');
     }
   }
 
@@ -439,7 +448,7 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
    */
   async openChartTypeSelection(): Promise<void> {
     if (!this.filteredChartTypes || this.filteredChartTypes.length === 0) {
-      await this.notifier.error('No chart types', 'No chart types available for current widget configuration.');
+      await this.notifier.errorKey('notifications.no_chart_types');
       return;
     }
 
@@ -501,7 +510,7 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
           this.currentWidget?._id,
           widgetPayload
         );
-        await this.notifier.success('Widget saved', 'Widget changes saved successfully!');
+        await this.notifier.successKey('notifications.widget_saved', undefined, 2000);
         this.dialogRef.close(result); // Indicate success
       } else {
         // Add new section
@@ -513,12 +522,12 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
 
         // Update existing dashboard with modified sections
         const result = await this.dashboardService.createWidget(widgetPayload);
-        await this.notifier.success('Widget saved', 'Widget changes saved successfully!');
+        await this.notifier.successKey('notifications.widget_saved', undefined, 2000);
         this.dialogRef.close(result); // Indicate success
       }
     } catch (error) {
       console.error("Error saving widget:", error);
-      await this.notifier.error('Save failed', 'Failed to save widget. Please try again.');
+      await this.notifier.errorKey('notifications.save_error');
       this.dialogRef.close(false); // Indicate failure
     }
   }

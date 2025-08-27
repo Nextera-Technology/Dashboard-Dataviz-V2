@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 
@@ -53,7 +53,7 @@ export class DatavizConfirmationService {
     /**
      * Constructor
      */
-    constructor(private _matDialog: MatDialog) {}
+    constructor(private _matDialog: MatDialog, private _injector: Injector) {}
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
@@ -73,8 +73,9 @@ export class DatavizConfirmationService {
         return new Observable(observer => {
             // Use NotificationService.confirm instead of window.confirm for better UX.
             // Dynamically import NotificationService to avoid circular DI issues in providers.
-            import('@dataviz/services/notification/notification.service').then(({ NotificationService }) => {
-                const svc = new NotificationService();
+            import('@dataviz/services/notification/notification.service').then((mod) => {
+                const NotificationServiceClass = mod.NotificationService;
+                const svc = this._injector.get(NotificationServiceClass);
                 svc.confirm({ title: finalConfig.title, text: finalConfig.message }).then(res => {
                     observer.next(!!res.isConfirmed);
                     observer.complete();
