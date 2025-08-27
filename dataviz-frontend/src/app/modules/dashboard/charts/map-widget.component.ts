@@ -13,6 +13,7 @@ import {
   WidgetAction,
 } from "app/shared/services/dashboard.service";
 import { ActionsButtonsComponent } from "app/shared/components/actions-buttons/actions-buttons.component";
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 
 declare const am5: any;
 declare const am5themes_Animated: any;
@@ -22,7 +23,7 @@ declare const am5geodata_franceLow: any;
 @Component({
   selector: "app-map-widget",
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, ActionsButtonsComponent],
+  imports: [CommonModule, MatButtonModule, MatIconModule, ActionsButtonsComponent, TranslatePipe],
   template: `
     <div
       class="widget-container"
