@@ -10,6 +10,7 @@ import {
   SimpleChanges,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 import * as am5 from "@amcharts/amcharts5";
 import * as am5percent from "@amcharts/amcharts5/percent";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
@@ -25,7 +26,7 @@ interface Widget {
 @Component({
   selector: "app-pie-chart-widget",
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: "./pie-chart-widget.component.html",
   styleUrl: "./pie-chart-widget.component.scss",
 })

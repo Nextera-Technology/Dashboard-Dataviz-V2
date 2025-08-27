@@ -22,6 +22,54 @@
         "title": "Administration",
         "userManagement": "Gestion des utilisateurs"
       },
+      "userManagement": {
+        "page_title": "Gestion des utilisateurs",
+        "subtitle": "Gérez les utilisateurs, les rôles et l'accès",
+        "search_placeholder": "Rechercher des utilisateurs par nom ou e-mail",
+        "add_button": "Ajouter un utilisateur",
+        "add_label": "Ajouter",
+        "table": {
+          "columns": {
+            "name": "Nom",
+            "email": "E-mail",
+            "role": "Rôle",
+            "status": "Statut",
+            "lastLogin": "Dernière connexion",
+            "never": "Jamais",
+            "actions": "Actions"
+          }
+        },
+        "paginator": {
+          "items_per_page": "Éléments par page :"
+        },
+        "roles": {
+          "visitor": "Visiteur",
+          "operator": "Opérateur",
+          "admin": "Admin"
+        },
+        "form": {
+          "create_title": "Créer un nouvel utilisateur",
+          "edit_title": "Modifier l'utilisateur",
+          "subtitle": "Gérez les détails de l'utilisateur et les rôles",
+          "first_name_label": "Prénom",
+          "first_name_placeholder": "Prénom",
+          "last_name_label": "Nom",
+          "last_name_placeholder": "Nom",
+          "email_label": "E-mail",
+          "email_placeholder": "email@example.com",
+          "password_label": "Mot de passe",
+          "password_placeholder": "Saisir le mot de passe",
+          "role_label": "Rôle",
+          "cancel": "Annuler",
+          "create_user": "Créer l'utilisateur",
+          "save_changes": "Enregistrer les modifications"
+        },
+        "tooltips": {
+          "edit": "Modifier l'utilisateur",
+          "toggle_status": "Basculer le statut de l'utilisateur",
+          "delete": "Supprimer l'utilisateur"
+        }
+      },
       "dashboardList": {
         "header_title": "Constructeur de tableaux de bord",
         "header_subtitle": "Créez et gérez vos tableaux de bord interactifs",
@@ -307,12 +355,17 @@
     },
     "shared": {
       "language_changed": "Langue modifiée",
+      "logout": "Se déconnecter",
       "worldMapWidget": {
-        "students_total_label": "Données totales :",
+        "students_total_label": "Nombre total :",
         "no_students": "Aucune donnée d’étudiants",
-        "salary_total_label": "Données totales :",
+        "salary_total_label": "Nombre total :",
         "salary_currency_suffix": "€",
         "no_salary": "Aucune donnée salariale"
+      },
+      "display": {
+        "side": "Côté",
+        "list": "Liste"
       }
     }
   }

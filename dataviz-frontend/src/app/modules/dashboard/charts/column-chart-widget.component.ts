@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { DashboardWidget, WidgetAction } from 'app/shared/services/dashboard.service';
@@ -11,11 +12,11 @@ declare var am5xy: any;
 @Component({
   selector: 'app-column-chart-widget',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, ActionsButtonsComponent],
+  imports: [CommonModule, MatButtonModule, MatIconModule, ActionsButtonsComponent, TranslatePipe],
   template: `
     <div class="chart-box" [ngClass]="{'one-by-one': isOneByOne()}" [style.background-color]="widget?.background || '#ffffff'">
       <!-- Total Data label -->
-      <div class="chart-legend">Total Data : {{ totalData }}</div>
+      <div class="chart-legend">{{ 'shared.worldMapWidget.students_total_label' | translate }} {{ totalData }}</div>
 
       <app-actions-buttons [widget]="widget"></app-actions-buttons>
 

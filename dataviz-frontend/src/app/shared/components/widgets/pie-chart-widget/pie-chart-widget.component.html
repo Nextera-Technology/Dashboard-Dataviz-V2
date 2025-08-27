@@ -1,5 +1,5 @@
 <div class="pie-chart-widget h-full w-full" [style.background-color]="widget?.background || '#ffffff'">
-    <div class="chart-legend">Total Data : {{ totalData }}</div>
+    <div class="chart-legend">{{ 'shared.worldMapWidget.students_total_label' | translate }} {{ totalData }}</div>
     <div *ngIf="data && data.length > 0" [id]="'pie-chart-div-' + widget._id" class="chart-container h-full w-full">
     </div>
 

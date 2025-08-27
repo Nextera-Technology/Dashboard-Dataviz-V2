@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -13,6 +13,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { NotificationService } from '@dataviz/services/notification/notification.service';
 import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
+import { TranslationService } from 'app/shared/services/translation/translation.service';
 
 import { AuthService, User } from '../../core/auth/auth.service';
 import { DashboardService, DashboardData, FilterData, CertificationFilter, SectionFilter, Section } from '../../shared/services/dashboard.service';
@@ -63,6 +64,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   selectedCertificationsCount: number = 0;
   selectedSectionsCount: number = 0;
   dashboardId: string | null = null;
+
+  langMenuOpen = false;
 
   // Filter data
   certifications: CertificationFilter[] = [];
@@ -116,8 +119,33 @@ getChildModel(childName: string): boolean {
     private snackBar: MatSnackBar,
     private notifier: NotificationService,
     private shareDataService: ShareDataService
+    ,
+    public translation: TranslationService
   ) {
     shareDataService.setIsDashboard(true);
+  }
+
+  setLanguage(lang: string): void {
+    this.translation.setLanguage(lang);
+    const msg = this.translation.translate('shared.language_changed') || 'Language changed';
+    this.snackBar.open(msg, 'Close', { duration: 1500 });
+    this.langMenuOpen = false;
+  }
+
+  @HostListener('document:click')
+  closeLangMenu(): void {
+    this.langMenuOpen = false;
+  }
+
+  openLangMenu(event: Event): void {
+    event.stopPropagation();
+    this.langMenuOpen = !this.langMenuOpen;
+  }
+
+  currentFlag(): string {
+    const lang = this.translation.getCurrentLanguage?.() || this.translation.getCurrentLanguage();
+    if (lang === 'fr') return 'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/fr.svg';
+    return 'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/gb.svg';
   }
 
   ngOnInit(): void {

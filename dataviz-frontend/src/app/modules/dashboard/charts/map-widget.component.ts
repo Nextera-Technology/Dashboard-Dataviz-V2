@@ -29,7 +29,7 @@ declare const am5geodata_franceLow: any;
       [style.background-color]="widget?.background || '#ffffff'"
     >
       <!-- Total Data label -->
-      <div class="chart-legend">Total Data : {{ totalData }}</div>
+      <div class="chart-legend">{{ 'shared.worldMapWidget.students_total_label' | translate }} {{ totalData }}</div>
 
       <!-- Action Buttons -->
       <app-actions-buttons [widget]="widget"></app-actions-buttons>

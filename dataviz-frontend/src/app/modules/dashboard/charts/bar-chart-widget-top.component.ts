@@ -22,7 +22,7 @@ declare var am5xy: any;
       class="chart-box relative"
       [style.background-color]="widget?.background || '#ffffff'"
     >
-      <div class="chart-legend">Total Data : {{ totalData }}</div>
+      <div class="chart-legend">{{ 'shared.worldMapWidget.students_total_label' | translate }} {{ totalData }}</div>
       <!-- Action Buttons -->
       <div class="button-container">
         <button class="info-button primary" (click)="onActionClick('info')" title="Information">
@@ -33,10 +33,10 @@ declare var am5xy: any;
         </button>
         <button
           class="info-button secondary"
-          (click)="onActionClick('audience')"
-          title="Audience"
+          (click)="onActionClick('analysis')"
+          title="Analysis"
         >
-          <img [src]="getActionIcon('audience_4644048.png')" alt="Audience" />
+          <img [src]="getActionIcon('audience_4644048.png')" alt="Analysis" />
         </button>
       </div>
 

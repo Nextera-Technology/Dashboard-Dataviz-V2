@@ -34,7 +34,7 @@ interface Widget {
   imports: [CommonModule],
   template: `
     <div class="radar-chart-container">
-      <span class="total-data" *ngIf="totalData > 0">Total Data : {{ totalData }}</span>
+      <span class="total-data" *ngIf="totalData > 0">{{ 'shared.worldMapWidget.students_total_label' | translate }} {{ totalData }}</span>
       <div [id]="chartDivId" class="radar-chart"></div>
     </div>
   `,

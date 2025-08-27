@@ -15,6 +15,7 @@ import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 import { MatIconModule } from "@angular/material/icon"; // For no-data icon
 import { MatButtonModule } from "@angular/material/button";
 import { ActionsButtonsComponent } from "app/shared/components/actions-buttons/actions-buttons.component";
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 
 interface Widget {
   _id?: string;
@@ -35,7 +36,7 @@ interface Widget {
 @Component({
   selector: "app-pictorial-fraction-chart",
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, ActionsButtonsComponent],
+  imports: [CommonModule, MatButtonModule, MatIconModule, ActionsButtonsComponent, TranslatePipe],
   template: `
     <div
       class="chart-box"
@@ -51,7 +52,7 @@ interface Widget {
         <div #chartContainer class="chart-container" [style.height.px]="getChartHeight()"></div>
         <!-- Total Data -->
         <div class="chart-legend">
-          Total Student : {{ data && data.length && data[0].totalData ?? data[0].totalData || 0 }}
+          {{ 'shared.worldMapWidget.students_total_label' | translate }} {{ data && data.length && data[0].totalData ?? data[0].totalData || 0 }}
         </div>
 
         <!-- Manual Legend (sembunyikan untuk tile 1-row agar tidak overflow) -->

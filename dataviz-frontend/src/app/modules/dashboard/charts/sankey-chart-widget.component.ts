@@ -14,6 +14,7 @@ import {
   WidgetAction,
 } from "app/shared/services/dashboard.service";
 import { ActionsButtonsComponent } from "app/shared/components/actions-buttons/actions-buttons.component";
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 
 declare var am5: any;
 declare var am5flow: any;
@@ -21,14 +22,14 @@ declare var am5flow: any;
 @Component({
   selector: "app-sankey-chart-widget",
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, ActionsButtonsComponent],
+  imports: [CommonModule, MatButtonModule, MatIconModule, ActionsButtonsComponent, TranslatePipe],
   template: `
     <div
       class="chart-box"
       [style.background-color]="widget?.background || '#ffffff'"
     >
       <!-- Total Data label -->
-      <div class="chart-legend">Total Data : {{ totalData }}</div>
+      <div class="chart-legend">{{ 'shared.worldMapWidget.students_total_label' | translate }} {{ totalData }}</div>
 
         <!-- Action Buttons -->
       <app-actions-buttons [widget]="widget"></app-actions-buttons>

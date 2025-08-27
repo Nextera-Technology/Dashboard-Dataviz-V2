@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatSortModule, Sort } from '@angular/material/sort';
+import { MatSortModule, MatSort, Sort } from '@angular/material/sort';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,9 +11,12 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { TranslationService } from 'app/shared/services/translation/translation.service';
 import { NotificationService } from '@dataviz/services/notification/notification.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 import { UserFormDialogComponent, UserFormData } from '../../components/user-form-dialog/user-form-dialog.component';
 import { AdminLayoutComponent } from '../../components/admin-layout/admin-layout.component';
 import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../core/auth/auth.service';
@@ -36,21 +39,40 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
     MatInputModule,
     MatChipsModule,
     MatSnackBarModule,
+    TranslatePipe,
     AdminLayoutComponent
+  ],
+  providers: [
+    {
+      provide: MatPaginatorIntl,
+      useFactory: (translation: TranslationService) => {
+        const intl = new MatPaginatorIntl();
+        const setLabels = () => {
+          intl.itemsPerPageLabel = translation.translate('admin.userManagement.paginator.items_per_page') || 'Items per page:';
+          intl.changes.next();
+        };
+        // initial
+        setLabels();
+        // update on language change
+        translation.translationsLoaded$.subscribe(() => setLabels());
+        return intl;
+      },
+      deps: [TranslationService]
+    }
   ],
   template: `
     <app-admin-layout>
       <div class="user-management">
         <div class="um-toolbar">
           <div class="um-title">
-            <h1>User Management</h1>
-            <div class="um-sub">Manage users, roles, and access</div>
+            <h1>{{ 'admin.userManagement.page_title' | translate }}</h1>
+            <div class="um-sub">{{ 'admin.userManagement.subtitle' | translate }}</div>
           </div>
 
           <div class="um-actions">
             <mat-form-field appearance="outline" class="search-field">
               <mat-icon matPrefix>search</mat-icon>
-              <input matInput placeholder="Search users by name or email" (input)="onSearchInput($event)" [value]="searchValue" />
+              <input matInput placeholder="{{ 'admin.userManagement.search_placeholder' | translate }}" (input)="onSearchInput($event)" [value]="searchValue" />
               <button mat-icon-button matSuffix *ngIf="searchValue" aria-label="Clear search" (click)="clearSearch()">
                 <mat-icon>close</mat-icon>
               </button>
@@ -63,9 +85,9 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
               </div>
             </div>
 
-            <button mat-raised-button color="primary" class="add-button" (click)="openAddDialog()">
+            <button mat-raised-button color="primary" class="add-button" (click)="openAddDialog()" matTooltip="{{ 'admin.userManagement.add_button' | translate }}" matTooltipPosition="above">
               <mat-icon>person_add</mat-icon>
-              <span>Add User</span>
+              <span class="add-label">{{ 'admin.userManagement.add_label' | translate }}</span>
             </button>
           </div>
         </div>
@@ -77,19 +99,19 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
 
                 <!-- Name Column -->
                 <ng-container matColumnDef="name">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.userManagement.table.columns.name' | translate }}</th>
                   <td mat-cell *matCellDef="let user">{{user.name}}</td>
                 </ng-container>
 
                 <!-- Email Column -->
                 <ng-container matColumnDef="email">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.userManagement.table.columns.email' | translate }}</th>
                   <td mat-cell *matCellDef="let user">{{user.email}}</td>
                 </ng-container>
 
                 <!-- Role Column -->
                 <ng-container matColumnDef="role">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Role</th>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.userManagement.table.columns.role' | translate }}</th>
                   <td mat-cell *matCellDef="let user">
                     <span class="role-badge" [ngClass]="user.role">{{user.role | titlecase}}</span>
                   </td>
@@ -97,7 +119,7 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
 
                 <!-- Status Column -->
                 <ng-container matColumnDef="status">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.userManagement.table.columns.status' | translate }}</th>
                   <td mat-cell *matCellDef="let user">
                     <span class="status-badge" [ngClass]="user.status">{{user.status | titlecase}}</span>
                   </td>
@@ -105,22 +127,22 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
 
                 <!-- Last Login Column -->
                 <ng-container matColumnDef="lastLogin">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Login</th>
-                  <td mat-cell *matCellDef="let user">{{user.lastLogin ? (user.lastLogin | date:'short') : 'Never'}}</td>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.userManagement.table.columns.lastLogin' | translate }}</th>
+                  <td mat-cell *matCellDef="let user">{{user.lastLogin ? (user.lastLogin | date:'short') : ('admin.userManagement.table.columns.never' | translate)}}</td>
                 </ng-container>
 
                 <!-- Actions Column -->
                 <ng-container matColumnDef="actions">
-                  <th mat-header-cell *matHeaderCellDef>Actions</th>
+                  <th mat-header-cell *matHeaderCellDef>{{ 'admin.userManagement.table.columns.actions' | translate }}</th>
                   <td mat-cell *matCellDef="let user">
                     <div class="actions-cell">
-                      <button mat-icon-button color="primary" aria-label="Edit" (click)="openEditDialog(user)" class="action-btn edit">
+                      <button mat-icon-button color="primary" aria-label="{{ 'admin.userManagement.tooltips.edit' | translate }}" matTooltip="{{ 'admin.userManagement.tooltips.edit' | translate }}" matTooltipPosition="above" (click)="openEditDialog(user)" class="action-btn edit">
                         <mat-icon>edit</mat-icon>
                       </button>
-                      <button mat-icon-button color="accent" aria-label="Toggle status" (click)="toggleUserStatus(user)" class="action-btn toggle">
+                      <button mat-icon-button color="accent" aria-label="{{ 'admin.userManagement.tooltips.toggle_status' | translate }}" matTooltip="{{ 'admin.userManagement.tooltips.toggle_status' | translate }}" matTooltipPosition="above" (click)="toggleUserStatus(user)" class="action-btn toggle">
                         <mat-icon>{{user.status === 'active' ? 'block' : 'check_circle'}}</mat-icon>
                       </button>
-                      <button mat-icon-button color="warn" aria-label="Delete" (click)="deleteUser(user)" class="action-btn delete">
+                      <button mat-icon-button color="warn" aria-label="{{ 'admin.userManagement.tooltips.delete' | translate }}" matTooltip="{{ 'admin.userManagement.tooltips.delete' | translate }}" matTooltipPosition="above" (click)="deleteUser(user)" class="action-btn delete">
                         <mat-icon>delete</mat-icon>
                       </button>
                     </div>
@@ -246,7 +268,7 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
     }
 
     /* Improved Add User button */
-    .add-button {
+    .add-button { 
       border-radius: 10px;
       padding: 10px 16px;
       min-width: 140px;
@@ -258,6 +280,7 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
       font-weight: 700;
       font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
+    
 
     .add-button mat-icon { font-size: 20px; }
 
@@ -352,9 +375,10 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
     }
   `]
 })
-export class UserManagementComponent implements OnInit {
+export class UserManagementComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  
+  @ViewChild(MatSort) sort!: MatSort;
+
   dataSource = new MatTableDataSource<User>();
   displayedColumns: string[] = ['name', 'email', 'role', 'status', 'lastLogin', 'actions'];
   searchValue: string = '';
@@ -372,6 +396,23 @@ export class UserManagementComponent implements OnInit {
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+
+    // Ensure name/email sort case-insensitively (A-Z) and status puts 'active' first
+    this.dataSource.sortingDataAccessor = (item: any, property: string) => {
+      if (!item) return '';
+      switch (property) {
+        case 'name':
+          return (item.name || '').toString().toLowerCase();
+        case 'email':
+          return (item.email || '').toString().toLowerCase();
+        case 'status':
+          // active should come first when sorting ascending
+          return item.status === 'active' ? 0 : 1;
+        default:
+          return item[property];
+      }
+    };
   }
 
   onSearchInput(event: Event): void {

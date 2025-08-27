@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, HostListener } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   FormBuilder,
@@ -16,6 +16,7 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { NotificationService } from '@dataviz/services/notification/notification.service';
 import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
+import { TranslationService } from 'app/shared/services/translation/translation.service';
 
 import { AuthService, LoginCredentials } from "../../../core/auth/auth.service";
 
@@ -48,7 +49,8 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private snackBar: MatSnackBar,
-    private notifier: NotificationService
+    private notifier: NotificationService,
+    public translation: TranslationService
   ) {
     this.loginForm = this.fb.group({
       email: ["", [Validators.required, Validators.email]],
@@ -56,6 +58,35 @@ export class LoginComponent implements OnInit {
     });
 
     this.loginForm.markAsUntouched();
+  }
+
+  langMenuOpen = false;
+
+  setLanguage(lang: string): void {
+    this.translation.setLanguage(lang);
+    const msg = this.translation.translate('shared.language_changed') || 'Language changed';
+    this.snackBar.open(msg, 'Close', { duration: 1500 });
+    this.langMenuOpen = false;
+  }
+
+  getCurrentLanguage(): string {
+    return this.translation.getCurrentLanguage();
+  }
+
+  @HostListener('document:click')
+  closeLangMenu(): void {
+    this.langMenuOpen = false;
+  }
+
+  openLangMenu(event: Event): void {
+    event.stopPropagation();
+    this.langMenuOpen = !this.langMenuOpen;
+  }
+
+  currentFlag(): string {
+    const lang = this.translation.getCurrentLanguage?.() || this.translation.getCurrentLanguage();
+    if (lang === 'fr') return 'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/fr.svg';
+    return 'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/gb.svg';
   }
 
   ngOnInit(): void {

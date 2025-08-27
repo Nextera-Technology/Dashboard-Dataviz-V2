@@ -165,6 +165,59 @@
         "save_changes": "Save Changes",
         "add_widget": "Add Widget"
       },
+      "userManagement": {
+        "page_title": "User Management",
+        "subtitle": "Manage users, roles, and access",
+        "search_placeholder": "Search users by name or email",
+        "add_button": "Add User",
+        "add_label": "Add",
+        "table": {
+          "columns": {
+            "name": "Name",
+            "email": "Email",
+            "role": "Role",
+            "status": "Status",
+            "lastLogin": "Last Login",
+            "never": "Never",
+            "actions": "Actions"
+          }
+        },
+        "paginator": {
+          "items_per_page": "Items per page:"
+        },
+        "roles": {
+          "visitor": "Visitor",
+          "operator": "Operator",
+          "admin": "Admin"
+        },
+        "form": {
+          "create_title": "Create New User",
+          "edit_title": "Edit User",
+          "subtitle": "Manage user details and roles",
+          "first_name_placeholder": "First name",
+          "last_name_placeholder": "Last name",
+          "email_placeholder": "email@example.com",
+          "password_placeholder": "Enter password",
+          "first_name_label": "First name",
+          "first_name_required": "First name is required",
+          "last_name_label": "Last name",
+          "last_name_required": "Last name is required",
+          "email_label": "Email",
+          "email_required": "Email is required",
+          "email_invalid": "Please enter a valid email address",
+          "password_label": "Password",
+          "password_required": "Password is required",
+          "role_label": "Role",
+          "cancel": "Cancel",
+          "create_user": "Create user",
+          "save_changes": "Save changes"
+        },
+        "tooltips": {
+          "edit": "Edit user",
+          "toggle_status": "Toggle user status",
+          "delete": "Delete user"
+        }
+      },
       "followUpStages": {
         "AFTER_FIRST_WAVE": "After first wave",
         "AFTER_SECOND_WAVE": "After second wave",
@@ -309,12 +362,17 @@
     },
     "shared": {
       "language_changed": "Language changed",
+      "logout": "Logout",
       "worldMapWidget": {
         "students_total_label": "Total Data :",
         "no_students": "No Students Data",
         "salary_total_label": "Total Data :",
         "salary_currency_suffix": "€",
         "no_salary": "No Salary Data"
+      },
+      "display": {
+        "side": "Side",
+        "list": "List"
       }
     }
   }

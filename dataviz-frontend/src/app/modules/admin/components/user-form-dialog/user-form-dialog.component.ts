@@ -6,8 +6,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 import { RepositoryFactory } from '@dataviz/repositories/repository.factory';
+import { TranslationService } from 'app/shared/services/translation/translation.service';
 
 export interface UserFormData {
   id?: string;
@@ -19,87 +20,85 @@ export interface UserFormData {
 @Component({
   selector: 'app-user-form-dialog',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule],
+  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, TranslatePipe],
   template: `
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="user-form" autocomplete="off">
-      <div class="header">
-        <h3>{{ data?.id ? 'Edit user' : 'Add user' }}</h3>
-      </div>
-
-      <div class="row">
-        <mat-form-field appearance="outline" class="col">
-          <mat-label>First name</mat-label>
-          <input matInput formControlName="firstName" placeholder="First name" />
-          <mat-error *ngIf="form.controls.firstName.invalid && form.controls.firstName.touched">First name is required</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="col">
-          <mat-label>Last name</mat-label>
-          <input matInput formControlName="lastName" placeholder="Last name" />
-          <mat-error *ngIf="form.controls.lastName.invalid && form.controls.lastName.touched">Last name is required</mat-error>
-        </mat-form-field>
-      </div>
-
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Email</mat-label>
-        <input matInput formControlName="email" placeholder="email@example.com" />
-        <mat-error *ngIf="form.controls.email.invalid && form.controls.email.touched">Enter a valid email</mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="full" *ngIf="!data?.id">
-        <mat-label>Password</mat-label>
-        <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Create a password" />
-        <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()" [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+    <div class="dashboard-form-dialog flex flex-col bg-white rounded-xl border border-gray-200 overflow-y-auto max-w-3xl w-full mx-auto">
+      <!-- Header -->
+      <div class="header flex justify-between items-center px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-slate-50 to-gray-50">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900 mb-1">{{ data?.id ? ('admin.userManagement.form.edit_title' | translate) : ('admin.userManagement.form.create_title' | translate) }}</h2>
+          <p class="text-sm text-gray-500">{{ 'admin.userManagement.form.subtitle' | translate }}</p>
+        </div>
+        <button (click)="onCancel()" class="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
         </button>
-        <mat-error *ngIf="form.controls.password.invalid && form.controls.password.touched">Password is required</mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Role</mat-label>
-        <mat-select formControlName="role">
-          <mat-option *ngFor="let r of roles" [value]="r.roleName">{{ r.roleName }}</mat-option>
-          <mat-option *ngIf="roles.length === 0" value="visitor">Visitor</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <div class="actions">
-        <button mat-stroked-button color="primary" type="button" (click)="onCancel()">Cancel</button>
-        <button mat-flat-button color="accent" type="submit" [disabled]="form.invalid">{{ data?.id ? 'Save changes' : 'Create user' }}</button>
       </div>
-    </form>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex-grow">
+        <div class="py-6 px-8 space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'admin.userManagement.form.first_name_label' | translate }} <span *ngIf="form.get('firstName')?.hasError('required') && form.get('firstName')?.touched" class="text-red-600">*</span></label>
+              <input formControlName="firstName" placeholder="{{ 'admin.userManagement.form.first_name_placeholder' | translate }}" class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200 hover:border-gray-400 text-sm" />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'admin.userManagement.form.last_name_label' | translate }} <span *ngIf="form.get('lastName')?.hasError('required') && form.get('lastName')?.touched" class="text-red-600">*</span></label>
+              <input formControlName="lastName" placeholder="{{ 'admin.userManagement.form.last_name_placeholder' | translate }}" class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200 hover:border-gray-400 text-sm" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'admin.userManagement.form.email_label' | translate }} <span *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="text-red-600">*</span></label>
+            <input formControlName="email" placeholder="{{ 'admin.userManagement.form.email_placeholder' | translate }}" class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200 hover:border-gray-400 text-sm" />
+          </div>
+
+          <div *ngIf="!data?.id">
+            <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'admin.userManagement.form.password_label' | translate }} <span *ngIf="form.get('password')?.hasError('required') && form.get('password')?.touched" class="text-red-600">*</span></label>
+            <input formControlName="password" type="password" placeholder="{{ 'admin.userManagement.form.password_placeholder' | translate }}" class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200 hover:border-gray-400 text-sm" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'admin.userManagement.form.role_label' | translate }}</label>
+            <select formControlName="role" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200 hover:border-gray-400 text-sm bg-white">
+              <option *ngFor="let r of rolesDisplayed" [value]="r.roleName">{{ r.label }}</option>
+              <option *ngIf="rolesDisplayed.length === 0" value="visitor">{{ 'admin.userManagement.roles.visitor' | translate }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="px-8 py-6 bg-gray-50 border-t border-gray-200 flex justify-end space-x-4">
+          <button type="button" (click)="onCancel()" class="px-6 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md">
+            {{ 'admin.userManagement.form.cancel' | translate }}
+          </button>
+          <button type="submit" [disabled]="form.invalid" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium shadow-sm hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none transition-all duration-200">
+            {{ data?.id ? ('admin.userManagement.form.save_changes' | translate) : ('admin.userManagement.form.create_user' | translate) }}
+          </button>
+        </div>
+      </form>
+    </div>
   `,
   styles: [
     `
-    :host { display: block; box-sizing: border-box; }
-    .user-form { width: 720px; max-width: calc(100vw - 32px); padding: 24px; background: #ffffff; border-radius: 12px; box-shadow: 0 12px 36px rgba(2,6,23,0.12); max-height: calc(100vh - 80px); overflow: auto; box-sizing: border-box; }
-    .header h3 { margin:0 0 12px 0; font-size:1.125rem; font-weight:800; }
-    .row { display:flex; gap:16px; margin-bottom:12px; align-items: flex-start; }
-    .col { flex:1; min-width:0; }
-    .full { width:100%; margin-bottom:12px; }
-    mat-form-field { width:100%; }
-    /* ensure input elements have enough height and padding to avoid cropping */
-    input.mat-input-element, textarea.mat-input-element { padding: 12px 14px; height: 44px; line-height: 20px; box-sizing: border-box; }
-    /* Outline field visual improvements */
-    .mat-form-field-appearance-outline .mat-form-field-outline { border-radius: 8px; }
-    mat-form-field.mat-form-field { font-size: 0.95rem; }
-    .actions { display:flex; justify-content:flex-end; gap:12px; margin-top:18px; }
-    button[mat-flat-button] { min-width:140px; }
-    /* make sure dialog container doesn't clip on small screens */
-    :host ::ng-deep .mat-dialog-container { padding: 0 !important; }
-    @media (max-width: 760px) { .user-form { width: calc(100vw - 24px); padding:16px; } .row { flex-direction:column; } }
+    .user-form { width: 520px; max-width: calc(100vw - 48px); }
+    @media (max-width: 520px) { .flex-1 { min-width: 0; } .flex { flex-direction: column; } }
     `
   ]
 })
 export class UserFormDialogComponent implements OnInit {
   form: FormGroup;
   roles: Array<{ id: string; roleName: string }> = [];
+  rolesDisplayed: Array<{ id: string; roleName: string; label: string }> = [];
   private userRepo: any;
-  showPassword = false;
 
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<UserFormDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: UserFormData
+    , private translation: TranslationService
   ) {
     this.form = this.fb.group({
       firstName: [data?.name ? (data.name.split(' ')[0] || '') : '', Validators.required],
@@ -118,15 +117,18 @@ export class UserFormDialogComponent implements OnInit {
       this.userRepo.getAllUserTypes()
         .then((types: any[]) => {
           this.roles = types || [];
+          this.rolesDisplayed = (this.roles || []).map(r => {
+            const key = `admin.userManagement.roles.${(r.roleName || '').toLowerCase()}`;
+            const translated = this.translation.translate(key);
+            const label = (translated && translated !== key) ? translated : ((r.roleName || '') ? (r.roleName.charAt(0).toUpperCase() + r.roleName.slice(1).toLowerCase()) : '');
+            return { id: r.id, roleName: r.roleName, label };
+          });
         })
         .catch(() => {
           this.roles = [{ id: 'visitor', roleName: 'Visitor' }, { id: 'operator', roleName: 'Operator' }];
+          this.rolesDisplayed = this.roles.map(r => ({ id: r.id, roleName: r.roleName, label: r.roleName }));
         });
     }
-  }
-
-  togglePasswordVisibility() {
-    this.showPassword = !this.showPassword;
   }
 
   onSubmit() {

@@ -9,7 +9,7 @@
         [ngClass]="{'one-by-two': isOneByTwo}"
         [style.background-color]="widget?.background || '#ffffff'">
        <div class="flex items-center justify-between px-4 pt-4 flex-shrink-0">
-            <div class="chart-legend flex-shrink-0">Total Data : {{ totalStudentData }}</div>
+            <div class="chart-legend flex-shrink-0">{{ 'shared.worldMapWidget.students_total_label' | translate }} {{ totalStudentData }}</div>
             <div class="flex-1 flex justify-center">
             <h3 class="text-lg font-semibold border-b-0 text-center text-gray-800 m-0 mt-4">{{ widget?.name }}</h3>
             </div>
@@ -54,7 +54,7 @@
         [ngClass]="{'one-by-two': isOneByTwo}"
         [style.background-color]="widget?.background || '#ffffff'">
         <div class="flex items-center justify-between px-4 pt-4 flex-shrink-0">
-            <div class="chart-legend flex-shrink-0">Total Data : {{ totalSalaryData }}</div>
+            <div class="chart-legend flex-shrink-0">{{ 'shared.worldMapWidget.salary_total_label' | translate }} {{ totalSalaryData }}</div>
             <div class="flex-1 flex justify-center">
             <h3 class="text-lg font-semibold border-b-0 text-center text-gray-800 m-0  mt-4">{{ widget?.name }}</h3>
             </div>

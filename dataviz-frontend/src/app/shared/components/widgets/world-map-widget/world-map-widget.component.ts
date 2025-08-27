@@ -8,6 +8,7 @@ import {
   Input,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 import { MatIconModule } from "@angular/material/icon"; // For the no-data overlay icon
 import { MatButtonModule } from "@angular/material/button";
 import { ActionsButtonsComponent } from 'app/shared/components/actions-buttons/actions-buttons.component';
@@ -20,7 +21,7 @@ import * as am5geodata_franceLow from "@amcharts/amcharts5-geodata/franceLow";
 @Component({
   selector: "app-world-map-widget",
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, ActionsButtonsComponent],
+  imports: [CommonModule, MatIconModule, MatButtonModule, ActionsButtonsComponent, TranslatePipe],
   templateUrl: "./world-map-widget.component.html",
   styleUrl: "./world-map-widget.component.scss",
 })

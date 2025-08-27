@@ -369,22 +369,22 @@ button, .mat-button, .mat-mdc-button, .btn-primary, .btn-secondary, .dataviz-btn
 
 /* Audience-specific tuning: same idle circle but make its icon more faded
    so the Audience button looks visually lighter than the others while hover stays purple. */
-.info-button[title="Audience"],
-button.info-button[title="Audience"] {
+.info-button[title="Analysis"],
+button.info-button[title="Analysis"] {
     background-color: rgba(16, 24, 32, 0.04) !important; /* keep subtle gray circle */
 }
 
-.info-button[title="Audience"] img,
-button.info-button[title="Audience"] img {
+.info-button[title="Analysis"] img,
+button.info-button[title="Analysis"] img {
     /* lower default icon opacity for Audience specifically */
     filter: grayscale(100%) opacity(0.35) !important;
     transition: filter 0.18s ease, opacity 0.18s ease, transform 0.18s ease;
 }
 
-.info-button[title="Audience"]:hover img,
-button.info-button[title="Audience"]:hover img,
-.info-button[title="Audience"]:focus img,
-button.info-button[title="Audience"]:focus img {
+.info-button[title="Analysis"]:hover img,
+button.info-button[title="Analysis"]:hover img,
+.info-button[title="Analysis"]:focus img,
+button.info-button[title="Analysis"]:focus img {
     /* on hover/focus, icon becomes dark like others */
     filter: brightness(0) opacity(1) !important;
 }

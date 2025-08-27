@@ -157,7 +157,7 @@ export class DashboardService {
             actions: [
               { id: '1', type: 'primary', title: 'Info', label: 'Info', icon: 'paragraph.png', action: 'info' },
               { id: '2', type: 'secondary', title: 'Export', label: 'Export', icon: 'excel.png', action: 'export' },
-              { id: '3', type: 'secondary', title: 'Audience', label: 'Audience', icon: 'audience_4644048.png', action: 'audience' }
+              { id: '3', type: 'secondary', title: 'Analysis', label: 'Analysis', icon: 'audience_4644048.png', action: 'analysis' }
             ]
           },
           {
@@ -176,7 +176,7 @@ export class DashboardService {
             actions: [
               { id: '1', type: 'primary', title: 'Info', label: 'Info', icon: 'paragraph.png', action: 'info' },
               { id: '2', type: 'secondary', title: 'Export', label: 'Export', icon: 'excel.png', action: 'export' },
-              { id: '3', type: 'secondary', title: 'Audience', label: 'Audience', icon: 'audience_4644048.png', action: 'audience' }
+              { id: '3', type: 'secondary', title: 'Analysis', label: 'Analysis', icon: 'audience_4644048.png', action: 'analysis' }
             ]
           },
           {
@@ -195,7 +195,7 @@ export class DashboardService {
             actions: [
               { id: '1', type: 'primary', title: 'Info', label: 'Info', icon: 'paragraph.png', action: 'info' },
               { id: '2', type: 'secondary', title: 'Export', label: 'Export', icon: 'excel.png', action: 'export' },
-              { id: '3', type: 'secondary', title: 'Audience', label: 'Audience', icon: 'audience_4644048.png', action: 'audience' }
+              { id: '3', type: 'secondary', title: 'Analysis', label: 'Analysis', icon: 'audience_4644048.png', action: 'analysis' }
             ]
           },
           {
@@ -214,7 +214,7 @@ export class DashboardService {
             actions: [
               { id: '1', type: 'primary', title: 'Info', label: 'Info', icon: 'paragraph.png', action: 'info' },
               { id: '2', type: 'secondary', title: 'Export', label: 'Export', icon: 'excel.png', action: 'export' },
-              { id: '3', type: 'secondary', title: 'Audience', label: 'Audience', icon: 'audience_4644048.png', action: 'audience' }
+              { id: '3', type: 'secondary', title: 'Analysis', label: 'Analysis', icon: 'audience_4644048.png', action: 'analysis' }
             ]
           }
         ]
@@ -246,7 +246,7 @@ export class DashboardService {
             actions: [
               { id: '1', type: 'primary', title: 'Info', label: 'Info', icon: 'paragraph.png', action: 'info' },
               { id: '2', type: 'secondary', title: 'Export', label: 'Export', icon: 'excel.png', action: 'export' },
-              { id: '3', type: 'secondary', title: 'Audience', label: 'Audience', icon: 'audience_4644048.png', action: 'audience' }
+              { id: '3', type: 'secondary', title: 'Analysis', label: 'Analysis', icon: 'audience_4644048.png', action: 'analysis' }
             ]
           },
           {
@@ -269,7 +269,7 @@ export class DashboardService {
             actions: [
               { id: '1', type: 'primary', title: 'Info', label: 'Info', icon: 'paragraph.png', action: 'info' },
               { id: '2', type: 'secondary', title: 'Export', label: 'Export', icon: 'excel.png', action: 'export' },
-              { id: '3', type: 'secondary', title: 'Audience', label: 'Audience', icon: 'audience_4644048.png', action: 'audience' }
+              { id: '3', type: 'secondary', title: 'Analysis', label: 'Analysis', icon: 'audience_4644048.png', action: 'analysis' }
             ]
           }
         ]
@@ -305,7 +305,7 @@ export class DashboardService {
             actions: [
               { id: '1', type: 'primary', title: 'Info', label: 'Info', icon: 'paragraph.png', action: 'info' },
               { id: '2', type: 'secondary', title: 'Export', label: 'Export', icon: 'excel.png', action: 'export' },
-              { id: '3', type: 'secondary', title: 'Audience', label: 'Audience', icon: 'audience_4644048.png', action: 'audience' }
+              { id: '3', type: 'secondary', title: 'Analysis', label: 'Analysis', icon: 'audience_4644048.png', action: 'analysis' }
             ]
           },
           {
@@ -330,7 +330,7 @@ export class DashboardService {
             actions: [
               { id: '1', type: 'primary', title: 'Info', label: 'Info', icon: 'paragraph.png', action: 'info' },
               { id: '2', type: 'secondary', title: 'Export', label: 'Export', icon: 'excel.png', action: 'export' },
-              { id: '3', type: 'secondary', title: 'Audience', label: 'Audience', icon: 'audience_4644048.png', action: 'audience' }
+              { id: '3', type: 'secondary', title: 'Analysis', label: 'Analysis', icon: 'audience_4644048.png', action: 'analysis' }
             ]
           }
         ]

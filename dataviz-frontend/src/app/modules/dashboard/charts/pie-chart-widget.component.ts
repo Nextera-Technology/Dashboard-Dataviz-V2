@@ -14,6 +14,7 @@ import {
   WidgetAction,
 } from "app/shared/services/dashboard.service";
 import { ActionsButtonsComponent } from "app/shared/components/actions-buttons/actions-buttons.component";
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 
 declare var am5: any;
 declare var am5percent: any;
@@ -21,7 +22,7 @@ declare var am5percent: any;
 @Component({
   selector: "app-pie-chart-widget",
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, ActionsButtonsComponent],
+  imports: [CommonModule, MatButtonModule, MatIconModule, ActionsButtonsComponent, TranslatePipe],
   template: `
     <div
       class="chart-box"
@@ -38,14 +39,14 @@ declare var am5percent: any;
 
         <!-- Manual Legend -->
         <div class="chart-legend" >
-          Total Data Used : {{ data && data.length && data[0].totalData ?? data[0].totalData || 0 }}
+          {{ 'shared.worldMapWidget.students_total_label' | translate }} {{ data && data.length && data[0].totalData ?? data[0].totalData || 0 }}
         </div>
       </div>
       
       <!-- Buttons to toggle display mode -->
       <div class="display-mode-toggle">
-        <button (click)="setDisplayMode('side')" [class.active]="displayMode === 'side'">Side</button>
-        <button (click)="setDisplayMode('list')" [class.active]="displayMode === 'list'">List</button>
+        <button (click)="setDisplayMode('side')" [class.active]="displayMode === 'side'">{{ 'shared.display.side' | translate }}</button>
+        <button (click)="setDisplayMode('list')" [class.active]="displayMode === 'list'">{{ 'shared.display.list' | translate }}</button>
       </div>
     </div>
   `,
@@ -240,10 +241,10 @@ export class PieChartWidgetComponent implements OnInit, OnDestroy {
     {
       id: "3";
       type: "secondary";
-      title: "Audience";
-      label: "Audience";
+      title: "Analysis";
+      label: "Analysis";
       icon: "audience_4644048.png";
-      action: "audience";
+      action: "analysis";
     },
   ];
   private root: any;
