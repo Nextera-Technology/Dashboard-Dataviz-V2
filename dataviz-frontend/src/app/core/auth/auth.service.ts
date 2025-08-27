@@ -8,7 +8,7 @@ export interface User {
   name: string;
   email: string;
   password: string;
-  role: "operator" | "visitor";
+  role: string;
   status?: "active" | "inactive";
   lastLogin?: Date;
 }
@@ -22,14 +22,15 @@ export interface CreateUserData {
   name: string;
   email: string;
   password: string;
-  role: "operator" | "visitor";
+  // frontend role label — will be sent as roleName to backend
+  role?: string;
 }
 
 export interface UpdateUserData {
   id: string;
   name: string;
   email: string;
-  role: "operator" | "visitor";
+  role?: string;
 }
 
 @Injectable({
@@ -195,21 +196,60 @@ export class AuthService {
   createUser(userData: CreateUserData): Observable<User> {
     if (this.userRepository?.createUser) {
       return new Observable<User>((subscriber) => {
-        this.userRepository
-          .createUser(userData)
-          .then((res: any) => {
-            // backend may return created id or user object
-            const created = res?.createUser || res || {};
-            subscriber.next({ id: created._id || created.id || Date.now().toString(), ...userData, status: 'active' } as User);
-            subscriber.complete();
-          })
-          .catch((err: any) => subscriber.error(err));
+        // Prepare payload to match backend CreateUserInput: firstName, lastName, roleName (or userTypeIds)
+        const parts = (userData.name || '').split(' ');
+        const firstName = parts.shift() || '';
+        const lastName = parts.join(' ') || '';
+
+        const payload: any = {
+          firstName,
+          lastName,
+          email: userData.email,
+          password: userData.password,
+          name: `${firstName}${lastName ? ' ' + lastName : ''}`.trim(),
+        };
+
+        // send role label as roleName (backend accepts roleName); do not send `role` field
+        // Resolve userTypeIds by querying available user types, then create
+        if (userData.role && this.userRepository?.getAllUserTypes) {
+          this.userRepository.getAllUserTypes()
+            .then((types: any[]) => {
+              const match = types.find(t => (t.roleName || '').toLowerCase() === (userData.role || '').toLowerCase());
+              if (match) {
+                payload.userTypeIds = [match.id];
+                payload.roleName = match.roleName || userData.role;
+              } else if (types.length > 0) {
+                // fallback to first available type if exact match not found
+                payload.userTypeIds = [types[0].id];
+                payload.roleName = types[0].roleName || userData.role; // keep roleName too
+              }
+
+              return this.userRepository.createUser(payload);
+            })
+            .then((res: any) => {
+              const created = res?.createUser || res || {};
+              subscriber.next({ id: created._id || created.id || Date.now().toString(), name: `${firstName}${lastName ? ' ' + lastName : ''}`.trim(), email: userData.email, role: userData.role || 'visitor', password: userData.password, status: 'active' } as User);
+              subscriber.complete();
+            })
+            .catch((err: any) => subscriber.error(err));
+        } else {
+          if (userData.role) payload.roleName = userData.role;
+          this.userRepository
+            .createUser(payload)
+            .then((res: any) => {
+              const created = res?.createUser || res || {};
+              subscriber.next({ id: created._id || created.id || Date.now().toString(), name: `${firstName}${lastName ? ' ' + lastName : ''}`.trim(), email: userData.email, role: userData.role || 'visitor', password: userData.password, status: 'active' } as User);
+              subscriber.complete();
+            })
+            .catch((err: any) => subscriber.error(err));
+        }
       });
     }
 
     const newUser: User = {
       id: Date.now().toString(),
       ...userData,
+      role: userData.role || 'visitor',
       status: "active",
     };
 
@@ -223,14 +263,45 @@ export class AuthService {
   updateUser(userData: UpdateUserData): Observable<User> {
     if (this.userRepository?.updateUser) {
       return new Observable<User>((subscriber) => {
-        this.userRepository
-          .updateUser(userData.id, userData)
-          .then((res: any) => {
-            // map response if necessary
-            subscriber.next({ ...userData } as any);
-            subscriber.complete();
-          })
-          .catch((err: any) => subscriber.error(err));
+        // Prepare payload similar to createUser: firstName, lastName, name, email
+        const parts = (userData.name || '').split(' ');
+        const firstName = parts.shift() || '';
+        const lastName = parts.join(' ') || '';
+        const payload: any = {
+          firstName,
+          lastName,
+          name: `${firstName}${lastName ? ' ' + lastName : ''}`.trim(),
+          email: userData.email,
+        };
+
+        // Resolve userTypeIds if role provided
+        const doUpdate = (resolvedPayload: any) => {
+          return this.userRepository.updateUser(userData.id, resolvedPayload);
+        };
+
+        if (userData.role && this.userRepository?.getAllUserTypes) {
+          this.userRepository.getAllUserTypes()
+            .then((types: any[]) => {
+              const match = types.find(t => (t.roleName || '').toLowerCase() === (userData.role || '').toLowerCase());
+              if (match) {
+                payload.userTypeIds = [match.id];
+                payload.roleName = match.roleName || userData.role;
+              }
+              return doUpdate(payload);
+            })
+            .then((res: any) => {
+              subscriber.next({ ...userData } as any);
+              subscriber.complete();
+            })
+            .catch((err: any) => subscriber.error(err));
+        } else {
+          doUpdate(payload)
+            .then((res: any) => {
+              subscriber.next({ ...userData } as any);
+              subscriber.complete();
+            })
+            .catch((err: any) => subscriber.error(err));
+        }
       });
     }
 

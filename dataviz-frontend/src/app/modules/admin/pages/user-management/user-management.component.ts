@@ -396,6 +396,9 @@ export class UserManagementComponent implements OnInit {
     this.authService.getAllUsers().subscribe({
       next: (users) => {
         this.dataSource.data = users;
+        // Ensure table detects the change (MatTableDataSource sometimes needs this)
+        try { this.dataSource._updateChangeSubscription(); } catch (e) { /* ignore */ }
+        if (!this.dataSource.paginator && this.paginator) this.dataSource.paginator = this.paginator;
       },
       error: (error) => {
         this.notifier.errorKey('notifications.user_create_error', { error: error.message || '' });
@@ -405,7 +408,8 @@ export class UserManagementComponent implements OnInit {
 
   openAddDialog(): void {
     const dialogRef = this.dialog.open(UserFormDialogComponent, {
-      width: '500px',
+      width: '720px',
+      maxWidth: '95vw',
       data: { name: '', email: '', role: 'visitor' }
     });
 
@@ -418,7 +422,8 @@ export class UserManagementComponent implements OnInit {
 
   openEditDialog(user: User): void {
     const dialogRef = this.dialog.open(UserFormDialogComponent, {
-      width: '500px',
+      width: '720px',
+      maxWidth: '95vw',
       data: { ...user }
     });
 
@@ -488,7 +493,15 @@ export class UserManagementComponent implements OnInit {
     this.authService.toggleUserStatus(user.id).subscribe({
       next: (updatedUser) => {
         this.notifier.toastKey('notifications.user_status_changed', 'success', { status: updatedUser.status === 'active' ? 'activated' : 'deactivated' }, 3000);
-        this.loadUsers(); // Reload the list
+        // Optimistically update the table row so UI reflects change immediately
+        try {
+          const current = this.dataSource.data || [];
+          this.dataSource.data = current.map(u => u.id === updatedUser.id ? { ...u, ...updatedUser } : u);
+          try { this.dataSource._updateChangeSubscription(); } catch (e) { /* ignore */ }
+        } catch (e) {
+          // fallback to full reload
+          this.loadUsers();
+        }
       },
       error: (error) => {
         this.notifier.errorKey('notifications.user_status_error', { error: error.message || '' });

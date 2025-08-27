@@ -12,6 +12,8 @@ import {
   gqlUpdateUser,
 } from '@dataviz/graphql/mutations/users/users.mutation';
 import { gqlGetAllUsers } from '@dataviz/graphql/queries/users/users.query';
+import { gqlGetAllUserType } from '@dataviz/graphql/queries/users/users.query';
+import { gqlGetOneUser } from '@dataviz/graphql/queries/users/users.query';
 
 export class UsersRepository {
   _client = inject(GraphqlClient);
@@ -140,9 +142,68 @@ export class UsersRepository {
     }
   }
 
+  async getAllUserTypes() {
+    const query = gqlGetAllUserType;
+    try {
+      const result = await this._client.GraphqlQuery(query, {} as any);
+      const types = result?.getAllUserType?.data || [];
+      return types.map((t: any) => ({ id: t._id, roleName: t.roleName }));
+    } catch (error) {
+      throw {
+        message: 'Failed to fetch user types.',
+        originalError: error,
+        queryOrMutation: query,
+      };
+    }
+  }
+
+  async getOneUser(id: string) {
+    const query = gqlGetOneUser;
+    const variables = { id };
+    try {
+      const result = await this._client.GraphqlQuery(query, variables);
+      return result?.getOneUser || null;
+    } catch (error) {
+      throw {
+        message: 'Failed to fetch one user.',
+        originalError: error,
+        queryOrMutation: query,
+        input: JSON.stringify(variables),
+      };
+    }
+  }
+
   async updateUser(id: string, input: any) {
     const mutation = gqlUpdateUser;
-    const variables = { id, input };
+    // Ensure required fields exist: if missing name, roleName, or userTypeIds, fetch current record and merge
+    let finalInput = { ...input };
+    if (!finalInput.name || !finalInput.roleName || !finalInput.userTypeIds) {
+      try {
+        const existing = await this.getOneUser(id);
+        if (existing) {
+          finalInput = {
+            name: finalInput.name || existing.name || `${existing.firstName || ''}${existing.lastName ? ' ' + existing.lastName : ''}`.trim(),
+            roleName: finalInput.roleName || existing.roleName || (Array.isArray(existing.userTypeIds) && existing.userTypeIds[0]?.roleName) || undefined,
+            // ensure userTypeIds is present when backend expects it
+            userTypeIds: finalInput.userTypeIds || (existing.userTypeIds ? existing.userTypeIds.map((t: any) => (t._id || t)) : undefined) || undefined,
+            ...finalInput,
+          };
+
+          // Ensure firstName and lastName fields exist for validation
+          if (!finalInput.firstName || finalInput.firstName === '') {
+            const parts = (finalInput.name || '').split(' ').filter(Boolean);
+            finalInput.firstName = parts.shift() || existing.firstName || '';
+            finalInput.lastName = finalInput.lastName || parts.join(' ') || existing.lastName || '';
+          } else if (!finalInput.lastName) {
+            finalInput.lastName = existing.lastName || '';
+          }
+        }
+      } catch (e) {
+        // ignore — we'll try update with provided input and let server respond
+      }
+    }
+
+    const variables = { id, input: finalInput };
     try {
       const result = await this._client.GraphqlMutate(mutation, variables);
       return result?.updateUser;
@@ -162,12 +223,78 @@ export class UsersRepository {
     try {
       const result = await this._client.GraphqlMutate(mutation, variables);
       return result?.deleteUser;
-    } catch (error) {
+    } catch (error: any) {
+      // If backend doesn't expose deleteUser mutation (validation failed), fallback to soft-delete via updateUser
+      const msg = (error?.message || error?.originalError?.message || '').toString();
+      if (msg.includes('Cannot query field "deleteUser"') || (error?.extensions && error.extensions.code === 'GRAPHQL_VALIDATION_FAILED')) {
+        try {
+          const updateMutation = gqlUpdateUser;
+          const updateVars = { id, input: { isActive: false } };
+          const updateResult = await this._client.GraphqlMutate(updateMutation, updateVars);
+          return updateResult?.updateUser || true;
+        } catch (uerr) {
+          throw {
+            message: 'Failed to soft-delete user via updateUser fallback.',
+            originalError: uerr,
+            queryOrMutation: gqlUpdateUser,
+            input: JSON.stringify({ id, input: { isActive: false } }),
+          };
+        }
+      }
+
       throw {
         message: 'Failed to delete user.',
         originalError: error,
         queryOrMutation: mutation,
         input: JSON.stringify(variables),
+      };
+    }
+  }
+
+  /**
+   * Toggle user active status. If backend has a direct toggle, use it; otherwise use updateUser.
+   */
+  async toggleUserStatus(id: string) {
+    try {
+      const users = await this.getAllUsers();
+      const u = users.find((x: any) => x.id === id);
+      if (!u) throw new Error('User not found');
+
+      const newIsActive = !(u.status === 'active');
+      // call updateUser to set isActive flag — include required roleName and userTypeIds if available
+      const updatePayload: any = { isActive: newIsActive };
+      // include name (required by backend) preferably from mapped user, fallback to first/last
+      updatePayload.name = u.name || `${u.firstName || ''}${u.lastName ? ' ' + u.lastName : ''}`.trim();
+      // backend requires roleName in UpdateUserInput; provide current role if available
+      if (u.role) updatePayload.roleName = u.role;
+      // if repository getAllUsers included userTypeIds raw, include them; otherwise leave out
+      if ((u as any).userTypeIds) updatePayload.userTypeIds = (u as any).userTypeIds;
+
+      const result = await this.updateUser(id, updatePayload);
+
+      const updatedRaw = result?.updateUser || result || {};
+
+      const toId = (val: any) => {
+        if (!val) return undefined;
+        if (typeof val === 'string') return val;
+        if (val.$oid) return val.$oid;
+        if (val._id) return val._id;
+        return undefined;
+      };
+
+      const updated = {
+        id: toId(updatedRaw._id) || id,
+        name: updatedRaw.name || `${updatedRaw.firstName || ''}${updatedRaw.lastName ? ' ' + updatedRaw.lastName : ''}`.trim(),
+        email: updatedRaw.email,
+        role: updatedRaw.roleName || (Array.isArray(updatedRaw.userTypeIds) && updatedRaw.userTypeIds[0]?.roleName) || u.role,
+        status: updatedRaw.isActive === false ? 'inactive' : 'active'
+      } as any;
+
+      return updated;
+    } catch (error) {
+      throw {
+        message: 'Failed to toggle user status.',
+        originalError: error,
       };
     }
   }

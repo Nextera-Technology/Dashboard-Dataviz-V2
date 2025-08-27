@@ -20,6 +20,16 @@ export const gqlUpdateUser = gql`
   mutation UpdateUser($id: String!, $input: UpdateUserInput!) {
     updateUser(_id: $id, input: $input) {
       _id
+      email
+      firstName
+      lastName
+      name
+      isActive
+      status
+      userTypeIds {
+        _id
+        roleName
+      }
     }
   }
 `;
