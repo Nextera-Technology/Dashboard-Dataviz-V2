@@ -9,34 +9,19 @@ export const gqlGetAllDashboardTable = gql`
       data {
         _id
         name
-        sectionIds {
-          name
-          _id
-          background
-          title
-          widgetIds {
-            _id
-            chartType
-            data
-            name
-            title
-            visible
-            widgetType
-            widgetSubType
-            followUpStage
-            columnSize
-            rowSize
-            background
-            status
-          }
-          status
-        }
         sources {
           certification
           classes
         }
         title
         status
+        duplicationType
+        dashboardOriginId {
+          _id
+          name
+          title
+          type
+        }
       }
     }
   }
@@ -48,34 +33,19 @@ export const gqlGetAllDashboard = gql`
       data {
         _id
         name
-        sectionIds {
-          name
-          _id
-          background
-          title
-          widgetIds {
-            _id
-            chartType
-            data
-            name
-            title
-            visible
-            widgetType
-            followUpStage
-            widgetSubType
-            columnSize
-            rowSize
-            background
-            status
-          }
-          status
-        }
         sources {
           certification
           classes
         }
         title
         status
+        duplicationType
+        dashboardOriginId {
+          _id
+          name
+          title
+          type
+        }
       }
     }
   }

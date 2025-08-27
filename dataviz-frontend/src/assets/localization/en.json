@@ -1,0 +1,181 @@
+{
+    "auth": {
+      "login": {
+        "title": "Sign In",
+        "welcome_banner": "Welcome! Please sign in to access your Data Visualization Dashboard and explore insightful analytics.",
+        "email_label": "Email address *",
+        "email_placeholder": "Enter Email",
+        "email_required": "Email is required",
+        "email_invalid": "Please enter a valid email address",
+        "password_label": "Password *",
+        "password_placeholder": "Password",
+        "password_required": "Password is required",
+        "signing_in": "Signing in...",
+        "sign_in": "Sign in",
+        "right_panel_title_line1": "Welcome to",
+        "right_panel_title_line2": "your Data Dashboard",
+        "right_panel_subtitle": "Our dashboard platform empowers you to create interactive and insightful visualizations. Dive into your data and unlock powerful insights today."
+      }
+    },
+    "admin": {
+      "layout": {
+        "title": "Administration",
+        "userManagement": "User Management"
+      },
+      "dashboardList": {
+        "header_title": "Dashboard Builder",
+        "header_subtitle": "Create and manage your interactive dashboards",
+        "create_button": "Create Dashboard",
+        "active_badge": "Active",
+        "data_sources": "Data Sources",
+        "no_classes": "No classes",
+        "expand_less": "Expand less...",
+        "expand_more": "Expand more...",
+        "show_less": "Show Less",
+        "show_more": "Show More",
+        "no_sources_defined": "No sources defined.",
+        "no_sources_configured": "No data sources configured",
+        "view": "View",
+        "edit": "Edit",
+        "manage": "Manage",
+        "delete": "Delete",
+        "empty_title": "No Dashboards Yet",
+        "empty_description": "Create your first dashboard to get started with data visualization.",
+        "empty_cta": "Create Your First Dashboard"
+      },
+      "dashboardFormDialog": {
+        "edit_title": "Edit Dashboard",
+        "create_title": "Create New Dashboard",
+        "subtitle": "Configure your dashboard settings and data sources",
+        "basic_info": "Basic Information",
+        "name_label": "Dashboard Name (Slug)",
+        "name_required": "Name is required",
+        "title_label": "Dashboard Title",
+        "title_required": "Title is required",
+        "sources_header": "Data Sources",
+        "sources_subtitle": "Configure the data sources for your dashboard",
+        "add_source": "Add Source",
+        "certification_label": "Certification",
+        "certification_required": "Certification is required",
+        "select_certification": "Select certification...",
+        "classes_label": "Classes",
+        "classes_hint": "Hold Ctrl/Cmd to select multiple classes",
+        "empty_sources_title": "No data sources configured yet.",
+        "empty_sources_hint": "Click \"Add Source\" to get started.",
+        "duplicate_header": "Create from existing dashboard",
+        "duplicate_subtitle": "Clone sections, widgets, and sources from another dashboard",
+        "duplicated_from_label": "Duplicated From",
+        "duplicated_type_label": "Type",
+        "source_type": "Source Type",
+        "source_type_live": "Live",
+        "source_type_template": "Template",
+        "choose_dashboard": "Choose Dashboard",
+        "select_dashboard": "Select dashboard...",
+        "cancel": "Cancel",
+        "save_changes": "Save Changes",
+        "create_dashboard": "Create Dashboard"
+      },
+      "widgetSettings": {
+        "title": "Widget Settings"
+      }
+      ,
+      "sectionFormDialog": {
+        "section_title_label": "Section Title",
+        "title_required": "Title is required",
+        "section_name_label": "Section Name (Slug)",
+        "name_required": "Name is required"
+      },
+      "sectionSettings": {
+        "columns": {
+          "title": "Title",
+          "background": "Background",
+          "widgets": "Widgets",
+          "visible": "Visible",
+          "actions": "Actions"
+        },
+        "tooltips": {
+          "toggle_visibility": "Toggle section visibility"
+        }
+      },
+      "shared": {
+        "actions": {
+          "edit": "Edit",
+          "delete": "Delete"
+        }
+      },
+      "dashboardBuilder": {
+        "loading_dashboard": "Loading Dashboard...",
+        "back_to_dashboards": "Back to Dashboards",
+        "view_dashboard": "View Dashboard",
+        "regenerate_analysis": "Regenerate Analysis",
+        "add_section": "Add Section",
+        "save_dashboard": "Save Dashboard",
+        "no_sections": "No Sections",
+        "widgets_count_suffix": "widgets",
+        "edit_section_tooltip": "Edit Section",
+        "delete_section_tooltip": "Delete Section",
+        "add_widget_tooltip": "Add Widget to Section",
+        "no_chart_or_data": "No Chart or Data",
+        "configure_widget_or_data": "Configure widget type or add data.",
+        "size_label": "Size:",
+        "data_source_label": "Data Source:",
+        "data_source_plural_label": "Data Source",
+        "total_sources": "Total sources:",
+        "show_more": "Show more...",
+        "show_less": "Show less...",
+        "no_data_source_defined": "No data source defined.",
+        "toggle_details_show": "Show details",
+        "toggle_details_hide": "Hide details",
+        "empty_state_title": "No sections added yet!",
+        "empty_state_subtitle": "Start building your dashboard by adding a new section.",
+        "empty_state_cta": "Add Your First Section"
+      },
+      "widgetFormDialog": {
+        "edit_title": "Edit Widget",
+        "create_title": "Add New Widget",
+        "widget_title_label": "Widget Title",
+        "widget_title_placeholder": "e.g., Sales Performance, User Demographics",
+        "widget_title_required": "Title is required",
+        "widget_name_label": "Widget Name (Slug)",
+        "widget_name_placeholder": "e.g., sales-performance (auto-generated or custom)",
+        "widget_name_required": "Name is required",
+        "follow_up_stage": "Follow-up Stage",
+        "none": "None",
+        "widget_type": "Widget Type",
+        "widget_type_required": "Widget type is required",
+        "widget_subtype": "Widget SubType",
+        "chart_type": "Chart Type",
+        "select_chart_type": "Select Chart Type",
+        "chart_type_required": "Chart type is required",
+        "visible_on_dashboard": "Visible on Dashboard",
+        "background_color": "Background Color",
+        "background_color_required": "Background color is required",
+        "template_colors_quick_pick": "Template Colors (Quick pick)",
+        "columns": "Columns",
+        "columns_required": "Columns is required",
+        "rows": "Rows",
+        "rows_required": "Rows is required",
+        "size_preview": "Size Preview",
+        "current_size": "Current Size:",
+        "cancel": "Cancel",
+        "save_changes": "Save Changes",
+        "add_widget": "Add Widget"
+      },
+      "followUpStages": {
+        "AFTER_FIRST_WAVE": "After first wave",
+        "AFTER_SECOND_WAVE": "After second wave",
+        "AFTER_THIRD_WAVE": "After third wave",
+        "AFTER_FOURTH_WAVE": "After fourth wave"
+      }
+    },
+    "shared": {
+      "language_changed": "Language changed",
+      "worldMapWidget": {
+        "students_total_label": "Total Data :",
+        "no_students": "No Students Data",
+        "salary_total_label": "Total Data :",
+        "salary_currency_suffix": "€",
+        "no_salary": "No Salary Data"
+      }
+    }
+  }

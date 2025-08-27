@@ -50,21 +50,21 @@ export interface WidgetFormData {
   ],
   template: `
     <h2 mat-dialog-title>
-      {{ isEditMode ? "Edit Widget" : "Add New Widget" }}
+      {{ isEditMode ? ('admin.widgetFormDialog.edit_title' | translate) : ('admin.widgetFormDialog.create_title' | translate) }}
     </h2>
 
     <form [formGroup]="widgetForm" (ngSubmit)="onSubmit()">
       <mat-dialog-content>
         <div class="form-row">
           <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Title</mat-label>
+            <mat-label>{{ 'admin.widgetFormDialog.widget_title_label' | translate }}</mat-label>
             <input
               matInput
               formControlName="title"
-              placeholder="Enter widget title"
+              placeholder="{{ 'admin.widgetFormDialog.widget_title_placeholder' | translate }}"
             />
             <mat-error *ngIf="widgetForm.get('title')?.hasError('required')">
-              Title is required
+              {{ 'admin.widgetFormDialog.widget_title_required' | translate }}
             </mat-error>
           </mat-form-field>
         </div>

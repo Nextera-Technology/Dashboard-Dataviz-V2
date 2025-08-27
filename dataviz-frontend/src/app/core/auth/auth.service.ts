@@ -172,6 +172,20 @@ export class AuthService {
    * Get all users (for admin)
    */
   getAllUsers(): Observable<User[]> {
+    // Use repository if available to fetch real users
+    if (this.userRepository?.getAllUsers) {
+      // convert promise -> observable
+      return new Observable<User[]>((subscriber) => {
+        this.userRepository
+          .getAllUsers()
+          .then((users: User[]) => {
+            subscriber.next(users);
+            subscriber.complete();
+          })
+          .catch((err: any) => subscriber.error(err));
+      });
+    }
+
     return of(this.dummyUsers).pipe(delay(500));
   }
 
@@ -179,6 +193,20 @@ export class AuthService {
    * Create new user
    */
   createUser(userData: CreateUserData): Observable<User> {
+    if (this.userRepository?.createUser) {
+      return new Observable<User>((subscriber) => {
+        this.userRepository
+          .createUser(userData)
+          .then((res: any) => {
+            // backend may return created id or user object
+            const created = res?.createUser || res || {};
+            subscriber.next({ id: created._id || created.id || Date.now().toString(), ...userData, status: 'active' } as User);
+            subscriber.complete();
+          })
+          .catch((err: any) => subscriber.error(err));
+      });
+    }
+
     const newUser: User = {
       id: Date.now().toString(),
       ...userData,
@@ -193,6 +221,19 @@ export class AuthService {
    * Update user
    */
   updateUser(userData: UpdateUserData): Observable<User> {
+    if (this.userRepository?.updateUser) {
+      return new Observable<User>((subscriber) => {
+        this.userRepository
+          .updateUser(userData.id, userData)
+          .then((res: any) => {
+            // map response if necessary
+            subscriber.next({ ...userData } as any);
+            subscriber.complete();
+          })
+          .catch((err: any) => subscriber.error(err));
+      });
+    }
+
     const index = this.dummyUsers.findIndex((u) => u.id === userData.id);
     if (index !== -1) {
       this.dummyUsers[index] = { ...this.dummyUsers[index], ...userData };
@@ -205,6 +246,18 @@ export class AuthService {
    * Delete user
    */
   deleteUser(userId: string): Observable<boolean> {
+    if (this.userRepository?.deleteUser) {
+      return new Observable<boolean>((subscriber) => {
+        this.userRepository
+          .deleteUser(userId)
+          .then(() => {
+            subscriber.next(true);
+            subscriber.complete();
+          })
+          .catch((err: any) => subscriber.error(err));
+      });
+    }
+
     const index = this.dummyUsers.findIndex((u) => u.id === userId);
     if (index !== -1) {
       this.dummyUsers.splice(index, 1);
@@ -217,6 +270,18 @@ export class AuthService {
    * Toggle user status
    */
   toggleUserStatus(userId: string): Observable<User> {
+    if (this.userRepository?.toggleUserStatus) {
+      return new Observable<User>((subscriber) => {
+        this.userRepository
+          .toggleUserStatus(userId)
+          .then((res: any) => {
+            subscriber.next(res);
+            subscriber.complete();
+          })
+          .catch((err: any) => subscriber.error(err));
+      });
+    }
+
     const user = this.dummyUsers.find((u) => u.id === userId);
     if (user) {
       user.status = user.status === "active" ? "inactive" : "active";

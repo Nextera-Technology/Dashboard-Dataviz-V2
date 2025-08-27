@@ -12,6 +12,7 @@ import { NotificationService } from '@dataviz/services/notification/notification
 import { DashboardBuilderService } from '../../pages/dashboard-builder/dashboard-builder.service'; // Adjust path if needed
 import { Subscription } from 'rxjs';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 
 // Re-using Section interface for consistency
 interface Section {
@@ -31,6 +32,8 @@ interface Dashboard {
   sources?: { certification: string | null; classes: string[] | null; }[]; // New 'sources' field
   title: string;
   status?: string;
+  duplicationType?: string;
+  dashboardOriginId?: { _id?: string; name?: string; title?: string; type?: string };
 }
 
 // UPDATED: Interface for the structured source data to use 'classes'
@@ -58,6 +61,7 @@ export interface DashboardFormDialogData {
     MatIconModule,
     MatSnackBarModule,
     MatCheckboxModule,
+    TranslatePipe,
   ],
   templateUrl: './dashboard-form-dialog.component.html',
   styleUrl: './dashboard-form-dialog.component.scss',
@@ -273,6 +277,24 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
     return this.filteredClassesMap.get(sourceGroup) || [];
   }
 
+  /**
+   * Toggle a class checkbox for a given source FormGroup. Preserves selections per-source.
+   */
+  onClassCheckboxChange(sourceGroup: FormGroup, cls: string, event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    const current: string[] = sourceGroup.get('classes')?.value || [];
+    if (checked) {
+      if (!current.includes(cls)) {
+        sourceGroup.get('classes')?.setValue([...current, cls]);
+      }
+    } else {
+      sourceGroup.get('classes')?.setValue(current.filter(c => c !== cls));
+    }
+    // Keep control state consistent
+    sourceGroup.get('classes')?.markAsDirty();
+    sourceGroup.get('classes')?.updateValueAndValidity({ emitEvent: false });
+  }
+
   async loadTemplates() {
     const type = this.dashboardForm.get('duplicateType')?.value;
     try {
@@ -323,7 +345,8 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
         const result = await this.dashboardService.duplicateDashboardFromOther(duplicateInput);
         console.debug('Duplicate result:', result);
         await this.notifier.success('Dashboard duplicated', result?.message || 'Dashboard duplicated successfully');
-        this.dialogRef.close(true);
+        // Return the created dashboard id so caller can scroll/select it
+        this.dialogRef.close(result?.dashboard?._id || result?._id || true);
       } catch (error) {
         console.error('Error duplicating dashboard:', error);
         await this.notifier.error('Duplication failed', error?.message || 'Failed to duplicate dashboard. Please try again.');
@@ -352,7 +375,8 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
           result = await this.dashboardService.createDashboard(dashboardInput);
         }
         await this.notifier.success(this.isEditMode ? 'Dashboard updated' : 'Dashboard created', result?.message || (this.isEditMode ? 'Dashboard updated successfully' : 'Dashboard created successfully'));
-        this.dialogRef.close(true);
+        // If create, return the new dashboard id to caller so it can be focused/scrolled
+        this.dialogRef.close(result?.dashboard?._id || result?._id || true);
       } catch (error) {
         console.error('Error saving dashboard:', error);
         await this.notifier.error('Save failed', error?.message || 'Failed to save dashboard. Please try again.');

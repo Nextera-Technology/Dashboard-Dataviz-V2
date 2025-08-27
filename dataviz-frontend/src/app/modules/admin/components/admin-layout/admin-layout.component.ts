@@ -5,6 +5,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
+import { TranslationService } from '../../../../shared/services/translation/translation.service';
 import { Router } from '@angular/router';
 import { AuthService, User } from '../../../../core/auth/auth.service';
 
@@ -17,7 +19,8 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    TranslatePipe
   ],
   template: `
     <div class="admin-layout">
@@ -46,16 +49,16 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
         <div class="admin-nav">
           <div class="section-title">
             <span class="section-icon">⚙️</span>
-            Administration
+            {{ 'admin.layout.title' | translate }}
           </div>
           <div class="nav-menu">
             <a routerLink="/admin/dashboard-list" routerLinkActive="active" class="nav-item">
               <mat-icon>dashboard</mat-icon>
-              <span>Dashboard Builder</span>
+              <span>{{ 'admin.dashboardList.header_title' | translate }}</span>
             </a>
             <a routerLink="/admin/user-management" routerLinkActive="active" class="nav-item">
               <mat-icon>people</mat-icon>
-              <span>User Management</span>
+              <span>{{ 'admin.layout.userManagement' | translate }}</span>
             </a>
           </div>
         </div>
@@ -73,12 +76,278 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
       <main class="main-content">
         <header class="admin-header">
           <div class="header-content">
-            <h1>{{ pageTitle }}</h1>
-            <p class="breadcrumb">{{ breadcrumb }}</p>
+            <h1>{{ pageTitle && pageTitle.indexOf('.') > -1 ? (pageTitle | translate) : pageTitle }}</h1>
+            <p class="breadcrumb">{{ breadcrumb && breadcrumb.indexOf('.') > -1 ? (breadcrumb | translate) : breadcrumb }}</p>
           </div>
           
           <!-- User Menu -->
-          <div class="user-menu">
+          <div class="user-menu" style="display:flex; align-items:center; gap:8px;">
+            <!-- Language selector -->
+            <div class="lang-selector" style="display:flex; align-items:center; gap:6px;">
+              <button class="info-button" (click)="setLanguage('en')" title="English">
+                <img src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/gb.svg" alt="EN" style="width:20px;height:14px;object-fit:cover;" />
+              </button>
+              <button class="info-button" (click)="setLanguage('fr')" title="Français">
+                <img src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/fr.svg" alt="FR" style="width:20px;height:14px;object-fit:cover;" />
+              </button>
+            </div>
+
+            
+          
+            
+            
+            
+            
+            
+            
+            <div style="width:8px"></div>
+
+          
+          
+          
+          
+          
+          
+            
+          
+          
+            
+          
+          
+            
+          
+          
+            
+          
+          
+            
+          
+          
+            
+          
+          
+            
+          
+          
+            
+          
+          
+            
+          
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+          
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+          
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+          
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+          
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+          
             <button 
               mat-icon-button 
               [matMenuTriggerFor]="userMenu"
@@ -393,14 +662,21 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
 })
 export class AdminLayoutComponent implements OnInit {
   currentUser: User | null = null;
-  pageTitle: string = 'Admin Dashboard';
-  breadcrumb: string = 'Administration';
+  pageTitle: string = 'admin.layout.title';
+  breadcrumb: string = 'admin.layout.title';
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private translation: TranslationService
   ) {}
+
+  setLanguage(lang: string): void {
+    this.translation.setLanguage(lang);
+    const msg = this.translation.translate('shared.language_changed') || 'Language changed';
+    this.snackBar.open(msg, 'Close', { duration: 1500 });
+  }
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
@@ -411,19 +687,34 @@ export class AdminLayoutComponent implements OnInit {
 
     // Set page title and breadcrumb based on current route
     this.updatePageInfo();
+
+    // Register global logout handler so other modules (e.g., graphql error handler)
+    // can trigger a client-side logout that clears in-memory state before redirect
+    try {
+      // Expose a small function on window to avoid circular imports
+      (window as any).appLogout = () => {
+        try {
+          this.authService.logout();
+        } catch (e) {
+          console.warn('appLogout: failed to call authService.logout()', e);
+        }
+      };
+    } catch (e) {
+      console.warn('Failed to register global appLogout handler', e);
+    }
   }
 
   updatePageInfo(): void {
     const currentUrl = this.router.url;
     if (currentUrl.includes('/admin/users')) {
-      this.pageTitle = 'User Management';
-      this.breadcrumb = 'Administration / Users';
+      this.pageTitle = 'admin.layout.userManagement';
+      this.breadcrumb = 'admin.layout.title';
     } else if (currentUrl.includes('/admin/widgets')) {
-      this.pageTitle = 'Widget Settings';
-      this.breadcrumb = 'Administration / Widgets';
+      this.pageTitle = 'admin.widgetSettings.title';
+      this.breadcrumb = 'admin.layout.title';
     } else if (currentUrl.includes('/admin/sections')) {
-      this.pageTitle = 'Section Settings';
-      this.breadcrumb = 'Administration / Sections';
+      this.pageTitle = 'admin.sectionSettings.title';
+      this.breadcrumb = 'admin.layout.title';
     }
   }
 

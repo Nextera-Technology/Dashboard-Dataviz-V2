@@ -1,86 +1,86 @@
-<div class="widget-config-dialog flex flex-col bg-white rounded-2xl shadow-xl ring-1 ring-gray-200 overflow-y-auto">
-    <div class="header flex justify-between items-center px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-500 rounded-t-2xl text-white shadow-md">
+<div class="widget-config-dialog flex flex-col bg-white rounded-2xl shadow-xl ring-1 ring-gray-200">
+    <div class="header sticky-header flex justify-between items-center px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-500 rounded-t-2xl text-white shadow-md">
         <h2 class="text-xl font-semibold">
-            {{ isEditMode ? 'Edit Widget' : 'Add New Widget' }}
+            {{ isEditMode ? ('admin.widgetFormDialog.edit_title' | translate) : ('admin.widgetFormDialog.create_title' | translate) }}
         </h2>
-        <button mat-icon-button (click)="onCancel()" aria-label="Close dialog">
+        <button mat-icon-button (click)="onCancel()" aria-label="Close dialog" class="close-button">
             <mat-icon class="text-white/80 hover:text-white">close</mat-icon>
         </button>
     </div>
 
     <form [formGroup]="widgetForm" (ngSubmit)="onSubmit()" class="flex-grow">
-        <div class="py-6 px-6 overflow-y-auto">
+        <div class="py-6 px-6 dialog-content overflow-y-auto">
             <div class="form-fields grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 pb-5">
                 <div class="col-span-2">
-                    <div>Widget Title</div>
-                    <input matInput formControlName="title" placeholder="e.g., Sales Performance, User Demographics"
+                    <div>{{ 'admin.widgetFormDialog.widget_title_label' | translate }}</div>
+                    <input matInput formControlName="title" placeholder="{{ 'admin.widgetFormDialog.widget_title_placeholder' | translate }}"
                         class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 
                      focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
                      hover:border-gray-400 text-sm" />
                     <div class="text-red-400"
                         *ngIf="widgetForm.get('title')?.hasError('required') && widgetForm.get('title')?.touched">
-                        Title is required
+                        {{ 'admin.widgetFormDialog.widget_title_required' | translate }}
                     </div>
                 </div>
 
                 <div class="col-span-2">
-                    <div>Widget Name (Slug)</div>
+                    <div>{{ 'admin.widgetFormDialog.widget_name_label' | translate }}</div>
                     <input matInput formControlName="name"
-                        placeholder="e.g., sales-performance (auto-generated or custom)" class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 
+                        placeholder="{{ 'admin.widgetFormDialog.widget_name_placeholder' | translate }}" class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 
                      focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
                      hover:border-gray-400 text-sm" />
                     <div class="text-red-400"
                         *ngIf="widgetForm.get('name')?.hasError('required') && widgetForm.get('name')?.touched">
-                        Name is required
+                        {{ 'admin.widgetFormDialog.widget_name_required' | translate }}
                     </div>
                 </div>
 
                 <div class="col-span-2">
-                    <div>Follow-up Stage</div>
+                    <div>{{ 'admin.widgetFormDialog.follow_up_stage' | translate }}</div>
                     <select class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 
                      focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
                      hover:border-gray-400 text-sm" formControlName="followUpStage">
-                        <option [value]="null">None</option>
+                        <option [value]="null">{{ 'admin.widgetFormDialog.none' | translate }}</option>
                         <option *ngFor="let stage of followUpStages" [value]="stage">
-                            {{ stage | titlecase | replaceUnderscores }}
+                            {{ (('admin.followUpStages.' + stage) | translate) || (stage | replaceUnderscores | titlecase) }}
                         </option>
                     </select>
                 </div>
 
                 <div class="col-span-1">
-                    <div>Widget Type</div>
+                    <div>{{ 'admin.widgetFormDialog.widget_type' | translate }}</div>
                     <select class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 
                      focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
                      hover:border-gray-400 text-sm" formControlName="widgetType"
                         (change)="onWidgetTypeChange($event.target.value)">
                         <option *ngFor="let type of widgetTypes" [value]="type.value">
-                            {{ type.label }}
+                            {{ (('admin.widgetTypes.' + type.value) | translate) || type.label }}
                         </option>
                     </select>
                     <div class="text-red-400" *ngIf="widgetForm.get('widgetType')?.hasError('required')">
-                        Widget type is required
+                        {{ 'admin.widgetFormDialog.widget_type_required' | translate }}
                     </div>
                 </div>
 
                 <div class="col-span-1">
-                    <div>Widget SubType</div>
+                    <div>{{ 'admin.widgetFormDialog.widget_subtype' | translate }}</div>
                     <select class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 
                      focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
                      hover:border-gray-400 text-sm" formControlName="widgetSubType"
                         [disabled]="!filteredSubTypes || filteredSubTypes.length === 0">
-                        <option [value]="null">None</option>
+                        <option [value]="null">{{ 'admin.widgetFormDialog.none' | translate }}</option>
                         <option *ngFor="let subType of filteredSubTypes" [value]="subType.value">
-                            {{ subType.label }}
+                            {{ (('admin.widgetSubTypes.' + subType.value) | translate) || subType.label }}
                         </option>
                     </select>
                 </div>
 
                 <div class="col-span-1 chart-form-field">
-                    <div>Chart Type</div>
+                    <div>{{ 'admin.widgetFormDialog.chart_type' | translate }}</div>
                     <div class="div-wrapper custom-input-trigger relative" (click)="openChartTypeSelection()"
                         [class.disabled-trigger]="!filteredChartTypes || filteredChartTypes.length === 0">
                         <input [value]="(widgetForm.get('chartType')?.value | titlecase | replaceUnderscores) || ''"
-                            readonly placeholder="Select Chart Type"
+                            readonly placeholder="{{ 'admin.widgetFormDialog.select_chart_type' | translate }}"
                             [disabled]="!filteredChartTypes || filteredChartTypes.length === 0" class="chart-type-display-input widget-config-dialog flex flex-col bg-white rounded-lg border-gray-300 overflow-hidden w-full px-4 py-3 pl-10 border outline-none shadow-sm placeholder-gray-400 
                      focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
                      hover:border-gray-400 text-sm" />
@@ -89,30 +89,41 @@
                     </div>
                     <div class="text-red-400"
                         *ngIf="widgetForm.get('chartType')?.hasError('required') && widgetForm.get('chartType')?.touched">
-                        Chart type is required
+                        {{ 'admin.widgetFormDialog.chart_type_required' | translate }}
                     </div>
                 </div>
 
                 <div class="col-span-1 flex items-center pt-2">
                     <mat-slide-toggle formControlName="visible" color="primary">
-                        Visible on Dashboard
+                        {{ 'admin.widgetFormDialog.visible_on_dashboard' | translate }}
                     </mat-slide-toggle>
                 </div>
 
                 <div class="col-span-2">
-                    <div>Background Color</div>
-                    <input type="color" formControlName="background" class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 
-                     focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
-                     hover:border-gray-400 text-sm" [style.background-color]="widgetForm.get('background')?.value" />
+                    <div>{{ 'admin.widgetFormDialog.background_color' | translate }}</div>
+                    <div class="bg-input-wrapper">
+                        <div class="bg-visual" [ngStyle]="{ 'background': (widgetForm.get('background')?.value === '#ffffff' ? 'linear-gradient(90deg, #ffffff 0%, #FFD79A 16%, #FECACA 33%, #FBCFE8 50%, #C7F9CC 66%, #93C5FD 83%, #FDE68A 100%)' : widgetForm.get('background')?.value) }">
+                            <input type="color" formControlName="background" class="color-input-overlay" />
+                        </div>
+                    </div>
                     <div class="text-red-400" *ngIf="widgetForm.get('background')?.hasError('required')">
-                        Background color is required
+                        {{ 'admin.widgetFormDialog.background_color_required' | translate }}
+                    </div>
+                    <div class="rgb-display" *ngIf="widgetForm.get('background')?.value && widgetForm.get('background')?.value.toLowerCase() !== '#ffffff'">
+                        {{ hexToRgbString(widgetForm.get('background')?.value) }}
                     </div>
                 </div>
 
                 <!-- Tambahan: Pilihan template background colors (diperbarui UI) -->
                 <div class="col-span-2">
-                    <div class="mb-2 font-medium text-sm">Template Colors (Quick pick)</div>
+                    <div class="mb-2 font-medium text-sm">{{ 'admin.widgetFormDialog.template_colors_quick_pick' | translate }}</div>
                     <div class="grid grid-cols-6 gap-2">
+                        <!-- Add plain white option first -->
+                        <button type="button" (click)="setTemplateColor('#ffffff')" [attr.aria-pressed]="widgetForm.get('background')?.value === '#ffffff'"
+                            class="w-full h-10 rounded-md flex items-center justify-center border transition-shadow duration-150 focus:outline-none"
+                            [ngClass]="{'ring-2 ring-blue-500': widgetForm.get('background')?.value === '#ffffff', 'border-gray-200': widgetForm.get('background')?.value !== '#ffffff'}"
+                            [style.background-color]="'#ffffff'" title="Select white">
+                        </button>
                         <button *ngFor="let color of templateColors" type="button"
                             (click)="setTemplateColor(color)"
                             [attr.aria-pressed]="widgetForm.get('background')?.value === color"
@@ -125,7 +136,7 @@
                 </div>
 
                 <div class="col-span-1">
-                    <div>Columns</div>
+                    <div>{{ 'admin.widgetFormDialog.columns' | translate }}</div>
                     <select class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 
                      focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
                      hover:border-gray-400 text-sm" formControlName="columnSize">
@@ -134,12 +145,12 @@
                         </option>
                     </select>
                     <div class="text-red-400" *ngIf="widgetForm.get('columnSize')?.hasError('required')">
-                        Columns is required
+                        {{ 'admin.widgetFormDialog.columns_required' | translate }}
                     </div>
                 </div>
 
                 <div class="col-span-1">
-                    <div>Rows</div>
+                    <div>{{ 'admin.widgetFormDialog.rows' | translate }}</div>
                     <select class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 
                      focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
                      hover:border-gray-400 text-sm" formControlName="rowSize">
@@ -148,13 +159,13 @@
                         </option>
                     </select>
                     <div class="text-red-400" *ngIf="widgetForm.get('rowSize')?.hasError('required')">
-                        Rows is required
+                        {{ 'admin.widgetFormDialog.rows_required' | translate }}
                     </div>
                 </div>
 
                 <div
                     class="col-span-2 size-preview flex flex-col gap-2 p-2 rounded-md border border-gray-300 bg-gray-50">
-                    <h4 class="text-sm font-semibold text-gray-700">Size Preview</h4>
+                    <h4 class="text-sm font-semibold text-gray-700">{{ 'admin.widgetFormDialog.size_preview' | translate }}</h4>
                     <div class="grid-preview flex-grow p-2 border border-gray-200 rounded-md bg-white"
                         [style.grid-template-columns]="'repeat(' + (widgetForm.get('columnSize')?.value || 1) + ', 1fr)'"
                         [style.grid-template-rows]="'repeat(' + (widgetForm.get('rowSize')?.value || 1) + ', 1fr)'"
@@ -166,7 +177,7 @@
                         </div>
                     </div>
                     <p class="text-xs text-gray-500 mt-1">
-                        Current Size:
+                        {{ 'admin.widgetFormDialog.current_size' | translate }}
                         <span class="font-semibold">{{ widgetForm.get('columnSize')?.value }}x{{
                             widgetForm.get('rowSize')?.value
                             }}</span>
@@ -176,14 +187,14 @@
             </div>
         </div>
 
-        <mat-dialog-actions align="end" class="px-6 py-4 flex gap-2 bg-white rounded-b-2xl">
+        <mat-dialog-actions align="end" class="px-6 py-4 flex gap-2 bg-white rounded-b-2xl sticky-actions">
             <button type="button" (click)="onCancel()"
                 class="px-6 py-2.5 text-gray-700 bg-white outline-none border border-gray-300 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500/15 transition-all duration-200 shadow-sm hover:shadow-md">
-                Cancel
+                {{ 'admin.widgetFormDialog.cancel' | translate }}
             </button>
             <button color="primary" type="submit" [disabled]="widgetForm.invalid || isSaving"
                 class="px-6 py-2.5 bg-blue-600 text-white outline-none rounded-lg font-medium shadow-sm hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/15 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none transition-all duration-200 flex items-center justify-center">
-                <span>{{ isEditMode ? 'Save Changes' : 'Add Widget' }}</span>
+                <span>{{ isEditMode ? ('admin.widgetFormDialog.save_changes' | translate) : ('admin.widgetFormDialog.add_widget' | translate) }}</span>
                 <mat-spinner *ngIf="isSaving" diameter="20" class="inline-spinner ml-2"></mat-spinner>
             </button>
         </mat-dialog-actions>

@@ -59,40 +59,51 @@ export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
         // Check if the error is specifically due to UNAUTHENTICATED or similar codes
         const code = extensions?.code;
         if (message?.toLowerCase().includes('unauthorized') || code === 'UNAUTHENTICATED') {
-            // Skip reload for login mutation
+            // Skip handling if the operation is login itself
             if (operation.operationName === 'Login') {
                 console.log('Unauthorized error during login - skipping reload');
                 return;
             }
-            console.warn('Unauthorized access detected. Clearing token and redirecting to login.');
-            // Clear auth data
-            localStorage.removeItem(TOKEN_KEY);
-            localStorage.removeItem(environment?.userProfileKey ?? 'currentUser');
-            sessionStorage.clear();
 
-            // Use NotificationService to show session-expired message, then redirect.
-            import('@dataviz/services/notification/notification.service').then(({ NotificationService }) => {
-              const notifier = new NotificationService();
-              notifier.confirm({
+            console.warn('Unauthorized access detected. Triggering client logout and redirecting to login.');
+
+            // First, try to clear any in-memory auth state via a global handler
+            try {
+              const win = window as any;
+              if (win && typeof win.appLogout === 'function') {
+                try { win.appLogout(); } catch (e) { console.warn('win.appLogout failed', e); }
+              }
+            } catch (e) {
+              console.warn('Failed to invoke global appLogout', e);
+            }
+
+            // Ensure storage is cleared as a fallback
+            try {
+              if (TOKEN_KEY) localStorage.removeItem(TOKEN_KEY);
+              if (environment?.userProfileKey) localStorage.removeItem(environment.userProfileKey);
+              localStorage.removeItem('currentUser');
+              localStorage.removeItem('dashboardId');
+              try { sessionStorage.clear(); } catch (e) { console.warn('Failed to clear sessionStorage', e); }
+            } catch (err) {
+              console.error('Error while clearing auth storage:', err);
+            }
+
+            // Notify user using SweetAlert2 and redirect using replace to avoid back-navigation
+            import('sweetalert2').then(({ default: Swal }) => {
+              Swal.fire({
                 icon: 'warning',
                 title: 'Session Expired',
                 text: 'Your session has expired. Please login again.',
                 confirmButtonText: 'OK',
-                showCancelButton: false
+                allowOutsideClick: false,
+                allowEscapeKey: false
               }).then(() => {
-                window.location.href = '/auth/login';
+                window.location.replace('/auth/login');
               });
             }).catch(err => {
-              console.error('Failed to load NotificationService:', err);
-              // Fallback: dynamic sweetalert import
-              import('sweetalert2').then(({ default: Swal }) => {
-                Swal.fire({ icon: 'warning', title: 'Session Expired', text: 'Your session has expired. Please login again.', confirmButtonText: 'OK' }).then(() => {
-                  window.location.href = '/auth/login';
-                });
-              }).catch(err2 => {
-                console.error('Failed to load Swal fallback:', err2);
-                window.location.href = '/auth/login';
-              });
+              console.error('Failed to load SweetAlert2:', err);
+              try { alert('Session Expired. Please login again.'); } catch (e) { /* ignore */ }
+              window.location.replace('/auth/login');
             });
         }
       });

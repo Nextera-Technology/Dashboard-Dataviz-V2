@@ -1,6 +1,69 @@
 .widget-config-dialog {
   max-width: 90vw;
   max-height: 90vh;
+  /* Prevent page-level scrollbar by confining overflow to internal content */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Make header sticky so X stays visible */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+/* Ensure dialog internal scrolling */
+.dialog-content {
+  max-height: calc(90vh - 72px); /* account for header and actions */
+  overflow-y: auto;
+}
+
+/* current swatch styling */
+
+.bg-input-and-swatch .current-swatch {
+  border: 1px solid rgba(0,0,0,0.12);
+}
+
+/* Make dialog actions sticky at bottom */
+.sticky-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 40;
+  box-shadow: 0 -6px 12px rgba(0,0,0,0.06);
+}
+
+/* New styles for background visual + overlay input */
+.bg-input-wrapper {
+  width: 100%;
+}
+.bg-visual {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  height: 40px;
+  position: relative;
+  overflow: hidden;
+}
+.bg-visual .color-input-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0; /* keep native color input but invisible so gradient shows */
+  cursor: pointer;
+}
+.muted-text {
+  font-size: 12px;
+  color: #6b7280;
+  margin-left: 8px;
+}
+
+/* RGB display styling */
+.rgb-display {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #374151;
 }
 
 // Custom styling for color input

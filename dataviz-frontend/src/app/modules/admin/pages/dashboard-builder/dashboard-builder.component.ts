@@ -52,6 +52,7 @@ import { ColumnChartWidgetComponent } from "app/modules/dashboard/charts/column-
 import { InformationDialogComponent } from "app/shared/components/action-dialogs/information-dialog/information-dialog.component";
 import { DataSourceQuickInfoDialogComponent } from "app/shared/components/action-dialogs/data-source-quick-info-dialog/data-source-quick-info-dialog.component";
 import { DashboardBuilderRepository } from "@dataviz/repositories/dashboard-builder/dashboard-builder.repository";
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 
 // Define interfaces for better type safety based on your GraphQL queries
 interface WidgetData {
@@ -113,6 +114,8 @@ interface Dashboard {
     MatSnackBarModule,
     OverlayModule,
     AdminLayoutComponent,
+    // translation pipe
+    TranslatePipe,
     // Import all atom widget components for dynamic rendering
     MetricWidgetComponent,
     BarChartWidgetComponent,
@@ -395,6 +398,7 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(WidgetFormDialogComponent, {
       // Changed to WidgetFormDialogComponent
       width: "600px",
+      disableClose: true,
       data: {
         dashboard: this.dashboard,
         section: parentSection,
@@ -418,10 +422,17 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
   async deleteSection(section: Section): Promise<void> {
     if (!this.dashboard || !this.dashboard.sectionIds || !section._id) return;
 
-    if (confirm(`Are you sure you want to delete the section "${section.title}"?`)) {
+    const confirmation = await this.notifier.confirm({
+      title: 'Are you sure?',
+      text: `Are you sure you want to delete the section "${section.title}"?`,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (confirmation.isConfirmed) {
       try {
         await this.dashboardBuilderRepository.deleteSection(section._id);
-        
+
         const index = this.dashboard.sectionIds.findIndex(
           (s) => s._id === section._id
         );
@@ -435,21 +446,17 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
               ...this.dashboard.sectionIds.slice(index + 1)
             ]
           };
-          
+
           // Also update the widgetSectionList to reflect the change in the UI
           this.widgetSectionList = [];
           this.selectedTabIndex = 0; // Reset to first tab
         }
-        
-        this.snackBar.open("Section deleted successfully.", "Close", {
-          duration: 3000,
-        });
+
+        await this.notifier.success('Deleted', 'Section deleted successfully!');
 
       } catch (error) {
         console.error("Error deleting section:", error);
-        this.snackBar.open("Error deleting section. Please try again.", "Close", {
-          duration: 3000,
-        });
+        await this.notifier.error('Error', 'Error deleting section. Please try again.');
       }
     }
   }
@@ -557,6 +564,7 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
   addSection(): void {
     const dialogRef = this.dialog.open(SectionFormDialogComponent, {
       width: "450px",
+      disableClose: true,
       data: {
         dashboard: this.dashboard,
         title: "New Section",
@@ -566,7 +574,23 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result?._id) {
-        this.loadDashboard(this.dashboard!._id!);
+        // Reload dashboard then select and scroll to the newly created section
+        this.loadDashboard(this.dashboard!._id!).then(() => {
+          // Find the index of the new section
+          const newIndex = this.dashboard?.sectionIds?.findIndex(s => s._id === result._id) || 0;
+          this.selectedTabIndex = newIndex >= 0 ? newIndex : 0;
+          this.onTabChange(this.selectedTabIndex);
+
+          // Wait a tick and then scroll the tab header into view
+          setTimeout(() => {
+            const selector = `[data-section-id="${result._id}"]`;
+            const el = document.querySelector(selector) as HTMLElement | null;
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              el.focus({ preventScroll: true });
+            }
+          }, 120);
+        });
       }
     });
   }
@@ -602,6 +626,7 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
     this.isOpeningDialog = true;
     const dialogRef = this.dialog.open(WidgetFormDialogComponent, {
       width: "600px",
+      disableClose: true,
       data: {
         dashboard: this.dashboard,
         section: section,

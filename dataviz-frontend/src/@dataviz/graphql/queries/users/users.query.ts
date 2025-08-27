@@ -13,7 +13,7 @@ export const gqlGetAllUsers = gql`
                 lastName
                 email
                 phoneNumber
-                userTypeId {
+                userTypeIds {
                     _id
                     roleName
                 }

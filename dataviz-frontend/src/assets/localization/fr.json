@@ -1,0 +1,180 @@
+{
+    "auth": {
+      "login": {
+        "title": "Se connecter",
+        "welcome_banner": "Bienvenue ! Veuillez vous connecter pour accéder à votre tableau de bord de visualisation des données et explorer des analyses pertinentes.",
+        "email_label": "Adresse e-mail *",
+        "email_placeholder": "Saisir l’e-mail",
+        "email_required": "L’e-mail est requis",
+        "email_invalid": "Veuillez saisir une adresse e‑mail valide",
+        "password_label": "Mot de passe *",
+        "password_placeholder": "Mot de passe",
+        "password_required": "Le mot de passe est requis",
+        "signing_in": "Connexion...",
+        "sign_in": "Se connecter",
+        "right_panel_title_line1": "Bienvenue sur",
+        "right_panel_title_line2": "votre tableau de bord",
+        "right_panel_subtitle": "Notre plateforme vous permet de créer des visualisations interactives et instructives. Plongez dans vos données et libérez de puissants insights dès aujourd’hui."
+      }
+    },
+    "admin": {
+      "layout": {
+        "title": "Administration",
+        "userManagement": "Gestion des utilisateurs"
+      },
+      "dashboardList": {
+        "header_title": "Constructeur de tableaux de bord",
+        "header_subtitle": "Créez et gérez vos tableaux de bord interactifs",
+        "create_button": "Créer un tableau de bord",
+        "active_badge": "Actif",
+        "data_sources": "Sources de données",
+        "no_classes": "Aucune classe",
+        "expand_less": "Réduire...",
+        "expand_more": "Afficher plus...",
+        "show_less": "Afficher moins",
+        "show_more": "Afficher plus",
+        "no_sources_defined": "Aucune source définie.",
+        "no_sources_configured": "Aucune source de données configurée",
+        "view": "Voir",
+        "edit": "Modifier",
+        "manage": "Gérer",
+        "delete": "Supprimer",
+        "empty_title": "Aucun tableau de bord pour le moment",
+        "empty_description": "Créez votre premier tableau de bord pour commencer la visualisation des données.",
+        "empty_cta": "Créer votre premier tableau de bord"
+      },
+      "dashboardFormDialog": {
+        "edit_title": "Modifier le tableau de bord",
+        "create_title": "Créer un nouveau tableau de bord",
+        "subtitle": "Configurez les paramètres et les sources de données de votre tableau de bord",
+        "basic_info": "Informations de base",
+        "name_label": "Nom du tableau de bord (slug)",
+        "name_required": "Le nom est requis",
+        "title_label": "Titre du tableau de bord",
+        "title_required": "Le titre est requis",
+        "sources_header": "Sources de données",
+        "sources_subtitle": "Configurez les sources de données de votre tableau de bord",
+        "add_source": "Ajouter une source",
+        "certification_label": "Certification",
+        "certification_required": "La certification est requise",
+        "select_certification": "Sélectionner une certification...",
+        "classes_label": "Classes",
+        "classes_hint": "Maintenez Ctrl/Cmd pour sélectionner plusieurs classes",
+        "empty_sources_title": "Aucune source de données configurée pour le moment.",
+        "empty_sources_hint": "Cliquez sur « Ajouter une source » pour commencer.",
+        "duplicate_header": "Créer à partir d’un tableau de bord existant",
+        "duplicate_subtitle": "Cloner les sections, widgets et sources à partir d’un autre tableau de bord",
+        "duplicated_from_label": "Dupliqué depuis",
+        "duplicated_type_label": "Type",
+        "source_type": "Type de source",
+        "source_type_live": "En direct",
+        "source_type_template": "Modèle",
+        "choose_dashboard": "Choisir un tableau de bord",
+        "select_dashboard": "Sélectionner un tableau de bord...",
+        "cancel": "Annuler",
+        "save_changes": "Enregistrer les modifications",
+        "create_dashboard": "Créer un tableau de bord"
+      },
+      "widgetSettings": {
+        "title": "Paramètres du widget"
+      },
+      "sectionFormDialog": {
+        "section_title_label": "Titre de la section",
+        "title_required": "Le titre est requis",
+        "section_name_label": "Nom de la section (slug)",
+        "name_required": "Le nom est requis"
+      },
+      "sectionSettings": {
+        "columns": {
+          "title": "Titre",
+          "background": "Arrière-plan",
+          "widgets": "Widgets",
+          "visible": "Visible",
+          "actions": "Actions"
+        },
+        "tooltips": {
+          "toggle_visibility": "Basculer la visibilité de la section"
+        }
+      },
+      "shared": {
+        "actions": {
+          "edit": "Modifier",
+          "delete": "Supprimer"
+        }
+      },
+      "dashboardBuilder": {
+        "loading_dashboard": "Chargement du tableau de bord...",
+        "back_to_dashboards": "Retour aux tableaux de bord",
+        "view_dashboard": "Voir le tableau de bord",
+        "regenerate_analysis": "Régénérer l’analyse",
+        "add_section": "Ajouter une section",
+        "save_dashboard": "Enregistrer le tableau de bord",
+        "no_sections": "Aucune section",
+        "widgets_count_suffix": "widgets",
+        "edit_section_tooltip": "Modifier la section",
+        "delete_section_tooltip": "Supprimer la section",
+        "add_widget_tooltip": "Ajouter un widget à la section",
+        "no_chart_or_data": "Aucun graphique ni donnée",
+        "configure_widget_or_data": "Configurez le type de widget ou ajoutez des données.",
+        "size_label": "Taille :",
+        "data_source_label": "Source de données :",
+        "data_source_plural_label": "Source de données",
+        "total_sources": "Nombre total de sources :",
+        "show_more": "Afficher plus...",
+        "show_less": "Afficher moins...",
+        "no_data_source_defined": "Aucune source de données définie.",
+        "toggle_details_show": "Afficher les détails",
+        "toggle_details_hide": "Masquer les détails",
+        "empty_state_title": "Aucune section ajoutée pour l’instant !",
+        "empty_state_subtitle": "Commencez à créer votre tableau de bord en ajoutant une nouvelle section.",
+        "empty_state_cta": "Ajouter votre première section"
+      },
+      "widgetFormDialog": {
+        "edit_title": "Modifier le widget",
+        "create_title": "Ajouter un nouveau widget",
+        "widget_title_label": "Titre du widget",
+        "widget_title_placeholder": "ex. Performance des ventes, Démographie des utilisateurs",
+        "widget_title_required": "Le titre est requis",
+        "widget_name_label": "Nom du widget (slug)",
+        "widget_name_placeholder": "ex. sales-performance (généré automatiquement ou personnalisé)",
+        "widget_name_required": "Le nom est requis",
+        "follow_up_stage": "Étape de suivi",
+        "none": "Aucun",
+        "widget_type": "Type de widget",
+        "widget_type_required": "Le type de widget est requis",
+        "widget_subtype": "Sous-type de widget",
+        "chart_type": "Type de graphique",
+        "select_chart_type": "Sélectionner un type de graphique",
+        "chart_type_required": "Le type de graphique est requis",
+        "visible_on_dashboard": "Visible sur le tableau de bord",
+        "background_color": "Couleur d’arrière-plan",
+        "background_color_required": "La couleur d’arrière-plan est requise",
+        "template_colors_quick_pick": "Couleurs de modèle (sélection rapide)",
+        "columns": "Colonnes",
+        "columns_required": "Le nombre de colonnes est requis",
+        "rows": "Lignes",
+        "rows_required": "Le nombre de lignes est requis",
+        "size_preview": "Aperçu de la taille",
+        "current_size": "Taille actuelle :",
+        "cancel": "Annuler",
+        "save_changes": "Enregistrer les modifications",
+        "add_widget": "Ajouter le widget"
+      },
+      "followUpStages": {
+        "AFTER_FIRST_WAVE": "Après la première vague",
+        "AFTER_SECOND_WAVE": "Après la deuxième vague",
+        "AFTER_THIRD_WAVE": "Après la troisième vague",
+        "AFTER_FOURTH_WAVE": "Après la quatrième vague"
+      }
+    },
+    "shared": {
+      "language_changed": "Langue modifiée",
+      "worldMapWidget": {
+        "students_total_label": "Données totales :",
+        "no_students": "Aucune donnée d’étudiants",
+        "salary_total_label": "Données totales :",
+        "salary_currency_suffix": "€",
+        "no_salary": "Aucune donnée salariale"
+      }
+    }
+  }

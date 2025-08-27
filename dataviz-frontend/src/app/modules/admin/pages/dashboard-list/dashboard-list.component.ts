@@ -174,6 +174,7 @@ import {
 import { ShareDataService } from "app/shared/services/share-data.service";
 import Swal from 'sweetalert2';
 import { NotificationService } from '@dataviz/services/notification/notification.service';
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 
 // UPDATED: Dashboard interface to reflect the new 'sources' array structure
 interface Section {
@@ -205,6 +206,8 @@ interface Dashboard {
     MatChipsModule,
     MatTooltipModule,
     AdminLayoutComponent,
+    // translation pipe
+    TranslatePipe,
   ],
   templateUrl: "./dashboard-list.component.html",
   styleUrl: "./dashboard-list.component.scss",
@@ -259,6 +262,24 @@ export class DashboardListComponent implements OnInit {
     }
   }
 
+  /**
+   * Scroll to dashboard card by id and focus it.
+   */
+  scrollToDashboard(dashboardId: string): void {
+    try {
+      const selector = `[data-dashboard-id=\"${dashboardId}\"]`;
+      const el = document.querySelector(selector) as HTMLElement | null;
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Focus for accessibility
+        el.setAttribute('tabindex', '-1');
+        el.focus({ preventScroll: true });
+      }
+    } catch (err) {
+      console.error('Error scrolling to dashboard:', err);
+    }
+  }
+
   openDashboard(dashboard: Dashboard): void {
     // Add smooth transition effect
     const element = event?.target as HTMLElement;
@@ -292,7 +313,7 @@ export class DashboardListComponent implements OnInit {
     const dialogRef = this.dialog.open<
       DashboardFormDialogComponent,
       DashboardFormDialogData,
-      boolean
+      any
     >(DashboardFormDialogComponent, {
       width: "600px",
       data: {},
@@ -301,7 +322,13 @@ export class DashboardListComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result === true) {
+      // If dialog returned a dashboard id (string), reload and scroll to it
+      if (typeof result === 'string' && result.length > 0) {
+        this.loadDashboards().then(() => {
+          // Wait a tick for DOM to update
+          setTimeout(() => this.scrollToDashboard(result), 150);
+        });
+      } else if (result === true) {
         this.loadDashboards();
       }
     });

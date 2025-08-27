@@ -23,6 +23,7 @@ import { NotificationService } from '@dataviz/services/notification/notification
 import { Subscription } from "rxjs";
 import { DashboardBuilderService } from "../../pages/dashboard-builder/dashboard-builder.service";
 import { ReplaceUnderscoresPipe } from "@dataviz/pipes/replace-underscores/replace-underscores.pipe";
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 // Import the new chart selection dialog and its data interfaces
@@ -127,6 +128,7 @@ interface ChartTypeOption {
     MatSlideToggleModule,
     MatSnackBarModule,
     ReplaceUnderscoresPipe,
+    TranslatePipe,
     MatProgressSpinnerModule,
   ],
   templateUrl: "./widget-form-dialog.component.html",
@@ -155,11 +157,11 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
     },
     {
       value: "DOMAINS",
-      label: "Domains",
+      label: "domains",
       subTypes: [
-        { value: "DOMAIN_PERCENTAGE", label: "Domain Percentage" },
-        { value: "DOMAIN_TOP3_COMPARISON", label: "Domain Top 3 Comparison" },
-        { value: "DOMAIN_EVOLUTION", label: "Domain Evolution" },
+        { value: "DOMAIN_PERCENTAGE", label: "DOMAIN_PERCENTAGE" },
+        { value: "DOMAIN_TOP3_COMPARISON", label: "DOMAIN_TOP3_COMPARISON" },
+        { value: "DOMAIN_EVOLUTION", label: "DOMAIN_EVOLUTION" },
       ],
     },
     { value: "MANAGER_LEVEL", label: "Manager Level" },
@@ -401,31 +403,14 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
     // Update filteredChartTypes for the dialog
     this.filteredChartTypes = matchedChartOptionData?.chartOptions || [];
 
-    // Set default chart or null if no options
-    const currentChartType = this.widgetForm.get("chartType")?.value;
-    if (
-      !currentChartType &&
-      matchedChartOptionData?.defaultChart &&
-      this.filteredChartTypes.some(
-        (c) => c.chartType === matchedChartOptionData.defaultChart
-      )
-    ) {
-      this.widgetForm
-        .get("chartType")
-        ?.setValue(matchedChartOptionData.defaultChart);
-    } else if (
-      currentChartType &&
-      !this.filteredChartTypes.some((c) => c.chartType === currentChartType)
-    ) {
-      // If current chart type is no longer valid for the new selection, reset it
-      this.widgetForm.get("chartType")?.setValue(null);
-    } else if (!currentChartType && this.filteredChartTypes.length > 0) {
-      // If no chart type is selected and options are available, select the first one
-      this.widgetForm
-        .get("chartType")
-        ?.setValue(this.filteredChartTypes[0].chartType);
-    } else if (this.filteredChartTypes.length === 0) {
-      // If no chart types are available, set to null
+    // Always update the chartType when widgetType or widgetSubType changes.
+    // Behavior: prefer configured defaultChart (if present in options), else pick the first available option.
+    if (matchedChartOptionData?.defaultChart && this.filteredChartTypes.some((c) => c.chartType === matchedChartOptionData!.defaultChart)) {
+      this.widgetForm.get("chartType")?.setValue(matchedChartOptionData.defaultChart);
+    } else if (this.filteredChartTypes.length > 0) {
+      this.widgetForm.get("chartType")?.setValue(this.filteredChartTypes[0].chartType);
+    } else {
+      // no valid chart types for this selection
       this.widgetForm.get("chartType")?.setValue(null);
     }
   }
@@ -560,6 +545,26 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
 
     // Return true for light text (on dark background), false for dark text (on light background)
     return brightness < 150; // You can adjust this threshold (0-255)
+  }
+
+  /**
+   * Convert hex color string to `rgb(r, g, b)` format.
+   * Returns empty string for invalid input.
+   */
+  hexToRgbString(hexColor: string | null | undefined): string {
+    if (!hexColor) return "";
+    let hex = hexColor.trim();
+    if (hex[0] === "#") hex = hex.slice(1);
+    // Expand shorthand form (#abc -> #aabbcc)
+    if (hex.length === 3) {
+      hex = hex.split("").map((c) => c + c).join("");
+    }
+    if (hex.length !== 6) return "";
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return "";
+    return `rgb(${r}, ${g}, ${b})`;
   }
 
   // Add this getter to your class

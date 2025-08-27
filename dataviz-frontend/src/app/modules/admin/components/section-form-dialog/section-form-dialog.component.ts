@@ -19,6 +19,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar"; // Import MatSnackBar
 import { NotificationService } from '@dataviz/services/notification/notification.service';
 import { DashboardBuilderService } from "../../pages/dashboard-builder/dashboard-builder.service";
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 
 // Re-using interfaces from dashboard-builder.component.ts for consistency
 interface Widget {
@@ -80,6 +81,7 @@ export interface SectionFormData {
     MatButtonModule,
     MatIconModule,
     MatSnackBarModule, // Add MatSnackBarModule here
+    TranslatePipe,
   ],
   templateUrl: "./section-form-dialog.component.html",
   styleUrl: "./section-form-dialog.component.scss",
