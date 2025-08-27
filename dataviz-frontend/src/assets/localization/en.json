@@ -39,6 +39,7 @@
         "edit": "Edit",
         "manage": "Manage",
         "delete": "Delete",
+        "cancel": "Cancel",
         "empty_title": "No Dashboards Yet",
         "empty_description": "Create your first dashboard to get started with data visualization.",
         "empty_cta": "Create Your First Dashboard"

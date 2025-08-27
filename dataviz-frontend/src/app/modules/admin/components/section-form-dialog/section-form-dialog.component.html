@@ -34,11 +34,11 @@
         </div>
 
         <div class="w-full flex flex-col gap-1 p-2">
-          <label for="background" class="text-sm font-medium text-gray-700">Background Color</label>
+          <label for="background" class="text-sm font-medium text-gray-700">{{ 'admin.widgetFormDialog.background_color' | translate }}</label>
           <input id="background" type="color" formControlName="background"
             class="h-12 w-20 rounded border border-gray-300 cursor-pointer" />
           <div *ngIf="sectionForm.get('background')?.hasError('required')" class="text-red-600 text-xs mt-1">
-            Background color is required
+            {{ 'admin.widgetFormDialog.background_color_required' | translate }}
           </div>
         </div>
 
@@ -48,11 +48,11 @@
     <mat-dialog-actions align="end" class="px-6 py-4 flex gap-2 border-t border-gray-200 bg-gray-50">
       <button type="button" (click)="onCancel()"
         class="px-6 py-2.5 text-gray-700 bg-white outline-none  border border-gray-300 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500/15  transition-all duration-200 shadow-sm hover:shadow-md">
-        Cancel
+        {{ 'admin.dashboardList.cancel' | translate }}
       </button>
       <button color="primary" type="submit" [disabled]="sectionForm.invalid"
         class="px-6 py-2.5 bg-blue-600 text-white  outline-none rounded-lg font-medium shadow-sm hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/15  disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none transition-all duration-200">
-        {{ isEditMode ? 'Save Changes' : 'Add Section' }}
+        {{ isEditMode ?  ('admin.dashboardFormDialog.save_changes' | translate) : ('admin.dashboardBuilder.add_section' | translate) }}
       </button>
     </mat-dialog-actions>
   </form>

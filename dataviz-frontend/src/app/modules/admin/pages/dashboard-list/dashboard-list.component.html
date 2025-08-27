@@ -58,10 +58,10 @@
                   (click)="toggleSourcesExpansion(dashboard._id!); $event.stopPropagation();"
                   *ngIf="dashboard.sources.length > initialVisibleSources"
                   class="text-gray-600 flex gap-4 relative items-center hover:text-gray-800 transition-colors duration-200 mt-2"
-                  [matTooltip]="isSourcesExpanded(dashboard._id!) ? 'Show less sources' : 'Show more sources'"
+                  [matTooltip]="isSourcesExpanded(dashboard._id!) ? {{ 'admin.dashboardBuilder.show_less' | translate }} : {{ 'admin.dashboardBuilder.show_more' | translate }}"
                 >
                   <mat-icon>{{ isSourcesExpanded(dashboard._id!) ? 'expand_less' : 'expand_more' }}</mat-icon>
-                  <span class="text-base">{{ isSourcesExpanded(dashboard._id!) ? 'Expand less...' : 'Expand more...' }}</span>
+                  <span class="text-base">{{ isSourcesExpanded(dashboard._id!) ? ('admin.dashboardBuilder.expand_less' | translate) : ('admin.dashboardBuilder.expand_more' | translate) }}</span>
                 </button>
               </div>
               <ng-template #noSources>

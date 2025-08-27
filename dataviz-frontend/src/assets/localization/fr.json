@@ -39,6 +39,7 @@
         "edit": "Modifier",
         "manage": "Gérer",
         "delete": "Supprimer",
+        "cancel": "Annuler",
         "empty_title": "Aucun tableau de bord pour le moment",
         "empty_description": "Créez votre premier tableau de bord pour commencer la visualisation des données.",
         "empty_cta": "Créer votre premier tableau de bord"

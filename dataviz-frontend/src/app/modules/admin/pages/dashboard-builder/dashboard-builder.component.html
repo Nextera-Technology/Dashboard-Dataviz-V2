@@ -232,7 +232,7 @@
                                                         <div class="px-3 py-2 flex items-center justify-between border-b border-gray-100">
                                                             <div class="flex items-center gap-2 text-gray-700 text-sm font-semibold">
                                                                 <mat-icon class="text-base text-blue-500">source</mat-icon>
-                                                                <span>Data Source</span>
+                                                                <span>{{ 'admin.dashboardBuilder.data_source_plural_label' | translate }}</span>
                                                             </div>
                                                             <button type="button" class="text-gray-500 hover:text-gray-700"
                                                                 (click)="closeQuickInfo($event)">
@@ -241,7 +241,7 @@
                                                         </div>
                                                         <div class="p-3">
                                                             <div class="text-[13px] font-medium text-slate-600 mb-1" *ngIf="quickInfoWidget?.title">{{ quickInfoWidget?.title }}</div>
-                                                            <div class="text-[11px] text-slate-500 mb-2">Total sources: {{ getUniqueDataSourceNames(quickInfoWidget!).length }}</div>
+                                                            <div class="text-[11px] text-slate-500 mb-2">{{ 'admin.dashboardBuilder.total_sources' | translate }} {{ getUniqueDataSourceNames(quickInfoWidget!).length }}</div>
                                                             <div class="max-h-[220px] overflow-auto grid gap-1">
                                                                 <div *ngFor="let name of getUniqueDataSourceNames(quickInfoWidget!)"
                                                                     class="px-2 py-1 rounded-md text-[12px] bg-blue-50 text-blue-800">
@@ -258,7 +258,7 @@
                                         <ng-template #defaultDataSourceBlock>
                                         <div class="widget-source-container"
                                                 *ngIf="getUniqueDataSourceNames(widget).length > 0; else noDataSource">
-                                                <span class="font-medium block mb-1">Data Source:</span>
+                                                <span class="font-medium block mb-1">{{ 'admin.dashboardBuilder.data_source_label' | translate }}</span>
                                                 <div class="flex flex-wrap gap-1">
                                                     <span *ngFor="let name of getUniqueDataSourceNames(widget) | slice:0: (isDataSourceExpanded(widget._id!) ? 9999 : initialVisibleDataSourceTags)"
                                                         class="px-2 py-0.5 bg-blue-100 h-[24px] text-blue-800 rounded-full text-xs font-medium">
@@ -267,12 +267,12 @@
                                                     <button *ngIf="getUniqueDataSourceNames(widget).length > initialVisibleDataSourceTags"
                                                         (click)="toggleDataSourceExpansion(widget._id!)"
                                                         class="text-blue-600 h-[24px] hover:text-blue-800 text-xs py-0 px-2 min-w-0">
-                                                        {{ isDataSourceExpanded(widget._id!) ? 'Show less...' : 'Show more...' }}
+                                                        {{ isDataSourceExpanded(widget._id!) ? ('admin.dashboardBuilder.show_less' | translate) : ('admin.dashboardBuilder.show_more' | translate) }}
                                                     </button>
                                                 </div>
                                             </div>
                                             <ng-template #noDataSource>
-                                                <span class="widget-source block mt-1 text-gray-500 text-xs">No data source defined.</span>
+                                                <span class="widget-source block mt-1 text-gray-500 text-xs">{{ 'admin.dashboardBuilder.no_data_source_defined' | translate }}</span>
                                             </ng-template>
                                             </ng-template>
                                         </div>
