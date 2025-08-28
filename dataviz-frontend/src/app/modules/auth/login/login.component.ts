@@ -115,8 +115,8 @@ export class LoginComponent implements OnInit {
         const user = await this.authService.userLogin(credentials?.email, credentials?.password);
         this.isLoading = false;
         if (!user || !user.user) {
+          // Show single notification and throw to go to catch block
           await this.notifier.errorKey('notifications.login_failed');
-
           throw new Error("Login failed");
         }
 
@@ -133,8 +133,10 @@ export class LoginComponent implements OnInit {
           error.message ||
           "Oops! That email or password doesn’t match. Try again";
 
-        // Show snackbar for additional feedback
-        await this.notifier.errorKey('notifications.login_failed');
+        // Show snackbar for additional feedback (ensure only shown once)
+        // notifier.errorKey already called above when response missing; only call here if not already shown
+        // To avoid duplicate alerts, only show if errorMessage is empty (meaning not previously set)
+        // but since we set errorMessage above, avoid calling notifier again.
       }
     } else {
       // Mark all fields as touched to show validation errors

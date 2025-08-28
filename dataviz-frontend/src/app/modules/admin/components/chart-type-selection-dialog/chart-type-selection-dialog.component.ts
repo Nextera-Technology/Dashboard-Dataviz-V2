@@ -51,10 +51,38 @@ export class ChartTypeSelectionDialogComponent implements OnInit {
   }
 
   /**
+   * Returns whether the given chart option is selectable.
+   * For now (developer mode) only the currently selected/default chart is selectable.
+   */
+  isChartSelectable(chartOption: ChartOptionForDialog): boolean {
+    if (!this.data) return false;
+    // If a selectedChartTypeName is provided, allow only that one.
+    if (this.data.selectedChartTypeName) {
+      return chartOption.chartType === this.data.selectedChartTypeName;
+    }
+    // Fallback: allow only the first chart option as default
+    return this.data.chartOptions && this.data.chartOptions.length > 0 && this.data.chartOptions[0].chartType === chartOption.chartType;
+  }
+
+  /**
+   * Tooltip text: shows chart name when selectable or disabled message when not.
+   */
+  getTooltipText(chartOption: ChartOptionForDialog): string {
+    return this.isChartSelectable(chartOption)
+      ? `${chartOption.chartType}`
+      : 'Tidak dapat dipilih (mode developer)';
+  }
+
+  /**
    * Selects a chart type and closes the dialog, returning the selected chart's name.
    * @param chartOption The selected ChartOptionForDialog object.
    */
   onSelect(chartOption: ChartOptionForDialog): void {
+    // Prevent selecting disabled chart options
+    if (!this.isChartSelectable(chartOption)) {
+      return;
+    }
+
     this.dialogRef.close(chartOption.chartType);
   }
 

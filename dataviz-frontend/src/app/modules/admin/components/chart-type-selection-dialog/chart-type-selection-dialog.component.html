@@ -11,15 +11,17 @@
             class="chart-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             <div *ngFor="let chartOption of data.chartOptions" (click)="onSelect(chartOption)" [ngClass]="{
              'border-blue-600 ring-2 ring-blue-500': data.selectedChartTypeName === chartOption.chartType,
-             'hover:border-blue-400 hover:shadow-md': data.selectedChartTypeName !== chartOption.chartType
+             'hover:border-blue-400 hover:shadow-md': data.selectedChartTypeName !== chartOption.chartType,
+             'opacity-40 cursor-not-allowed': !isChartSelectable(chartOption)
            }" class="chart-box flex flex-col items-center p-3 border border-gray-200 rounded-lg cursor-pointer transition-all duration-200 bg-white shadow-sm"
-                matTooltip="{{ chartOption.chartType | titlecase }}" aria-label="Select {{ chartOption.chartType }}">
+                matTooltip="{{ getTooltipText(chartOption) }}" aria-label="Select {{ chartOption.chartType }}">
                 <img [src]="chartOption.previewChartImage" [alt]="chartOption.chartType + ' Chart Preview'"
                     class="w-full h-24 object-contain mb-2 min-h-[77px] rounded-md bg-gray-50 p-1"
                     onerror="this.onerror=null;this.src='https://via.placeholder.com/100x80?text=No+Image';" />
                 <span class="text-sm font-medium text-gray-700 text-center line-clamp-2">
                     {{ chartOption.chartType | titlecase | replaceUnderscores }}
                 </span>
+                <mat-icon *ngIf="!isChartSelectable(chartOption)" class="text-gray-400 mt-2" aria-hidden="true">lock</mat-icon>
             </div>
         </div>
         <ng-template #noChartOptions>
