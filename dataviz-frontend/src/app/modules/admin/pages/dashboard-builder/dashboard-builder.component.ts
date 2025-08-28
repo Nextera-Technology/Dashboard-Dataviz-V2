@@ -53,6 +53,7 @@ import { InformationDialogComponent } from "app/shared/components/action-dialogs
 import { DataSourceQuickInfoDialogComponent } from "app/shared/components/action-dialogs/data-source-quick-info-dialog/data-source-quick-info-dialog.component";
 import { DashboardBuilderRepository } from "@dataviz/repositories/dashboard-builder/dashboard-builder.repository";
 import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
+import { TranslationService } from 'app/shared/services/translation/translation.service';
 
 // Define interfaces for better type safety based on your GraphQL queries
 interface WidgetData {
@@ -173,7 +174,8 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private shareDataService: ShareDataService,
     private dashboardBuilderRepository: DashboardBuilderRepository,
-    private notifier: NotificationService
+    private notifier: NotificationService,
+    private translation: TranslationService
   ) {
      shareDataService.setIsDashboard(false);
   }
@@ -264,7 +266,6 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
         this.widgetSectionList = [
           ...this.dashboard.sectionIds[this.selectedTabIndex].widgetIds,
         ];
-        console.log("Loaded dashboard:", this.dashboard);
       }
       } else {
         await this.notifier.toastKey('notifications.dashboard_not_found', 'error', undefined, 3000);
@@ -367,7 +368,6 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
           this.dashboard._id,
           updateInput
         );
-        console.log("Dashboard updated with new section order:", result);
         await this.notifier.toastKey('notifications.section_order_updated', 'success', undefined, 2000);
       } else {
         result = await this.dashboardService.createDashboard(updateInput);
@@ -558,7 +558,6 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
           throw new Error("Failed to get ID for new dashboard.");
         }
       }
-      console.log("Dashboard save result:", result);
     } catch (error) {
       console.error("Error saving dashboard:", error);
       await this.notifier.errorKey('notifications.save_error', { error: error?.message || '' });
@@ -661,7 +660,40 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
     try {
       const regenerationResult = await this.dashboardService.regenerateAutoAnalysisDashboard(this.dashboard._id);
       
-      await this.notifier.successKey('notifications.regenerate_success', undefined, 2000);
+      if (regenerationResult.includes("up to date")) {
+        await this.notifier.successKey('notifications.regenerate_up_to_date');
+      } 
+      else if (regenerationResult.includes("Estimated time")) {
+        const match = regenerationResult.match(/(\d+)\s+(seconds?|minutes?)/i);
+
+        const time = match ? match[1] : "a few";
+        const rawUnit = match ? match[2].toLowerCase() : "seconds";
+        let unit = rawUnit;
+
+        // Use translation service
+        const lang = this.translation.getCurrentLanguage();
+
+        if (lang === 'fr') {
+          if (rawUnit.startsWith("second")) {
+            unit = time === "1" ? "seconde" : "secondes";
+          } else if (rawUnit.startsWith("minute")) {
+            unit = time === "1" ? "minute" : "minutes";
+          }
+        } else {
+          // English plural handling
+          if (rawUnit.startsWith("second")) {
+            unit = time === "1" ? "second" : "seconds";
+          } else if (rawUnit.startsWith("minute")) {
+            unit = time === "1" ? "minute" : "minutes";
+          }
+        }
+
+        await this.notifier.successKey('notifications.regenerate_in_progress', { time, unit });
+      }
+
+      else {
+        await this.notifier.successKey('notifications.regenerate_success');
+      }
       
       // Reload the dashboard to reflect changes
       this.loadDashboard(this.dashboard._id);
@@ -826,15 +858,12 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
         name: section.name
       };
       
-      console.log("Saving section with widget order:", sectionPayload);
-      
       // Update existing dashboard with modified sections
       const result = await this.dashboardService.updateSection(
         section._id,
         sectionPayload
       );
       
-      console.log("Section update result:", result);
     } catch (error) {
       console.error("Error saving section:", error);
       await this.notifier.error('Error', 'Error saving widget order. Please try again.');

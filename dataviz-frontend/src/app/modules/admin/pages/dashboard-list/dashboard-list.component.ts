@@ -246,7 +246,6 @@ export class DashboardListComponent implements OnInit {
       
       if (result?.data) {
         this.dashboards = result?.data;
-        console.log("Dashboards loaded:", this.dashboards);
         
         // Initialize expansion state for new dashboards
         this.dashboards.forEach(dashboard => {
@@ -385,8 +384,6 @@ export class DashboardListComponent implements OnInit {
           if (dashboard._id) {
             this.dashboardSourcesExpansionState.delete(dashboard._id);
           }
-
-          console.log(`Dashboard "${dashboard.title}" deleted successfully.`);
 
           await this.notifier.successKey('notifications.dashboard_deleted', { title: dashboard.title });
 

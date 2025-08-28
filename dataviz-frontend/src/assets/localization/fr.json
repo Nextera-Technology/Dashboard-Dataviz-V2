@@ -291,7 +291,14 @@
 
       "regenerate_success": { "title": "Succès !", "message": "Analyse du tableau de bord régénérée avec succès !" },
       "regenerate_error": { "title": "Erreur", "message": "Erreur lors de la régénération de l'analyse. Veuillez réessayer." },
-
+      "regenerate_in_progress": {
+        "title": "Succès !",
+        "message": "La régénération du tableau de bord est en cours. Temps estimé : {time} {unit}."
+      },
+      "regenerate_up_to_date": {
+        "title": "Succès !",
+        "message": "L’analyse du tableau de bord est déjà à jour."
+      },
       "login_failed": { "title": "Échec de la connexion", "message": "Oops ! Cet e‑mail ou mot de passe ne correspond pas. Réessayez" },
       "welcome_back": { "title": "Bienvenue", "message": "Bon retour, {name} !" },
 

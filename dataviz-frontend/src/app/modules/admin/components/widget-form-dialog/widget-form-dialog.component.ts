@@ -345,8 +345,6 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
         ? event
         : (event.target as HTMLSelectElement).value;
 
-    console.log("Selected widget type:", selectedType); // Debug log
-
     // Find the selected widget type option
     const selectedWidgetTypeOption = this.widgetTypes.find(
       (type) => type.value === selectedType
@@ -354,8 +352,7 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
 
     // Update filteredSubTypes
     this.filteredSubTypes = selectedWidgetTypeOption?.subTypes || [];
-    console.log("Filtered subTypes:", this.filteredSubTypes); // Debug log
-
+    
     // Reset widgetSubType if current subType is not valid for the new widgetType
     const currentSubType = this.widgetForm.get("widgetSubType")?.value;
     if (
@@ -435,7 +432,6 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
           widgetSubType: item.widgetSubType || null,
           widgetType: item.widgetType,
         }));
-        console.log("Loaded all chart type options:", this.allChartTypeOptions);
       }
     } catch (error) {
       console.error("Error loading chart type options:", error);

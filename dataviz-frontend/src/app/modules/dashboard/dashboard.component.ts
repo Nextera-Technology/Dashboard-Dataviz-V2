@@ -192,7 +192,6 @@ getChildModel(childName: string): boolean {
     // this.filteredCertifications = this.certificateList.filter(cert => {
     //   return cert.name.toLowerCase().includes(this.certificationSearch.toLowerCase());
     // });
-    console.log('Certification search:', this.certificationSearch);
   }
 
   toggleCertificationSelectAll(): void {

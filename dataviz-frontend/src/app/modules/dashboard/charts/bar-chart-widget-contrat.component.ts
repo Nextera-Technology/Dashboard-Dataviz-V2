@@ -360,7 +360,6 @@ export class BarChartWidgetContratComponent implements OnInit, OnDestroy {
   }
 
   onActionClick(action: string): void {
-    console.log("Action clicked:", action);
     // Placeholder for future implementation
   }
 

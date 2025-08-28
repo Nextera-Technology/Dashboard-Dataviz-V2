@@ -308,7 +308,14 @@
 
       "regenerate_success": { "title": "Success!", "message": "Dashboard analysis regenerated successfully!" },
       "regenerate_error": { "title": "Error", "message": "Error regenerating analysis. Please try again." },
-
+      "regenerate_in_progress": {
+        "title": "Success!",
+        "message": "Dashboard regeneration is in progress. Estimated time: {time} {unit}."
+      },
+      "regenerate_up_to_date": {
+        "title": "Success!",
+        "message": "Dashboard analysis is currently up to date."
+      },
       "login_failed": { "title": "Login failed", "message": "Oops! That email or password doesn’t match. Try again" },
       "welcome_back": { "title": "Welcome", "message": "Welcome back, {name}!" },
 
