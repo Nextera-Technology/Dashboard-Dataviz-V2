@@ -143,6 +143,7 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
 
   private widgetTypeSubscription?: Subscription;
   private widgetSubTypeSubscription?: Subscription;
+  private isInitialLoad: boolean = true; // Add flag to track initial load
 
   readonly followUpStages = Object.values(EnumSurveyFollowUpStage);
 
@@ -327,6 +328,9 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
     // Initial calls to set up filtered sub-types and chart types
     this.onWidgetTypeChange(this.widgetForm.get("widgetType")?.value);
     this.onWidgetTypeOrSubTypeChange(); // Call after initial setup and subscriptions
+    
+    // Mark initial load as complete
+    this.isInitialLoad = false;
   }
 
   ngOnDestroy(): void {
@@ -409,15 +413,19 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Always update the chartType when widgetType or widgetSubType changes.
-    // Behavior: prefer configured defaultChart (if present in options), else pick the first available option.
-    if (matchedChartOptionData?.defaultChart && this.filteredChartTypes.some((c) => c.chartType === matchedChartOptionData!.defaultChart)) {
-      this.widgetForm.get("chartType")?.setValue(matchedChartOptionData.defaultChart);
-    } else if (this.filteredChartTypes.length > 0) {
-      this.widgetForm.get("chartType")?.setValue(this.filteredChartTypes[0].chartType);
-    } else {
-      // no valid chart types for this selection
-      this.widgetForm.get("chartType")?.setValue(null);
+    // Only update chartType when it's not the initial load (i.e., user actually changed widgetType or widgetSubType)
+    // This prevents overriding the saved chart type when editing an existing widget
+    if (!this.isInitialLoad) {
+      // Always update the chartType when widgetType or widgetSubType changes.
+      // Behavior: prefer configured defaultChart (if present in options), else pick the first available option.
+      if (matchedChartOptionData?.defaultChart && this.filteredChartTypes.some((c) => c.chartType === matchedChartOptionData!.defaultChart)) {
+        this.widgetForm.get("chartType")?.setValue(matchedChartOptionData.defaultChart);
+      } else if (this.filteredChartTypes.length > 0) {
+        this.widgetForm.get("chartType")?.setValue(this.filteredChartTypes[0].chartType);
+      } else {
+        // no valid chart types for this selection
+        this.widgetForm.get("chartType")?.setValue(null);
+      }
     }
   }
 
