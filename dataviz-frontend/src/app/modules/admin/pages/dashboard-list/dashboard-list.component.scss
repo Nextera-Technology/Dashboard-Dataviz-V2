@@ -121,6 +121,29 @@
   transition: all 0.3s ease;
 }
 
+/* Reserve space for the "show more" button so action buttons don't jump
+   even when the button is not rendered. The parent is positioned
+   relatively so we can absolutely place the expand button inside it. */
+.sources-section {
+  position: relative;
+  /* reserve approx the height of the expand button + spacing */
+  padding-bottom: 4.25rem;
+  min-height: 6rem;
+}
+
+/* If the expand button exists, keep it visually anchored to the bottom
+   of the sources area so layout is stable whether it's present or not. */
+.sources-section .expand-btn {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 0.75rem;
+  width: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* Tags Animation */
 .classes-tags span {
   transition: all 0.3s ease;
@@ -159,6 +182,66 @@
   position: relative;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ensure icons are always visible and don't shrink when translations
+   change length (e.g. in French). Fix icon sizing and keep text legible. */
+.action-buttons button mat-icon,
+.sources-section mat-icon,
+.dashboard-card mat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem; /* ~18px */
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: 0 0 auto; /* prevent shrinking when text is long */
+  margin-right: 0.5rem;
+}
+
+.action-buttons button > div > span,
+.action-buttons button span {
+  font-size: 0.95rem; /* keep consistent readable size */
+  line-height: 1.1rem;
+}
+
+/* Ensure buttons keep a minimum width so icons and text don't wrap */
+.action-buttons .flex > button {
+  /* keep the current width but increase vertical size for better touch
+     and visual hierarchy. */
+  min-width: 4.5rem;
+  padding: 0.65rem 0.6rem; /* taller buttons */
+  font-size: 0.95rem; /* slightly larger text */
+  border-radius: 0.75rem;
+}
+
+/* Force icons to inherit color in RTL/L10n contexts where mat-icon
+   may get reset by other libraries; keep strong contrast. */
+.action-buttons button mat-icon {
+  color: currentColor !important;
+}
+
+/* For French (or other languages) long labels, prevent icon/text from
+   collapsing: make text truncate with ellipsis and keep icon visible. */
+.action-buttons button span {
+  display: inline-block;
+  /* slightly smaller max-width so labels truncate and keep buttons narrow */
+  max-width: 6.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* For very small screens, stack buttons but keep them compact */
+@media (max-width: 420px) {
+  .action-buttons .flex {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .action-buttons .flex > button {
+    width: 100%;
+    min-width: 0;
+  }
 }
 
 /* Loading Animation */

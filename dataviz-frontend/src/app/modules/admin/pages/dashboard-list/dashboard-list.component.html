@@ -208,6 +208,8 @@
           <div class="flex space-x-3">
          <button 
             (click)="manageDashboard(dashboard, $event)"
+            [matTooltip]="'admin.dashboardList.manage' | translate"
+            matTooltipPosition="above"
             class="flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r bg-gradient-to-r from-[#303AA1] via-[#2C3E50] to-[#2C3E50] text-white font-semibold hover:from-gray-500 hover:to-gray-700 transform hover:scale-105 transition ease-in-out duration-300 shadow-md hover:shadow-md"
           >
             <div class="flex items-center justify-center space-x-2">
@@ -222,6 +224,8 @@
           <div class="flex space-x-3">
             <button 
               (click)="openDashboard(dashboard)"
+              [matTooltip]="'admin.dashboardList.view' | translate"
+              matTooltipPosition="below"
               class="flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 transition ease-in-out duration-300 shadow-md hover:shadow-md border"
             >
               <div class="flex items-center justify-center space-x-2">
@@ -231,6 +235,8 @@
             </button>
             <button 
               (click)="editDashboard(dashboard, $event)"
+              [matTooltip]="'admin.dashboardList.edit' | translate"
+              matTooltipPosition="below"
               class="flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r from-slate-500 to-slate-600 text-white font-semibold hover:from-slate-600 hover:to-slate-700 transform hover:scale-105 transition ease-in-out duration-300 shadow-md hover:shadow-md"
             >
               <div class="flex items-center justify-center space-x-2">
@@ -240,6 +246,8 @@
             </button>
             <button 
               (click)="deleteDashboard(dashboard, $event)"
+              [matTooltip]="'admin.dashboardList.delete' | translate"
+              matTooltipPosition="below"
               class="flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r from-red-500 to-rose-600 text-white font-semibold hover:from-red-600 hover:to-rose-700 transform hover:scale-105 transition ease-in-out duration-300 shadow-md"
             >
               <div class="flex items-center justify-center space-x-2">

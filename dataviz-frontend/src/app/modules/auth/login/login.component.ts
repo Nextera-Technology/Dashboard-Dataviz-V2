@@ -65,7 +65,8 @@ export class LoginComponent implements OnInit {
   setLanguage(lang: string): void {
     this.translation.setLanguage(lang);
     const msg = this.translation.translate('shared.language_changed') || 'Language changed';
-    this.snackBar.open(msg, 'Close', { duration: 1500 });
+    const closeLabel = this.translation.translate('shared.close') || 'Close';
+    this.snackBar.open(msg, closeLabel, { duration: 1500 });
     this.langMenuOpen = false;
   }
 
@@ -117,7 +118,8 @@ export class LoginComponent implements OnInit {
         if (!user || !user.user) {
           // Show single notification and throw to go to catch block
           await this.notifier.errorKey('notifications.login_failed');
-          throw new Error("Login failed");
+          // Throw the translated message (not title) so inline errorMessage shows the proper translated text
+          throw new Error(this.translation.translate('notifications.login_failed.message') || 'Oops! That email or password doesn\'t match. Try again');
         }
 
         await this.notifier.successKey('notifications.welcome_back', { name: `${user.user.lastName} ${user.user.firstName}` });
@@ -131,7 +133,7 @@ export class LoginComponent implements OnInit {
         // lalu set errorMessage setelah patchValue, agar tidak ter-clear oleh valueChanges
         this.errorMessage =
           error.message ||
-          "Oops! That email or password doesn’t match. Try again";
+          (this.translation.translate('notifications.login_failed.message') || "Oops! That email or password doesn’t match. Try again");
 
         // Show snackbar for additional feedback (ensure only shown once)
         // notifier.errorKey already called above when response missing; only call here if not already shown
@@ -143,7 +145,7 @@ export class LoginComponent implements OnInit {
       this.markFormGroupTouched();
 
       // Show a consistent login-failed message and snackbar even when the form is invalid
-      this.errorMessage = "Oops! That email or password doesn’t match. Try again";
+      this.errorMessage = this.translation.translate('notifications.login_failed.message') || "Oops! That email or password doesn’t match. Try again";
       await this.notifier.errorKey('notifications.login_failed');
     }
   }

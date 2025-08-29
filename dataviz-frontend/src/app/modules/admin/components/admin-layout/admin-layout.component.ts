@@ -686,7 +686,8 @@ export class AdminLayoutComponent implements OnInit {
   setLanguage(lang: string): void {
     this.translation.setLanguage(lang);
     const msg = this.translation.translate('shared.language_changed') || 'Language changed';
-    this.snackBar.open(msg, 'Close', { duration: 1500 });
+    const closeLabel = this.translation.translate('shared.close') || 'Close';
+    this.snackBar.open(msg, closeLabel, { duration: 1500 });
     this.langMenuOpen = false;
   }
 

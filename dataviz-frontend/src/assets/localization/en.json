@@ -376,6 +376,7 @@
     },
     "shared": {
       "language_changed": "Language changed",
+      "close": "Close",
       "logout": "Logout",
       "worldMapWidget": {
         "students_total_label": "Total Data :",

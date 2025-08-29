@@ -369,6 +369,7 @@
     },
     "shared": {
       "language_changed": "Langue modifiée",
+      "close": "Fermer",
       "logout": "Se déconnecter",
       "worldMapWidget": {
         "students_total_label": "Nombre total :",
