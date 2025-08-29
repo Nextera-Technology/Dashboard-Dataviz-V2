@@ -265,6 +265,13 @@
         "NON_TARGETED_COMPANY_SIZE": "Non-Targeted Company Size",
         "STUDENT_REGION_DISTRIBUTION": "Student Region Distribution",
         "REGION_SALARY_AVERAGE": "Region Salary Average"
+      },
+      "chartTypeSelection": {
+        "tooltip": {
+          "disabled": "Cannot select (developer mode)"
+        }
+      ,
+      "title": "Select Chart Type"
       }
     },
     "dashboard": {

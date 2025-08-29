@@ -10,6 +10,8 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip"; // For tooltips on chart boxes
 import { environment } from "environments/environment";
 import { ReplaceUnderscoresPipe } from "@dataviz/pipes/replace-underscores/replace-underscores.pipe";
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
+import { TranslationService } from 'app/shared/services/translation/translation.service';
 
 // Interface for the data passed into this dialog
 export interface ChartOptionForDialog {
@@ -31,7 +33,8 @@ export interface ChartSelectionDialogData {
     MatButtonModule,
     MatIconModule,
     MatTooltipModule, // Include MatTooltipModule
-    ReplaceUnderscoresPipe
+    ReplaceUnderscoresPipe,
+    TranslatePipe
   ],
   templateUrl: "./chart-type-selection-dialog.component.html",
   styleUrl: "./chart-type-selection-dialog.component.scss",
@@ -43,7 +46,8 @@ export class ChartTypeSelectionDialogComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<ChartTypeSelectionDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ChartSelectionDialogData
+    @Inject(MAT_DIALOG_DATA) public data: ChartSelectionDialogData,
+    private translation: TranslationService
   ) {}
 
   ngOnInit(): void {
@@ -68,9 +72,11 @@ export class ChartTypeSelectionDialogComponent implements OnInit {
    * Tooltip text: shows chart name when selectable or disabled message when not.
    */
   getTooltipText(chartOption: ChartOptionForDialog): string {
-    return this.isChartSelectable(chartOption)
-      ? `${chartOption.chartType}`
-      : 'Tidak dapat dipilih (mode developer)';
+    if (this.isChartSelectable(chartOption)) {
+      return `${chartOption.chartType}`;
+    }
+    // Use translation key for disabled tooltip
+    return this.translation.translate('admin.chartTypeSelection.tooltip.disabled');
   }
 
   /**

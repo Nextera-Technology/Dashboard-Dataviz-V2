@@ -259,6 +259,13 @@
         "NON_TARGETED_COMPANY_SIZE": "Taille d'entreprise non ciblée",
         "STUDENT_REGION_DISTRIBUTION": "Répartition régionale des étudiants",
         "REGION_SALARY_AVERAGE": "Salaire moyen par région"
+      },
+      "chartTypeSelection": {
+        "tooltip": {
+          "disabled": "Impossible de sélectionner (mode développeur)"
+        }
+      ,
+      "title": "Sélectionner le type de graphique"
       }
     },
     "notifications": {
