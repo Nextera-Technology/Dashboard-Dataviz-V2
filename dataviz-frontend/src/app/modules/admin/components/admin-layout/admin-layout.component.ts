@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -379,7 +379,7 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
         </header>
 
         <!-- Page Content -->
-        <div class="page-content">
+        <div class="page-content" [class.full-bleed]="fullBleed">
           <ng-content></ng-content>
         </div>
       </main>
@@ -645,6 +645,11 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
       overflow-y: auto;
     }
 
+    /* Utility to allow pages to use full-bleed layout like dashboard-builder */
+    .page-content.full-bleed {
+      padding: 0; /* remove default padding so child can take full width */
+    }
+
     /* Responsive Design */
     @media (max-width: 1024px) {
       .sidebar {
@@ -670,6 +675,7 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
   `]
 })
 export class AdminLayoutComponent implements OnInit {
+  @Input() fullBleed: boolean = false;
   currentUser: User | null = null;
   pageTitle: string = 'admin.layout.title';
   breadcrumb: string = 'admin.layout.title';

@@ -52,13 +52,38 @@ export class ColumnChartWidgetComponent
 
   ngAfterViewInit(): void {
     this.zone.runOutsideAngular(() => {
+      console.debug('ColumnChartWidget: ngAfterViewInit', { widget: this.widget, data: this.data });
+
       if (!this.data || this.data.length === 0) {
-        console.warn("ColumnChartWidget: No data provided.", this.widget.title);
+        console.warn("ColumnChartWidget: No data provided.", this.widget?.title, this.widget);
         return;
       }
 
-      const root = am5.Root.new(`column-chart-div-${this.widget._id}`);
+      // Prepare element id with fallback to avoid duplicate/undefined ids
+      const elemId = `column-chart-div-${this.widget && this.widget._id ? this.widget._id : 'temp_' + Math.random().toString(36).substr(2,6)}`;
 
+      // Ensure the target element exists in DOM and has at least a min-height
+      const targetEl = document.getElementById(elemId);
+      if (!targetEl) {
+        console.warn(`ColumnChartWidget: target element not found: ${elemId}`);
+        return;
+      }
+
+      // Set a sensible min-height if the container is collapsed
+      if (!targetEl.style.minHeight) {
+        targetEl.style.minHeight = '150px';
+      }
+
+      // Normalize incoming data to expected { category, value } shape
+      const mappedData = (this.data || []).map((d: any) => {
+        return {
+          category: d.name ?? d.category ?? d.label ?? 'Unknown',
+          value: Number(d.count ?? d.value ?? d.percentage ?? 0),
+          totalData: d.totalData
+        };
+      });
+
+      const root = am5.Root.new(elemId);
       root.setThemes([am5themes_Animated.new(root)]);
 
       const chart = root.container.children.push(
@@ -67,7 +92,7 @@ export class ColumnChartWidgetComponent
           panY: true,
           wheelX: "panX",
           wheelY: "zoomX",
-          layout: root.horizontalLayout, // Use horizontal layout for columns
+          layout: root.horizontalLayout,
         })
       );
 
@@ -75,12 +100,12 @@ export class ColumnChartWidgetComponent
       const xRenderer = am5xy.AxisRendererX.new(root, {});
       const xAxis = chart.xAxes.push(
         am5xy.CategoryAxis.new(root, {
-          categoryField: "category", // Assuming 'category' field
+          categoryField: "category",
           renderer: xRenderer,
           tooltip: am5.Tooltip.new(root, {}),
         })
       );
-      xAxis.data.setAll(this.data);
+      xAxis.data.setAll(mappedData);
 
       const yRenderer = am5xy.AxisRendererY.new(root, {});
       const yAxis = chart.yAxes.push(
@@ -93,16 +118,24 @@ export class ColumnChartWidgetComponent
       // Create series
       const series = chart.series.push(
         am5xy.ColumnSeries.new(root, {
-          name: this.widget.title,
+          name: this.widget?.title ?? 'Series',
           xAxis: xAxis,
           yAxis: yAxis,
-          valueYField: "value", // Assuming 'value' field
+          valueYField: "value",
           categoryXField: "category",
           tooltip: am5.Tooltip.new(root, {
             labelText: "{categoryX}: {valueY}",
           }),
         })
       );
+
+      // Ensure bars have explicit fill/stroke so they contrast with tile background
+      series.columns.template.setAll({
+        fill: am5.color('#15616d'),
+        stroke: am5.color('#15616d'),
+        fillOpacity: 1,
+        strokeOpacity: 1
+      });
 
       // Legend only on larger widgets
       const isSmall = (this.widget?.columnSize ?? 0) <= 2 && (this.widget?.rowSize ?? 0) <= 1;
@@ -125,7 +158,7 @@ export class ColumnChartWidgetComponent
         chart.setAll({ paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0 });
       }
 
-      series.data.setAll(this.data);
+      series.data.setAll(mappedData);
 
       // Make stuff animate on load
       series.appear(1000);

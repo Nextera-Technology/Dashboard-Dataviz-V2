@@ -1,7 +1,8 @@
 import { Component, Input, OnInit, AfterViewInit, OnDestroy, NgZone } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import * as am5 from "@amcharts/amcharts5";
-import * as am5percent from "@amcharts/amcharts5/percent";
+import * as am5xy from "@amcharts/amcharts5/xy";
+import * as am5radar from "@amcharts/amcharts5/radar";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 
 interface WidgetData { name?: string; count?: number; percentage?: number; totalData?: number; }
@@ -28,7 +29,6 @@ interface Widget {
   template: `
     <div class="gauge-container">
       <div [id]="chartDivId" class="gauge-chart"></div>
-      <div class="center-label" *ngIf="value !== null">{{ value }}%</div>
     </div>
   `,
   styles: [`
@@ -43,6 +43,8 @@ export class AnimatedGaugeWidgetComponent implements OnInit, AfterViewInit, OnDe
 
   private root?: am5.Root;
   value: number | null = null;
+  dataCount: number | null = null;
+  dataTotal: number | null = null;
 
   get chartDivId(): string { return `animated-gauge-div-${this.widget._id}`; }
 
@@ -52,26 +54,104 @@ export class AnimatedGaugeWidgetComponent implements OnInit, AfterViewInit, OnDe
     if(this.data && this.data.length){
       const d = this.data[0];
       this.value = d.percentage ?? d.count ?? null;
+      // try to get counts/total for tooltip
+      if(d.count !== undefined && d.totalData !== undefined){
+        this.dataCount = Number(d.count) || 0;
+        this.dataTotal = Number(d.totalData) || 0;
+      } else if(d.percentage !== undefined && d.totalData !== undefined){
+        this.dataTotal = Number(d.totalData) || 0;
+        this.dataCount = Math.round((Number(d.percentage) / 100) * this.dataTotal);
+      }
     }
   }
 
   ngAfterViewInit(): void {
-    if(this.value===null) return;
+    if (this.value === null) return;
     this.zone.runOutsideAngular(() => {
       const root = am5.Root.new(this.chartDivId);
       root.setThemes([am5themes_Animated.new(root)]);
-      const chart = root.container.children.push(am5percent.PieChart.new(root,{ innerRadius: am5.percent(80), startAngle: -90, endAngle: 270 }));
 
-      const series = chart.series.push(am5percent.PieSeries.new(root,{ valueField: "value", categoryField: "category", startAngle:-90, endAngle:270 }));
-      series.get("colors")!.set("colors", [ am5.color(0x0d7680), am5.color(0xE0E0E0) ]);
-      series.slices.template.setAll({ cornerRadius:10, strokeOpacity:0 });
-      series.labels.template.set("forceHidden", true);
-      series.ticks.template.set("forceHidden", true);
-      series.data.setAll([
-        { category: "filled", value: this.value },
-        { category: "empty", value: 100 - this.value }
-      ]);
-      series.appear(1000,100);
+      // Create semicircle radar chart
+      const chart = root.container.children.push(am5radar.RadarChart.new(root, {
+        panX: false,
+        panY: false,
+        startAngle: 180,
+        endAngle: 360
+      }));
+
+      chart.getNumberFormatter().set("numberFormat", "#'%'");
+
+      const axisRenderer = am5radar.AxisRendererCircular.new(root, {
+        innerRadius: -40
+      });
+
+      axisRenderer.grid.template.setAll({ stroke: root.interfaceColors.get("background"), visible: true, strokeOpacity: 0.8 });
+
+      const xAxis = chart.xAxes.push(am5xy.ValueAxis.new(root, {
+        maxDeviation: 0,
+        min: 0,
+        max: 100,
+        strictMinMax: true,
+        renderer: axisRenderer
+      }));
+
+      // colored ranges
+      const colorSet = am5.ColorSet.new(root, {});
+      const pct = Math.max(0, Math.min(100, Number(this.value)));
+      const axisRange0 = xAxis.createAxisRange(xAxis.makeDataItem({ above: true, value: 0, endValue: pct }));
+      axisRange0.get("axisFill").setAll({ visible: true, fill: colorSet.getIndex(0) });
+      axisRange0.get("label").setAll({ forceHidden: true });
+      // tooltip for filled range
+      const count = this.dataCount ?? null;
+      const total = this.dataTotal ?? null;
+      if(count !== null && total !== null){
+        axisRange0.get("axisFill").setAll({ tooltipText: `${count} / ${total}` });
+      } else {
+        axisRange0.get("axisFill").setAll({ tooltipText: `${Math.round(pct)}%` });
+      }
+
+      const axisRange1 = xAxis.createAxisRange(xAxis.makeDataItem({ above: true, value: pct, endValue: 100 }));
+      axisRange1.get("axisFill").setAll({ visible: true, fill: colorSet.getIndex(4) });
+      axisRange1.get("label").setAll({ forceHidden: true });
+
+      // clock hand
+      const axisDataItem = xAxis.makeDataItem({});
+
+      const clockHand = am5radar.ClockHand.new(root, {
+        pinRadius: 50,
+        radius: am5.percent(100),
+        innerRadius: 50,
+        bottomWidth: 0,
+        topWidth: 0
+      });
+
+      clockHand.pin.setAll({ fillOpacity: 0, strokeOpacity: 0.5, stroke: am5.color(0x000000), strokeWidth: 1, strokeDasharray: [2, 2] });
+      clockHand.hand.setAll({ fillOpacity: 0, strokeOpacity: 0.5, stroke: am5.color(0x000000), strokeWidth: 0.5 });
+
+      const bullet = axisDataItem.set("bullet", am5xy.AxisBullet.new(root, { sprite: clockHand }));
+      xAxis.createAxisRange(axisDataItem);
+
+      axisDataItem.set("value", pct);
+
+      // clock hand rotation listener -> update internal label
+      const label = chart.radarContainer.children.push(am5.Label.new(root, {
+        centerX: am5.percent(50),
+        textAlign: "center",
+        centerY: am5.percent(50),
+        fontSize: "1.5em",
+        text: String(Math.round(pct)) + "%"
+      }));
+
+      const sprite = bullet.get("sprite") as any;
+      sprite.on && sprite.on("rotation", function(){
+        const v = axisDataItem.get("value");
+        label.set("text", Math.round(v).toString() + "%");
+      });
+
+      // animate pointer to value
+      axisDataItem.animate({ key: "value", to: pct, duration: 800, easing: am5.ease.out(am5.ease.cubic) });
+
+      chart.appear(1000, 100);
       this.root = root;
     });
   }

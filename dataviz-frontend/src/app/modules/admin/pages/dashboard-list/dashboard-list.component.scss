@@ -192,17 +192,17 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.125rem; /* ~18px */
-  width: 1.25rem;
-  height: 1.25rem;
+  font-size: 1rem; /* ~16px - slightly smaller */
+  width: 1.125rem;
+  height: 1.125rem;
   flex: 0 0 auto; /* prevent shrinking when text is long */
-  margin-right: 0.5rem;
+  margin-right: 0; /* reduce gap; spacing handled by container */
 }
 
 .action-buttons button > div > span,
 .action-buttons button span {
-  font-size: 0.95rem; /* keep consistent readable size */
-  line-height: 1.1rem;
+  font-size: 0.85rem; /* slightly smaller per request (includes Manage) */
+  line-height: 1rem;
 }
 
 /* Ensure buttons keep a minimum width so icons and text don't wrap */
@@ -219,6 +219,11 @@
    may get reset by other libraries; keep strong contrast. */
 .action-buttons button mat-icon {
   color: currentColor !important;
+}
+
+/* Reduce spacing introduced by Tailwind's space-x-2 inside buttons */
+.action-buttons button > div.space-x-2 > * + * {
+  margin-left: 0.25rem !important; /* shrink gap between icon and label */
 }
 
 /* For French (or other languages) long labels, prevent icon/text from

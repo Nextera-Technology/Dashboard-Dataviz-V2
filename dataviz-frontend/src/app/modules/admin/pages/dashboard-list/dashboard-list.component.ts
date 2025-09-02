@@ -279,33 +279,48 @@ export class DashboardListComponent implements OnInit {
     }
   }
 
-  openDashboard(dashboard: Dashboard): void {
-    // Add smooth transition effect
-    const element = event?.target as HTMLElement;
-    if (element) {
-      element.style.transform = 'scale(0.95)';
-      element.style.transition = 'transform 0.1s ease';
+  openDashboard(dashboard: Dashboard, event?: Event): void {
+    // Prevent bubbling when called from button click
+    if (event) {
+      event.stopPropagation();
+    }
+
+    // Try to animate the clicked element, fall back to card element
+    const clickedEl = (event && ((event.currentTarget as HTMLElement) || (event.target as HTMLElement))) || null;
+    const cardEl = document.querySelector(`[data-dashboard-id="${dashboard._id}"]`) as HTMLElement | null;
+
+    const elToAnimate = clickedEl || cardEl;
+    if (elToAnimate) {
+      elToAnimate.style.transform = 'scale(0.95)';
+      elToAnimate.style.transition = 'transform 0.1s ease';
       setTimeout(() => {
         this.shareDataService.setDashboardId(dashboard._id || '');
         this.router.navigate(['/dashboard']);
       }, 100);
-    } else {
-      this.router.navigate(["/admin/dashboard-builder", dashboard._id]);
+      return;
     }
+
+    // Fallback navigation
+    this.shareDataService.setDashboardId(dashboard._id || '');
+    this.router.navigate(['/dashboard']);
   }
 
-   manageDashboard(dashboard: Dashboard): void {
-    // Add smooth transition effect
-    const element = event?.target as HTMLElement;
-    if (element) {
-      element.style.transform = 'scale(0.95)';
-      element.style.transition = 'transform 0.1s ease';
-      setTimeout(() => {
-          this.router.navigate(["/admin/dashboard-builder", dashboard._id]);
-      }, 100);
-    } else {
-      this.router.navigate(["/admin/dashboard-builder", dashboard._id]);
+  manageDashboard(dashboard: Dashboard, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
     }
+
+    const cardEl = document.querySelector(`[data-dashboard-id="${dashboard._id}"]`) as HTMLElement | null;
+    if (cardEl) {
+      cardEl.style.transform = 'scale(0.95)';
+      cardEl.style.transition = 'transform 0.1s ease';
+      setTimeout(() => {
+        this.router.navigate(["/admin/dashboard-builder", dashboard._id]);
+      }, 100);
+      return;
+    }
+
+    this.router.navigate(["/admin/dashboard-builder", dashboard._id]);
   }
 
   createNewDashboard(): void {

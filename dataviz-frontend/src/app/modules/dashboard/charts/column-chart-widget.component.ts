@@ -181,10 +181,44 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.calculateTotalData();
+
+    console.debug('ModuleColumnChart: ngOnInit', { widget: this.widget, data: this.data });
+
+    // If data is array of {name, count, percentage, totalData}, normalize into categories + series
+    if (Array.isArray(this.widget.data) && this.widget.data.length > 0) {
+      try {
+        const arr = this.widget.data as any[];
+        const categories = arr.map(d => d.name ?? d.category ?? d.label ?? 'Unknown');
+        const values = arr.map(d => Number(d.count ?? d.value ?? d.percentage ?? 0));
+        const percentages = arr.map(d => d.percentage ?? null);
+        // Do NOT mutate input widget object (may be frozen). Assign to local `data` input instead.
+        this.data = {
+          categories,
+          series: [
+            {
+              name: this.widget.title ?? 'Series',
+              data: values,
+              percentages,
+              // Use a default series color (do NOT use widget.background which is the tile color)
+              color: '#67b7dc',
+              totalData: arr[0]?.totalData
+            }
+          ]
+        };
+        console.debug('ModuleColumnChart: normalized widget.data', this.widget.data);
+        this.createChart();
+        return;
+      } catch (e) {
+        console.warn('ModuleColumnChart: error normalizing array data', e);
+      }
+    }
+
     if (this.widget.widgetType === 'SURVEY_COMPLETION' || this.widget.widget === 'SURVEY_COMPLETION') {
       this.createSurveyChart();
     } else if (this.widget.data?.series) {
       this.createChart();
+    } else {
+      console.debug('ModuleColumnChart: no chart created - unsupported data shape', { widgetData: this.widget.data });
     }
   }
 
@@ -398,11 +432,13 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
     );
 
     // Set categories
-    const categories = this.widget.data.categories || [];
+    // Prefer local `data` input normalized earlier; fallback to widget.data
+    const sourceData = this.data || this.widget.data || {};
+    const categories = sourceData.categories || [];
     this.xAxis.data.setAll(categories.map((cat: string, index: number) => ({ category: cat })));
 
     // Create series for each data series
-    this.widget.data.series.forEach((seriesData: any, index: number) => {
+    (sourceData.series || []).forEach((seriesData: any, index: number) => {
       const series = this.chart.series.push(
         am5xy.ColumnSeries.new(this.root, {
           name: seriesData.name,
@@ -423,13 +459,19 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
       }));
       series.data.setAll(data);
 
-      // Configure appearance
+      // Configure appearance and colors
       series.columns.template.setAll({
         cornerRadiusTL: 6,
         cornerRadiusTR: 6,
         strokeWidth: 2,
-        tooltipText: '{name}: {valueY} ({percentage}%)'
+        tooltipText: '{name}: {valueY} ({percentage}%)',
       });
+
+      // Explicitly apply fill/stroke with full opacity to contrast with tile background
+      series.columns.template.set('fill', am5.color(seriesData.color || '#67b7dc'));
+      series.columns.template.set('stroke', am5.color(seriesData.color || '#67b7dc'));
+      series.columns.template.set('fillOpacity', 1);
+      series.columns.template.set('strokeOpacity', 1);
       this.series.push(series);
     });
 

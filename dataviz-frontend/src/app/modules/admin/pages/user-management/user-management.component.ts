@@ -61,7 +61,7 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
     }
   ],
   template: `
-    <app-admin-layout>
+    <app-admin-layout [fullBleed]="true">
       <div class="user-management">
         <div class="um-toolbar">
           <div class="um-title">
@@ -216,6 +216,8 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
       padding: 28px;
       font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
       color: #111827;
+      width: 100%; /* ensure wrapper spans available content width */
+      box-sizing: border-box;
     }
 
     .um-toolbar {
@@ -288,11 +290,14 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 8px 30px rgba(17,24,39,0.04);
+      width: 100%; /* force card to stretch to container */
+      box-sizing: border-box;
     }
 
     .table-wrap {
       overflow: auto;
       border-radius: 8px;
+      width: 100%; /* ensure the scrolling wrapper fills the card */
     }
 
     /* Table uses header Inter font */
@@ -307,8 +312,10 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
-      min-width: 820px;
+      /* allow table to shrink to container width */
+      min-width: 0;
       background: white;
+      table-layout: auto;
     }
 
     .user-table th, .user-table td {
@@ -318,7 +325,7 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
       vertical-align: middle;
       font-size: 0.95rem;
       overflow: visible;
-      white-space: nowrap;
+      white-space: nowrap; /* keep default for larger screens */
     }
 
     /* Make header sticky and visually distinct */
@@ -364,14 +371,22 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
     /* Responsive tweaks */
     @media (max-width: 900px) {
       .search-field { width: 240px; }
-      .user-table { min-width: 640px; }
+      /* encourage table to fit container and allow internal scrolling */
+      .user-table { min-width: 0; }
     }
 
     @media (max-width: 640px) {
       .um-toolbar { flex-direction: column; align-items: stretch; gap: 12px; }
       .um-actions { justify-content: space-between; }
       .search-field { width: 100%; }
-      .user-table { min-width: 540px; }
+      .user-table { min-width: 0; }
+
+      /* allow cells to wrap on very small screens */
+      .user-table th,
+      .user-table td {
+        white-space: normal;
+        word-break: break-word;
+      }
     }
   `]
 })
