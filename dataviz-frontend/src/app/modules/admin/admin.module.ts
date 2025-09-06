@@ -16,6 +16,10 @@ const routes: Routes = [
         loadComponent: () => import('./pages/dashboard-list/dashboard-list.component').then(m => m.DashboardListComponent)
       },
       {
+        path: 'job-description',
+        loadComponent: () => import('./pages/job-description-list/job-description-list.component').then(m => m.JobDescriptionListComponent)
+      },
+      {
         path: 'dashboard-builder/:id',
         loadComponent: () => import('./pages/dashboard-builder/dashboard-builder.component').then(m => m.DashboardBuilderComponent)
       },

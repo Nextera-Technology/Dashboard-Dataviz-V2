@@ -1,0 +1,317 @@
+/* Modern Dashboard Styles */
+.dashboard-list {
+  padding: 0;
+  position: relative;
+}
+
+@keyframes backgroundShift {
+  0%, 100% { background: linear-gradient(45deg, #f8fafc, #e7f3ff, #e0e7ff); }
+  50% { background: linear-gradient(45deg, #e0e7ff, #f8fafc, #e7f3ff); }
+}
+
+/* Header Styling */
+.header-container {
+  position: relative;
+  z-index: 10;
+}
+
+@keyframes headerGlow {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.3; }
+  50% { transform: scale(1.1) rotate(180deg); opacity: 0.6; }
+}
+
+/* Create Button Animation */
+.create-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Dashboard Grid */
+.dashboards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 2rem;
+  position: relative;
+  z-index: 5;
+}
+
+/* Dashboard Card Animations */
+.dashboard-card {
+  position: relative;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.dashboard-card:hover::before {
+  opacity: 1;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15), 0 10px 20px rgba(59, 130, 246, 0.2);
+}
+
+/* Card Content Animation */
+.dashboard-card h2 {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+/* Source Items */
+.source-item {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Reserve space for the "show more" button so action buttons don't jump
+   even when the button is not rendered. The parent is positioned
+   relatively so we can absolutely place the expand button inside it. */
+.sources-section {
+  position: relative;
+  /* reserve approx the height of the expand button + spacing */
+  padding-bottom: 4.25rem;
+  min-height: 6rem;
+}
+
+/* If the expand button exists, keep it visually anchored to the bottom
+   of the sources area so layout is stable whether it's present or not. */
+.sources-section .expand-btn {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 0.75rem;
+  width: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Tags Animation */
+.classes-tags span {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.classes-tags span::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.4s ease;
+}
+
+.classes-tags span:hover::before {
+  left: 100%;
+}
+
+/* Expand Button */
+.expand-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.expand-btn:hover::before {
+  width: 200px;
+  height: 200px;
+}
+
+/* Action Buttons */
+.action-buttons button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ensure icons are always visible and don't shrink when translations
+   change length (e.g. in French). Fix icon sizing and keep text legible. */
+.action-buttons button mat-icon,
+.sources-section mat-icon,
+.dashboard-card mat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem; /* ~16px - slightly smaller */
+  width: 1.125rem;
+  height: 1.125rem;
+  flex: 0 0 auto; /* prevent shrinking when text is long */
+  margin-right: 0; /* reduce gap; spacing handled by container */
+}
+
+.action-buttons button > div > span,
+.action-buttons button span {
+  font-size: 0.85rem; /* slightly smaller per request (includes Manage) */
+  line-height: 1rem;
+}
+
+/* Ensure buttons keep a minimum width so icons and text don't wrap */
+.action-buttons .flex > button {
+  /* keep the current width but increase vertical size for better touch
+     and visual hierarchy. */
+  min-width: 4.5rem;
+  padding: 0.65rem 0.6rem; /* taller buttons */
+  font-size: 0.95rem; /* slightly larger text */
+  border-radius: 0.75rem;
+}
+
+/* Force icons to inherit color in RTL/L10n contexts where mat-icon
+   may get reset by other libraries; keep strong contrast. */
+.action-buttons button mat-icon {
+  color: currentColor !important;
+}
+
+/* Reduce spacing introduced by Tailwind's space-x-2 inside buttons */
+.action-buttons button > div.space-x-2 > * + * {
+  margin-left: 0.25rem !important; /* shrink gap between icon and label */
+}
+
+/* For French (or other languages) long labels, prevent icon/text from
+   collapsing: make text truncate with ellipsis and keep icon visible. */
+.action-buttons button span {
+  display: inline-block;
+  /* slightly smaller max-width so labels truncate and keep buttons narrow */
+  max-width: 6.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* For very small screens, stack buttons but keep them compact */
+@media (max-width: 420px) {
+  .action-buttons .flex {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .action-buttons .flex > button {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* Loading Animation */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Status Indicator */
+.w-3.h-3.bg-green-400 {
+  box-shadow: 0 0 4px rgba(34, 197, 94, 0.6);
+}
+
+/* Empty State */
+.empty-state {
+  position: relative;
+  z-index: 10;
+}
+
+.empty-state::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: emptyStateGlow 4s ease-in-out infinite;
+}
+
+@keyframes emptyStateGlow {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+  50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboards-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .dashboard-card {
+    margin: 0 1rem;
+  }
+  
+  .header-container .backdrop-blur-xl {
+    padding: 1.5rem;
+  }
+  
+  .create-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-list {
+    padding: 1rem;
+  }
+  
+  .dashboards-grid {
+    gap: 1rem;
+  }
+  
+  .dashboard-card {
+    margin: 0;
+    border-radius: 1rem;
+  }
+  
+  .action-buttons {
+    padding: 1rem;
+  }
+  
+  .action-buttons .flex {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .action-buttons button {
+    width: 100%;
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus states for accessibility */
+button:focus,
+.dashboard-card:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .dashboard-card {
+    border: 2px solid #000;
+  }
+  
+  .backdrop-blur-xl {
+    background: rgba(255, 255, 255, 0.95);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .dashboard-card:hover {
+    transform: none;
+  }
+}

@@ -112,15 +112,15 @@
                            focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
                            hover:border-gray-400 text-sm bg-white">
                     <option value="">{{ 'admin.dashboardFormDialog.select_certification' | translate }}</option>
-                    <!-- For first source (i === 0): Show all options -->
+                    <!-- For first source (i === 0): Show available options based on context -->
                     <ng-container *ngIf="i === 0">
-                      <option *ngFor="let source of allSources" [value]="source.certification">
+                      <option *ngFor="let source of getAvailableSources()" [value]="source.certification">
                         {{ source.certification }}
                       </option>
                     </ng-container>
                     <!-- For additional sources (i > 0): Show only matching option if firstSourceCertification is set -->
                     <ng-container *ngIf="i > 0">
-                      <option *ngFor="let source of allSources" [value]="source.certification" [hidden]="firstSourceCertification && source.certification !== firstSourceCertification">
+                      <option *ngFor="let source of getAvailableSources()" [value]="source.certification" [hidden]="firstSourceCertification && source.certification !== firstSourceCertification">
                         {{ source.certification }}
                       </option>
                     </ng-container>

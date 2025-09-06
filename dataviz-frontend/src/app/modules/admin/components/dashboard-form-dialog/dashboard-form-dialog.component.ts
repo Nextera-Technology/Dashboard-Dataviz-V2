@@ -45,6 +45,7 @@ interface SourceDataOption {
 // Data passed to the dialog
 export interface DashboardFormDialogData {
   dashboard?: Dashboard; // The dashboard to edit, or undefined for new
+  typeOfUsage?: string; // Optional typeOfUsage to set for new dashboards
 }
 
 @Component({
@@ -75,6 +76,7 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
 
   // UPDATED: Structured list of all possible sources based on new data
   readonly allSources: SourceDataOption[] = [
+    { certification: "RDC", classes: ["2025 DECAL OCT"] },
     { certification: "RDC 2021", classes: [] },
     { certification: "RDC 2022", classes: ["Classe 2022", "Classe Excellence 2022"] },
     { certification: "RDC 2023", classes: [] },
@@ -89,6 +91,11 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
     { certification: "CPEB 2023", classes: [] },
     { certification: "CPEB 2024", classes: [] },
     { certification: "CPEB 2025", classes: [] },
+  ];
+
+  // Filtered sources for Job Description context
+  readonly jobDescriptionSources: SourceDataOption[] = [
+    { certification: "RDC", classes: ["2025 DECAL OCT"] }
   ];
 
   // Map to store filtered classes for each source FormGroup
@@ -135,7 +142,15 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
       }
     } else {
       // For new dashboards, add at least one source entry by default
-      this.addSource();
+      if (this.data.typeOfUsage === 'JOB_DESCRIPTION_EVALUATION') {
+        // For Job Description dashboards, pre-populate with RDC 2025 and 2025 DECAL OCT
+        this.addSource({
+          certification: 'RDC',
+          classes: ['2025 DECAL OCT']
+        });
+      } else {
+        this.addSource();
+      }
     }
   }
 
@@ -225,10 +240,20 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Get the appropriate sources list based on context (Job Description vs regular)
+   */
+  getAvailableSources(): SourceDataOption[] {
+    return this.data.typeOfUsage === 'JOB_DESCRIPTION_EVALUATION' 
+      ? this.jobDescriptionSources 
+      : this.allSources;
+  }
+
+  /**
    * Updates the filteredClasses for a specific source FormGroup.
    */
   updateFilteredClassesForGroup(sourceGroup: FormGroup, selectedCert: string): void {
-    const selectedSourceOption = this.allSources.find(s => s.certification === selectedCert);
+    const availableSources = this.getAvailableSources();
+    const selectedSourceOption = availableSources.find(s => s.certification === selectedCert);
     const classesForThisCert = selectedSourceOption?.classes || [];
     this.filteredClassesMap.set(sourceGroup, classesForThisCert);
 
@@ -246,6 +271,7 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
    * Refresh filtered classes for all source groups, used after changes to the first source.
    */
   refreshAllFilteredClasses(): void {
+    const availableSources = this.getAvailableSources();
     this.sourcesFormArray.controls.forEach(control => {
       const group = control as FormGroup;
       const cert = group.get('certification')?.value;
@@ -255,7 +281,7 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
           group.get('certification')?.setValue(this.firstSourceCertification, { emitEvent: false });
         }
       }
-      const selectedSourceOption = this.allSources.find(s => s.certification === group.get('certification')?.value);
+      const selectedSourceOption = availableSources.find(s => s.certification === group.get('certification')?.value);
       const classesForThisCert = selectedSourceOption?.classes || [];
       this.filteredClassesMap.set(group, classesForThisCert);
       // Reset classes if invalid
@@ -360,6 +386,11 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
         title: formValue.title,
         sources,
       };
+
+      // Add typeOfUsage if provided from dialog data (for Job Description dashboards)
+      if (this.data.typeOfUsage) {
+        dashboardInput.typeOfUsage = this.data.typeOfUsage;
+      }
 
       try {
         let result;
