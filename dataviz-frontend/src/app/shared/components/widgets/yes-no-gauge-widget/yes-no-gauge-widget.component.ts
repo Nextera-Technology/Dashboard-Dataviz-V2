@@ -4,6 +4,8 @@ import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import * as am5radar from "@amcharts/amcharts5/radar";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
+import { ActionsButtonsComponent } from "app/shared/components/actions-buttons/actions-buttons.component";
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 
 interface WidgetData { name?: string; count?: number; percentage?: number; totalData?: number; }
 interface Widget {
@@ -22,13 +24,15 @@ interface Widget {
 @Component({
   selector: "app-yes-no-gauge-widget",
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ActionsButtonsComponent, TranslatePipe],
   template: `
     <div
       class="chart-box"
       [ngClass]="{ 'short-row': (widget?.rowSize || 1) <= 1 }"
       [style.background-color]="widget?.background || '#ffffff'"
     >
+      <!-- Action Buttons -->
+      <app-actions-buttons [widget]="widget"></app-actions-buttons>
       <!-- Widget Content -->
       <div class="chart-content">
         <h3 class="chart-title">{{ widget.title }}</h3>
@@ -36,6 +40,10 @@ interface Widget {
         <div class="gauge-container">
           <div [id]="chartDivId" class="gauge-chart"></div>
           <div class="center-label" *ngIf="yesPct!==null">{{ yesPct }}%</div>
+        </div>
+        <!-- Total Data -->
+        <div class="chart-legend">
+          {{ 'shared.worldMapWidget.students_total_label' | translate }} {{ getTotalData() }}
         </div>
       </div>
     </div>
@@ -59,6 +67,21 @@ interface Widget {
     .chart-box.short-row .chart-title {
       margin: 10px 0 8px 0;
       font-size: 16px;
+    }
+
+    .chart-legend {
+      position: absolute;
+      top: 10px;
+      left: 14px;
+      z-index: 2;
+      background: rgba(255,255,255,0.85);
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #15616d;
+      pointer-events: none;
+      text-align: left;
     }
 
     .chart-box:hover {
@@ -156,6 +179,14 @@ export class YesNoGaugeWidgetComponent implements OnInit,AfterViewInit,OnDestroy
       leftLabel: this.data[1]?.name || 'NO',  // Second item (typically "Not Used" or "Not Completed")
       rightLabel: this.data[0]?.name || 'YES'  // First item (typically "Used" or "Completed by Mentor")
     };
+  }
+
+  // Get total data count for display
+  getTotalData(): number {
+    if (!this.data || this.data.length === 0) {
+      return 0;
+    }
+    return this.data[0]?.totalData || this.totalCount || 0;
   }
   ngOnInit(){
     // Robust parsing of possible input shapes from backend or test data.
