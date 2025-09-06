@@ -97,6 +97,20 @@
             <button class="clear-filters" (click)="applySectionFilters()">{{ 'dashboard.sidebar.apply_filters' | translate }}</button>
         </div>
 
+        <!-- Job Description Section -->
+        <div class="job-description-section" *ngIf="isAdminUser()">
+            <div class="section-title job-description-title">
+                <span class="section-icon">📋</span>
+                Job Description
+            </div>
+            <div class="job-description-menu">
+                <a routerLink="/admin/job-description" class="job-description-menu-item">
+                    <mat-icon>work</mat-icon>
+                    <span>Job Description Dashboards</span>
+                </a>
+            </div>
+        </div>
+
         <!-- Admin Navigation Section -->
         <div class="admin-section" *ngIf="isAdminUser()">
             <div class="section-title admin-title">
