@@ -70,8 +70,8 @@ export class DashboardBuilderService {
     return await this.dashboardBuilderRepository.getOneDashboard(id);
   }
 
-  async getChartOptions() {
-    return await this.dashboardBuilderRepository.getChartOptions();
+  async getChartOptions(isForJobDescription?: boolean) {
+    return await this.dashboardBuilderRepository.getChartOptions(isForJobDescription);
   }
 
   async getWidgetDataSource(id: string) {

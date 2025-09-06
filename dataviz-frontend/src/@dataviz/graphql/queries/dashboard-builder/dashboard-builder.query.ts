@@ -84,13 +84,14 @@ export const gqlGetOneDashboard = gql`
       }
       title
       status
+      typeOfUsage
     }
   }
 `;
 
 export const gqlGetChartOptions = gql`
-  query GetChartOptions {
-    getChartOptions {
+  query GetChartOptions($isForJobDescription: Boolean) {
+    getChartOptions(isForJobDescription: $isForJobDescription) {
       data {
         chartOptions {
           previewChartImage

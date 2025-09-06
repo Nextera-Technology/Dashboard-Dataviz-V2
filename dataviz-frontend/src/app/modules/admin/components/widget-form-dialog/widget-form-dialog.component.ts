@@ -76,6 +76,7 @@ interface Dashboard {
   source?: string;
   title: string;
   status?: string;
+  typeOfUsage?: string;
 }
 
 // Data passed to the dialog
@@ -237,6 +238,16 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
     { value: "FLOW", label: "Flow" },
   ];
 
+  // Job Description specific widget types
+  readonly jobDescriptionWidgetTypes: WidgetTypeOption[] = [
+    { value: "JOBDESC_COMPANY_SECTORS", label: "Company Sectors" },
+    { value: "JOBDESC_WORKING_DAYS", label: "Working Days" },
+    { value: "JOBDESC_COMPETENCY_AUTONOMY", label: "Competency Autonomy" },
+    { value: "JOBDESC_COMPETENCY_USAGE", label: "Competency Usage" },
+    { value: "JOBDESC_COMPETENCY_MISSION_EVALUATION", label: "Competency Mission Evaluation" },
+    { value: "JOBDESC_PROFESSIONAL_EVALUATIONS", label: "Professional Evaluations" },
+  ];
+
   filteredSubTypes: WidgetSubTypeOption[] = [];
   maxGridSize = 4; // Max for columnSize and rowSize dropdowns
 
@@ -262,6 +273,16 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
     this.widgetForm.get('background')?.setValue(color);
   }
 
+  // Helper method to check if current dashboard is for job description evaluation
+  get isJobDescriptionDashboard(): boolean {
+    return this.dashboard?.typeOfUsage === 'JOB_DESCRIPTION_EVALUATION';
+  }
+
+  // Get the appropriate widget types based on dashboard type
+  get availableWidgetTypes(): WidgetTypeOption[] {
+    return this.isJobDescriptionDashboard ? this.jobDescriptionWidgetTypes : this.widgetTypes;
+  }
+
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<WidgetFormDialogComponent>,
@@ -275,6 +296,9 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
     this.currentSection = data.section;
     this.currentWidget = data.widget;
 
+    // Initialize form with conditional validators based on dashboard type
+    const followUpStageValidators = this.isJobDescriptionDashboard ? [] : [Validators.required];
+    
     this.widgetForm = this.fb.group({
       title: [this.currentWidget?.title || "", Validators.required],
       name: [this.currentWidget?.name || "", Validators.required],
@@ -284,7 +308,7 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
           ? this.currentWidget.visible
           : true,
       ],
-      followUpStage: [this.currentWidget?.followUpStage || null, Validators.required],
+      followUpStage: [this.currentWidget?.followUpStage || null, followUpStageValidators],
       widgetType: [this.currentWidget?.widgetType || "", Validators.required],
       widgetSubType: [this.currentWidget?.widgetSubType || null],
       columnSize: [
@@ -349,12 +373,13 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
         ? event
         : (event.target as HTMLSelectElement).value;
 
-    // Find the selected widget type option
-    const selectedWidgetTypeOption = this.widgetTypes.find(
+    // Find the selected widget type option from the appropriate list
+    const widgetTypesList = this.isJobDescriptionDashboard ? this.jobDescriptionWidgetTypes : this.widgetTypes;
+    const selectedWidgetTypeOption = widgetTypesList.find(
       (type) => type.value === selectedType
     );
 
-    // Update filteredSubTypes
+    // Update filteredSubTypes (for job description dashboards, this will always be empty)
     this.filteredSubTypes = selectedWidgetTypeOption?.subTypes || [];
     
     // Reset widgetSubType if current subType is not valid for the new widgetType
@@ -431,7 +456,8 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
 
   async getChartOptions(): Promise<void> {
     try {
-      const result = await this.dashboardService.getChartOptions();
+      const isForJobDescription = this.isJobDescriptionDashboard;
+      const result = await this.dashboardService.getChartOptions(isForJobDescription);
       if (result?.data?.length) {
         this.allChartTypeOptions = result.data.map((item: any) => ({
           // chartOptions now contains objects { name, s3_file_name }

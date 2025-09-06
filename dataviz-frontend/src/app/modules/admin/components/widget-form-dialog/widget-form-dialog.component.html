@@ -35,7 +35,8 @@
                     </div>
                 </div>
 
-                <div class="col-span-2">
+                <!-- Follow-up Stage - Hidden for Job Description dashboards -->
+                <div class="col-span-2" *ngIf="!isJobDescriptionDashboard">
                     <div>{{ 'admin.widgetFormDialog.follow_up_stage' | translate }}</div>
                     <select class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 
                      focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
@@ -57,7 +58,7 @@
                      focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
                      hover:border-gray-400 text-sm" formControlName="widgetType"
                         (change)="onWidgetTypeChange($event.target.value)">
-                        <option *ngFor="let type of widgetTypes" [value]="type.value">
+                        <option *ngFor="let type of availableWidgetTypes" [value]="type.value">
                             {{ (('admin.widgetTypes.' + type.value) | translate) || type.label }}
                         </option>
                     </select>
@@ -66,7 +67,8 @@
                     </div>
                 </div>
 
-                <div class="col-span-1">
+                <!-- Widget Sub Type - Hidden for Job Description dashboards -->
+                <div class="col-span-1" *ngIf="!isJobDescriptionDashboard">
                     <div>{{ 'admin.widgetFormDialog.widget_subtype' | translate }}</div>
                     <select class="w-full px-4 py-3 border border-gray-300 outline-none rounded-lg shadow-sm placeholder-gray-400 
                      focus:ring-4 focus:ring-blue-500/15 focus:border-blue-500 transition-all duration-200
@@ -79,7 +81,7 @@
                     </select>
                 </div>
 
-                <div class="col-span-1 chart-form-field">
+                <div class="chart-form-field" [ngClass]="isJobDescriptionDashboard ? 'col-span-2' : 'col-span-1'">
                     <div>{{ 'admin.widgetFormDialog.chart_type' | translate }}</div>
                     <div class="div-wrapper custom-input-trigger relative" (click)="openChartTypeSelection()"
                         [class.disabled-trigger]="!filteredChartTypes || filteredChartTypes.length === 0">

@@ -349,15 +349,15 @@ export class DashboardBuilderRepository {
    * @param The ID of the Dashboard to retrieve.
    * @returns {Promise<any>} - The query result.
    */
-  async getChartOptions() {
+  async getChartOptions(isForJobDescription?: boolean) {
     const query = gqlGetChartOptions;
-    const variables = {};
+    const variables = isForJobDescription ? { isForJobDescription } : {};
     try {
       const queryResult = await this._client.GraphqlQuery(query, variables);
       return queryResult.getChartOptions;
     } catch (error) {
       throw {
-        message: "Failed to get one Dashboard.",
+        message: "Failed to get chart options.",
         originalError: error,
         queryOrMutation: query,
         input: JSON.stringify(variables),
