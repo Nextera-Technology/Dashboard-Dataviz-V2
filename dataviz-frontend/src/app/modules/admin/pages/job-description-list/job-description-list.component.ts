@@ -9,15 +9,9 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { AdminLayoutComponent } from "../../components/admin-layout/admin-layout.component";
 import { DashboardBuilderService } from "../dashboard-builder/dashboard-builder.service";
 import { MatDialog } from "@angular/material/dialog";
-import {
-  DashboardFormDialogComponent,
-  DashboardFormDialogData,
-} from "../../components/dashboard-form-dialog/dashboard-form-dialog.component";
-import {
-  SchoolSelectionDialogComponent,
-  SchoolSelectionDialogData,
-  SchoolSelectionResult,
-} from "../../components/school-selection-dialog/school-selection-dialog.component";
+import { SchoolSelectionDialogComponent, SchoolSelectionResult } from '../../components/school-selection-dialog/school-selection-dialog.component';
+import { LoadingSpinnerDialogComponent } from '../../components/loading-spinner-dialog/loading-spinner-dialog.component';
+import { DashboardFormDialogComponent, DashboardFormDialogData } from '../../components/dashboard-form-dialog/dashboard-form-dialog.component';
 import { ShareDataService } from "app/shared/services/share-data.service";
 import Swal from 'sweetalert2';
 import { NotificationService } from '@dataviz/services/notification/notification.service';
@@ -151,16 +145,11 @@ export class JobDescriptionListComponent implements OnInit {
       event.stopPropagation();
     }
 
-    // Open school selection dialog
-    const dialogRef = this.dialog.open<
-      SchoolSelectionDialogComponent,
-      SchoolSelectionDialogData,
-      SchoolSelectionResult
-    >(SchoolSelectionDialogComponent, {
-      width: "600px",
+    const dialogRef = this.dialog.open(SchoolSelectionDialogComponent, {
+      width: '600px',
       data: {
-        dashboardId: dashboard._id || '',
-        dashboardTitle: dashboard.title
+        dashboardId: dashboard._id,
+        dashboardTitle: dashboard.title || dashboard.name || 'Dashboard'
       },
       panelClass: 'modern-dialog',
       backdropClass: 'modern-backdrop',
@@ -174,10 +163,29 @@ export class JobDescriptionListComponent implements OnInit {
         // Force close any remaining dialogs
         this.dialog.closeAll();
         
+        // Show loading spinner
+        const loadingDialogRef = this.dialog.open(LoadingSpinnerDialogComponent, {
+          width: '400px',
+          disableClose: true,
+          hasBackdrop: true,
+          backdropClass: 'loading-backdrop',
+          panelClass: 'loading-dialog',
+          data: {
+            message: result.openWithAllData 
+              ? 'Opening dashboard...' 
+              : `Applying school filters: ${result.selectedSchools.join(', ')}...`
+          }
+        });
+        
         try {
           if (result.openWithAllData) {
             // Use existing behavior - open with all data
             this.shareDataService.setDashboardId(dashboard._id || '');
+            
+            // Small delay to show loading state
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            loadingDialogRef.close();
             this.router.navigate(['/dashboard']);
           } else {
             // Use school filter query
@@ -185,6 +193,8 @@ export class JobDescriptionListComponent implements OnInit {
               dashboard._id || '',
               result.selectedSchools
             );
+            
+            loadingDialogRef.close();
             
             if (filterResult?._id) {
               this.shareDataService.setDashboardId(filterResult._id);
@@ -200,6 +210,7 @@ export class JobDescriptionListComponent implements OnInit {
             }
           }
         } catch (error) {
+          loadingDialogRef.close();
           console.error('Error opening dashboard:', error);
           await this.notifier.error('Failed to open dashboard. Please try again.', 'Error');
         }
