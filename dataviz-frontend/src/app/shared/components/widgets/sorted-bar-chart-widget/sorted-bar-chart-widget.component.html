@@ -1,0 +1,24 @@
+<div
+  class="chart-box relative"
+  [style.background-color]="widget?.background || '#ffffff'"
+>
+  <!-- Total Data Legend -->
+  <div class="chart-legend">{{ 'shared.worldMapWidget.students_total_label' | translate }} {{ totalData }}</div>
+  
+  <!-- Action Buttons -->
+  <app-actions-buttons [widget]="widget"></app-actions-buttons>
+
+  <!-- Widget Content -->
+  <div class="chart-content">
+    <h3 class="chart-title">{{ widget.title }}</h3>
+
+    <!-- Chart Container -->
+    <div #chartContainer class="chart-container"></div>
+
+    <!-- No Data Overlay -->
+    <div *ngIf="!widget?.data || widget?.data?.length === 0" class="no-data-overlay">
+      <mat-icon>bar_chart</mat-icon>
+      <p>{{ 'shared.noData' | translate }}</p>
+    </div>
+  </div>
+</div>

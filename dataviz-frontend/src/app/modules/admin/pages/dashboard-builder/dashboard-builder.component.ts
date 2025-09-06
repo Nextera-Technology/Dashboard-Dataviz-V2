@@ -44,6 +44,7 @@ import { RadarChartWidgetComponent } from "app/shared/components/widgets/radar-c
 import { DonutChartWidgetComponent } from "app/shared/components/widgets/donut-chart-widget/donut-chart-widget.component";
 import { AnimatedGaugeWidgetComponent } from "app/shared/components/widgets/animated-gauge-widget/animated-gauge-widget.component";
 import { YesNoGaugeWidgetComponent } from "app/shared/components/widgets/yes-no-gauge-widget/yes-no-gauge-widget.component";
+import { SortedBarChartWidgetComponent } from "app/shared/components/widgets/sorted-bar-chart-widget/sorted-bar-chart-widget.component";
 import { BarChartWidgetComponent } from "app/modules/dashboard/charts/bar-chart-widget.component";
 import { ShareDataService } from "app/shared/services/share-data.service";
 import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/breakdown-chart-widget.component";
@@ -134,6 +135,7 @@ interface Dashboard {
     DonutChartWidgetComponent,
     AnimatedGaugeWidgetComponent,
     YesNoGaugeWidgetComponent,
+    SortedBarChartWidgetComponent,
     BreakDownChartWidgetComponent
   ],
   templateUrl: "./dashboard-builder.component.html",

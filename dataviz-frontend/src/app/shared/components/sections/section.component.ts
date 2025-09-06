@@ -7,11 +7,11 @@ import { ColumnChartWidgetComponent } from "app/modules/dashboard/charts/column-
 import { LineChartWidgetComponent } from "app/modules/dashboard/charts/line-chart-widget.component";
 import { SankeyChartWidgetComponent } from "app/modules/dashboard/charts/sankey-chart-widget.component";
 import { TextWidgetComponent } from "app/modules/dashboard/charts/text-widget.component";
-import { MapWidgetComponent } from "app/modules/dashboard/charts/map-widget.component";
 import { WorldMapWidgetComponent } from "../widgets/world-map-widget/world-map-widget.component";
 import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/charts/pictorial-fraction-chart.component";
 import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/breakdown-chart-widget.component";
 import { YesNoGaugeWidgetComponent } from "../widgets/yes-no-gauge-widget/yes-no-gauge-widget.component";
+import { SortedBarChartWidgetComponent } from "../widgets/sorted-bar-chart-widget/sorted-bar-chart-widget.component";
 
 @Component({
   selector: "app-section",
@@ -25,11 +25,11 @@ import { YesNoGaugeWidgetComponent } from "../widgets/yes-no-gauge-widget/yes-no
     LineChartWidgetComponent,
     SankeyChartWidgetComponent,
     TextWidgetComponent,
-    MapWidgetComponent,
     PictorialStackedChartWidgetComponent,
     WorldMapWidgetComponent,
     BreakDownChartWidgetComponent,
-    YesNoGaugeWidgetComponent
+    YesNoGaugeWidgetComponent,
+    SortedBarChartWidgetComponent
   ],
   template: `
     <div class="section" [style.background-color]="section.background">
@@ -312,6 +312,29 @@ import { YesNoGaugeWidgetComponent } from "../widgets/yes-no-gauge-widget/yes-no
               [class.widget-large]="widget.size === 'large'"
             >
             </app-yes-no-gauge-widget>
+
+            <!-- Sorted Bar Chart Widget for COMPETENCY_AUTONOMY -->
+            <app-sorted-bar-chart-widget
+              *ngIf="(widget.widgetType === 'JOBDESC_COMPETENCY_AUTONOMY') && widget.chartType === 'SORTED_BAR_CHART'"
+              [widget]="widget"
+              class="widget"
+              [class.widget-small]="widget.size === 'small'"
+              [class.widget-medium]="widget.size === 'medium'"
+              [class.widget-large]="widget.size === 'large'"
+            >
+            </app-sorted-bar-chart-widget>
+
+            <!-- Other Sorted Bar Chart Widget -->
+            <app-bar-chart-widget
+              *ngIf="(widget.chartType === 'SORTED_BAR_CHART' && widget.widgetType !== 'JOBDESC_COMPETENCY_AUTONOMY') || widget.chartType === 'SortedBarChart' || widget.chartType === 'sorted_bar_chart'"
+              [widget]="widget"
+              [data]="widget?.data"
+              class="widget"
+              [class.widget-small]="widget.size === 'small'"
+              [class.widget-medium]="widget.size === 'medium'"
+              [class.widget-large]="widget.size === 'large'"
+            >
+            </app-bar-chart-widget>
           </div>
         </ng-container>
       </div>
