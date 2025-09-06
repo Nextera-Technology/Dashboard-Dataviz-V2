@@ -51,6 +51,44 @@ export const gqlGetAllDashboard = gql`
   }
 `;
 
+export const gqlOpenDashboardWithSchoolFilter = gql`
+  query openDashboardWithSchoolFilter($dashboardId: String!, $schoolFilters: [String!]!) {
+    openDashboardWithSchoolFilter(dashboardId: $dashboardId, schoolFilters: $schoolFilters) {
+      _id
+      name
+      sectionIds {
+        name
+        _id
+        background
+        title
+        widgetIds {
+          _id
+          chartType
+          data
+          name
+          title
+          visible
+          widgetType
+          widgetSubType
+          columnSize
+          followUpStage
+          rowSize
+          background
+          status
+        }
+        status
+      }
+      sources {
+        certification
+        classes
+      }
+      title
+      status
+      typeOfUsage
+    }
+  }
+`;
+
 export const gqlGetOneDashboard = gql`
   query GetOneDashboard($id: String!) {
     getOneDashboard(_id: $id) {

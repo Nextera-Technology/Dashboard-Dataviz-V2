@@ -13,6 +13,11 @@ import {
   DashboardFormDialogComponent,
   DashboardFormDialogData,
 } from "../../components/dashboard-form-dialog/dashboard-form-dialog.component";
+import {
+  SchoolSelectionDialogComponent,
+  SchoolSelectionDialogData,
+  SchoolSelectionResult,
+} from "../../components/school-selection-dialog/school-selection-dialog.component";
 import { ShareDataService } from "app/shared/services/share-data.service";
 import Swal from 'sweetalert2';
 import { NotificationService } from '@dataviz/services/notification/notification.service';
@@ -146,24 +151,60 @@ export class JobDescriptionListComponent implements OnInit {
       event.stopPropagation();
     }
 
-    // Try to animate the clicked element, fall back to card element
-    const clickedEl = (event && ((event.currentTarget as HTMLElement) || (event.target as HTMLElement))) || null;
-    const cardEl = document.querySelector(`[data-dashboard-id="${dashboard._id}"]`) as HTMLElement | null;
+    // Open school selection dialog
+    const dialogRef = this.dialog.open<
+      SchoolSelectionDialogComponent,
+      SchoolSelectionDialogData,
+      SchoolSelectionResult
+    >(SchoolSelectionDialogComponent, {
+      width: "600px",
+      data: {
+        dashboardId: dashboard._id || '',
+        dashboardTitle: dashboard.title
+      },
+      panelClass: 'modern-dialog',
+      backdropClass: 'modern-backdrop',
+      disableClose: false,
+      hasBackdrop: true,
+      closeOnNavigation: true
+    });
 
-    const elToAnimate = clickedEl || cardEl;
-    if (elToAnimate) {
-      elToAnimate.style.transform = 'scale(0.95)';
-      elToAnimate.style.transition = 'transform 0.1s ease';
-      setTimeout(() => {
-        this.shareDataService.setDashboardId(dashboard._id || '');
-        this.router.navigate(['/dashboard']);
-      }, 100);
-      return;
-    }
-
-    // Fallback navigation
-    this.shareDataService.setDashboardId(dashboard._id || '');
-    this.router.navigate(['/dashboard']);
+    dialogRef.afterClosed().subscribe(async (result: SchoolSelectionResult | undefined) => {
+      if (result) {
+        // Force close any remaining dialogs
+        this.dialog.closeAll();
+        
+        try {
+          if (result.openWithAllData) {
+            // Use existing behavior - open with all data
+            this.shareDataService.setDashboardId(dashboard._id || '');
+            this.router.navigate(['/dashboard']);
+          } else {
+            // Use school filter query
+            const filterResult = await this.dashboardService.openDashboardWithSchoolFilter(
+              dashboard._id || '',
+              result.selectedSchools
+            );
+            
+            if (filterResult?._id) {
+              this.shareDataService.setDashboardId(filterResult._id);
+              this.router.navigate(['/dashboard']);
+              
+              // Show success message
+              await this.notifier.success(
+                `Dashboard opened with school filter: ${result.selectedSchools.join(', ')}`, 
+                'School Filter Applied'
+              );
+            } else {
+              await this.notifier.error('Failed to open dashboard with school filter', 'Error');
+            }
+          }
+        } catch (error) {
+          console.error('Error opening dashboard:', error);
+          await this.notifier.error('Failed to open dashboard. Please try again.', 'Error');
+        }
+      }
+    });
   }
 
   manageDashboard(dashboard: Dashboard, event?: Event): void {

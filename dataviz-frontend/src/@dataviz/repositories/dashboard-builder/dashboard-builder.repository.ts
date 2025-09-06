@@ -22,6 +22,7 @@ import {
 } from "@dataviz/graphql/mutations/dashboard-builder/dashboard-builder.mutation";
 import {
   gqlGetAllDashboard,
+  gqlOpenDashboardWithSchoolFilter,
   gqlGetChartOptions,
   gqlGetOneDashboard,
   gqlGetDashboardTemplates
@@ -337,6 +338,44 @@ export class DashboardBuilderRepository {
     } catch (error) {
       throw {
         message: "Failed to get one Dashboard.",
+        originalError: error,
+        queryOrMutation: query,
+        input: JSON.stringify(variables),
+      };
+    }
+  }
+
+  /**
+   * Open dashboard with school filter using GraphQL.
+   * @param {string} dashboardId - The ID of the Dashboard to open.
+   * @param {string[]} schoolFilters - Array of school filters to apply.
+   * @returns {Promise<any>} - The query result.
+   */
+  async openDashboardWithSchoolFilter(dashboardId: string, schoolFilters: string[]) {
+    console.log('DashboardBuilderRepository: openDashboardWithSchoolFilter called');
+    console.log('Parameters:', { dashboardId, schoolFilters });
+    
+    if (!dashboardId || !schoolFilters) {
+      throw new Error("Dashboard ID and school filters are required");
+    }
+    
+    const query = gqlOpenDashboardWithSchoolFilter;
+    
+    const variables = { dashboardId, schoolFilters };
+    
+    try {
+      const queryResult = await this._client.GraphqlQuery(query, variables);
+      console.log('GraphQL query executed successfully');
+      console.log('Raw query result:', queryResult);
+      
+      const result = queryResult.openDashboardWithSchoolFilter;
+      console.log('Extracted result:', result);
+      
+      return result;
+    } catch (error) {
+      console.error('GraphQL query failed in repository:', error);
+      throw {
+        message: "Failed to open dashboard with school filter.",
         originalError: error,
         queryOrMutation: query,
         input: JSON.stringify(variables),

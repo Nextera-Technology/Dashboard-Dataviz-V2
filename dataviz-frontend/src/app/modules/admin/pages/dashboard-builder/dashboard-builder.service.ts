@@ -70,6 +70,13 @@ export class DashboardBuilderService {
     return await this.dashboardBuilderRepository.getOneDashboard(id);
   }
 
+  async openDashboardWithSchoolFilter(dashboardId: string, schoolFilters: string[]) {
+    console.log('DashboardBuilderService: openDashboardWithSchoolFilter called with:', { dashboardId, schoolFilters });
+    const result = await this.dashboardBuilderRepository.openDashboardWithSchoolFilter(dashboardId, schoolFilters);
+    console.log('DashboardBuilderService: repository returned:', result);
+    return result;
+  }
+
   async getChartOptions(isForJobDescription?: boolean) {
     return await this.dashboardBuilderRepository.getChartOptions(isForJobDescription);
   }
