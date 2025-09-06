@@ -178,36 +178,30 @@ export class JobDescriptionListComponent implements OnInit {
         });
         
         try {
-          if (result.openWithAllData) {
-            // Use existing behavior - open with all data
-            this.shareDataService.setDashboardId(dashboard._id || '');
-            
-            // Small delay to show loading state
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            loadingDialogRef.close();
+          // Always use school filter query, but pass all schools for "all data" option
+          const schoolsToFilter = result.openWithAllData 
+            ? ['IEF2I', 'KOUT QUE KOUT MONTPELLIER'] // All available schools
+            : result.selectedSchools;
+          
+          const filterResult = await this.dashboardService.openDashboardWithSchoolFilter(
+            dashboard._id || '',
+            schoolsToFilter
+          );
+          
+          loadingDialogRef.close();
+          
+          if (filterResult?._id) {
+            this.shareDataService.setDashboardId(filterResult._id);
             this.router.navigate(['/dashboard']);
+            
+            // Show success message
+            const message = result.openWithAllData
+              ? 'Dashboard opened with all school data'
+              : `Dashboard opened with school filter: ${result.selectedSchools.join(', ')}`;
+            
+            await this.notifier.success(message, 'Dashboard Opened');
           } else {
-            // Use school filter query
-            const filterResult = await this.dashboardService.openDashboardWithSchoolFilter(
-              dashboard._id || '',
-              result.selectedSchools
-            );
-            
-            loadingDialogRef.close();
-            
-            if (filterResult?._id) {
-              this.shareDataService.setDashboardId(filterResult._id);
-              this.router.navigate(['/dashboard']);
-              
-              // Show success message
-              await this.notifier.success(
-                `Dashboard opened with school filter: ${result.selectedSchools.join(', ')}`, 
-                'School Filter Applied'
-              );
-            } else {
-              await this.notifier.error('Failed to open dashboard with school filter', 'Error');
-            }
+            await this.notifier.error('Failed to open dashboard with school filter', 'Error');
           }
         } catch (error) {
           loadingDialogRef.close();
