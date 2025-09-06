@@ -107,7 +107,7 @@ export class SortedBarChartWidgetComponent implements OnInit, OnDestroy, AfterVi
       width: am5.percent(30),
       opposite: false,
       inside: false,
-      inversed: false  // Don't invert the axis to maintain high-to-low order
+      inversed: true  // Invert the axis to show highest values at top
     });
 
     yRenderer.labels.template.setAll({
