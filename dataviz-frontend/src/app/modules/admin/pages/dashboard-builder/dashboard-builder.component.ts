@@ -55,6 +55,8 @@ import { DataSourceQuickInfoDialogComponent } from "app/shared/components/action
 import { DashboardBuilderRepository } from "@dataviz/repositories/dashboard-builder/dashboard-builder.repository";
 import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 import { TranslationService } from 'app/shared/services/translation/translation.service';
+import { SchoolSelectionDialogComponent, SchoolSelectionResult } from '../../components/school-selection-dialog/school-selection-dialog.component';
+import { LoadingSpinnerDialogComponent } from '../../components/loading-spinner-dialog/loading-spinner-dialog.component';
 
 // Define interfaces for better type safety based on your GraphQL queries
 interface WidgetData {
@@ -99,6 +101,7 @@ interface Dashboard {
   sources?: { certification: string | null; classes: string[] | null }[];
   title: string;
   status?: string;
+  typeOfUsage?: string;
 }
 
 @Component({
@@ -185,6 +188,7 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
   /**
    * Opens the main dashboard view in a new browser tab.
    * Sets the dashboard id in ShareDataService so the dashboard page can load the correct dashboard.
+   * For job description dashboards, shows school selection dialog first.
    */
   async viewDashboard(): Promise<void> {
     if (!this.dashboard || !this.dashboard._id) {
@@ -192,12 +196,94 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Persist id for the dashboard page to read
-    this.shareDataService.setDashboardId(this.dashboard._id);
+    // Check if this is a job description dashboard
+    if (this.dashboard.typeOfUsage === 'JOB_DESCRIPTION_EVALUATION') {
+      this.openJobDescriptionDashboard();
+    } else {
+      // Regular dashboard - open directly
+      this.shareDataService.setDashboardId(this.dashboard._id);
+      const url = `${window.location.origin}/#/dashboard`;
+      window.open(url, '_blank');
+    }
+  }
 
-    // Build the URL for the dashboard route and open in new tab
-    const url = `${window.location.origin}/#/dashboard`;
-    window.open(url, '_blank');
+  /**
+   * Opens job description dashboard with school selection dialog
+   */
+  private openJobDescriptionDashboard(): void {
+    const dialogRef = this.dialog.open(SchoolSelectionDialogComponent, {
+      width: '600px',
+      data: {
+        dashboardId: this.dashboard._id,
+        dashboardTitle: this.dashboard.title || this.dashboard.name || 'Dashboard'
+      },
+      panelClass: 'modern-dialog',
+      backdropClass: 'modern-backdrop',
+      disableClose: false,
+      hasBackdrop: true,
+      closeOnNavigation: true
+    });
+
+    dialogRef.afterClosed().subscribe(async (result: SchoolSelectionResult | undefined) => {
+      if (result) {
+        // Force close any remaining dialogs
+        this.dialog.closeAll();
+        
+        // Show loading spinner
+        const loadingDialogRef = this.dialog.open(LoadingSpinnerDialogComponent, {
+          width: '400px',
+          disableClose: true,
+          hasBackdrop: true,
+          backdropClass: 'loading-backdrop',
+          panelClass: 'loading-dialog',
+          data: {
+            message: result.openWithAllData 
+              ? 'Opening dashboard...' 
+              : `Applying school filters: ${result.selectedSchools.join(', ')}...`
+          }
+        });
+        
+        try {
+          if (result.openWithAllData) {
+            // Use existing behavior - open with all data
+            this.shareDataService.setDashboardId(this.dashboard._id || '');
+            
+            // Small delay to show loading state
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            loadingDialogRef.close();
+            const url = `${window.location.origin}/#/dashboard`;
+            window.open(url, '_blank');
+          } else {
+            // Use school filter query
+            const filterResult = await this.dashboardService.openDashboardWithSchoolFilter(
+              this.dashboard._id || '',
+              result.selectedSchools
+            );
+            
+            loadingDialogRef.close();
+            
+            if (filterResult?._id) {
+              this.shareDataService.setDashboardId(filterResult._id);
+              const url = `${window.location.origin}/#/dashboard`;
+              window.open(url, '_blank');
+              
+              // Show success message
+              await this.notifier.success(
+                `Dashboard opened with school filter: ${result.selectedSchools.join(', ')}`, 
+                'School Filter Applied'
+              );
+            } else {
+              await this.notifier.error('Failed to open dashboard with school filter', 'Error');
+            }
+          }
+        } catch (error) {
+          loadingDialogRef.close();
+          console.error('Error opening dashboard:', error);
+          await this.notifier.error('Failed to open dashboard. Please try again.', 'Error');
+        }
+      }
+    });
   }
 
   ngOnInit(): void {
