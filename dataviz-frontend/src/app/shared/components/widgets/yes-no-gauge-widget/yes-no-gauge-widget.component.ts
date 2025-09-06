@@ -14,6 +14,9 @@ interface Widget {
   widgetType: string;
   columnSize: number;
   rowSize: number;
+  background?: string;
+  visible?: boolean;
+  status?: string;
 }
 
 @Component({
@@ -21,15 +24,104 @@ interface Widget {
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="gauge-container">
-      <div [id]="chartDivId" class="gauge-chart"></div>
-      <div class="center-label" *ngIf="yesPct!==null">{{ yesPct }}%</div>
+    <div
+      class="chart-box"
+      [ngClass]="{ 'short-row': (widget?.rowSize || 1) <= 1 }"
+      [style.background-color]="widget?.background || '#ffffff'"
+    >
+      <!-- Widget Content -->
+      <div class="chart-content">
+        <h3 class="chart-title">{{ widget.title }}</h3>
+        <!-- Gauge Container -->
+        <div class="gauge-container">
+          <div [id]="chartDivId" class="gauge-chart"></div>
+          <div class="center-label" *ngIf="yesPct!==null">{{ yesPct }}%</div>
+        </div>
+      </div>
     </div>
   `,
   styles:[`
-    .gauge-container{position:relative;width:100%;height:100%;}
-    .gauge-chart{width:100%;height:100%;min-height:150px;}
-    .center-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px;font-weight:700;color:#4caf50;}
+    .chart-box {
+      height: 100%;
+      position: relative;
+      text-align: center;
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.3s ease;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chart-box.short-row {
+      padding: 12px;
+    }
+    .chart-box.short-row .chart-title {
+      margin: 10px 0 8px 0;
+      font-size: 16px;
+    }
+
+    .chart-box:hover {
+      transform: translateY(-2px);
+    }
+
+    .chart-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .chart-title {
+      font-family: 'Inter';
+      font-size: 18px;
+      font-weight: 600;
+      color: #00454d;
+      margin: 15px 0 15px 0;
+      line-height: 1.3;
+    }
+
+    .gauge-container {
+      position: relative;
+      width: 100%;
+      flex: 1;
+      min-height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .gauge-chart {
+      width: 100%;
+      height: 100%;
+      min-height: 150px;
+    }
+    
+    .center-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px;
+      font-weight: 700;
+      color: #4caf50;
+      z-index: 10;
+    }
+
+    @media (max-width: 768px) {
+      .chart-box {
+        padding: 15px;
+        min-height: 200px;
+      }
+
+      .chart-title {
+        font-size: 16px;
+      }
+
+      .gauge-container {
+        min-height: 120px;
+      }
+    }
   `]
 })
 export class YesNoGaugeWidgetComponent implements OnInit,AfterViewInit,OnDestroy{
@@ -46,6 +138,25 @@ export class YesNoGaugeWidgetComponent implements OnInit,AfterViewInit,OnDestroy
     return `yes-no-gauge-div-${id}`;
   }
   constructor(private zone:NgZone){}
+  
+  // Check if this is a job description widget that needs custom labels
+  get isJobDescriptionWidget(): boolean {
+    return this.widget?.widgetType === 'JOBDESC_COMPETENCY_USAGE' || 
+           this.widget?.widgetType === 'JOBDESC_PROFESSIONAL_EVALUATIONS';
+  }
+
+  // Get dynamic labels from data
+  get dynamicLabels(): { leftLabel: string; rightLabel: string } {
+    if (!this.data || this.data.length < 2) {
+      return { leftLabel: 'NO', rightLabel: 'YES' };
+    }
+    
+    // Use the actual field names from data
+    return {
+      leftLabel: this.data[1]?.name || 'NO',  // Second item (typically "Not Used" or "Not Completed")
+      rightLabel: this.data[0]?.name || 'YES'  // First item (typically "Used" or "Completed by Mentor")
+    };
+  }
   ngOnInit(){
     // Robust parsing of possible input shapes from backend or test data.
     if(!this.data || this.data.length === 0){
@@ -128,33 +239,36 @@ export class YesNoGaugeWidgetComponent implements OnInit,AfterViewInit,OnDestroy
         renderer: axisRenderer
       }));
 
-      // YES range (0..0.5)
-      const yesDataItem = xAxis.makeDataItem({});
-      yesDataItem.set("value", 0);
-      yesDataItem.set("endValue", 0.5);
-      xAxis.createAxisRange(yesDataItem);
-      yesDataItem.get("label").setAll({ text: "YES", forceHidden: false });
-      yesDataItem.get("axisFill").setAll({ visible: true, fillOpacity: 1, fill: am5.color(0x4caf50) });
-      // Tooltip for YES range
-      const yesCount = this.yesCount || 0;
-      const total = this.totalCount || (yesCount + (this.noCount || 0));
-      yesDataItem.get("axisFill").setAll({ tooltipText: `${yesCount} / ${total}` });
-
-      // NO range (0.5..1)
+      // NO range (0..0.5) - left side (red) - use dynamic labels
       const noDataItem = xAxis.makeDataItem({});
-      noDataItem.set("value", 0.5);
-      noDataItem.set("endValue", 1);
+      noDataItem.set("value", 0);
+      noDataItem.set("endValue", 0.5);
       xAxis.createAxisRange(noDataItem);
-      noDataItem.get("label").setAll({ text: "NO", forceHidden: false });
+      const labels = this.dynamicLabels;
+      noDataItem.get("label").setAll({ text: labels.leftLabel.toUpperCase(), forceHidden: false });
       noDataItem.get("axisFill").setAll({ visible: true, fillOpacity: 1, fill: am5.color(0xf44336) });
       // Tooltip for NO range
+      const yesCount = this.yesCount || 0;
+      const total = this.totalCount || (yesCount + (this.noCount || 0));
       const noCount = this.noCount || Math.max(0, (this.totalCount || 0) - (this.yesCount || 0));
-      noDataItem.get("axisFill").setAll({ tooltipText: `${noCount} / ${total}` });
+      const noTooltip = `${labels.leftLabel}: ${noCount} / ${total}`;
+      noDataItem.get("axisFill").setAll({ tooltipText: noTooltip });
+
+      // YES range (0.5..1) - right side (green) - use dynamic labels
+      const yesDataItem = xAxis.makeDataItem({});
+      yesDataItem.set("value", 0.5);
+      yesDataItem.set("endValue", 1);
+      xAxis.createAxisRange(yesDataItem);
+      yesDataItem.get("label").setAll({ text: labels.rightLabel.toUpperCase(), forceHidden: false });
+      yesDataItem.get("axisFill").setAll({ visible: true, fillOpacity: 1, fill: am5.color(0x4caf50) });
+      // Tooltip for YES range
+      const yesTooltip = `${labels.rightLabel}: ${yesCount} / ${total}`;
+      yesDataItem.get("axisFill").setAll({ tooltipText: yesTooltip });
 
       // Clock hand indicator
-      // NOTE: invert mapping so higher "yes" percentage points to the GREEN (YES) side
+      // Map percentage directly: 0% = 0 (left/NO), 100% = 1 (right/YES)
       const pctVal = Math.max(0, Math.min(100, Number(this.yesPct)));
-      const value = Math.max(0, Math.min(1, 1 - (pctVal / 100)));
+      const value = pctVal / 100; // Direct mapping: 0% -> 0, 100% -> 1
       const axisDataItem = xAxis.makeDataItem({});
       axisDataItem.set("value", value);
 

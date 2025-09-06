@@ -11,6 +11,7 @@ import { MapWidgetComponent } from "app/modules/dashboard/charts/map-widget.comp
 import { WorldMapWidgetComponent } from "../widgets/world-map-widget/world-map-widget.component";
 import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/charts/pictorial-fraction-chart.component";
 import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/breakdown-chart-widget.component";
+import { YesNoGaugeWidgetComponent } from "../widgets/yes-no-gauge-widget/yes-no-gauge-widget.component";
 
 @Component({
   selector: "app-section",
@@ -27,7 +28,8 @@ import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/brea
     MapWidgetComponent,
     PictorialStackedChartWidgetComponent,
     WorldMapWidgetComponent,
-    BreakDownChartWidgetComponent
+    BreakDownChartWidgetComponent,
+    YesNoGaugeWidgetComponent
   ],
   template: `
     <div class="section" [style.background-color]="section.background">
@@ -298,6 +300,18 @@ import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/brea
               [class.widget-large]="widget.size === 'large'"
             >
             </app-world-map-widget>
+
+            <!-- Yes/No Gauge Widget -->
+            <app-yes-no-gauge-widget
+              *ngIf="widget.chartType === 'YES_NO_GAUGE'"
+              [widget]="widget"
+              [data]="widget?.data"
+              class="widget"
+              [class.widget-small]="widget.size === 'small'"
+              [class.widget-medium]="widget.size === 'medium'"
+              [class.widget-large]="widget.size === 'large'"
+            >
+            </app-yes-no-gauge-widget>
           </div>
         </ng-container>
       </div>
