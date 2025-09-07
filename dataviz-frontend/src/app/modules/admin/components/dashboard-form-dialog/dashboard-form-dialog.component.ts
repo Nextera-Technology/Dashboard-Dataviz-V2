@@ -323,8 +323,15 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
 
   async loadTemplates() {
     const type = this.dashboardForm.get('duplicateType')?.value;
+    
     try {
-      this.dashboardTemplates = await this.dashboardService.getDashboardTemplates(type);
+      // Only pass isForJobDescription parameter when in job description context
+      if (this.data.typeOfUsage === 'JOB_DESCRIPTION_EVALUATION') {
+        this.dashboardTemplates = await this.dashboardService.getDashboardTemplates(type, true);
+      } else {
+        // Normal dashboard builder - don't pass the parameter
+        this.dashboardTemplates = await this.dashboardService.getDashboardTemplates(type);
+      }
     } catch (error) {
       await this.notifier.errorKey('notifications.error_loading_dashboard');
     }

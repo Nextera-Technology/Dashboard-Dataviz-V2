@@ -144,8 +144,8 @@ export const gqlGetChartOptions = gql`
 `;
 
 export const gqlGetDashboardTemplates = gql`
-  query getDashboardTemplates($type: String!) {
-    getDashboardTemplates(type: $type) {
+  query getDashboardTemplates($type: String!, $isForJobDescription: Boolean) {
+    getDashboardTemplates(type: $type, isForJobDescription: $isForJobDescription) {
       _id
       name
     }

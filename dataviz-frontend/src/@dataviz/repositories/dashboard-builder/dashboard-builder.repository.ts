@@ -365,8 +365,6 @@ export class DashboardBuilderRepository {
     
     try {
       const queryResult = await this._client.GraphqlQuery(query, variables);
-      console.log('GraphQL query executed successfully');
-      console.log('Raw query result:', queryResult);
       
       const result = queryResult.openDashboardWithSchoolFilter;
       console.log('Extracted result:', result);
@@ -486,9 +484,9 @@ export class DashboardBuilderRepository {
     }
   }
 
-  async getDashboardTemplates(type: string) {
+  async getDashboardTemplates(type: string, isForJobDescription?: boolean) {
     const query = gqlGetDashboardTemplates;
-    const variables = { type };
+    const variables = { type, isForJobDescription };
 
     try {
       const result = await this._client.GraphqlQuery(query, variables);

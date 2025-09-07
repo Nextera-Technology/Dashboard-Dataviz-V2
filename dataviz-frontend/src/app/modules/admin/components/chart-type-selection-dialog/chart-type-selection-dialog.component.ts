@@ -54,7 +54,7 @@ export class ChartTypeSelectionDialogComponent implements OnInit {
    * If true, all chart types are selectable (used for testing/developer mode).
    * Set this to true to disable the grayout/lock overlay when selecting chart types.
    */
-  allowAllChartTypesForTesting = true;
+  allowAllChartTypesForTesting = false;
 
   ngOnInit(): void {
     // Dialog data is available via this.data

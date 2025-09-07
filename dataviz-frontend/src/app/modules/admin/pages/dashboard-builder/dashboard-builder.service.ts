@@ -89,8 +89,8 @@ export class DashboardBuilderService {
     return await this.dashboardBuilderRepository.regenerateAutoAnalysisDashboard(dashboardId);
   }
 
-  async getDashboardTemplates(type: string) {
-    return await this.dashboardBuilderRepository.getDashboardTemplates(type);
+  async getDashboardTemplates(type: string, isForJobDescription?: boolean) {
+    return await this.dashboardBuilderRepository.getDashboardTemplates(type, isForJobDescription);
   }
 
   async duplicateDashboardFromOther(input: any) {
