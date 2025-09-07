@@ -276,12 +276,12 @@ export class YesNoGaugeWidgetComponent implements OnInit,AfterViewInit,OnDestroy
       noDataItem.set("endValue", 0.5);
       xAxis.createAxisRange(noDataItem);
       const labels = this.dynamicLabels;
-      noDataItem.get("label").setAll({ text: labels.leftLabel.toUpperCase(), forceHidden: false });
-      noDataItem.get("axisFill").setAll({ visible: true, fillOpacity: 1, fill: am5.color(0xf44336) });
-      // Tooltip for NO range
       const yesCount = this.yesCount || 0;
       const total = this.totalCount || (yesCount + (this.noCount || 0));
       const noCount = this.noCount || Math.max(0, (this.totalCount || 0) - (this.yesCount || 0));
+      noDataItem.get("label").setAll({ text: `${labels.leftLabel.toUpperCase()} (${noCount}/${total})`, forceHidden: false });
+      noDataItem.get("axisFill").setAll({ visible: true, fillOpacity: 1, fill: am5.color(0xf44336) });
+      // Tooltip for NO range
       const noTooltip = `${labels.leftLabel}: ${noCount} / ${total}`;
       noDataItem.get("axisFill").setAll({ tooltipText: noTooltip });
 
@@ -290,7 +290,7 @@ export class YesNoGaugeWidgetComponent implements OnInit,AfterViewInit,OnDestroy
       yesDataItem.set("value", 0.5);
       yesDataItem.set("endValue", 1);
       xAxis.createAxisRange(yesDataItem);
-      yesDataItem.get("label").setAll({ text: labels.rightLabel.toUpperCase(), forceHidden: false });
+      yesDataItem.get("label").setAll({ text: `${labels.rightLabel.toUpperCase()} (${yesCount}/${total})`, forceHidden: false });
       yesDataItem.get("axisFill").setAll({ visible: true, fillOpacity: 1, fill: am5.color(0x4caf50) });
       // Tooltip for YES range
       const yesTooltip = `${labels.rightLabel}: ${yesCount} / ${total}`;
