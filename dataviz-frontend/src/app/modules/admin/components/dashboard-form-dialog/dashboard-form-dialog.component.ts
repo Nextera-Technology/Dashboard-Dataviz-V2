@@ -76,7 +76,7 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
 
   // UPDATED: Structured list of all possible sources based on new data
   readonly allSources: SourceDataOption[] = [
-    { certification: "RDC", classes: ["2025 DECAL OCT"] },
+    { certification: "RDC", classes: ["2025 DECAL OCT", "2025"] },
     { certification: "RDC 2021", classes: [] },
     { certification: "RDC 2022", classes: ["Classe 2022", "Classe Excellence 2022"] },
     { certification: "RDC 2023", classes: [] },
@@ -95,7 +95,7 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
 
   // Filtered sources for Job Description context
   readonly jobDescriptionSources: SourceDataOption[] = [
-    { certification: "RDC", classes: ["2025 DECAL OCT"] }
+    { certification: "RDC", classes: ["2025 DECAL OCT", "2025"] }
   ];
 
   // Map to store filtered classes for each source FormGroup
@@ -146,7 +146,7 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
         // For Job Description dashboards, pre-populate with RDC 2025 and 2025 DECAL OCT
         this.addSource({
           certification: 'RDC',
-          classes: ['2025 DECAL OCT']
+          classes: ['2025']
         });
       } else {
         this.addSource();

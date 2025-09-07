@@ -154,7 +154,8 @@ export const gqlGetDashboardTemplates = gql`
   }
 `;
 
-
-
-
-
+export const gqlGetSchoolDropdown = gql`
+  query getSchoolDropdown($dashboardId: String!) {
+    getSchoolDropdown(dashboardId: $dashboardId)
+  }
+`;

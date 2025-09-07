@@ -246,7 +246,7 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
         try {
           // Always use school filter query, but pass all schools for "all data" option
           const schoolsToFilter = result.openWithAllData 
-            ? ['IEF2I', 'KOUT QUE KOUT MONTPELLIER'] // All available schools
+            ? ['ALL'] // All available schools
             : result.selectedSchools;
           
           const filterResult = await this.dashboardService.openDashboardWithSchoolFilter(

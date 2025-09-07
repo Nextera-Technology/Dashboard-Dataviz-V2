@@ -25,7 +25,8 @@ import {
   gqlOpenDashboardWithSchoolFilter,
   gqlGetChartOptions,
   gqlGetOneDashboard,
-  gqlGetDashboardTemplates
+  gqlGetDashboardTemplates,
+  gqlGetSchoolDropdown
 } from "@dataviz/graphql/queries/dashboard-builder/dashboard-builder.query";
 
 @Injectable({
@@ -513,6 +514,31 @@ export class DashboardBuilderRepository {
         message: "Failed to duplicate dashboard.",
         originalError: error,
         mutation: mutation,
+        input: JSON.stringify(variables),
+      };
+    }
+  }
+
+  /**
+   * Get school dropdown options for a specific dashboard using GraphQL.
+   * @param {string} dashboardId - The ID of the dashboard to get schools for.
+   * @returns {Promise<string[]>} - Array of school names.
+   */
+  async getSchoolDropdown(dashboardId: string) {
+    if (!dashboardId) {
+      throw new Error("Dashboard ID is required");
+    }
+    const query = gqlGetSchoolDropdown;
+    const variables = { dashboardId };
+
+    try {
+      const queryResult = await this._client.GraphqlQuery(query, variables);
+      return queryResult.getSchoolDropdown;
+    } catch (error) {
+      throw {
+        message: "Failed to get school dropdown options.",
+        originalError: error,
+        queryOrMutation: query,
         input: JSON.stringify(variables),
       };
     }
