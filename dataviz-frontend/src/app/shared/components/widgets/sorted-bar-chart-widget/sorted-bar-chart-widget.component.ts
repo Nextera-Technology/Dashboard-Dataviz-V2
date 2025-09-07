@@ -79,8 +79,8 @@ export class SortedBarChartWidgetComponent implements OnInit, OnDestroy, AfterVi
         layout: this.root.verticalLayout,
         wheelX: "none",
         wheelY: "none",
-        paddingLeft: 20,
-        paddingRight: 20,
+        paddingLeft: 10,
+        paddingRight: 40,
         paddingTop: 20,
         paddingBottom: 20
       })
@@ -103,18 +103,19 @@ export class SortedBarChartWidgetComponent implements OnInit, OnDestroy, AfterVi
 
     // Create Y-axis (categories) - exact pattern from information dialog
     const yRenderer = am5xy.AxisRendererY.new(this.root, {
-      minGridDistance: 20,
-      width: am5.percent(30),
+      minGridDistance: 40,
+      width: am5.percent(35),
       opposite: false,
       inside: false,
       inversed: true  // Invert the axis to show highest values at top
     });
 
     yRenderer.labels.template.setAll({
-      oversizedBehavior: "truncate",
-      maxWidth: 350,
-      fontSize: 12,
-      textAlign: "right"
+      oversizedBehavior: "wrap",
+      maxWidth: 150,
+      fontSize: 11,
+      textAlign: "right",
+      lineHeight: 1.2
     });
 
     const yAxis = chart.yAxes.push(
@@ -133,7 +134,7 @@ export class SortedBarChartWidgetComponent implements OnInit, OnDestroy, AfterVi
         numberFormatter: am5.NumberFormatter.new(this.root, {
           "numberFormat": "#,###a"
         }),
-        extraMax: 0.1,
+        extraMax: 0.2,
         renderer: am5xy.AxisRendererX.new(this.root, {
           strokeOpacity: 0.1,
           minGridDistance: 30
@@ -144,53 +145,48 @@ export class SortedBarChartWidgetComponent implements OnInit, OnDestroy, AfterVi
     // Create series - exact pattern from information dialog
     const series = chart.series.push(
       am5xy.ColumnSeries.new(this.root, {
-        name: "Series 1",
+        name: "Series",
         xAxis: xAxis,
         yAxis: yAxis,
         valueXField: "count",
-        categoryYField: "category"
+        categoryYField: "category",
+        tooltip: am5.Tooltip.new(this.root, {
+          labelText: "{categoryY}: {valueX}"
+        })
       })
     );
 
-    // Set tooltip separately to ensure it works
-    series.set("tooltip", am5.Tooltip.new(this.root, {
-      pointerOrientation: "left",
-      labelText: "{categoryY}: {valueX}"
-    }));
-
-    // Style the columns - exact pattern from information dialog
+    // Configure series appearance
     series.columns.template.setAll({
       cornerRadiusTR: 5,
       cornerRadiusBR: 5,
-      strokeOpacity: 0
-    });
-
-    // Add wrapping to tooltip label to prevent text cutoff
-    let tooltip = series.get("tooltip");
-    if (tooltip) {
-      tooltip.label.setAll({
-        oversizedBehavior: "wrap",
-        maxWidth: 250,
-        textAlign: "left"
-      });
-    }
-
-    // Enable tooltips on columns
-    series.columns.template.setAll({
+      stroke: am5.color("#ffffff"),
+      strokeWidth: 1,
+      strokeOpacity: 0.1,
+      fill: am5.color("#4FC3F7"),
       tooltipText: "{categoryY}: {valueX}",
       cursorOverStyle: "pointer"
     });
 
-    // Make each column to be of a different color
-    series.columns.template.adapters.add("fill", function (fill, target) {
-      return chart.get("colors").getIndex(series.columns.indexOf(target));
+    // Add data labels to show count values
+    series.bullets.push(() => {
+      return am5.Bullet.new(this.root, {
+        locationX: 1,
+        locationY: 0.5,
+        sprite: am5.Label.new(this.root, {
+          text: "{valueX}",
+          fill: am5.color("#000000"),
+          centerY: am5.percent(50),
+          centerX: am5.percent(0),
+          populateText: true,
+          fontSize: 11,
+          fontWeight: "500",
+          dx: -2 // Small offset to position label slightly to the right of the bar end
+        })
+      });
     });
 
-    series.columns.template.adapters.add("stroke", function (stroke, target) {
-      return chart.get("colors").getIndex(series.columns.indexOf(target));
-    });
-
-    // Set data - exact pattern from information dialog
+    // Set data
     yAxis.data.setAll(chartData);
     series.data.setAll(chartData);
 
