@@ -50,6 +50,7 @@ interface Dashboard {
   sources?: { certification: string | null; classes: string[] | null }[]; // Updated source structure
   title: string;
   status?: string;
+  isDuplicationProcessInProgress?: boolean;
 }
 
 @Component({
@@ -139,12 +140,41 @@ export class JobDescriptionListComponent implements OnInit {
     }
   }
 
-  openDashboard(dashboard: Dashboard, event?: Event): void {
+  async openDashboard(dashboard: Dashboard, event?: Event): Promise<void> {
     // Prevent bubbling when called from button click
     if (event) {
       event.stopPropagation();
     }
 
+    // Step 1: Validate dashboard ID
+    if (!dashboard._id) {
+      await this.notifier.toastKey('notifications.no_dashboard_to_view', 'info', undefined, 3000);
+      return;
+    }
+
+    try {
+      // Step 2: Fetch the latest dashboard data to ensure up-to-date information
+      const latestDashboard = await this.dashboardService.getOneDashboard(dashboard._id);
+      if (!latestDashboard) {
+        await this.notifier.toastKey('notifications.dashboard_not_found', 'error', undefined, 3000);
+        return;
+      }
+
+      // Step 3: Check if duplication process is in progress
+      if (latestDashboard.isDuplicationProcessInProgress) {
+        await this.notifier.infoKey('notifications.duplication_in_progress', undefined, 4000);
+        return;
+      }
+
+      // Step 4: Proceed with school selection dialog
+      this.openSchoolSelectionDialog(latestDashboard);
+    } catch (error) {
+      console.error('Error fetching latest dashboard data:', error);
+      await this.notifier.errorKey('notifications.error_loading_dashboard');
+    }
+  }
+
+  private openSchoolSelectionDialog(dashboard: Dashboard): void {
     const dialogRef = this.dialog.open(SchoolSelectionDialogComponent, {
       width: '600px',
       data: {

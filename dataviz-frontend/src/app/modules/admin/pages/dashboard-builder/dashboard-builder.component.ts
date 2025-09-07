@@ -102,6 +102,7 @@ interface Dashboard {
   title: string;
   status?: string;
   typeOfUsage?: string;
+  isDuplicationProcessInProgress?: boolean;
 }
 
 @Component({
@@ -196,14 +197,32 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Check if this is a job description dashboard
-    if (this.dashboard.typeOfUsage === 'JOB_DESCRIPTION_EVALUATION') {
-      this.openJobDescriptionDashboard();
-    } else {
-      // Regular dashboard - open directly
-      this.shareDataService.setDashboardId(this.dashboard._id);
-      const url = `${window.location.origin}/#/dashboard`;
-      window.open(url, '_blank');
+    try {
+      // Fetch the latest dashboard data to ensure up-to-date information
+      const latestDashboard = await this.dashboardService.getOneDashboard(this.dashboard._id);
+      if (!latestDashboard) {
+        await this.notifier.toastKey('notifications.dashboard_not_found', 'error', undefined, 3000);
+        return;
+      }
+
+      // Check if duplication process is in progress
+      if (latestDashboard.isDuplicationProcessInProgress) {
+        await this.notifier.infoKey('notifications.duplication_in_progress', undefined, 4000);
+        return;
+      }
+
+      // Check if this is a job description dashboard
+      if (latestDashboard.typeOfUsage === 'JOB_DESCRIPTION_EVALUATION') {
+        this.openJobDescriptionDashboard();
+      } else {
+        // Regular dashboard - open directly
+        this.shareDataService.setDashboardId(latestDashboard._id);
+        const url = `${window.location.origin}/#/dashboard`;
+        window.open(url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error fetching latest dashboard data:', error);
+      await this.notifier.errorKey('notifications.error_loading_dashboard');
     }
   }
 

@@ -33,6 +33,7 @@ export const gqlGetAllDashboard = gql`
       data {
         _id
         name
+        isDuplicationProcessInProgress
         sources {
           certification
           classes
@@ -57,6 +58,7 @@ export const gqlOpenDashboardWithSchoolFilter = gql`
       _id
       name
       currentSchools
+      isDuplicationProcessInProgress
       sectionIds {
         name
         _id
@@ -96,6 +98,7 @@ export const gqlGetOneDashboard = gql`
       _id
       name
       currentSchools
+      isDuplicationProcessInProgress
       sectionIds {
         name
         _id

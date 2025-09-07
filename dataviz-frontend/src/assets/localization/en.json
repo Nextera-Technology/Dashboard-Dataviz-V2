@@ -395,7 +395,8 @@
         "cancelButtonText": "Cancel"
       },
       "no_chart_types": { "title": "No chart types", "message": "No chart types available for current widget configuration." },
-      "duplication_failed": { "title": "Duplication failed", "message": "Failed to duplicate dashboard. Please try again. {error}" }
+      "duplication_failed": { "title": "Duplication failed", "message": "Failed to duplicate dashboard. Please try again. {error}" },
+      "duplication_in_progress": { "title": "Duplication in Progress", "message": "This dashboard is currently being duplicated. Please wait for the process to complete before viewing." }
     },
     "shared": {
       "language_changed": "Language changed",

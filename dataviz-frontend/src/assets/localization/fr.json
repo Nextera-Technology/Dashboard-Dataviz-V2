@@ -377,7 +377,8 @@
         "cancelButtonText": "Annuler"
       },
       "no_chart_types": { "title": "Aucun type de graphique", "message": "Aucun type de graphique disponible pour la configuration actuelle du widget." },
-      "duplication_failed": { "title": "Échec de la duplication", "message": "Échec de la duplication du tableau de bord. Veuillez réessayer. {error}" }
+      "duplication_failed": { "title": "Échec de la duplication", "message": "Échec de la duplication du tableau de bord. Veuillez réessayer. {error}" },
+      "duplication_in_progress": { "title": "Duplication en cours", "message": "Ce tableau de bord est actuellement en cours de duplication. Veuillez attendre que le processus soit terminé avant de le visualiser." }
     },
     "dashboard": {
       "sidebar": {
