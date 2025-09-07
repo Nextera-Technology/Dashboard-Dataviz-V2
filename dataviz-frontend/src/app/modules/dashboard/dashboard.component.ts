@@ -247,4 +247,31 @@ getChildModel(childName: string): boolean {
   isAdminUser(): boolean {
     return this.currentUser?.role === 'operator';
   }
-} 
+
+  isJobDescriptionDashboard(): boolean {
+    return this.dashboard?.typeOfUsage === 'JOB_DESCRIPTION_EVALUATION';
+  }
+
+  getDataSourceDisplay(): string {
+    if (this.dashboard?.sources && this.dashboard.sources.length > 0) {
+      return this.dashboard.sources.map((source: any) => {
+        const certification = source.certification || '';
+        const classes = source.classes && source.classes.length > 0 
+          ? source.classes.join(', ') 
+          : '';
+        
+        if (certification && classes) {
+          return `${certification} - ${classes}`;
+        } else if (certification) {
+          return certification;
+        } else if (classes) {
+          return classes;
+        }
+        return '';
+      }).filter((item: string) => item).join(' | ');
+    }
+    
+    // Fallback to translation key if no sources
+    return this.translation.translate('admin.dashboardBuilder.data_source_label') || 'Data Source';
+  }
+}

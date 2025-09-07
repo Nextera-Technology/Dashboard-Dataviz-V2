@@ -135,7 +135,10 @@
         <header>
             <div class="header-content">
                 <h1>{{ dashboard?.title || 'Dashboard' }}</h1>
-                <h4>{{ dashboard?.subtitle || ('admin.dashboardBuilder.data_source_label' | translate) }}</h4>
+                <h4>{{ getDataSourceDisplay() }}</h4>
+                <h5 *ngIf="isJobDescriptionDashboard() && dashboard?.currentSchools" class="schools-info">
+                    Schools: {{ dashboard.currentSchools }}
+                </h5>
             </div>
 
             <!-- language dropdown removed from here and moved into user-menu to align right next to profile -->

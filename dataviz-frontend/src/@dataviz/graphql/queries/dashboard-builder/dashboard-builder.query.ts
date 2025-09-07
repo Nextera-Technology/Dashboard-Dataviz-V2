@@ -56,6 +56,7 @@ export const gqlOpenDashboardWithSchoolFilter = gql`
     openDashboardWithSchoolFilter(dashboardId: $dashboardId, schoolFilters: $schoolFilters) {
       _id
       name
+      currentSchools
       sectionIds {
         name
         _id
@@ -94,6 +95,7 @@ export const gqlGetOneDashboard = gql`
     getOneDashboard(_id: $id) {
       _id
       name
+      currentSchools
       sectionIds {
         name
         _id

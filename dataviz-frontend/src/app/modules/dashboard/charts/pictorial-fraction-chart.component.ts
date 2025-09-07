@@ -62,7 +62,8 @@ interface Widget {
             <span class="legend-label">
               {{ item.name }}
               <span class="legend-value" [style.color]="item.color">
-                <strong>{{ item.count }} ({{ item.percentage }}%)</strong>
+                <strong *ngIf="isWorkingDaysWidget">{{ item.count }} days</strong>
+                <strong *ngIf="!isWorkingDaysWidget">{{ item.count }} ({{ item.percentage }}%)</strong>
               </span>
             </span>
           </div>
@@ -211,6 +212,11 @@ export class PictorialStackedChartWidgetComponent
 
   constructor(private zone: NgZone) {}
 
+  // Check if this is a working days widget
+  get isWorkingDaysWidget(): boolean {
+    return this.widget?.widgetType === 'JOBDESC_WORKING_DAYS';
+  }
+
   ngOnInit(): void {}
 
   // Match builder behavior: keep 1x2 height the same as 2x1
@@ -221,11 +227,6 @@ export class PictorialStackedChartWidgetComponent
     // Apply 2x1 height profile to any wide 1-row tile (>= 2x1)
     if ((rowSize === 1 && colSize >= 2) || (colSize === 1 && rowSize === 2)) return 220;
     return 300;
-  }
-
-  // Check if this is a working days widget
-  get isWorkingDaysWidget(): boolean {
-    return this.widget?.widgetType === 'JOBDESC_WORKING_DAYS';
   }
 
   // Get the custom SVG path based on widget type
