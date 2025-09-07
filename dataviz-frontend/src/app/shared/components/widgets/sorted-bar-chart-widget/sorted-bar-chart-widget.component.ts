@@ -33,6 +33,7 @@ export class SortedBarChartWidgetComponent implements OnInit, OnDestroy, AfterVi
 
   totalData: number = 0;
   private root: any;
+  private chartCreated = false;
 
   ngOnInit(): void {
     this.calculateTotalData();
@@ -42,7 +43,7 @@ export class SortedBarChartWidgetComponent implements OnInit, OnDestroy, AfterVi
     // Delay chart creation to ensure DOM and amCharts5 are ready
     setTimeout(() => {
       this.createChart();
-    }, 500);
+    }, 100);
   }
 
   private calculateTotalData(): void {
@@ -60,10 +61,14 @@ export class SortedBarChartWidgetComponent implements OnInit, OnDestroy, AfterVi
       return;
     }
 
-    // Dispose existing chart
+    // Dispose existing chart and clear container
     if (this.root) {
       this.root.dispose();
+      this.root = null;
     }
+    
+    // Clear the container completely
+    this.chartContainer.nativeElement.innerHTML = '';
 
     // Initialize amCharts5 root - same pattern as information dialog
     this.root = am5.Root.new(this.chartContainer.nativeElement);
@@ -163,25 +168,73 @@ export class SortedBarChartWidgetComponent implements OnInit, OnDestroy, AfterVi
       stroke: am5.color("#ffffff"),
       strokeWidth: 1,
       strokeOpacity: 0.1,
-      fill: am5.color("#4FC3F7"),
       tooltipText: "{categoryY}: {valueX}",
       cursorOverStyle: "pointer"
     });
 
-    // Add data labels to show count values
-    series.bullets.push(() => {
-      return am5.Bullet.new(this.root, {
+    // Generate dynamic colors based on data length
+    const generateColorGradient = (dataLength: number) => {
+      const baseColors = [
+        "#FF6B6B", // Vibrant red for highest values
+        "#4ECDC4", // Teal
+        "#45B7D1", // Blue
+        "#96CEB4", // Light green
+        "#FFEAA7", // Light yellow
+        "#DDA0DD", // Plum
+        "#F0E68C", // Khaki
+        "#FFB347", // Peach
+        "#87CEEB", // Sky blue
+        "#98FB98"  // Pale green
+      ];
+      
+      if (dataLength <= baseColors.length) {
+        return baseColors.slice(0, dataLength);
+      }
+      
+      // Generate additional colors using HSL interpolation for more data
+      const colors = [...baseColors];
+      const additionalNeeded = dataLength - baseColors.length;
+      
+      for (let i = 0; i < additionalNeeded; i++) {
+        const hue = (i * 360 / additionalNeeded) % 360;
+        const saturation = 60 + (i % 3) * 15; // Vary saturation 60-90%
+        const lightness = 55 + (i % 4) * 10;  // Vary lightness 55-85%
+        colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+      }
+      
+      return colors;
+    };
+
+    const colorGradient = generateColorGradient(chartData.length);
+
+    // Apply colors to each column based on data index (highest to lowest)
+    series.columns.template.adapters.add("fill", function (fill, target) {
+      const dataItem = target.dataItem;
+      if (dataItem) {
+        const index = series.dataItems.indexOf(dataItem);
+        return am5.color(colorGradient[index] || colorGradient[colorGradient.length - 1]);
+      }
+      return fill;
+    });
+
+    // Add data labels to show count values with matching colors and stroke for readability
+    series.bullets.push((root, series, dataItem) => {
+      const index = series.dataItems.indexOf(dataItem);
+      const colorIndex = Math.min(index, colorGradient.length - 1);
+      const labelColor = colorGradient[colorIndex];
+      
+      return am5.Bullet.new(root, {
         locationX: 1,
         locationY: 0.5,
-        sprite: am5.Label.new(this.root, {
+        sprite: am5.Label.new(root, {
           text: "{valueX}",
           fill: am5.color("#000000"),
           centerY: am5.percent(50),
           centerX: am5.percent(0),
           populateText: true,
-          fontSize: 11,
+          fontSize: 12,
           fontWeight: "500",
-          dx: -2 // Small offset to position label slightly to the right of the bar end
+          dx: -2, // Small offset to position label slightly to the right of the bar end
         })
       });
     });
