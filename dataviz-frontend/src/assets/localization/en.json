@@ -20,7 +20,8 @@
     "admin": {
       "layout": {
         "title": "Administration",
-        "userManagement": "User Management"
+        "userManagement": "User Management",
+        "jobDescription": "Job Description"
       },
       "dashboardList": {
         "header_title": "Dashboard Builder",
@@ -164,6 +165,28 @@
         "cancel": "Cancel",
         "save_changes": "Save Changes",
         "add_widget": "Add Widget"
+      },
+      "jobDescriptionList": {
+        "header_title": "Job Description Dashboards",
+        "header_subtitle": "Manage dashboards for job description evaluation",
+        "create_button": "Create Dashboard",
+        "active_badge": "Active",
+        "data_sources": "Data Sources",
+        "no_classes": "No classes",
+        "expand_less": "Expand less...",
+        "expand_more": "Expand more...",
+        "show_less": "Show Less",
+        "show_more": "Show More",
+        "no_sources_defined": "No sources defined.",
+        "no_sources_configured": "No data sources configured",
+        "view": "View",
+        "edit": "Edit",
+        "manage": "Manage",
+        "delete": "Delete",
+        "cancel": "Cancel",
+        "empty_title": "No Job Description Dashboards Yet",
+        "empty_description": "Create your first job description dashboard to get started with evaluation analytics.",
+        "empty_cta": "Create Your First Dashboard"
       },
       "userManagement": {
         "page_title": "User Management",

@@ -62,7 +62,7 @@ interface Widget {
             <span class="legend-label">
               {{ item.name }}
               <span class="legend-value" [style.color]="item.color">
-                <strong *ngIf="isWorkingDaysWidget">{{ item.count }} days</strong>
+                <strong *ngIf="isWorkingDaysWidget">{{ item.count }} Jours</strong>
                 <strong *ngIf="!isWorkingDaysWidget">{{ item.count }} ({{ item.percentage }}%)</strong>
               </span>
             </span>
@@ -284,7 +284,7 @@ export class PictorialStackedChartWidgetComponent
       // Configure labels for working days widget
       if (this.isWorkingDaysWidget) {
         series.labels.template.setAll({
-          text: "{count} days",
+          text: "{count} Jours",
           fontSize: isSmall ? "9px" : "12px",
           fontWeight: "500",
           fill: am5.color("#374151")
@@ -292,7 +292,7 @@ export class PictorialStackedChartWidgetComponent
         
         // Configure tooltips for working days
         series.slices.template.setAll({
-          tooltipText: "{name}: {count} days"
+          tooltipText: "{name}: {count} Jours"
         });
       } else {
         // Default configuration for other widget types

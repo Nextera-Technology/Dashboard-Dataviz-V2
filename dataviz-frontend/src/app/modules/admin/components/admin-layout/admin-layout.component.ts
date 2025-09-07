@@ -59,7 +59,7 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
             </a>
             <a routerLink="/admin/job-description" routerLinkActive="active" class="nav-item">
               <mat-icon>work</mat-icon>
-              <span>Job Description</span>
+              <span>{{ 'admin.layout.jobDescription' | translate }}</span>
             </a>
             <a routerLink="/admin/user-management" routerLinkActive="active" class="nav-item">
               <mat-icon>people</mat-icon>

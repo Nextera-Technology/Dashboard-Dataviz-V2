@@ -101,12 +101,12 @@
         <div class="job-description-section" *ngIf="isAdminUser()">
             <div class="section-title job-description-title">
                 <span class="section-icon">📋</span>
-                Job Description
+                {{ 'admin.layout.jobDescription' | translate }}
             </div>
             <div class="job-description-menu">
                 <a routerLink="/admin/job-description" class="job-description-menu-item">
                     <mat-icon>work</mat-icon>
-                    <span>Job Description Dashboards</span>
+                    <span>{{ 'admin.jobDescriptionList.header_title' | translate }}</span>
                 </a>
             </div>
         </div>
