@@ -244,8 +244,9 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
     { value: "JOBDESC_WORKING_DAYS", label: "Working Days" },
     { value: "JOBDESC_COMPETENCY_AUTONOMY", label: "Competency Autonomy" },
     { value: "JOBDESC_COMPETENCY_USAGE", label: "Competency Usage" },
-    { value: "JOBDESC_COMPETENCY_MISSION_EVALUATION", label: "Competency Mission Evaluation" },
+    // { value: "JOBDESC_COMPETENCY_MISSION_EVALUATION", label: "Competency Mission Evaluation" },
     { value: "JOBDESC_PROFESSIONAL_EVALUATIONS", label: "Professional Evaluations" },
+    { value: "GRADUATION_SUCCESS", label: "Graduation Success" },
   ];
 
   filteredSubTypes: WidgetSubTypeOption[] = [];
