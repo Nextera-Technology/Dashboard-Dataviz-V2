@@ -54,39 +54,38 @@ export interface SchoolSelectionResult {
       <!-- Content -->
       <mat-dialog-content class="fuse-dialog-content">
         <div class="space-y-4">
-          <!-- All Schools Option -->
-          <div class="fuse-option-card" 
-               [class.selected]="selectedOption === 'all'" 
-               (click)="selectedOption = 'all'">
-            <mat-radio-button value="all" [(ngModel)]="selectedOption" class="fuse-radio">
-              <div class="flex items-start space-x-4">
-                <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-50">
-                  <mat-icon class="text-blue-600">public</mat-icon>
-                </div>
-                <div class="flex-1">
-                  <h3 class="text-base font-medium text-gray-900">Open with all school data</h3>
-                  <p class="text-sm text-gray-500 mt-1">View dashboard with complete dataset from all schools</p>
+          <!-- Options (unified radio group so clicking card or circle selects) -->
+          <mat-radio-group [(ngModel)]="selectedOption" class="w-full">
+            <div class="fuse-option-card" [class.selected]="selectedOption === 'all'" (click)="selectedOption = 'all'">
+              <div class="flex items-center">
+                <mat-radio-button class="mr-4" value="all" aria-label="Open with all school data"></mat-radio-button>
+                <div class="flex items-start space-x-4">
+                  <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-50">
+                    <mat-icon class="text-blue-600">public</mat-icon>
+                  </div>
+                  <div>
+                    <h3 class="text-base font-medium text-gray-900">Open with all school data</h3>
+                    <p class="text-sm text-gray-500 mt-1">View dashboard with complete dataset from all schools</p>
+                  </div>
                 </div>
               </div>
-            </mat-radio-button>
-          </div>
+            </div>
 
-          <!-- Selected Schools Option -->
-          <div class="fuse-option-card" 
-               [class.selected]="selectedOption === 'selected'" 
-               (click)="selectedOption = 'selected'">
-            <mat-radio-button value="selected" [(ngModel)]="selectedOption" class="fuse-radio">
-              <div class="flex items-start space-x-4">
-                <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-indigo-50">
-                  <mat-icon class="text-indigo-600">filter_list</mat-icon>
-                </div>
-                <div class="flex-1">
-                  <h3 class="text-base font-medium text-gray-900">Open with selected schools</h3>
-                  <p class="text-sm text-gray-500 mt-1">Filter dashboard data by specific schools</p>
+            <div class="fuse-option-card mt-3" [class.selected]="selectedOption === 'selected'" (click)="selectedOption = 'selected'">
+              <div class="flex items-center">
+                <mat-radio-button class="mr-4" value="selected" aria-label="Open with selected schools"></mat-radio-button>
+                <div class="flex items-start space-x-4">
+                  <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-indigo-50">
+                    <mat-icon class="text-indigo-600">filter_list</mat-icon>
+                  </div>
+                  <div>
+                    <h3 class="text-base font-medium text-gray-900">Open with selected schools</h3>
+                    <p class="text-sm text-gray-500 mt-1">Filter dashboard data by specific schools</p>
+                  </div>
                 </div>
               </div>
-            </mat-radio-button>
-          </div>
+            </div>
+          </mat-radio-group>
         </div>
 
         <!-- School Selection Section -->
