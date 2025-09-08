@@ -1,5 +1,7 @@
-import { Component, Input, OnInit, AfterViewInit, OnDestroy, NgZone } from "@angular/core";
+import { Component, Input, OnInit, AfterViewInit, OnDestroy, NgZone, ElementRef, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { ActionsButtonsComponent } from "app/shared/components/actions-buttons/actions-buttons.component";
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import * as am5radar from "@amcharts/amcharts5/radar";
@@ -25,27 +27,41 @@ interface Widget {
 @Component({
   selector: "app-animated-gauge-widget",
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ActionsButtonsComponent, TranslatePipe],
   template: `
-    <div class="gauge-container">
-      <div [id]="chartDivId" class="gauge-chart"></div>
+    <div class="chart-box" [style.background-color]="widget?.background || '#ffffff'">
+      <app-actions-buttons [widget]="widget"></app-actions-buttons>
+      <div class="chart-content">
+        <h3 class="chart-title" *ngIf="!inBuilder">{{ widget.title }}</h3>
+        <div class="chart-legend" *ngIf="dataTotal !== null">{{ 'shared.worldMapWidget.students_total_label' | translate }} {{ dataTotal }}</div>
+        <div #chartContainer class="gauge-chart"></div>
+      </div>
     </div>
   `,
   styles: [`
-    .gauge-container { position: relative; width: 100%; height: 100%; }
-    .gauge-chart { width: 100%; height: 100%; min-height: 150px; }
-    .center-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; font-weight: 700; color: #0d7680; }
+    .chart-box { position: relative; text-align: center; border-radius: 12px; padding: 16px; transition: all 0.3s ease; min-height: 150px; display: flex; flex-direction: column; height: 100%; }
+    .chart-content { flex: 1; display: flex; flex-direction: column; }
+    .gauge-chart { flex: 1; width: 100%; min-height: 150px; position: relative }
+    .chart-title { font-family: 'Inter'; font-size: 16px; font-weight: 600; color: #00454d; margin: 8px 0; text-align: center }
+    .chart-legend { position: absolute; top: 10px; left: 14px; z-index: 2; background: rgba(255, 255, 255, 0.85); padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; color: #15616d; pointer-events: none; text-align: left; }
   `]
 })
 export class AnimatedGaugeWidgetComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() widget!: Widget;
+  @Input() inBuilder: boolean = false;
   @Input() data: WidgetData[] | undefined;
 
   private root?: am5.Root;
+  @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef;
   value: number | null = null;
   dataCount: number | null = null;
   dataTotal: number | null = null;
+  // references to update on resize
+  private chartClockHand: any | null = null;
+  private chartLabel: any | null = null;
+  private _resizeObserver?: ResizeObserver | null = null;
 
+  // Use ViewChild container instead of id so chart persists when widget properties update
   get chartDivId(): string { return `animated-gauge-div-${this.widget._id}`; }
 
   constructor(private zone: NgZone) {}
@@ -68,7 +84,9 @@ export class AnimatedGaugeWidgetComponent implements OnInit, AfterViewInit, OnDe
   ngAfterViewInit(): void {
     if (this.value === null) return;
     this.zone.runOutsideAngular(() => {
-      const root = am5.Root.new(this.chartDivId);
+      const root = am5.Root.new(this.chartContainer.nativeElement);
+      // remove amCharts branding/logo
+      try { root._logo.dispose(); } catch (e) {}
       root.setThemes([am5themes_Animated.new(root)]);
 
       // Create semicircle radar chart
@@ -98,6 +116,8 @@ export class AnimatedGaugeWidgetComponent implements OnInit, AfterViewInit, OnDe
       // colored ranges
       const colorSet = am5.ColorSet.new(root, {});
       const pct = Math.max(0, Math.min(100, Number(this.value)));
+      // compute sizes relative to container
+      const sizes = computeGaugeSizesForElement(this.chartContainer?.nativeElement || null);
       const axisRange0 = xAxis.createAxisRange(xAxis.makeDataItem({ above: true, value: 0, endValue: pct }));
       axisRange0.get("axisFill").setAll({ visible: true, fill: colorSet.getIndex(0) });
       axisRange0.get("label").setAll({ forceHidden: true });
@@ -118,9 +138,11 @@ export class AnimatedGaugeWidgetComponent implements OnInit, AfterViewInit, OnDe
       const axisDataItem = xAxis.makeDataItem({});
 
       const clockHand = am5radar.ClockHand.new(root, {
-        pinRadius: 50,
+        pinRadius: sizes.pinRadius,
+        // make needle reach outer ring (100%) so it aligns with the circle around the percent label
         radius: am5.percent(100),
-        innerRadius: 50,
+        // set innerRadius so the needle stops just before the center pin; base it on pinRadius
+        innerRadius: sizes.pinRadius,
         bottomWidth: 0,
         topWidth: 0
       });
@@ -138,9 +160,13 @@ export class AnimatedGaugeWidgetComponent implements OnInit, AfterViewInit, OnDe
         centerX: am5.percent(50),
         textAlign: "center",
         centerY: am5.percent(50),
-        fontSize: "1.5em",
+        fontSize: sizes.fontSize,
         text: String(Math.round(pct)) + "%"
       }));
+
+      // keep references for resize updates
+      this.chartClockHand = clockHand;
+      this.chartLabel = label;
 
       const sprite = bullet.get("sprite") as any;
       sprite.on && sprite.on("rotation", function(){
@@ -153,8 +179,54 @@ export class AnimatedGaugeWidgetComponent implements OnInit, AfterViewInit, OnDe
 
       chart.appear(1000, 100);
       this.root = root;
+      // add ResizeObserver to resize chart when container changes
+      if ((window as any).ResizeObserver) {
+        const ro = new ResizeObserver(() => {
+          try {
+            if (this.root) this.root.resize();
+            // update sizes dynamically
+            const s = computeGaugeSizesForElement(this.chartContainer?.nativeElement || null);
+            if (this.chartClockHand) {
+              this.chartClockHand.set("pinRadius", s.pinRadius);
+              // keep needle full-length so it reaches the surrounding circle
+              this.chartClockHand.set("radius", am5.percent(100));
+              this.chartClockHand.set("innerRadius", s.pinRadius);
+            }
+            if (this.chartLabel) {
+              this.chartLabel.set("fontSize", s.fontSize);
+            }
+          } catch(e){}
+        });
+        ro.observe(this.chartContainer.nativeElement);
+        this._resizeObserver = ro;
+      }
     });
   }
 
-  ngOnDestroy(): void { this.zone.runOutsideAngular(()=>{ if(this.root) this.root.dispose(); }); }
+  ngOnDestroy(): void {
+    try {
+      if (this._resizeObserver) {
+        this._resizeObserver.disconnect();
+        this._resizeObserver = null;
+      }
+    } catch (e) {}
+    this.zone.runOutsideAngular(()=>{ if(this.root) this.root.dispose(); });
+  }
 } 
+
+// compute sizes helper placed outside class to keep file organized
+export function computeGaugeSizesForElement(el: HTMLElement | null) {
+  if (!el) {
+    return { pinRadius: 20, radiusPercent: 100, innerRadius: 40, fontSize: "1.1em" };
+  }
+  const rect = el.getBoundingClientRect();
+  const minDim = Math.min(rect.width, rect.height || 150);
+  // scale values based on min dimension
+  const scale = Math.max(0.5, Math.min(1.0, minDim / 200));
+  return {
+    pinRadius: Math.round(20 * scale),
+    radiusPercent: Math.round(100 * scale),
+    innerRadius: Math.round(40 * scale),
+    fontSize: `${(1.1 * scale).toFixed(2)}em`
+  };
+}

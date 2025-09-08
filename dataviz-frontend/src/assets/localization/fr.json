@@ -236,8 +236,7 @@
         "CONTRACT_TYPES": "Types de contrat",
         "REGION": "Région",
         "GENDER": "Genre",
-        "EDUCATION_LEVEL_TARGET": "Niveau d'éducation cible",
-        "FLOW": "Flux"
+        "EDUCATION_LEVEL_TARGET": "Niveau d'éducation cible"
       },
       "widgetSubTypes": {
         "STUDY_RATE": "Taux d'études",

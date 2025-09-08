@@ -7,6 +7,7 @@ import {
   NgZone,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { TranslatePipe } from "app/shared/pipes/translate.pipe";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5radar from "@amcharts/amcharts5/radar";
 import * as am5xy from "@amcharts/amcharts5/xy";
@@ -31,7 +32,7 @@ interface Widget {
 @Component({
   selector: "app-radar-chart-widget",
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   template: `
     <div class="radar-chart-container">
       <span class="total-data" *ngIf="totalData > 0">{{ 'shared.worldMapWidget.students_total_label' | translate }} {{ totalData }}</span>
@@ -93,16 +94,29 @@ export class RadarChartWidgetComponent implements OnInit, AfterViewInit, OnDestr
       }
 
       const root = am5.Root.new(this.chartDivId);
+      // remove amCharts branding/logo if present
+      try { (root as any)._logo?.dispose(); } catch {}
       root.setThemes([am5themes_Animated.new(root)]);
 
       // Create chart
       const chart = root.container.children.push(
         am5radar.RadarChart.new(root, {
-          panX: false,
+          panX: true,
           panY: false,
+          wheelX: "zoomX",
+          wheelY: "zoomX",
           innerRadius: am5.percent(10),
         })
       );
+
+      // Add interactive cursor for zooming/hover
+      const cursor = chart.set(
+        "cursor",
+        am5radar.RadarCursor.new(root, {
+          behavior: "zoomX",
+        })
+      );
+      cursor.lineY.set("visible", false);
 
       // Create axes
       const xRenderer = am5radar.AxisRendererCircular.new(root, { minGridDistance: 30 });
@@ -118,6 +132,7 @@ export class RadarChartWidgetComponent implements OnInit, AfterViewInit, OnDestr
           maxDeviation: 0,
           categoryField: "name",
           renderer: xRenderer,
+          tooltip: am5.Tooltip.new(root, {}),
         })
       );
       xAxis.data.setAll(this.data);
@@ -139,11 +154,24 @@ export class RadarChartWidgetComponent implements OnInit, AfterViewInit, OnDestr
           valueYField: "count",
           categoryXField: "name",
           tooltip: am5.Tooltip.new(root, {
-            labelText: "{categoryX}: {valueY}"
-          })
+            labelText: "{categoryX}: {valueY}",
+          }),
         })
       );
       series.strokes.template.setAll({ strokeWidth: 2 });
+      series.fills.template.setAll({ visible: true, fillOpacity: 0.2 });
+      series.set("tooltipPosition", "pointer");
+      // add bullets for better readability
+      series.bullets.push(() =>
+        am5.Bullet.new(root, {
+          sprite: am5.Circle.new(root, {
+            radius: 4,
+            fill: series.get("fill"),
+            stroke: series.get("stroke"),
+            strokeWidth: 1
+          })
+        })
+      );
       series.data.setAll(this.data);
 
       series.appear(1000);

@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MetricWidgetComponent } from "app/modules/dashboard/charts/metric-widget.component";
+import { YesNoGaugeWidgetComponent } from "app/shared/components/widgets/yes-no-gauge-widget/yes-no-gauge-widget.component";
+import { AnimatedGaugeWidgetComponent } from "app/shared/components/widgets/animated-gauge-widget/animated-gauge-widget.component";
 import { PieChartWidgetComponent } from "app/modules/dashboard/charts/pie-chart-widget.component";
 import { BarChartWidgetComponent } from "app/modules/dashboard/charts/bar-chart-widget.component";
 import { ColumnChartWidgetComponent } from "app/modules/dashboard/charts/column-chart-widget.component";
@@ -18,6 +20,8 @@ import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/brea
   imports: [
     CommonModule,
     MetricWidgetComponent,
+    AnimatedGaugeWidgetComponent,
+    YesNoGaugeWidgetComponent,
     PieChartWidgetComponent,
     BarChartWidgetComponent,
     ColumnChartWidgetComponent,
@@ -172,6 +176,28 @@ import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/brea
             >
             </app-pie-chart-widget>
 
+            <!-- Animated Gauge Widget -->
+            <app-animated-gauge-widget
+              *ngIf="widget.chartType === 'ANIMATED_GAUGE' || widget.chartType === 'animated_gauge' || widget.chartType === 'AnimatedGauge'"
+              [widget]="widget"
+              [data]="widget?.data"
+              class="widget"
+              [class.widget-small]="widget.size === 'small'"
+              [class.widget-medium]="widget.size === 'medium'"
+              [class.widget-large]="widget.size === 'large'"
+            ></app-animated-gauge-widget>
+
+            <!-- Yes/No Gauge Widget -->
+            <app-yes-no-gauge-widget
+              *ngIf="widget.chartType === 'YES_NO_GAUGE' || widget.chartType === 'yes_no_gauge' || widget.chartType === 'YesNoGauge'"
+              [widget]="widget"
+              [data]="widget?.data"
+              class="widget"
+              [class.widget-small]="widget.size === 'small'"
+              [class.widget-medium]="widget.size === 'medium'"
+              [class.widget-large]="widget.size === 'large'"
+            ></app-yes-no-gauge-widget>
+
             <!-- Bar Chart Widget -->
             <app-bar-chart-widget
               *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART'"
@@ -323,7 +349,7 @@ export class SectionComponent implements OnInit {
   private updateVisibleWidgets(): void {
     if (this.section && Array.isArray(this.section.widgetIds) && this.section.widgetIds.length) {
       this.visibleWidgets = this.section.widgetIds
-        .filter((widget: any) => widget && widget.visible)
+        .filter((widget: any) => widget && (widget.visible === undefined || widget.visible === true))
         // Ensure consistent ordering (by id if numeric or fallback to title)
         .map((widget: any) => ({
           ...widget,

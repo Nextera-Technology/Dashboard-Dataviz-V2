@@ -1,5 +1,6 @@
-import { Component, Input, OnInit, AfterViewInit, OnDestroy, NgZone } from "@angular/core";
+import { Component, Input, OnInit, AfterViewInit, OnDestroy, NgZone, ElementRef, ViewChild, OnChanges, SimpleChanges } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { ActionsButtonsComponent } from "app/shared/components/actions-buttons/actions-buttons.component";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import * as am5radar from "@amcharts/amcharts5/radar";
@@ -14,37 +15,47 @@ interface Widget {
   widgetType: string;
   columnSize: number;
   rowSize: number;
+  background: string;
 }
 
 @Component({
   selector: "app-yes-no-gauge-widget",
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ActionsButtonsComponent],
   template: `
-    <div class="gauge-container">
-      <div [id]="chartDivId" class="gauge-chart"></div>
-      <div class="center-label" *ngIf="yesPct!==null">{{ yesPct }}%</div>
+    <div class="chart-box" [style.background-color]="widget?.background || '#ffffff'">
+      <app-actions-buttons [widget]="widget"></app-actions-buttons>
+      <div class="chart-content">
+        <h3 class="chart-title">{{ widget.title }}</h3>
+        <div #chartContainer class="gauge-chart">
+          <div class="percent-below" *ngIf="yesPct!==null" [ngStyle]="{ color: (yesPct >= 50 ? '#4caf50' : '#f44336') }">{{ yesPct }}%</div>
+        </div>
+      </div>
     </div>
   `,
   styles:[`
-    .gauge-container{position:relative;width:100%;height:100%;}
-    .gauge-chart{width:100%;height:100%;min-height:150px;}
-    .center-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px;font-weight:700;color:#4caf50;}
+    .chart-box{height:100%;position:relative;border-radius:12px;padding:16px;display:flex;flex-direction:column;}
+    .chart-content{flex:1;display:flex;flex-direction:column;position:relative}
+    .gauge-chart{width:100%;flex:1;min-height:150px;display:flex;align-items:center;justify-content:center;background:transparent;position:relative}
+    /* Position percentage relative to chart center so it stays just under the needle
+       Use percentage top so it scales with container size */
+    .percent-below{position:absolute;left:50%;top:12%;transform:translateX(-50%);font-size:20px;font-weight:700;white-space:nowrap;max-width:calc(100% - 24px);overflow:hidden;text-overflow:ellipsis}
+    .chart-title{font-size:16px;font-weight:600;color:#00454d;margin:8px 0;text-align:center;width:100%;position:relative;z-index:2}
   `]
 })
-export class YesNoGaugeWidgetComponent implements OnInit,AfterViewInit,OnDestroy{
+export class YesNoGaugeWidgetComponent implements OnInit,AfterViewInit,OnDestroy,OnChanges{
   @Input() widget!:Widget;
   @Input() data:WidgetData[]|undefined;
+  @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef;
   yesPct:number|null=null;
   yesCount:number=0;
   noCount:number=0;
   totalCount:number=0;
   private root?:am5.Root;
+  private _resizeObserver?: ResizeObserver | null = null;
   // guard if widget or id missing
-  get chartDivId(){
-    const id = this.widget && this.widget._id ? this.widget._id : Math.random().toString(36).slice(2,9);
-    return `yes-no-gauge-div-${id}`;
-  }
+  // Using ViewChild to target the container element directly prevents
+  // issues when widget ids change (e.g. when editing background in builder).
   constructor(private zone:NgZone){}
   ngOnInit(){
     // Robust parsing of possible input shapes from backend or test data.
@@ -98,10 +109,24 @@ export class YesNoGaugeWidgetComponent implements OnInit,AfterViewInit,OnDestroy
 
     this.yesPct = null;
   }
+  ngOnChanges(changes: SimpleChanges){
+    // If data or widget properties changed after initial render (e.g., background edited in builder)
+    // recreate the chart so it remains visible and consistent.
+    if((changes['data'] || changes['widget']) && this.root){
+      try{ this.zone.runOutsideAngular(()=>{ if(this.root) this.root.dispose(); this.root = undefined; }); }catch(e){}
+      // attempt to re-initialize chart when data present
+      if(this.yesPct !== null){
+        // run create logic similar to ngAfterViewInit
+        setTimeout(()=>{ try{ this.ngAfterViewInit(); }catch(e){} }, 50);
+      }
+    }
+  }
   ngAfterViewInit(){
     if(this.yesPct===null) return;
     this.zone.runOutsideAngular(()=>{
-      const root = am5.Root.new(this.chartDivId);
+      const root = am5.Root.new(this.chartContainer.nativeElement);
+      // remove amCharts branding/logo
+      try { root._logo.dispose(); } catch (e) {}
       root.setThemes([am5themes_Animated.new(root)]);
 
       // Create semicircle radar chart (gauge-like)
@@ -173,14 +198,35 @@ export class YesNoGaugeWidgetComponent implements OnInit,AfterViewInit,OnDestroy
       chart.appear(1000, 100);
 
       // update center label with actual YES percent (pctVal)
-      const centerEl = document.getElementById(this.chartDivId)?.querySelector('.center-label') as HTMLElement | null;
+      const centerEl = this.chartContainer?.nativeElement?.parentElement?.querySelector('.center-label') as HTMLElement | null;
       if(centerEl){
         centerEl.textContent = pctVal + "%";
         centerEl.style.color = pctVal >= 50 ? '#4caf50' : '#f44336';
       }
 
       this.root = root;
+
+      // ensure chart resizes when container resizes
+      if ((window as any).ResizeObserver) {
+        const resizeObserver = new ResizeObserver(() => {
+          try {
+            if (this.root) this.root.resize();
+          } catch (e) {
+            // ignore
+          }
+        });
+        resizeObserver.observe(this.chartContainer.nativeElement);
+        this._resizeObserver = resizeObserver;
+      }
     });
   }
-  ngOnDestroy(){this.zone.runOutsideAngular(()=>{if(this.root) this.root.dispose();});}
+  ngOnDestroy(): void {
+    try {
+      if (this._resizeObserver) {
+        this._resizeObserver.disconnect();
+        this._resizeObserver = null;
+      }
+    } catch (e) {}
+    this.zone.runOutsideAngular(()=>{if(this.root) this.root.dispose();});
+  }
 } 

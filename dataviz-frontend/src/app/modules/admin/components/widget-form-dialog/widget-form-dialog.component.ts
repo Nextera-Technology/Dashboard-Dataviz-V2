@@ -234,7 +234,7 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
     },
     { value: "GENDER", label: "Gender" },
     { value: "EDUCATION_LEVEL_TARGET", label: "Education Level Target" },
-    { value: "FLOW", label: "Flow" },
+    // FLOW option removed as requested
   ];
 
   filteredSubTypes: WidgetSubTypeOption[] = [];
@@ -404,14 +404,7 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
     // Update filteredChartTypes for the dialog
     this.filteredChartTypes = matchedChartOptionData?.chartOptions || [];
 
-    // Special-case: for FLOW widget type prefer Sankey if available
-    if (selectedWidgetType === 'FLOW') {
-      const sankeyOption = this.filteredChartTypes.find(c => c.chartType && c.chartType.toLowerCase().includes('sankey'));
-      if (sankeyOption) {
-        this.widgetForm.get("chartType")?.setValue(sankeyOption.chartType);
-        return;
-      }
-    }
+    // Special-case handling for FLOW removed (option deleted)
 
     // Only update chartType when it's not the initial load (i.e., user actually changed widgetType or widgetSubType)
     // This prevents overriding the saved chart type when editing an existing widget
@@ -632,7 +625,6 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
       companies: "mat_solid:business",
       region: "mat_solid:public",
       gender: "mat_solid:wc",
-      flow: "mat_solid:device_hub",
     };
 
     const typeToUse = (chartType || widgetType || "").toLowerCase(); // Prioritize chartType, then widgetType

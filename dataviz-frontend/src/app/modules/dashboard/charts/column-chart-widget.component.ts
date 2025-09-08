@@ -417,10 +417,13 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
     );
 
     // X Axis (categories)
+    const xRenderer = am5xy.AxisRendererX.new(this.root, { minGridDistance: 30 });
+    // Truncate long labels with ellipsis to avoid overlap
+    xRenderer.labels.template.setAll({ maxWidth: 50, oversizedBehavior: 'truncate' });
     this.xAxis = this.chart.xAxes.push(
       am5xy.CategoryAxis.new(this.root, {
         categoryField: 'category',
-        renderer: am5xy.AxisRendererX.new(this.root, { minGridDistance: 30 })
+        renderer: xRenderer
       })
     );
 
@@ -445,9 +448,7 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
           xAxis: this.xAxis,
           yAxis: this.yAxis,
           valueYField: 'value',
-          categoryXField: 'category',
-          fill: am5.color(seriesData.color || '#67b7dc'),
-          stroke: am5.color(seriesData.color || '#67b7dc')
+          categoryXField: 'category'
         })
       );
 
@@ -472,6 +473,9 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
       series.columns.template.set('stroke', am5.color(seriesData.color || '#67b7dc'));
       series.columns.template.set('fillOpacity', 1);
       series.columns.template.set('strokeOpacity', 1);
+
+      // Show category (object name) in tooltip instead of widget title
+      series.columns.template.set('tooltipText', '{categoryX}: {valueY}');
       this.series.push(series);
     });
 

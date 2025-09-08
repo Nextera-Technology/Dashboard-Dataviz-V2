@@ -76,6 +76,11 @@ export class SankeyChartWidgetComponent implements OnInit, OnDestroy {
         sourceIdField: "from",
         targetIdField: "to",
         valueField: "value",
+        idField: "id",
+        paddingRight: 50,
+        nodeWidth: 20,
+        nodePadding: 10,
+        linkOpacity: 0.5,
       })
     );
 
@@ -85,18 +90,42 @@ export class SankeyChartWidgetComponent implements OnInit, OnDestroy {
     // Style nodes and links
     if (this.chart?.nodes?.template) {
       this.chart.nodes.template.setAll({
-        fill: am5.color("#67b7dc"),
-        stroke: am5.color("#15616D"),
-        strokeWidth: 2,
+        strokeWidth: 0,
         paddingTop: 1,
         paddingBottom: 1,
       });
     }
 
     this.chart.links.template.setAll({
-      fill: am5.color("#67b7dc"),
-      stroke: am5.color("#15616D"),
+      fill: am5.color("#000000"),
+      stroke: am5.color("#000000"),
       strokeWidth: 1,
+      fillOpacity: 0.15,
+      fillStyle: "solid",
+    });
+
+    // Show id in tooltip on hover
+    this.chart.links.template.set("tooltip", am5.Tooltip.new(this.root, {}));
+    this.chart.links.template.set("tooltipText", "{id}: {from} → {to} ({value})");
+
+    // traceable behaviour: hover links that share id prefix
+    this.chart.links.template.setAll({ fillStyle: "solid", fillOpacity: 0.15 });
+    this.chart.links.template.events.on("pointerover", (event: any) => {
+      const dataItem = event.target.dataItem;
+      if (!dataItem) return;
+      const idPrefix = (dataItem.get && dataItem.get("id") || "").split("-")[0];
+      am5.array.each(this.chart.dataItems, (di: any) => {
+        const diId = di.get && di.get("id");
+        if (diId && diId.indexOf(idPrefix) !== -1) {
+          di.get("link").hover();
+        }
+      });
+    });
+
+    this.chart.links.template.events.on("pointerout", () => {
+      am5.array.each(this.chart.dataItems, (di: any) => {
+        di.get("link").unhover();
+      });
     });
 
     this.chart.appear(1000, 100);

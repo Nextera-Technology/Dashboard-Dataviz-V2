@@ -242,8 +242,7 @@
         "CONTRACT_TYPES": "Contract Types",
         "REGION": "Region",
         "GENDER": "Gender",
-        "EDUCATION_LEVEL_TARGET": "Education Level Target",
-        "FLOW": "Flow"
+        "EDUCATION_LEVEL_TARGET": "Education Level Target"
       },
       "widgetSubTypes": {
         "STUDY_RATE": "Study Rate",

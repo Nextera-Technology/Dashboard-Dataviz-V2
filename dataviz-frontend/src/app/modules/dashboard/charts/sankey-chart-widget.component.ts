@@ -200,7 +200,8 @@ export class SankeyChartWidgetComponent implements OnInit, OnDestroy {
         sourceIdField: "from",
         targetIdField: "to",
         valueField: "value",
-        paddingRight: 170,
+        idField: "id",
+        paddingRight: 50,
         paddingBottom: 30,
         nodeWidth: 20,
         nodePadding: 10,
@@ -211,17 +212,47 @@ export class SankeyChartWidgetComponent implements OnInit, OnDestroy {
     // Only set links data
     this.chart.data.setAll(this.widget.data);
 
-    // Style nodes and links
-    this.chart.nodes.template.setAll({
-      fill: am5.color("#67b7dc"),
-      stroke: am5.color("#15616D"),
-      strokeWidth: 2,
+    // Style nodes and links (guard for undefined templates)
+    if (this.chart?.nodes?.template) {
+      this.chart.nodes.template.setAll({
+        strokeWidth: 0,
+      });
+    }
+
+    if (this.chart?.links?.template) {
+      this.chart.links.template.setAll({
+        fill: am5.color("#000000"),
+        stroke: am5.color("#000000"),
+        strokeWidth: 1,
+        fillOpacity: 0.15,
+        fillStyle: "solid",
+      });
+    }
+
+    // Show id in tooltip on hover
+    if (this.chart?.links?.template) {
+      this.chart.links.template.set("tooltip", am5.Tooltip.new(this.root, {}));
+      this.chart.links.template.set("tooltipText", "{id}: {from} → {to} ({value})");
+    }
+
+    // make links traceable: hover all links that share the same id prefix
+    this.chart.links?.template?.setAll({ fillStyle: "solid", fillOpacity: 0.15 });
+    this.chart.links?.template?.events.on("pointerover", (event: any) => {
+      const dataItem = event.target.dataItem;
+      if (!dataItem) return;
+      const id = (dataItem.get && dataItem.get("id") || "").split("-")[0];
+      am5.array.each(this.chart.dataItems, (di: any) => {
+        const diId = di.get && di.get("id");
+        if (diId && diId.indexOf(id) !== -1) {
+          di.get("link").hover();
+        }
+      });
     });
 
-    this.chart.links.template.setAll({
-      fill: am5.color("#67b7dc"),
-      stroke: am5.color("#15616D"),
-      strokeWidth: 1,
+    this.chart.links?.template?.events.on("pointerout", (_event: any) => {
+      am5.array.each(this.chart.dataItems, (di: any) => {
+        di.get("link").unhover();
+      });
     });
 
     this.chart.appear(1000, 100);
@@ -284,11 +315,25 @@ export class SankeyChartWidgetComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const arr = Array.isArray(this.widget.data) ? this.widget.data : [];
-    if (arr.length) {
-      this.totalData = arr[0]?.totalData ?? arr.length;
+    const links = Array.isArray(this.widget.data) ? this.widget.data : [];
+    // Prefer explicit total if provided
+    const explicitTotal = (links.length && (links[0] as any).totalData) as number | undefined;
+    if (typeof explicitTotal === 'number') {
+      this.totalData = explicitTotal;
       return;
     }
-    this.totalData = this.widget.data.totalData ?? 0;
+
+    // Sum only first-stage links (ids ending with "-0") to represent initial cohort total
+    const firstStageSum = links
+      .filter((l: any) => typeof l?.id === 'string' && /-0$/.test(l.id))
+      .reduce((sum: number, l: any) => sum + (Number(l?.value) || 0), 0);
+
+    if (firstStageSum > 0) {
+      this.totalData = firstStageSum;
+      return;
+    }
+
+    // Fallback: sum of all link values
+    this.totalData = links.reduce((sum: number, l: any) => sum + (Number(l?.value) || 0), 0);
   }
 }
