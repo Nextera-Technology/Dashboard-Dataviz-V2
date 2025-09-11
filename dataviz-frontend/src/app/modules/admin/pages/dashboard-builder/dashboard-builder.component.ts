@@ -873,8 +873,7 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
       );
       
     } catch (error) {
-      console.error("Error saving section:", error);
-      await this.notifier.error('Error', 'Error saving widget order. Please try again.');
+      
     }
   }
 
