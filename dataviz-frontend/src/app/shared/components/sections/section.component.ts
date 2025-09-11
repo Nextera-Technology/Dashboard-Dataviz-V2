@@ -59,9 +59,7 @@ import { DirectedChordWidgetComponent } from "app/shared/components/widgets/dire
             [class.row-span-4]="widget.rowSize === 4"
           >
             <app-metric-widget
-              *ngIf="
-                widget.chartType === 'CARD' && !(widget?.widgetType === 'STATUS_BY_WAVE'  || widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN')
-              "
+              *ngIf="widget.chartType === 'CARD' && widget?.widgetType !== 'STATUS_BY_WAVE'"
               [widget]="widget"
               [data]="widget?.data"
               class="widget"
@@ -72,9 +70,7 @@ import { DirectedChordWidgetComponent } from "app/shared/components/widgets/dire
             </app-metric-widget>
 
             <app-breakdown-chart-widget
-              *ngIf="
-                widget.chartType === 'CARD' && (widget?.widgetType === 'STATUS_BY_WAVE'  && widget?.widgetSubType !== 'STATUS_WAVE_BREAKDOWN')
-              "
+              *ngIf="widget.chartType === 'CARD' && widget?.widgetType === 'STATUS_BY_WAVE'"
               [widget]="widget"
               [data]="widget?.data"
               class="widget"
@@ -215,7 +211,7 @@ import { DirectedChordWidgetComponent } from "app/shared/components/widgets/dire
 
             <!-- Bar Chart Widget -->
             <app-bar-chart-widget
-              *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART' || widget.chartType === 'SORTED_BAR_CHART' || widget.chartType === 'SortedBarChart' || widget.chartType === 'sorted_bar_chart' || widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN'"
+              *ngIf="(widget.chartType === 'CLUSTERED_BAR_CHART' || widget.chartType === 'SORTED_BAR_CHART' || widget.chartType === 'SortedBarChart' || widget.chartType === 'sorted_bar_chart') || (widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN' && widget.chartType !== 'CARD')"
               [widget]="widget"
               [data]="widget?.data"
               class="widget"
