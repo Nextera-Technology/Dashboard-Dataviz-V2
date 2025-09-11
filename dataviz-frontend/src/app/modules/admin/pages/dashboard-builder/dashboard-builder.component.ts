@@ -41,6 +41,7 @@ import { TextWidgetComponent } from "app/shared/components/widgets/text-widget/t
 import { PictorialStackedChartWidgetComponent } from "app/shared/components/widgets/pictorial-fraction-chart/pictorial-fraction-chart.component";
 import { WorldMapWidgetComponent } from "app/shared/components/widgets/world-map-widget/world-map-widget.component";
 import { RadarChartWidgetComponent } from "app/shared/components/widgets/radar-chart-widget/radar-chart-widget.component";
+import { DirectedChordWidgetComponent } from "app/shared/components/widgets/directed-chord-widget/directed-chord-widget.component";
 import { DonutChartWidgetComponent } from "app/shared/components/widgets/donut-chart-widget/donut-chart-widget.component";
 import { AnimatedGaugeWidgetComponent } from "app/shared/components/widgets/animated-gauge-widget/animated-gauge-widget.component";
 import { YesNoGaugeWidgetComponent } from "app/shared/components/widgets/yes-no-gauge-widget/yes-no-gauge-widget.component";
@@ -134,6 +135,7 @@ interface Dashboard {
     DonutChartWidgetComponent,
     AnimatedGaugeWidgetComponent,
     YesNoGaugeWidgetComponent,
+    DirectedChordWidgetComponent,
     BreakDownChartWidgetComponent
   ],
   templateUrl: "./dashboard-builder.component.html",
@@ -830,6 +832,12 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
   // Normalize chartType for switch matching (lowercase, no spaces)
   chartKey(type?: string | null): string {
     return (type || "").toLowerCase();
+  }
+
+  // Helper to detect Directed Chord chart types (handles variations)
+  isDirectedChord(widget: Widget): boolean {
+    const key = (widget.chartType || widget.chartType || '').toString().toLowerCase();
+    return ['directedchord', 'directed_chord', 'directed-chord', 'directedchorddiagram', 'directed_chord_diagram', 'directed chord diagram', 'directedchorddiagram'].includes(key) || key.indexOf('directed') !== -1 && key.indexOf('chord') !== -1;
   }
 
   /**

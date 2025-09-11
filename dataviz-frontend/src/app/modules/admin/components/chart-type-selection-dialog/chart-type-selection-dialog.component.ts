@@ -56,8 +56,19 @@ export class ChartTypeSelectionDialogComponent implements OnInit {
    */
   allowAllChartTypesForTesting = true;
 
+  // Chart types that should not be shown in the selection dialog
+  private bannedChartTypes = new Set<string>([
+    'donut',
+    'radial',
+    'map_choropleth'
+  ]);
+
   ngOnInit(): void {
     // Dialog data is available via this.data
+    // Filter out banned chart types right away so templates never render them
+    if (this.data && Array.isArray(this.data.chartOptions)) {
+      this.data.chartOptions = this.data.chartOptions.filter((opt: any) => !this.isBannedChartType(opt.chartType));
+    }
   }
 
   /**
@@ -65,6 +76,8 @@ export class ChartTypeSelectionDialogComponent implements OnInit {
    * For now (developer mode) only the currently selected/default chart is selectable.
    */
   isChartSelectable(chartOption: ChartOptionForDialog): boolean {
+    // Always gray-out stacked chart variants
+    if (this.isStackedChart(chartOption?.chartType)) return false;
     if (this.allowAllChartTypesForTesting) return true;
     if (!this.data) return false;
     // If a selectedChartTypeName is provided, allow only that one.
@@ -73,6 +86,28 @@ export class ChartTypeSelectionDialogComponent implements OnInit {
     }
     // Fallback: allow only the first chart option as default
     return this.data.chartOptions && this.data.chartOptions.length > 0 && this.data.chartOptions[0].chartType === chartOption.chartType;
+  }
+
+  private isStackedChart(chartTypeName?: string): boolean {
+    if (!chartTypeName) return false;
+    const normalized = chartTypeName.toLowerCase();
+    // match common stacked chart identifiers
+    if (normalized.includes('stack') || normalized.includes('stacked')) return true;
+    // specific named stacked variants
+    if (normalized.includes('horizontal_stacked') || normalized.includes('vertical_stacked')) return true;
+    return false;
+  }
+
+  private isBannedChartType(chartTypeName?: string): boolean {
+    if (!chartTypeName) return false;
+    const normalized = chartTypeName.toLowerCase();
+    // allow some flexibility in naming (e.g. "radial_bar_chart" contains "radial")
+    if (normalized.includes('radial')) return true;
+    if (normalized.includes('choropleth') ) return true;
+    if (normalized.includes('donut')) return true;
+    // Ban plain sankey but allow traceable sankey variants
+    if (normalized.includes('sankey') && !(normalized.includes('traceable') || normalized.includes('trace'))) return true;
+    return this.bannedChartTypes.has(normalized);
   }
 
   /**

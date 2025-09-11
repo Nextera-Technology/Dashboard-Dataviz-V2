@@ -12,7 +12,9 @@ import { TextWidgetComponent } from "app/modules/dashboard/charts/text-widget.co
 import { MapWidgetComponent } from "app/modules/dashboard/charts/map-widget.component";
 import { WorldMapWidgetComponent } from "../widgets/world-map-widget/world-map-widget.component";
 import { PictorialStackedChartWidgetComponent } from "app/modules/dashboard/charts/pictorial-fraction-chart.component";
+import { RadarChartWidgetComponent } from "app/shared/components/widgets/radar-chart-widget/radar-chart-widget.component";
 import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/breakdown-chart-widget.component";
+import { DirectedChordWidgetComponent } from "app/shared/components/widgets/directed-chord-widget/directed-chord-widget.component";
 
 @Component({
   selector: "app-section",
@@ -31,7 +33,9 @@ import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/brea
     MapWidgetComponent,
     PictorialStackedChartWidgetComponent,
     WorldMapWidgetComponent,
-    BreakDownChartWidgetComponent
+    BreakDownChartWidgetComponent,
+    RadarChartWidgetComponent
+    ,DirectedChordWidgetComponent
   ],
   template: `
     <div class="section" [style.background-color]="section.background">
@@ -69,7 +73,7 @@ import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/brea
 
             <app-breakdown-chart-widget
               *ngIf="
-                widget.chartType === 'CARD' && (widget?.widgetType === 'STATUS_BY_WAVE'  || widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN')
+                widget.chartType === 'CARD' && (widget?.widgetType === 'STATUS_BY_WAVE'  && widget?.widgetSubType !== 'STATUS_WAVE_BREAKDOWN')
               "
               [widget]="widget"
               [data]="widget?.data"
@@ -176,6 +180,17 @@ import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/brea
             >
             </app-pie-chart-widget>
 
+            <!-- Radar Chart Widget -->
+            <app-radar-chart-widget
+              *ngIf="widget.chartType === 'RadarChart' || widget.chartType === 'radarchart' || widget.chartType === 'RADAR_CHART' || widget.chartType === 'radar_chart'"
+              [widget]="widget"
+              [data]="widget?.data"
+              class="widget"
+              [class.widget-small]="widget.size === 'small'"
+              [class.widget-medium]="widget.size === 'medium'"
+              [class.widget-large]="widget.size === 'large'"
+            ></app-radar-chart-widget>
+
             <!-- Animated Gauge Widget -->
             <app-animated-gauge-widget
               *ngIf="widget.chartType === 'ANIMATED_GAUGE' || widget.chartType === 'animated_gauge' || widget.chartType === 'AnimatedGauge'"
@@ -200,7 +215,7 @@ import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/brea
 
             <!-- Bar Chart Widget -->
             <app-bar-chart-widget
-              *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART'"
+              *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART' || widget.chartType === 'SORTED_BAR_CHART' || widget.chartType === 'SortedBarChart' || widget.chartType === 'sorted_bar_chart' || widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN'"
               [widget]="widget"
               [data]="widget?.data"
               class="widget"
@@ -279,6 +294,17 @@ import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/brea
             >
             </app-sankey-chart-widget>
 
+            <!-- Directed Chord Widget -->
+            <app-directed-chord-widget
+              *ngIf="isDirectedChord(widget)"
+              [widget]="widget"
+              [data]="widget?.data"
+              class="widget"
+              [class.widget-small]="widget.size === 'small'"
+              [class.widget-medium]="widget.size === 'medium'"
+              [class.widget-large]="widget.size === 'large'"
+            ></app-directed-chord-widget>
+
             <!-- Text Widget -->
             <app-text-widget
               *ngIf="widget.chartType === 'text'"
@@ -293,7 +319,7 @@ import { BreakDownChartWidgetComponent } from "app/modules/dashboard/charts/brea
 
             <!-- Map Widget -->
             <app-column-chart-widget
-              *ngIf="widget.chartType === 'CLUSTERED_COLUMN_CHART'"
+              *ngIf="isColumnChart(widget)"
               [widget]="widget"
               [data]="widget?.data"
               class="widget"
@@ -363,7 +389,16 @@ export class SectionComponent implements OnInit {
           return aOrder - bOrder;
         });
     }
+    // Debug: log widget types to help tracing why DirectedChord not appearing
+    console.debug('[SectionComponent] visibleWidgets chartTypes:', this.visibleWidgets.map(w => ({ id: w._id || w.name || 'no-id', chartType: w.chartType, size: w.size })));
     this.prepareDataForSituationChart();
+  }
+
+  // helper to robustly detect DirectedChord chartType variants
+  isDirectedChord(widget: any): boolean {
+    if (!widget) return false;
+    const ct = (widget.chartType || widget.chartTypeName || '').toString().toLowerCase();
+    return (ct.includes('directed') && ct.includes('chord')) || ['directedchord', 'directed_chord', 'directed-chord'].includes(ct);
   }
 
   prepareDataForSituationChart() {
@@ -374,6 +409,16 @@ export class SectionComponent implements OnInit {
         // console.log(this.situationData);
       }
     });
+  }
+
+  isColumnChart(widget: any): boolean {
+    const chartType = (widget?.chartType || '').toString().toLowerCase();
+    if (!chartType) return false;
+    // Match common variants used across the app/backend
+    if (chartType.includes('column')) return true;
+    if (chartType.includes('verticalstacked') || chartType.includes('horizontalstacked')) return true;
+    if (chartType.includes('simple_column') || chartType.includes('clustered_column')) return true;
+    return false;
   }
 
   transformDataWithPercentage(dataArray) {
@@ -410,3 +455,5 @@ export class SectionComponent implements OnInit {
 
 
 }
+
+

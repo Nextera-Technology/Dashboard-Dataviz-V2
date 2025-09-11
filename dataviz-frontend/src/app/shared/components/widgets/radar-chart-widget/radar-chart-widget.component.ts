@@ -5,8 +5,13 @@ import {
   AfterViewInit,
   OnDestroy,
   NgZone,
+  ElementRef,
+  ViewChild,
+  OnChanges,
+  SimpleChanges,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { ActionsButtonsComponent } from "app/shared/components/actions-buttons/actions-buttons.component";
 import { TranslatePipe } from "app/shared/pipes/translate.pipe";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5radar from "@amcharts/amcharts5/radar";
@@ -32,37 +37,32 @@ interface Widget {
 @Component({
   selector: "app-radar-chart-widget",
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule, TranslatePipe, ActionsButtonsComponent],
   template: `
-    <div class="radar-chart-container">
-      <span class="total-data" *ngIf="totalData > 0">{{ 'shared.worldMapWidget.students_total_label' | translate }} {{ totalData }}</span>
-      <div [id]="chartDivId" class="radar-chart"></div>
+    <div class="chart-box" [style.background-color]="widget?.background || '#ffffff'">
+      <app-actions-buttons [widget]="widget" [isDashboard]="true"></app-actions-buttons>
+      <div class="chart-content">
+        <h3 class="chart-title">{{ widget?.title }}</h3>
+        <div class="chart-legend" *ngIf="totalData > 0">{{ 'shared.worldMapWidget.students_total_label' | translate }} {{ totalData }}</div>
+        <div class="radar-chart-container">
+          <div #chartContainer class="radar-chart"></div>
+        </div>
+      </div>
     </div>
   `,
   styles: [`
-    .radar-chart-container {
-      width: 100%;
-      height: 100%;
-      position: relative;
-    }
-    .radar-chart {
-      width: 100%;
-      height: 100%;
-      min-height: 150px;
-    }
-    .total-data {
-      position: absolute;
-      top: 0;
-      left: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #0d7680;
-    }
+    .chart-box { position: relative; border-radius: 12px; padding: 16px; transition: all 0.3s ease; min-height: 150px; display: flex; flex-direction: column; height: 100%; }
+    .chart-content { flex: 1; display: flex; flex-direction: column; }
+    .radar-chart-container { width: 100%; height: 100%; position: relative; flex: 1 }
+    .radar-chart { width: 100%; height: 100%; min-height: 150px; }
+    .chart-title { font-family: 'Inter'; font-size: 16px; font-weight: 600; color: #00454d; margin: 8px 0; text-align: center }
+    .chart-legend { position: absolute; top: 10px; left: 14px; z-index: 2; background: rgba(255, 255, 255, 0.95); padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; color: #15616d; pointer-events: none; text-align: left; }
   `]
 })
-export class RadarChartWidgetComponent implements OnInit, AfterViewInit, OnDestroy {
+export class RadarChartWidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @Input() widget!: Widget;
   @Input() data: any[] | undefined;
+  @ViewChild("chartContainer", { static: true }) chartContainer!: ElementRef;
 
   get totalData(): number {
     if (!this.data || this.data.length === 0) {
@@ -77,28 +77,54 @@ export class RadarChartWidgetComponent implements OnInit, AfterViewInit, OnDestr
 
   private root?: am5.Root;
   private chart?: am5radar.RadarChart;
+  private _resizeObserver?: ResizeObserver | null = null;
 
-  get chartDivId(): string {
-    return `radar-chart-div-${this.widget._id}`;
-  }
+  // Using ViewChild container for chart root (prevents issues when DOM rerenders)
 
   constructor(private zone: NgZone) {}
 
   ngOnInit(): void {}
 
   ngAfterViewInit(): void {
+    // create chart after view init
+    this.createChart();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // recreate chart when inputs change (data, widget, background)
+    if (changes.data || changes.widget) {
+      // if view not initialized yet, createChart will be called in ngAfterViewInit
+      if (!this.chartContainer) return;
+      this.zone.runOutsideAngular(() => {
+        try {
+          if (this.root) {
+            this.root.dispose();
+            this.root = undefined;
+            this.chart = undefined;
+          }
+        } catch (e) {}
+        this.createChart();
+      });
+    }
+  }
+
+  private createChart(): void {
     this.zone.runOutsideAngular(() => {
       if (!this.data || this.data.length === 0) {
-        console.warn("RadarChartWidget: No data provided.", this.widget.title);
+        console.warn("RadarChartWidget: No data provided.", this.widget?.title);
         return;
       }
 
-      const root = am5.Root.new(this.chartDivId);
-      // remove amCharts branding/logo if present
+      // dispose existing root if present
+      try { if (this.root) { this.root.dispose(); } } catch(e){}
+
+      const containerEl = this.chartContainer?.nativeElement;
+      if (!containerEl) return;
+
+      const root = am5.Root.new(containerEl);
       try { (root as any)._logo?.dispose(); } catch {}
       root.setThemes([am5themes_Animated.new(root)]);
 
-      // Create chart
       const chart = root.container.children.push(
         am5radar.RadarChart.new(root, {
           panX: true,
@@ -109,69 +135,36 @@ export class RadarChartWidgetComponent implements OnInit, AfterViewInit, OnDestr
         })
       );
 
-      // Add interactive cursor for zooming/hover
-      const cursor = chart.set(
-        "cursor",
-        am5radar.RadarCursor.new(root, {
-          behavior: "zoomX",
-        })
-      );
+      const cursor = chart.set("cursor", am5radar.RadarCursor.new(root, { behavior: "zoomX" }));
       cursor.lineY.set("visible", false);
 
-      // Create axes
       const xRenderer = am5radar.AxisRendererCircular.new(root, { minGridDistance: 30 });
-      xRenderer.labels.template.setAll({
-        radius: 10,
-        paddingTop: 5,
-        fontSize: "12px",
-        textType: "adjusted",
-      });
+      xRenderer.labels.template.setAll({ radius: 10, paddingTop: 5, fontSize: "12px", textType: "adjusted" });
 
-      const xAxis = chart.xAxes.push(
-        am5xy.CategoryAxis.new(root, {
-          maxDeviation: 0,
-          categoryField: "name",
-          renderer: xRenderer,
-          tooltip: am5.Tooltip.new(root, {}),
-        })
-      );
+      const xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+        maxDeviation: 0,
+        categoryField: "name",
+        renderer: xRenderer,
+        tooltip: am5.Tooltip.new(root, {}),
+      }));
       xAxis.data.setAll(this.data);
 
       const yRenderer = am5radar.AxisRendererRadial.new(root, {});
-      const yAxis = chart.yAxes.push(
-        am5xy.ValueAxis.new(root, {
-          min: 0,
-          renderer: yRenderer,
-        })
-      );
+      const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, { min: 0, renderer: yRenderer }));
 
-      // Create series
-      const series = chart.series.push(
-        am5radar.RadarLineSeries.new(root, {
-          name: this.widget.title,
-          xAxis: xAxis,
-          yAxis: yAxis,
-          valueYField: "count",
-          categoryXField: "name",
-          tooltip: am5.Tooltip.new(root, {
-            labelText: "{categoryX}: {valueY}",
-          }),
-        })
-      );
+      const series = chart.series.push(am5radar.RadarLineSeries.new(root, {
+        name: this.widget?.title,
+        xAxis: xAxis,
+        yAxis: yAxis,
+        valueYField: "count",
+        categoryXField: "name",
+        tooltip: am5.Tooltip.new(root, { labelText: "{categoryX}: {valueY}" }),
+      }));
+
       series.strokes.template.setAll({ strokeWidth: 2 });
       series.fills.template.setAll({ visible: true, fillOpacity: 0.2 });
       series.set("tooltipPosition", "pointer");
-      // add bullets for better readability
-      series.bullets.push(() =>
-        am5.Bullet.new(root, {
-          sprite: am5.Circle.new(root, {
-            radius: 4,
-            fill: series.get("fill"),
-            stroke: series.get("stroke"),
-            strokeWidth: 1
-          })
-        })
-      );
+      series.bullets.push(() => am5.Bullet.new(root, { sprite: am5.Circle.new(root, { radius: 4, fill: series.get("fill"), stroke: series.get("stroke"), strokeWidth: 1 }) }));
       series.data.setAll(this.data);
 
       series.appear(1000);
@@ -179,6 +172,20 @@ export class RadarChartWidgetComponent implements OnInit, AfterViewInit, OnDestr
 
       this.root = root;
       this.chart = chart;
+
+      // add ResizeObserver to resize chart when container changes
+      try {
+        if ((window as any).ResizeObserver) {
+          if (this._resizeObserver) {
+            try { this._resizeObserver.disconnect(); } catch(e){}
+          }
+          const ro = new ResizeObserver(() => {
+            try { if (this.root) this.root.resize(); } catch (e) {}
+          });
+          ro.observe(containerEl);
+          this._resizeObserver = ro;
+        }
+      } catch (e) {}
     });
   }
 

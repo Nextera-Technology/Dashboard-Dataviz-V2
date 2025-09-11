@@ -1,0 +1,19 @@
+<div class="directed-chord-widget h-full w-full">
+  <div class="chart-box relative" [style.background-color]="widget?.background || '#ffffff'">
+    <div class="total-label absolute top-2 left-2 text-sm font-medium">
+      {{ 'shared.worldMapWidget.students_total_label' | translate }} {{ totalData }}
+    </div>
+    <!-- Action Buttons for dashboard view -->
+    <app-actions-buttons [widget]="widget"></app-actions-buttons>
+
+    <div #chartContainer class="chart-container has-scroll" [attr.id]="'directed-chord-div-' + (widget?._id || '')">
+    <div *ngIf="!data || data.length === 0" class="no-data flex items-center justify-center h-full flex-col text-gray-500 bg-gray-50 p-4 rounded">
+      <mat-icon class="text-4xl text-gray-400">timeline</mat-icon>
+      <div class="mt-2">No Chart or Data</div>
+      <div class="text-sm">Configure widget type or add data.</div>
+    </div>
+    </div>
+  </div>
+</div>
+
+

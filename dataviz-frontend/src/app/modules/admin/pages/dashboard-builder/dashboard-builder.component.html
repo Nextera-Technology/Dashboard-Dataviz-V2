@@ -141,8 +141,8 @@
                                          [ngClass]="{ 'has-scroll': isPieChartOneByOne(widget) || isNonPieChartOneByOne(widget) || isTwoByOne(widget) || isOneByTwo(widget) }">
                                         <ng-container>
                                             <app-metric-widget *ngIf="widget.chartType === 'CARD' && !(widget?.widgetType === 'STATUS_BY_WAVE'  || widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN')" [widget]="widget" [data]="widget.data" class="h-full"></app-metric-widget>
-                                            <app-breakdown-chart-widget *ngIf="widget.chartType === 'CARD'  && (widget?.widgetType === 'STATUS_BY_WAVE'  || widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN')" [widget]="widget" [data]="widget.data" class="h-full"></app-breakdown-chart-widget>
-                                            <app-bar-chart-widget *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART'  || widget.chartType === 'SORTED_BAR_CHART' || widget.chartType === 'SortedBarChart' || widget.chartType === 'sorted_bar_chart'" [widget]="widget" [data]="widget.data" class="h-full"></app-bar-chart-widget>
+                                            <app-breakdown-chart-widget *ngIf="widget.chartType === 'CARD'  && (widget?.widgetType === 'STATUS_BY_WAVE'  && widget?.widgetSubType !== 'STATUS_WAVE_BREAKDOWN')" [widget]="widget" [data]="widget.data" class="h-full"></app-breakdown-chart-widget>
+                                            <app-bar-chart-widget *ngIf="widget.chartType === 'CLUSTERED_BAR_CHART'  || widget.chartType === 'SORTED_BAR_CHART' || widget.chartType === 'SortedBarChart' || widget.chartType === 'sorted_bar_chart' || widget?.widgetSubType === 'STATUS_WAVE_BREAKDOWN'" [widget]="widget" [data]="widget.data" class="h-full"></app-bar-chart-widget>
                                             <app-column-chart-widget *ngIf="widget.chartType === 'ColumnChart' || widget.chartType === 'CLUSTERED_COLUMN_CHART' || widget.chartType === 'HorizontalStackedChart' || widget.chartType === 'VerticalStackedChart' || widget.chartType === 'SIMPLE_COLUMN_CHART'" [widget]="widget" [data]="widget.data" class="h-full"></app-column-chart-widget>
                                             <app-line-chart-widget *ngIf="widget.chartType === 'LINE_CHART_WITH_DATA_LABELS' || widget.chartType === 'LineChart'" [widget]="widget" [data]="widget.data" class="h-full"></app-line-chart-widget>
                                             <app-pie-chart-widget *ngIf="widget.chartType === 'PIE_CHART_BROKEN_DOWN_SLICES' || widget.chartType === 'PieChart' || widget.chartType === 'SlicedChart'" [widget]="widget" [data]="widget.data" class="h-full"></app-pie-chart-widget>
@@ -154,6 +154,7 @@
                                             <app-animated-gauge-widget *ngIf="widget.chartType === 'ANIMATED_GAUGE' || widget.chartType === 'animated_gauge' || widget.chartType === 'AnimatedGauge'" [widget]="widget" [data]="widget.data" [inBuilder]="true" class="h-full"></app-animated-gauge-widget>
                                             <app-yes-no-gauge-widget *ngIf="widget.chartType === 'YES_NO_GAUGE' || widget.chartType === 'yes_no_gauge' || widget.chartType === 'YesNoGauge'" [widget]="widget" [data]="widget.data" class="h-full"></app-yes-no-gauge-widget>
                                             <app-sankey-chart-widget *ngIf="widget.chartType === 'TraceableSankee' || widget.chartType === 'TRACEABLE_SANKEY_DIAGRAM'" [widget]="widget" [data]="widget.data" class="h-full"></app-sankey-chart-widget>
+                                            <app-directed-chord-widget *ngIf="isDirectedChord(widget)" [widget]="widget" [data]="widget.data" class="h-full"></app-directed-chord-widget>
                                             <app-map-widget *ngIf="widget.chartType === 'MapChart'" [widget]="widget" [data]="widget.data" class="h-full"></app-map-widget>
                                             <app-simple-table-widget *ngIf="widget.chartType === 'Table'" [widget]="widget" [data]="widget.data" class="h-full"></app-simple-table-widget>
                                             <app-text-widget *ngIf="widget.chartType === 'Text'" [widget]="widget" [data]="widget.data" class="h-full"></app-text-widget>
@@ -198,7 +199,8 @@
                                                 widget.chartType === 'TRACEABLE_SANKEY_DIAGRAM' ||
                                                 widget.chartType === 'MapChart' ||
                                                 widget.chartType === 'Table' ||
-                                                widget.chartType === 'Text'
+                                                widget.chartType === 'Text' ||
+                                                isDirectedChord(widget)
                                             ) || !widget.chartType"
                                                 class="flex flex-col items-center justify-center h-full text-gray-500 bg-gray-50 p-4 rounded-lg">
                                                 <mat-icon class="text-6xl text-gray-400" svgIcon="mat_solid:widgets">widgets</mat-icon>

@@ -1,0 +1,43 @@
+.directed-chord-widget {
+  height: 100%;
+}
+
+.chart-box {
+  height: 100%;
+  position: relative;
+  text-align: center;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-container {
+  height: 100%;
+  width: 100%;
+  min-height: 150px;
+  /* give a bit of breathing room around chart to avoid clipping labels */
+  padding: 1px;
+}
+
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* Total label styling (matches other widgets) */
+.total-label {
+  background: rgba(255, 255, 255, 0.92); /* semi-opaque white so it reads on any background */
+  padding: 4px 8px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  display: inline-block;
+  z-index: 5; /* ensure label sits above the chart */
+  color: #15616d;
+}
+
+

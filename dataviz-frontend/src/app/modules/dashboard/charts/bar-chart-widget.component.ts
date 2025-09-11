@@ -18,6 +18,7 @@ import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 
 declare var am5: any;
 declare var am5xy: any;
+declare var am5themes_Animated: any;
 
 @Component({
   selector: "app-bar-chart-widget",
@@ -172,6 +173,8 @@ export class BarChartWidgetComponent implements OnInit, OnDestroy {
         this.createContratChart();
       } else if (this.widget.widgetType === 'SURVEY_COMPLETION') {
         this.createSurveyChart();
+      } else if (this.widget.widgetSubType === 'STATUS_WAVE_BREAKDOWN') {
+        this.createStatusWaveBreakdownChart();
       } else {
         this.createChart();
       }
@@ -728,6 +731,146 @@ export class BarChartWidgetComponent implements OnInit, OnDestroy {
   //   }
   // }
 
+
+  createStatusWaveBreakdownChart(): void {
+    // Transform the data for clustered bar chart
+    const originalData = [...this.data];
+    
+    // Group data by status/situation
+    const groupedByStatus = {};
+    
+    originalData.forEach((item) => {
+      const statusName = item.name;
+      const wave = `EE${item.wave}`;
+      
+      if (!groupedByStatus[statusName]) {
+        groupedByStatus[statusName] = {
+          name: statusName,
+          EE1: 0,
+          EE2: 0,
+          EE3: 0,
+          EE4: 0
+        };
+      }
+      
+      groupedByStatus[statusName][wave] = item.percentage || 0;
+    });
+
+    const groupedData = Object.values(groupedByStatus);
+
+    // Create AM5 root and chart
+    this.root = am5.Root.new(this.chartContainer.nativeElement);
+    this.root.setThemes([am5themes_Animated.new(this.root)]);
+
+    this.chart = this.root.container.children.push(
+      am5xy.XYChart.new(this.root, {
+        panX: false,
+        panY: false,
+        wheelX: "none",
+        wheelY: "none",
+        layout: this.root.verticalLayout
+      })
+    );
+
+    // Create Y axis (categories)
+    this.yAxis = this.chart.yAxes.push(
+      am5xy.CategoryAxis.new(this.root, {
+        categoryField: "name",
+        renderer: am5xy.AxisRendererY.new(this.root, {}),
+        tooltip: am5.Tooltip.new(this.root, {})
+      })
+    );
+
+    // Style Y axis labels
+    this.yAxis.get("renderer").labels.template.setAll({
+      fontSize: 12,
+      maxWidth: 150,
+      oversizedBehavior: "truncate"
+    });
+
+    this.yAxis.data.setAll(groupedData);
+
+    // Create X axis (values)
+    this.xAxis = this.chart.xAxes.push(
+      am5xy.ValueAxis.new(this.root, {
+        min: 0,
+        renderer: am5xy.AxisRendererX.new(this.root, {})
+      })
+    );
+
+    // Define colors for each wave
+    const waveColors = {
+      EE1: "#BCDCDC",
+      EE2: "#68B3B3", 
+      EE3: "#2A8A8A",
+      EE4: "#0E4B4B"
+    };
+
+    // Create series for each wave (EE1, EE2, EE3, EE4)
+    ["EE1", "EE2", "EE3", "EE4"].forEach((wave) => {
+      const series = this.chart.series.push(
+        am5xy.ColumnSeries.new(this.root, {
+          name: wave,
+          xAxis: this.xAxis,
+          yAxis: this.yAxis,
+          valueXField: wave,
+          categoryYField: "name",
+          clustered: true,
+          tooltip: am5.Tooltip.new(this.root, {
+            labelText: `{name} - ${wave}: {${wave}}%`
+          })
+        })
+      );
+
+      // Style columns
+      series.columns.template.setAll({
+        tooltipText: `{name} - ${wave}: {${wave}}%`,
+        cornerRadiusTL: 4,
+        cornerRadiusBL: 4,
+        strokeWidth: 1,
+        fill: am5.color(waveColors[wave]),
+        stroke: am5.color(waveColors[wave])
+      });
+
+      // Add data labels
+      series.bullets.push(() => {
+        const label = am5.Label.new(this.root, {
+          text: `{${wave}}%`,
+          populateText: true,
+          centerX: am5.percent(100),
+          centerY: am5.percent(50),
+          dx: 5,
+          fontSize: 10,
+          fill: am5.color("#000")
+        });
+
+        return am5.Bullet.new(this.root, {
+          locationX: 1,
+          sprite: label
+        });
+      });
+
+      series.data.setAll(groupedData);
+      series.appear(1000);
+    });
+
+    // Add legend
+    const legend = this.chart.children.push(
+      am5.Legend.new(this.root, {
+        centerX: am5.percent(50),
+        x: am5.percent(50),
+        layout: am5.GridLayout.new(this.root, {
+          maxColumns: 4,
+          fixedWidthGrid: true
+        })
+      })
+    );
+
+    legend.data.setAll(this.chart.series.values);
+
+    // Make chart appear
+    this.chart.appear(1000, 100);
+  }
 
   ngOnDestroy(): void {
     if (this.root) {

@@ -184,32 +184,40 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
 
     console.debug('ModuleColumnChart: ngOnInit', { widget: this.widget, data: this.data });
 
-    // If data is array of {name, count, percentage, totalData}, normalize into categories + series
+    // If data is array of {name, count, percentage, totalData} and widgetType is SURVEY_COMPLETION,
+    // prefer using the specialized survey chart creator which expects that shape.
     if (Array.isArray(this.widget.data) && this.widget.data.length > 0) {
-      try {
-        const arr = this.widget.data as any[];
-        const categories = arr.map(d => d.name ?? d.category ?? d.label ?? 'Unknown');
-        const values = arr.map(d => Number(d.count ?? d.value ?? d.percentage ?? 0));
-        const percentages = arr.map(d => d.percentage ?? null);
-        // Do NOT mutate input widget object (may be frozen). Assign to local `data` input instead.
-        this.data = {
-          categories,
-          series: [
-            {
-              name: this.widget.title ?? 'Series',
-              data: values,
-              percentages,
-              // Use a default series color (do NOT use widget.background which is the tile color)
-              color: '#67b7dc',
-              totalData: arr[0]?.totalData
-            }
-          ]
-        };
-        console.debug('ModuleColumnChart: normalized widget.data', this.widget.data);
-        this.createChart();
+      if (this.widget.widgetType === 'SURVEY_COMPLETION' || this.widget.widget === 'SURVEY_COMPLETION') {
+        // Use specialized chart creator which knows how to group by wave and name
+        this.createSurveyChart();
         return;
-      } catch (e) {
-        console.warn('ModuleColumnChart: error normalizing array data', e);
+      } else {
+        // For non-survey cases, fall back to generic normalization into a single-series column chart
+        try {
+          const arr = this.widget.data as any[];
+          const categories = arr.map(d => d.name ?? d.category ?? d.label ?? 'Unknown');
+          const values = arr.map(d => Number(d.count ?? d.value ?? d.percentage ?? 0));
+          const percentages = arr.map(d => d.percentage ?? null);
+          // Do NOT mutate input widget object (may be frozen). Assign to local `data` input instead.
+          this.data = {
+            categories,
+            series: [
+              {
+                name: this.widget.title ?? 'Series',
+                data: values,
+                percentages,
+                // Use a default series color (do NOT use widget.background which is the tile color)
+                color: '#67b7dc',
+                totalData: arr[0]?.totalData
+              }
+            ]
+          };
+          console.debug('ModuleColumnChart: normalized widget.data', this.widget.data);
+          this.createChart();
+          return;
+        } catch (e) {
+          console.warn('ModuleColumnChart: error normalizing array data', e);
+        }
       }
     }
 
@@ -263,9 +271,9 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
     "Indépendant": "#6D597A",
     "Mandataire Social": "#B5838D",
     "Autre": "#ADB5BD",
-    "SENT": "#8FD2D2",
-    "OPENED": "#4A90E2",
-    "COMPLETED": "#0E3F2D",
+    "SENT": "#62C7E5",
+    "OPENED": "#5B6DE2",
+    "COMPLETED": "#9B63EA",
   };
 
   createSurveyChart(): void {
@@ -305,6 +313,13 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
 
     // 4. Create chart
     this.root = am5.Root.new(this.chartContainer.nativeElement);
+    // Remove amCharts branding/watermark
+    if (this.root._logo && typeof this.root._logo.dispose === 'function') {
+      try {
+        this.root._logo.dispose();
+      } catch (e) {
+      }
+    }
     this.root.setThemes([am5.Theme.new(this.root)]);
 
     this.chart = this.root.container.children.push(
@@ -390,23 +405,60 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
       });
     });
 
-    // 8. Add legend (skip for very small 1x1 tiles to avoid overflow)
+    // 8. Add cursor, scrollbar and legend interactivity for clustered behavior
+    // Add cursor
+    this.chart.set("cursor", am5xy.XYCursor.new(this.root, {
+      behavior: "zoomX"
+    }));
+
+    // Add horizontal scrollbar if many categories
+    const scrollbar = am5xy.XYChartScrollbar.new(this.root, {
+      orientation: "horizontal"
+    });
+    this.chart.set("scrollbarX", scrollbar);
+
+    // Legend with interactive toggling (hide/show series)
     if (!this.isOneByOne()) {
-      this.chart.set("legend", am5.Legend.new(this.root, {
-        centerX: am5.percent(50),
-        x: am5.percent(50),
-        centerY: am5.percent(100),
-        y: am5.percent(100),
-        layout: this.root.horizontalLayout
-      }));
+      const legend = this.chart.children.push(
+        am5.Legend.new(this.root, {
+          centerX: am5.percent(50),
+          x: am5.percent(50),
+          centerY: am5.percent(100),
+          y: am5.percent(100),
+          layout: this.root.horizontalLayout
+        })
+      );
+      legend.data.setAll(this.chart.series.values);
+
+      // Make legend items toggle series visibility with animation
+      legend.markers.template.setAll({ width: 12, height: 12 });
+      legend.itemContainers.template.events.on("click", (ev: any) => {
+        const item = ev.target.dataItem.get("dataContext");
+        if (item) {
+          const series = item;
+          series.set("visible", !series.get("visible"));
+          if (series.get("visible")) {
+            series.show();
+          } else {
+            series.hide();
+          }
+        }
+      });
     }
 
-    // 9. Animate chart
+    // 9. Animate chart entrance
     this.chart.appear(1000, 100);
   }
 
   private createChart(): void {
     this.root = am5.Root.new(this.chartContainer.nativeElement);
+    // Remove amCharts branding/watermark for the simpler chart creation path
+    if (this.root._logo && typeof this.root._logo.dispose === 'function') {
+      try {
+        this.root._logo.dispose();
+      } catch (e) {
+      }
+    }
     this.root.setThemes([am5.Theme.new(this.root)]);
 
     this.chart = this.root.container.children.push(
@@ -442,21 +494,27 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
 
     // Create series for each data series
     (sourceData.series || []).forEach((seriesData: any, index: number) => {
+      // Define different colors for each bar
+      const colorPalette = ['#67b7dc', '#8ECAE6', '#219EBC', '#F4A261', '#E76F51', '#2A9D8F', '#264653', '#6D597A', '#B5838D', '#ADB5BD'];
+      
       const series = this.chart.series.push(
         am5xy.ColumnSeries.new(this.root, {
           name: seriesData.name,
           xAxis: this.xAxis,
           yAxis: this.yAxis,
           valueYField: 'value',
-          categoryXField: 'category'
+          categoryXField: 'category',
+          fillField: 'color',
+          strokeField: 'color'
         })
       );
 
-      // Set data for this series
+      // Set data for this series with different colors for each bar
       const data = categories.map((cat: string, catIndex: number) => ({
         category: cat,
         value: seriesData.data[catIndex] || 0,
-        percentage: seriesData.percentages ? seriesData.percentages[catIndex] : null
+        percentage: seriesData.percentages ? seriesData.percentages[catIndex] : null,
+        color: colorPalette[catIndex % colorPalette.length]
       }));
       series.data.setAll(data);
 
@@ -465,33 +523,32 @@ export class ColumnChartWidgetComponent implements OnInit, OnDestroy {
         cornerRadiusTL: 6,
         cornerRadiusTR: 6,
         strokeWidth: 2,
-        tooltipText: '{name}: {valueY} ({percentage}%)',
+        tooltipText: '{category}: {valueY} ({percentage}%)',
       });
 
-      // Explicitly apply fill/stroke with full opacity to contrast with tile background
-      series.columns.template.set('fill', am5.color(seriesData.color || '#67b7dc'));
-      series.columns.template.set('stroke', am5.color(seriesData.color || '#67b7dc'));
+      // Apply colors dynamically based on data
+      series.columns.template.adapters.add("fill", (fill, target) => {
+        const dataItem = target.dataItem;
+        if (dataItem && dataItem.dataContext) {
+          return am5.color(dataItem.dataContext.color);
+        }
+        return am5.color(seriesData.color || '#67b7dc');
+      });
+
+      series.columns.template.adapters.add("stroke", (stroke, target) => {
+        const dataItem = target.dataItem;
+        if (dataItem && dataItem.dataContext) {
+          return am5.color(dataItem.dataContext.color);
+        }
+        return am5.color(seriesData.color || '#67b7dc');
+      });
+
       series.columns.template.set('fillOpacity', 1);
       series.columns.template.set('strokeOpacity', 1);
-
-      // Show category (object name) in tooltip instead of widget title
-      series.columns.template.set('tooltipText', '{categoryX}: {valueY}');
       this.series.push(series);
     });
 
-    // Add legend (skip for very small 1x1 tiles to avoid overflow)
-    if (!this.isOneByOne()) {
-      const legend = this.chart.children.push(
-        am5.Legend.new(this.root, {
-          centerX: am5.percent(50),
-          x: am5.percent(50),
-          centerY: am5.percent(100),
-          y: am5.percent(100),
-          layout: this.root.horizontalLayout
-        })
-      );
-      legend.data.setAll(this.series);
-    }
+   
 
     // Animate
     this.series.forEach(series => {
