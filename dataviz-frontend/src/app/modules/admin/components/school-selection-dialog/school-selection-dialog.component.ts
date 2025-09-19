@@ -9,6 +9,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { DashboardBuilderRepository } from '@dataviz/repositories/dashboard-builder/dashboard-builder.repository';
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 
 export interface SchoolSelectionDialogData {
   dashboardId: string;
@@ -32,7 +33,8 @@ export interface SchoolSelectionResult {
     MatIconModule,
     MatRadioModule,
     MatInputModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    TranslatePipe
   ],
   template: `
     <div class="fuse-dialog">
@@ -44,7 +46,7 @@ export interface SchoolSelectionResult {
               <mat-icon class="text-primary-600">dashboard</mat-icon>
             </div>
             <div>
-              <h1 class="text-2xl font-semibold text-gray-900">Open Dashboard</h1>
+              <h1 class="text-2xl font-semibold text-gray-900">{{ 'admin.schoolSelectionDialog.title' | translate }}</h1>
               <p class="text-sm text-gray-500 mt-1">{{ data.dashboardTitle }}</p>
             </div>
           </div>
@@ -58,14 +60,14 @@ export interface SchoolSelectionResult {
           <mat-radio-group [(ngModel)]="selectedOption" class="w-full">
             <div class="fuse-option-card" [class.selected]="selectedOption === 'all'" (click)="selectedOption = 'all'">
               <div class="flex items-center">
-                <mat-radio-button class="mr-4" value="all" aria-label="Open with all school data"></mat-radio-button>
+                <mat-radio-button class="mr-4" value="all" [attr.aria-label]="'admin.schoolSelectionDialog.options.all.title' | translate"></mat-radio-button>
                 <div class="flex items-start space-x-4">
                   <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-50">
                     <mat-icon class="text-blue-600">public</mat-icon>
                   </div>
                   <div>
-                    <h3 class="text-base font-medium text-gray-900">Open with all school data</h3>
-                    <p class="text-sm text-gray-500 mt-1">View dashboard with complete dataset from all schools</p>
+                    <h3 class="fuse-option-title">{{ 'admin.schoolSelectionDialog.options.all.title' | translate }}</h3>
+                    <p class="fuse-option-paragraf">{{ 'admin.schoolSelectionDialog.options.all.description' | translate }}</p>
                   </div>
                 </div>
               </div>
@@ -73,14 +75,14 @@ export interface SchoolSelectionResult {
 
             <div class="fuse-option-card mt-3" [class.selected]="selectedOption === 'selected'" (click)="selectedOption = 'selected'">
               <div class="flex items-center">
-                <mat-radio-button class="mr-4" value="selected" aria-label="Open with selected schools"></mat-radio-button>
+                <mat-radio-button class="mr-4" value="selected" [attr.aria-label]="'admin.schoolSelectionDialog.options.selected.title' | translate"></mat-radio-button>
                 <div class="flex items-start space-x-4">
                   <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-indigo-50">
                     <mat-icon class="text-indigo-600">filter_list</mat-icon>
                   </div>
                   <div>
-                    <h3 class="text-base font-medium text-gray-900">Open with selected schools</h3>
-                    <p class="text-sm text-gray-500 mt-1">Filter dashboard data by specific schools</p>
+                    <h3 class="fuse-option-title">{{ 'admin.schoolSelectionDialog.options.selected.title' | translate }}</h3>
+                    <p class="fuse-option-paragraf">{{ 'admin.schoolSelectionDialog.options.selected.description' | translate }}</p>
                   </div>
                 </div>
               </div>
@@ -89,12 +91,12 @@ export interface SchoolSelectionResult {
         </div>
 
         <!-- School Selection Section -->
-        <div class="fuse-school-selection mt-6" *ngIf="selectedOption === 'selected'">
+        <div class="fuse-option-title" *ngIf="selectedOption === 'selected'">
           <div class="flex items-center space-x-3 mb-4">
             <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100">
               <mat-icon class="text-gray-600 text-lg">location_city</mat-icon>
             </div>
-            <h3 class="text-lg font-medium text-gray-900">Select Schools</h3>
+            <h3 class="text-lg font-medium text-gray-900">{{ 'admin.schoolSelectionDialog.select_schools_title' | translate }}</h3>
           </div>
           
           <!-- Search Field -->
@@ -106,7 +108,7 @@ export interface SchoolSelectionResult {
               <input type="text"
                      [(ngModel)]="searchTerm"
                      (input)="onSearchChange()"
-                     placeholder="Search schools..."
+                     [placeholder]="'admin.schoolSelectionDialog.search_placeholder' | translate"
                      class="fuse-search-input block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors">
             </div>
           </div>
@@ -119,7 +121,7 @@ export interface SchoolSelectionResult {
                   [(ngModel)]="schoolSelections[school]"
                   (change)="onSchoolSelectionChange()"
                   class="fuse-checkbox">
-                  <span class="text-sm text-gray-700">{{ school }}</span>
+                  <span class="fuse-option-paragraf">{{ school }}</span>
                 </mat-checkbox>
               </div>
             </div>
@@ -128,7 +130,7 @@ export interface SchoolSelectionResult {
             <div class="fuse-no-results" *ngIf="filteredSchools.length === 0 && availableSchools.length > 0">
               <div class="flex items-center justify-center space-x-2 py-8 text-gray-500">
                 <mat-icon class="text-gray-400">search_off</mat-icon>
-                <span class="text-sm">No schools found matching "{{ searchTerm }}"</span>
+                <span class="text-sm">{{ 'admin.schoolSelectionDialog.no_results' | translate }} "{{ searchTerm }}"</span>
               </div>
             </div>
           </div>
@@ -137,17 +139,17 @@ export interface SchoolSelectionResult {
           <div class="fuse-loading" *ngIf="isLoadingSchools">
             <div class="flex items-center justify-center space-x-3 py-8">
               <mat-icon class="animate-spin text-primary-600">hourglass_empty</mat-icon>
-              <span class="text-sm text-gray-600">Loading available schools...</span>
+              <span class="text-sm text-gray-600">{{ 'admin.schoolSelectionDialog.loading' | translate }}</span>
             </div>
           </div>
           
           <!-- Selection Info -->
           <div class="fuse-selection-info mt-4 p-3 bg-gray-50 rounded-lg" *ngIf="selectedOption === 'selected'">
             <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-gray-700">{{ getSelectedSchoolsCount() }} school(s) selected</span>
+              <span class="text-sm font-medium text-gray-700">{{ getSelectedSchoolsCount() }} {{ 'admin.schoolSelectionDialog.schools_selected_suffix' | translate }}</span>
               <div class="flex items-center space-x-1 text-amber-600" *ngIf="getSelectedSchoolsCount() === 0">
                 <mat-icon class="text-sm">warning</mat-icon>
-                <span class="text-xs">Please select at least one school</span>
+                <span class="text-xs">{{ 'admin.schoolSelectionDialog.please_select_one' | translate }}</span>
               </div>
             </div>
           </div>
@@ -161,7 +163,7 @@ export interface SchoolSelectionResult {
                   (click)="onCancel($event)" 
                   type="button"
                   class="fuse-cancel-button">
-            Cancel
+            {{ 'admin.schoolSelectionDialog.cancel' | translate }}
           </button>
           <button mat-flat-button 
                   color="primary" 
@@ -170,7 +172,7 @@ export interface SchoolSelectionResult {
                   type="button"
                   class="fuse-confirm-button">
             <mat-icon class="mr-2">open_in_new</mat-icon>
-            Open Dashboard
+            {{ 'admin.schoolSelectionDialog.open_dashboard' | translate }}
           </button>
         </div>
       </mat-dialog-actions>
@@ -255,6 +257,21 @@ export interface SchoolSelectionResult {
 
     .fuse-confirm-button:disabled {
       @apply bg-gray-400 text-white cursor-not-allowed;
+    }
+
+    .fuse-option-title {
+      font-size: 18px !important;
+      font-weight: 600 !important;
+      color: #1f2937 !important;
+      line-height: 1.4 !important;
+      font-family: system-ui, -apple-system, sans-serif !important;
+    }
+    .fuse-option-paragraf {
+      font-size: 12px !important;
+      font-weight: 400 !important;
+      color:rgb(84, 93, 107) !important;
+      line-height: 1.4 !important;
+      font-family: system-ui, -apple-system, sans-serif !important;
     }
 
     @keyframes spin {

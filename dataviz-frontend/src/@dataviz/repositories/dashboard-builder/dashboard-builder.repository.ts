@@ -5,6 +5,7 @@
  */
 import { inject, Injectable } from "@angular/core";
 import { GraphqlClient } from "@dataviz/graphql/client";
+import { TranslationService } from 'app/shared/services/translation/translation.service';
 import {
   gqlCreateDashboard,
   gqlDeleteDashboard,
@@ -20,6 +21,8 @@ import {
   gqlRegenerateAutoAnalysisDashboard,
   gqlDuplicateDashboardFromOther
 } from "@dataviz/graphql/mutations/dashboard-builder/dashboard-builder.mutation";
+import { gqlUploadPublicAsset } from "@dataviz/graphql/mutations/file/file-upload.mutation";
+import { environment } from 'environments/environment';
 import {
   gqlGetAllDashboard,
   gqlOpenDashboardWithSchoolFilter,
@@ -34,6 +37,7 @@ import {
 })
 export class DashboardBuilderRepository {
   _client = inject(GraphqlClient);
+  private translation = inject(TranslationService);
 
   constructor() {}
 
@@ -353,8 +357,6 @@ export class DashboardBuilderRepository {
    * @returns {Promise<any>} - The query result.
    */
   async openDashboardWithSchoolFilter(dashboardId: string, schoolFilters: string[]) {
-    console.log('DashboardBuilderRepository: openDashboardWithSchoolFilter called');
-    console.log('Parameters:', { dashboardId, schoolFilters });
     
     if (!dashboardId || !schoolFilters) {
       throw new Error("Dashboard ID and school filters are required");
@@ -368,11 +370,9 @@ export class DashboardBuilderRepository {
       const queryResult = await this._client.GraphqlQuery(query, variables);
       
       const result = queryResult.openDashboardWithSchoolFilter;
-      console.log('Extracted result:', result);
       
       return result;
     } catch (error) {
-      console.error('GraphQL query failed in repository:', error);
       throw {
         message: "Failed to open dashboard with school filter.",
         originalError: error,
@@ -433,12 +433,26 @@ export class DashboardBuilderRepository {
   /**
    * Export widget data via GraphQL, returning a downloadable filename.
    */
-  async exportWidgetData(widgetId: string, exportType: string) {
+  async exportWidgetData(
+    widgetId: string,
+    exportType: string,
+    displayChartS3Key?: string | null,
+    lineChartS3Key?: string | null
+  ) {
     if (!widgetId || !exportType) {
       throw new Error("widgetId and exportType are required");
     }
     const mutation = gqlExportWidgetData;
-    const variables = { widgetId, exportType };
+    const input = { 
+      widgetId, 
+      exportType,
+      displayChartFilename: displayChartS3Key ?? null,
+      lineChartFilename: lineChartS3Key ?? null,
+      // Provide language explicitly - backend requires EnumLanguage!
+      // Use uppercase enum values expected by backend (e.g. 'EN' or 'FR')
+      lang: this.translation.getCurrentLanguage().toUpperCase() === 'FR' ? 'FR' : 'EN'
+    };
+    const variables = { input };
 
     try {
       const mutationResult = await this._client.GraphqlMutate(
@@ -453,6 +467,78 @@ export class DashboardBuilderRepository {
         queryOrMutation: mutation,
         input: JSON.stringify(variables),
       };
+    }
+  }
+
+  /**
+   * Upload a public asset (file) to AWS S3.
+   * @param {File} file - The file to upload.
+   * @param {string} path - Optional path/folder in S3.
+   * @returns {Promise<{filename: string, url: string}>} - The uploaded file info.
+   */
+  async uploadPublicAsset(file: File,type: string) {
+    if (!file) {
+      throw new Error("File is required for upload");
+    }
+    const mutation = gqlUploadPublicAsset;
+    // Try using Apollo mutate with multipart context first
+    const variables = { input: { file, type } };
+    try {
+      const result = await this._client.GraphqlMutateWithContext(mutation, variables, true);
+      return result?.uploadPublicAsset;
+    } catch (error) {
+      // Fallback: build multipart request manually and send via fetch
+      try {
+        const operation = mutation?.loc?.source?.body || '';
+        const opDef: any = mutation?.definitions?.find((d: any) => d && d.kind === 'OperationDefinition');
+        const operationName = opDef?.name?.value || 'UploadPublicAsset';
+
+        const operations = JSON.stringify({
+          query: operation,
+          variables: { input: { file: null } }
+        });
+
+        const map = JSON.stringify({ '1': ['variables.input.file'] });
+
+        const form = new FormData();
+        form.append('operations', operations);
+        form.append('map', map);
+        form.append('1', file, file.name);
+
+        const headers: Record<string, string> = {
+          'x-apollo-operation-name': operationName,
+          'apollo-require-preflight': 'true',
+          'Accept': 'application/json'
+        };
+
+        const resp = await fetch(environment.apiGraphqlUrl, {
+          method: 'POST',
+          credentials: 'include',
+          headers,
+          body: form
+        });
+
+        const text = await resp.text();
+        let json: any;
+        try {
+          json = JSON.parse(text);
+        } catch (e) {
+          throw new Error('Invalid JSON response from upload endpoint');
+        }
+
+        if (json.errors && json.errors.length) {
+          throw new Error(json.errors[0].message || 'Upload error');
+        }
+
+        return json.data?.uploadPublicAsset;
+      } catch (fetchErr) {
+        throw {
+          message: "Failed to upload public asset.",
+          originalError: fetchErr,
+          queryOrMutation: mutation,
+          input: JSON.stringify({ fileName: file.name }),
+        };
+      }
     }
   }
 

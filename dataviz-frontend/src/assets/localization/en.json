@@ -166,6 +166,27 @@
         "save_changes": "Save Changes",
         "add_widget": "Add Widget"
       },
+      "schoolSelectionDialog": {
+        "title": "Open Dashboard",
+        "options": {
+          "all": {
+            "title": "Open with all school data",
+            "description": "View dashboard with complete dataset from all schools"
+          },
+          "selected": {
+            "title": "Open with selected schools",
+            "description": "Filter dashboard data by specific schools"
+          }
+        },
+        "select_schools_title": "Select Schools",
+        "search_placeholder": "Search schools...",
+        "no_results": "No schools found matching",
+        "loading": "Loading available schools...",
+        "schools_selected_suffix": "school(s) selected",
+        "please_select_one": "Please select at least one school",
+        "cancel": "Cancel",
+        "open_dashboard": "Open Dashboard"
+      },
       "jobDescriptionList": {
         "header_title": "Job Description Dashboards",
         "header_subtitle": "Manage dashboards for job description evaluation",

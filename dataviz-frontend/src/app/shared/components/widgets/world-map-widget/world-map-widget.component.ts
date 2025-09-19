@@ -98,24 +98,25 @@ export class WorldMapWidgetComponent
   public salaryLegendId: string; // ID for salary legend container
 
   constructor(private zone: NgZone) {
-    this.studentsMapId = "students-map-chart-" + Math.random().toString(36).substr(2, 9);
-    this.salaryMapId = "salary-map-chart-" + Math.random().toString(36).substr(2, 9);
-    console.log(
-      `[FranceRegionalMapsComponent] Constructor fired. Students Map ID: ${this.studentsMapId}, Salary Map ID: ${this.salaryMapId}`
-    );
+    // Initialize with temporary IDs, will be set properly in ngOnInit when widget is available
+    this.studentsMapId = "temp-students-map";
+    this.salaryMapId = "temp-salary-map";
   }
 
   ngOnInit(): void {
+    // Set consistent IDs based on widget ID for PDF export compatibility
+    const widgetId = this.widget?._id || this.widget?.id || '';
+    this.studentsMapId = `students-map-chart-div-${widgetId}`;
+    this.salaryMapId = `salary-map-chart-div-${widgetId}`;
+    this.studentsLegendId = `students-legend-${widgetId}`;
+    this.salaryLegendId = `salary-legend-${widgetId}`;
+    
     const colSize = Number(this.widget.columnSize || 1);
     const rowSize = Number(this.widget.rowSize || 1);
     
     this.isNarrow = colSize <= 1;
     this.isOneByTwo = colSize === 1 && rowSize === 2;
     this.isOneByOne = colSize === 1 && rowSize === 1;
-    
-    console.log(`[FranceRegionalMapsComponent] ngOnInit fired.`);
-    console.log("Widget Data:", this.widget);
-    console.log(`Layout: ${colSize}x${rowSize}, isNarrow: ${this.isNarrow}, isOneByTwo: ${this.isOneByTwo}`);
     
     if (this.widget?.widgetSubType === 'STUDENT_REGION_DISTRIBUTION') {
       this.createStudentData();
@@ -162,7 +163,6 @@ export class WorldMapWidgetComponent
   }
 
   ngAfterViewInit(): void {
-    console.log(`[FranceRegionalMapsComponent] ngAfterViewInit fired.`);
     this.zone.runOutsideAngular(() => {
       setTimeout(() => {
         this.initializeCharts();
@@ -171,33 +171,25 @@ export class WorldMapWidgetComponent
   }
 
   private initializeCharts(): void {
-    console.log(`[FranceRegionalMapsComponent] Initializing charts...`);
-    
     const studentsMapDiv = document.getElementById(this.studentsMapId);
     const salaryMapDiv = document.getElementById(this.salaryMapId);
     
     if (studentsMapDiv) {
-      console.log(`[FranceRegionalMapsComponent] Students map div found: ${this.studentsMapId}`);
       this.createFranceMap1(
         this.studentsMapId,
         this.studentsData,
         "studentsCount",
         this.studentsRoot
       );
-    } else {
-      console.error(`[FranceRegionalMapsComponent] Students map div not found: ${this.studentsMapId}`);
     }
 
     if (salaryMapDiv) {
-      console.log(`[FranceRegionalMapsComponent] Salary map div found: ${this.salaryMapId}`);
       this.createFranceMap1(
         this.salaryMapId,
         this.salaryData,
         "salaryAmount",
         this.salaryRoot
       );
-    } else {
-      console.error(`[FranceRegionalMapsComponent] Salary map div not found: ${this.salaryMapId}`);
     }
 
     const salaryLegendDiv = document.getElementById(this.salaryLegendId);
@@ -208,8 +200,6 @@ export class WorldMapWidgetComponent
         this.manualColorMapSalaries,
         (code, value) => `${this.regionNames[code] || code}: ${value}`
       );
-    } else {
-      console.warn(`[FranceRegionalMapsComponent] Legend container not found: ${this.salaryLegendId}`);
     }
   }
 
@@ -235,34 +225,21 @@ export class WorldMapWidgetComponent
 
   createFranceMap1(divId, data, labelField, rootRef: am5.Root | null) {
     const chartDiv = document.getElementById(divId);
-    console.log(
-      `[FranceRegionalMapsComponent] createFranceMap called for ID: ${divId}. Div exists: ${!!chartDiv}. Current rootRef: ${!!rootRef}`
-    );
 
     // Dispose existing root for this map if present
     if (divId === this.studentsMapId && this.studentsRoot) {
-      console.warn(`[FranceRegionalMapsComponent] Disposing existing studentsRoot for ${divId}.`);
       this.studentsRoot.dispose();
       this.studentsRoot = null;
       this.studentsSeries = null;
     }
     if (divId === this.salaryMapId && this.salaryRoot) {
-      console.warn(`[FranceRegionalMapsComponent] Disposing existing salaryRoot for ${divId}.`);
       this.salaryRoot.dispose();
       this.salaryRoot = null;
       this.salarySeries = null;
     }
 
     if (!chartDiv) {
-      console.error(
-        `[FranceRegionalMapsComponent] ERROR: Chart div '${divId}' not found for creating chart.`
-      );
       return;
-    }
-
-    const containerRect = chartDiv.getBoundingClientRect();
-    if (containerRect.height < 100) {
-      console.warn(`[FranceRegionalMapsComponent] Chart container height is too small: ${containerRect.height}px`);
     }
 
     const root = am5.Root.new(divId);
@@ -328,6 +305,9 @@ export class WorldMapWidgetComponent
     polygonSeries.data.setAll(dataItems);
     chart.appear(1000, 100);
 
+    // Store root reference in container for PDF export
+    (chartDiv as any)._amRoot = root;
+    
     // Keep references for legend-hover interactions
     if (divId === this.studentsMapId) {
       this.studentsRoot = root;
@@ -545,9 +525,6 @@ export class WorldMapWidgetComponent
   ): void {
     const container = document.getElementById(containerId);
     if (!container) {
-      console.error(
-        `[FranceRegionalMapsComponent] Legend container not found: ${containerId}`
-      );
       return;
     }
     container.innerHTML = ""; // Clear previous content
@@ -591,29 +568,17 @@ export class WorldMapWidgetComponent
       item.appendChild(label);
       container.appendChild(item);
     });
-    console.log(
-      `[FranceRegionalMapsComponent] Custom legend generated for ${containerId}.`
-    );
   }
   /**
    * Disposes all amCharts roots to prevent memory leaks.
    */
   ngOnDestroy(): void {
-    console.log(
-      `[FranceRegionalMapsComponent] ngOnDestroy fired. Initiating chart disposal.`
-    );
     this.zone.runOutsideAngular(() => {
       if (this.studentsRoot) {
         try {
           this.studentsRoot.dispose();
-          console.log(
-            `[FranceRegionalMapsComponent] Students map Root disposed.`
-          );
         } catch (e) {
-          console.error(
-            `[FranceRegionalMapsComponent] Error disposing students map Root:`,
-            e
-          );
+          // Ignore disposal errors
         } finally {
           this.studentsRoot = null;
         }
@@ -621,14 +586,8 @@ export class WorldMapWidgetComponent
       if (this.salaryRoot) {
         try {
           this.salaryRoot.dispose();
-          console.log(
-            `[FranceRegionalMapsComponent] Salary map Root disposed.`
-          );
         } catch (e) {
-          console.error(
-            `[FranceRegionalMapsComponent] Error disposing salary map Root:`,
-            e
-          );
+          // Ignore disposal errors
         } finally {
           this.salaryRoot = null;
         }

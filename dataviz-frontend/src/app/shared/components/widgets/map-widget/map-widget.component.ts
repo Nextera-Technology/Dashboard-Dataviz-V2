@@ -73,6 +73,10 @@ export class MapWidgetComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
+    // Ensure chartId matches template container id so we can locate the chart
+    // Template uses: [id]="'map-chart-div-' + widget._id"
+    this.chartId = 'map-chart-div-' + (this.widget?._id || this.widget?.id || '');
+
     // Component initialization
     this.calculateTotalData();
   }

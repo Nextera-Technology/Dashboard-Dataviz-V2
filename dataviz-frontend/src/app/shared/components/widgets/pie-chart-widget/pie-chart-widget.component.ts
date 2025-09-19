@@ -163,12 +163,14 @@ export class PieChartWidgetComponent
         series.labels.template.setAll({
           text: "{name}: {count} {percentage}%",
           fontSize: "12px",
-          maxWidth: 125,
+          maxWidth: 140, // Increased maxWidth to accommodate longer text
           oversizedBehavior: "wrap",
-          paddingBottom: 15,
-          paddingRight: 10,
+          paddingBottom: 5, // Increased padding for better spacing
+          paddingRight: 5, // Increased right padding to prevent clipping
+          paddingLeft: 5, // Added left padding
+          paddingTop: 5, // Added top padding
           forceHidden: isOneByOne,
-          radius: isOneByOne ? 5 : 20
+          radius: isOneByOne ? 5 : 15 // Increased radius to push labels further from chart
         });
 
         if (isOneByOne) {

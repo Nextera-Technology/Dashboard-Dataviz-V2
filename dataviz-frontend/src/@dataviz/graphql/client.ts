@@ -53,6 +53,13 @@ export class GraphqlClient {
         }
 
         try {
+            const operationName = mutation?.definitions?.[0]?.name?.value || '';
+            const headers: Record<string, string> = {
+                'apollo-require-preflight': 'true',
+            };
+            // Also include the x-apollo-operation-name header to satisfy server CSRF checks
+            if (operationName) headers['x-apollo-operation-name'] = operationName;
+
             const result = await this.apollo
                 .mutate<any>({
                     mutation,
@@ -60,14 +67,10 @@ export class GraphqlClient {
                     context: isUseMultipart
                         ? {
                               useMultipart: true, // Adds multipart context if true
-                              headers: {
-                                  'apollo-require-preflight': true,
-                              },
+                              headers,
                           }
                         : {
-                              headers: {
-                                  'apollo-require-preflight': true,
-                              },
+                              headers,
                           },
                 })
                 .toPromise();

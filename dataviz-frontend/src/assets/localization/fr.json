@@ -235,6 +235,27 @@
         "save_changes": "Enregistrer les modifications",
         "add_widget": "Ajouter le widget"
       },
+      "schoolSelectionDialog": {
+        "title": "Ouvrir le tableau de bord",
+        "options": {
+          "all": {
+            "title": "Ouvrir avec toutes les données des écoles",
+            "description": "Afficher le tableau de bord avec l’ensemble des données de toutes les écoles"
+          },
+          "selected": {
+            "title": "Ouvrir avec des écoles sélectionnées",
+            "description": "Filtrer les données du tableau de bord par écoles spécifiques"
+          }
+        },
+        "select_schools_title": "Sélectionner des écoles",
+        "search_placeholder": "Rechercher des écoles...",
+        "no_results": "Aucune école trouvée correspondant à",
+        "loading": "Chargement des écoles disponibles...",
+        "schools_selected_suffix": "école(s) sélectionnée(s)",
+        "please_select_one": "Veuillez sélectionner au moins une école",
+        "cancel": "Annuler",
+        "open_dashboard": "Ouvrir le tableau de bord"
+      },
       "followUpStages": {
         "AFTER_FIRST_WAVE": "Après la première vague",
         "AFTER_SECOND_WAVE": "Après la deuxième vague",
