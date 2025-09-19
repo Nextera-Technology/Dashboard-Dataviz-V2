@@ -315,7 +315,7 @@ import { SortedBarChartWidgetComponent } from "../widgets/sorted-bar-chart-widge
 
             <!-- Sorted Bar Chart Widget for COMPETENCY_AUTONOMY -->
             <app-sorted-bar-chart-widget
-              *ngIf="(widget.widgetType === 'JOBDESC_COMPETENCY_AUTONOMY') && widget.chartType === 'SORTED_BAR_CHART'"
+              *ngIf="(['JOBDESC_COMPETENCY_AUTONOMY', 'JOBDESC_COMPETENCY_COVERAGE', 'JOBDESC_COMPETENCY_SCORE_DISTRIBUTION'].includes(widget.widgetType)) && widget.chartType === 'SORTED_BAR_CHART'"
               [widget]="widget"
               class="widget"
               [class.widget-small]="widget.size === 'small'"
@@ -326,7 +326,7 @@ import { SortedBarChartWidgetComponent } from "../widgets/sorted-bar-chart-widge
 
             <!-- Other Sorted Bar Chart Widget -->
             <app-bar-chart-widget
-              *ngIf="(widget.chartType === 'SORTED_BAR_CHART' && widget.widgetType !== 'JOBDESC_COMPETENCY_AUTONOMY') || widget.chartType === 'SortedBarChart' || widget.chartType === 'sorted_bar_chart'"
+              *ngIf="(widget.chartType === 'SORTED_BAR_CHART' && !['JOBDESC_COMPETENCY_AUTONOMY', 'JOBDESC_COMPETENCY_COVERAGE', 'JOBDESC_COMPETENCY_SCORE_DISTRIBUTION'].includes(widget.widgetType)) || widget.chartType === 'SortedBarChart' || widget.chartType === 'sorted_bar_chart'"
               [widget]="widget"
               [data]="widget?.data"
               class="widget"
