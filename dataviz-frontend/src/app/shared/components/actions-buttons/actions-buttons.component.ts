@@ -14,6 +14,9 @@ import * as am5 from '@amcharts/amcharts5';
 import * as am5xy from '@amcharts/amcharts5/xy';
 import * as am5plugins_exporting from '@amcharts/amcharts5/plugins/exporting';
 import { Apollo, gql } from 'apollo-angular';
+// Import html-to-image library - install with: npm install --save html-to-image
+// @ts-ignore
+import { toPng, toBlob } from 'html-to-image';
 
 @Component({
   selector: 'app-actions-buttons',
@@ -168,8 +171,8 @@ export class ActionsButtonsComponent implements OnInit {
 
       // Show loading notification
       Swal.fire({
-        title: 'Preparing PDF...',
-        html: 'Estimated time ~30 seconds<br><div class="swal2-loading-dots"><span>.</span><span>.</span><span>.</span></div>',
+        title: this.translationService.translate('shared.export.pdf.preparing_title'),
+        html: `${this.translationService.translate('shared.export.pdf.preparing_message')}<br><div class="swal2-loading-dots"><span>.</span><span>.</span><span>.</span></div>`,
         allowOutsideClick: false,
         showConfirmButton: false,
         didOpen: () => {
@@ -190,27 +193,66 @@ export class ActionsButtonsComponent implements OnInit {
         // Find chart container in widget
         const chartContainer = this.findChartContainer();
         if (chartContainer) {
-          // Try to get amCharts Root instance
-          const root = this.getChartRoot(chartContainer);
-          if (root) {
-            // Export chart to PNG -> upload -> get s3Key
+          // Check if this is a metric/card widget (non-amCharts)
+          const isMetricWidget = this.widget?.chartType === 'CARD' || 
+                                this.widget?.widgetType === 'metric' ||
+                                this.widget?.type === 'metric';
+          
+          if (isMetricWidget) {
+            // Use html-to-image for metric/card widgets
             try {
-              displayChartS3Key = await this.exportChartToPNG(root);
-            } catch (err) {
-              displayChartS3Key = undefined;
-            }
-          }
-
-          // Fallback: if export failed or returned nothing, try exporting from DOM (canvas/SVG)
-          if (!displayChartS3Key) {
-            try {
-              const fallbackFile = await this.exportChartElementFallback(chartContainer);
-              if (fallbackFile) {
-                const uploadResult = await this.dashboardRepo.uploadPublicAsset(fallbackFile, 'IMAGE');
-                displayChartS3Key = uploadResult?.s3Key;
+              displayChartS3Key = await this.exportDomElementToPNG(chartContainer);
+              
+              // If html-to-image failed, try fallback method
+              if (!displayChartS3Key) {
+                const fallbackFile = await this.exportChartElementFallback(chartContainer);
+                if (fallbackFile) {
+                  const uploadResult = await this.dashboardRepo.uploadPublicAsset(fallbackFile, 'IMAGE');
+                  displayChartS3Key = uploadResult?.s3Key;
+                }
               }
             } catch (err) {
-              // Fallback export failed, continue without display chart
+              console.error('Failed to export metric widget:', err);
+              // Try fallback method as last resort
+              try {
+                const fallbackFile = await this.exportChartElementFallback(chartContainer);
+                if (fallbackFile) {
+                  const uploadResult = await this.dashboardRepo.uploadPublicAsset(fallbackFile, 'IMAGE');
+                  displayChartS3Key = uploadResult?.s3Key;
+                }
+              } catch (fallbackErr) {
+                console.error('All export methods failed:', fallbackErr);
+                displayChartS3Key = undefined;
+              }
+            }
+          } else {
+            // Try to get amCharts Root instance for chart widgets
+            const root = this.getChartRoot(chartContainer);
+            if (root) {
+              // Export chart to PNG -> upload -> get s3Key
+              try {
+                displayChartS3Key = await this.exportChartToPNG(root);
+              } catch (err) {
+                displayChartS3Key = undefined;
+              }
+            }
+
+            // Fallback: if export failed or returned nothing, try exporting from DOM (canvas/SVG)
+            if (!displayChartS3Key) {
+              try {
+                const fallbackFile = await this.exportChartElementFallback(chartContainer);
+                if (fallbackFile) {
+                  const uploadResult = await this.dashboardRepo.uploadPublicAsset(fallbackFile, 'IMAGE');
+                  displayChartS3Key = uploadResult?.s3Key;
+                }
+              } catch (err) {
+                // Fallback export failed, try html-to-image as final fallback
+                try {
+                  displayChartS3Key = await this.exportDomElementToPNG(chartContainer);
+                } catch (htmlToImageErr) {
+                  console.warn('All export methods failed:', htmlToImageErr);
+                }
+              }
             }
           }
         }
@@ -291,8 +333,8 @@ export class ActionsButtonsComponent implements OnInit {
         // Show success message
         Swal.fire({
           icon: 'success',
-          title: 'PDF Export Successful',
-          text: 'Your PDF has been generated and downloaded.',
+          title: this.translationService.translate('shared.export.pdf.success_title'),
+          text: this.translationService.translate('shared.export.pdf.success_message'),
           showConfirmButton: false,
           timer: 2000
         });
@@ -300,9 +342,9 @@ export class ActionsButtonsComponent implements OnInit {
       } catch (error) {
         Swal.fire({
           icon: 'error',
-          title: 'Export Failed',
-          text: 'Failed to generate PDF. Please try again later.',
-          confirmButtonText: 'OK'
+          title: this.translationService.translate('shared.export.pdf.error_title'),
+          text: this.translationService.translate('shared.export.pdf.error_message'),
+          confirmButtonText: this.translationService.translate('shared.export.pdf.confirm_button')
         });
       } finally {
         this.exportLoading = false;
@@ -312,9 +354,9 @@ export class ActionsButtonsComponent implements OnInit {
       this.exportLoading = false;
       Swal.fire({
         icon: 'error',
-        title: 'Export Failed',
-        text: 'Failed to generate PDF. Please try again later.',
-        confirmButtonText: 'OK'
+        title: this.translationService.translate('shared.export.pdf.error_title'),
+        text: this.translationService.translate('shared.export.pdf.error_message'),
+        confirmButtonText: this.translationService.translate('shared.export.pdf.confirm_button')
       });
     }
   }
@@ -325,6 +367,12 @@ export class ActionsButtonsComponent implements OnInit {
   private findChartContainer(): HTMLElement | null {
     const widgetId = this.widget?._id || this.widget?.id;
     if (!widgetId) return null;
+    
+    // Check if this is a metric/card widget first
+    const metricContainer = this.findMetricWidgetContainer();
+    if (metricContainer) {
+      return metricContainer;
+    }
     
     // Try to find chart container by common patterns
     const possibleIds = [
@@ -665,6 +713,111 @@ export class ActionsButtonsComponent implements OnInit {
 
       return s3Key;
     } catch (err) {
+      return undefined;
+    }
+  }
+
+  /**
+   * Find metric widget container for card-type widgets
+   */
+  private findMetricWidgetContainer(): HTMLElement | null {
+    const widgetId = this.widget?._id || this.widget?.id;
+    if (!widgetId) return null;
+    
+    // Check if this is a metric/card widget based on widget properties
+    const isMetricWidget = this.widget?.chartType === 'CARD' || 
+                          this.widget?.widgetType === 'metric' ||
+                          this.widget?.type === 'metric';
+    
+    if (!isMetricWidget) return null;
+    
+    try {
+      // Find the metric widget container relative to the action buttons
+      const host: HTMLElement = this.hostEl?.nativeElement;
+      const nearestContainer = host.closest('.chart-box') || host.closest('[data-widget-id]') || host.parentElement;
+      
+      if (nearestContainer) {
+        // Try multiple selectors to find metric widget containers
+        const selectors = [
+          '.metric-widget',
+          'app-metric-widget', 
+          '.chart-content',
+          '.widget-card',
+          '.chart-container',
+          '[class*="metric"]',
+          '[class*="card"]'
+        ];
+        
+        for (const selector of selectors) {
+          const metricContainer = nearestContainer.querySelector(selector);
+          if (metricContainer instanceof HTMLElement) {
+            return metricContainer;
+          }
+        }
+        
+        // If no specific metric container found, return the whole widget container
+        if (nearestContainer instanceof HTMLElement) {
+          return nearestContainer;
+        }
+      }
+    } catch (error) {
+      console.warn('Error finding metric widget container:', error);
+    }
+    
+    return null;
+  }
+
+  /**
+   * Export DOM element to PNG using html-to-image library
+   */
+  private async exportDomElementToPNG(element: HTMLElement): Promise<string | undefined> {
+    try {
+      // Ensure element is visible and has dimensions
+      if (!element.offsetWidth || !element.offsetHeight) {
+        return undefined;
+      }
+      
+      // Use html-to-image to convert DOM element to PNG blob
+      const blob = await toBlob(element, {
+        quality: 0.95,
+        width: Math.max(element.offsetWidth, 400),
+        height: Math.max(element.offsetHeight, 300),
+        backgroundColor: '#ffffff',
+        pixelRatio: 1,
+        cacheBust: true,
+        style: {
+          transform: 'scale(1)',
+          transformOrigin: 'top left'
+        },
+        filter: (node: any) => {
+          // Allow all nodes except specific UI elements
+          if (node && node.classList) {
+            const excludeClasses = [
+              'actions-buttons',
+              'export-wrapper', 
+              'display-mode-toggle',
+              'mat-menu',
+              'cdk-overlay'
+            ];
+            return !excludeClasses.some(cls => node.classList.contains(cls));
+          }
+          return true;
+        }
+      });
+      
+      if (!blob) {
+        return undefined;
+      }
+      
+      // Convert blob to file and upload
+      const uniqueId = this.generateUniqueId();
+      const file = new File([blob], `metric-widget-${uniqueId}.png`, { type: 'image/png' });
+      
+      const uploadResult = await this.dashboardRepo.uploadPublicAsset(file, 'IMAGE');
+      return uploadResult?.s3Key;
+      
+    } catch (error) {
+      console.error('Error exporting DOM element to PNG:', error);
       return undefined;
     }
   }

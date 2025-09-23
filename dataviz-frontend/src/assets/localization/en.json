@@ -433,6 +433,17 @@
       "display": {
         "side": "Side",
         "list": "List"
+      },
+      "export": {
+        "pdf": {
+          "preparing_title": "Preparing PDF...",
+          "preparing_message": "Estimated time ~30 seconds",
+          "success_title": "PDF Export Successful",
+          "success_message": "Your PDF has been generated and downloaded.",
+          "error_title": "Export Failed",
+          "error_message": "Failed to generate PDF. Please try again later.",
+          "confirm_button": "OK"
+        }
       }
     }
   }

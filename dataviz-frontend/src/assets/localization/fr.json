@@ -426,6 +426,17 @@
       "display": {
         "side": "Côté",
         "list": "Liste"
+      },
+      "export": {
+        "pdf": {
+          "preparing_title": "Préparation du PDF...",
+          "preparing_message": "Temps estimé ~30 secondes",
+          "success_title": "Export PDF Réussi",
+          "success_message": "Votre PDF a été généré et téléchargé.",
+          "error_title": "Échec de l'Export",
+          "error_message": "Impossible de générer le PDF. Veuillez réessayer plus tard.",
+          "confirm_button": "OK"
+        }
       }
     }
   }

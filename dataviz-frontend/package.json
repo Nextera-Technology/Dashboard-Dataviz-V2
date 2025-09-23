@@ -35,6 +35,7 @@
     "bootstrap-icons": "^1.11.3",
     "extract-files": "^11.0.0",
     "graphql": "^16.10.0",
+    "html-to-image": "^1.11.13",
     "lodash-es": "4.17.21",
     "luxon": "3.5.0",
     "ng-apexcharts": "1.15.0",

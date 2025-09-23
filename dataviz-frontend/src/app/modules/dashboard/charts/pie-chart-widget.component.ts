@@ -407,7 +407,7 @@ export class PieChartWidgetComponent implements OnInit, OnDestroy {
         paddingLeft: 5, // Added left padding
         paddingTop: 5, // Added top padding
         forceHidden: false,
-        radius: 15, // Reduced radius for better label positioning
+        radius: 10, // Reduced radius for better label positioning
       });
 
     } else {
