@@ -36,6 +36,13 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
           />
         </div>
 
+        <!-- Toggle Button - positioned above user info -->
+        <div class="sidebar-toggle-section">
+          <button (click)="toggleSidebar()" class="toggle-btn" [attr.aria-label]="isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'">
+            <mat-icon>{{ isSidebarCollapsed ? 'menu' : 'menu_open' }}</mat-icon>
+          </button>
+        </div>
+
         <!-- User Info -->
         <div class="user-info">
           <div class="user-avatar">
@@ -46,13 +53,6 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
             <p class="user-email">{{ currentUser?.email }}</p>
             <p class="user-role">{{ currentUser?.role | titlecase }}</p>
           </div>
-        </div>
-
-        <!-- Toggle Button - positioned before admin navigation -->
-        <div class="sidebar-toggle-section">
-          <button (click)="toggleSidebar()" class="toggle-btn" [attr.aria-label]="isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'">
-            <mat-icon>{{ isSidebarCollapsed ? 'menu' : 'menu_open' }}</mat-icon>
-          </button>
         </div>
 
         <!-- Admin Navigation -->
@@ -451,11 +451,11 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
       padding: 15px 10px;
     }
 
-    /* Sidebar Toggle Section */
+    /* Sidebar Toggle Section - positioned after logo, before user info */
     .sidebar-toggle-section {
       display: flex;
       justify-content: center;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
       padding: 10px 0;
     }
 
@@ -490,7 +490,7 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
 
     /* Collapsed state styling for toggle button */
     .sidebar.collapsed .sidebar-toggle-section {
-      margin-bottom: 15px;
+      margin-bottom: 20px;
       padding: 5px 0;
     }
 
@@ -502,8 +502,8 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
     /* Logo Container */
     .logo-container {
       text-align: center;
-      margin-bottom: 30px;
-      padding-bottom: 20px;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.2);
       transition: all 0.3s ease;
     }

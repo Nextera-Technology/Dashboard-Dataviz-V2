@@ -6,6 +6,13 @@
                 alt="Nextera Logo" />
         </div>
 
+        <!-- Toggle Button - positioned above user info -->
+        <div class="sidebar-toggle-section">
+            <button (click)="toggleSidebar()" class="toggle-btn" [attr.aria-label]="isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'">
+                <mat-icon>{{ isSidebarCollapsed ? 'menu' : 'menu_open' }}</mat-icon>
+            </button>
+        </div>
+
         <!-- User Info -->
         <div class="user-info">
             <div class="user-avatar">
@@ -16,13 +23,6 @@
                 <p class="user-email">{{ currentUser?.email }}</p>
                 <p class="user-role">{{ currentUser?.role | titlecase }}</p>
             </div>
-        </div>
-
-        <!-- Toggle Button - positioned before certification section -->
-        <div class="sidebar-toggle-section">
-            <button (click)="toggleSidebar()" class="toggle-btn" [attr.aria-label]="isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'">
-                <mat-icon>{{ isSidebarCollapsed ? 'menu' : 'menu_open' }}</mat-icon>
-            </button>
         </div>
 
         <!-- Certification Filter Section -->

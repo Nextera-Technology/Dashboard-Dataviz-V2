@@ -28,11 +28,11 @@
   padding: 15px 10px;
 }
 
-/* Sidebar Toggle Section */
+/* Sidebar Toggle Section - positioned after logo, before user info */
 .sidebar-toggle-section {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   padding: 10px 0;
 }
 
@@ -67,7 +67,7 @@
 
 /* Collapsed state styling for toggle button */
 .sidebar.collapsed .sidebar-toggle-section {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   padding: 5px 0;
 }
 
@@ -79,8 +79,8 @@
 /* Logo Container */
 .logo-container {
   text-align: center;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.3s ease;
 }
