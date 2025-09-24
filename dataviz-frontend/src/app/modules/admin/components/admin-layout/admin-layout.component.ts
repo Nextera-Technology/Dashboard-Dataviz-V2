@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 import { NotificationService } from '../../../../../@dataviz/services/notification/notification.service';
 import { TranslationService } from '../../../../shared/services/translation/translation.service';
@@ -21,12 +22,13 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
     MatButtonModule,
     MatMenuModule,
     MatSnackBarModule,
+    MatTooltipModule,
     TranslatePipe
   ],
   template: `
     <div class="admin-layout">
       <!-- Sidebar -->
-      <aside class="sidebar">
+      <aside class="sidebar" [class.collapsed]="isSidebarCollapsed">
         <div class="logo-container">
           <img 
             src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/Nextera%20Logo%20Career%20Insight%20White%20text.png"
@@ -39,15 +41,22 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
           <div class="user-avatar">
             <mat-icon>person</mat-icon>
           </div>
-          <div class="user-details">
+          <div class="user-details" *ngIf="!isSidebarCollapsed">
             <p class="user-name">{{ currentUser?.name }}</p>
             <p class="user-email">{{ currentUser?.email }}</p>
             <p class="user-role">{{ currentUser?.role | titlecase }}</p>
           </div>
         </div>
 
+        <!-- Toggle Button - positioned before admin navigation -->
+        <div class="sidebar-toggle-section">
+          <button (click)="toggleSidebar()" class="toggle-btn" [attr.aria-label]="isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'">
+            <mat-icon>{{ isSidebarCollapsed ? 'menu' : 'menu_open' }}</mat-icon>
+          </button>
+        </div>
+
         <!-- Admin Navigation -->
-        <div class="admin-nav">
+        <div class="admin-nav" *ngIf="!isSidebarCollapsed">
           <div class="section-title">
             <span class="section-icon">⚙️</span>
             {{ 'admin.layout.title' | translate }}
@@ -66,6 +75,27 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
               <span>{{ 'admin.layout.userManagement' | translate }}</span>
             </a>
           </div>
+        </div>
+
+        <!-- Collapsed Icon Menu -->
+        <div class="collapsed-menu" *ngIf="isSidebarCollapsed">
+          <!-- Admin Dashboard Icon -->
+          <a routerLink="/admin/dashboard-list" routerLinkActive="active" class="collapsed-menu-item" 
+             [matTooltip]="'admin.dashboardList.header_title' | translate" matTooltipPosition="right">
+            <mat-icon>dashboard</mat-icon>
+          </a>
+
+          <!-- Job Description Icon -->
+          <a routerLink="/admin/job-description" routerLinkActive="active" class="collapsed-menu-item" 
+             [matTooltip]="'admin.layout.jobDescription' | translate" matTooltipPosition="right">
+            <mat-icon>work</mat-icon>
+          </a>
+
+          <!-- User Management Icon -->
+          <a routerLink="/admin/user-management" routerLinkActive="active" class="collapsed-menu-item" 
+             [matTooltip]="'admin.layout.userManagement' | translate" matTooltipPosition="right">
+            <mat-icon>people</mat-icon>
+          </a>
         </div>
 
         <!-- Back to Dashboard -->
@@ -412,6 +442,61 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
       z-index: 1000;
       display: flex;
       flex-direction: column;
+      transition: width 0.3s ease;
+    }
+
+    /* Collapsed Sidebar */
+    .sidebar.collapsed {
+      width: 70px;
+      padding: 15px 10px;
+    }
+
+    /* Sidebar Toggle Section */
+    .sidebar-toggle-section {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+      padding: 10px 0;
+    }
+
+    .toggle-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .toggle-btn mat-icon {
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+    }
+
+    /* Collapsed state styling for toggle button */
+    .sidebar.collapsed .sidebar-toggle-section {
+      margin-bottom: 15px;
+      padding: 5px 0;
+    }
+
+    .sidebar.collapsed .toggle-btn {
+      width: 45px;
+      height: 45px;
     }
 
     /* Logo Container */
@@ -420,11 +505,23 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
       margin-bottom: 30px;
       padding-bottom: 20px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
     }
 
     .logo-container img {
       max-width: 200px;
       height: auto;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar.collapsed .logo-container {
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+    }
+
+    .sidebar.collapsed .logo-container img {
+      max-width: 40px;
+      margin-left: 5px;
     }
 
     /* User Info */
@@ -437,6 +534,13 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
       background: rgba(255, 255, 255, 0.1);
       border-radius: 12px;
       backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .sidebar.collapsed .user-info {
+      padding: 12px;
+      justify-content: center;
+      margin-bottom: 20px;
     }
 
     .user-avatar {
@@ -543,6 +647,47 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
       flex: 1;
     }
 
+    /* Collapsed Menu */
+    .collapsed-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 10px;
+      align-items: center;
+    }
+
+    .collapsed-menu-item {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: white;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+    }
+
+    .collapsed-menu-item:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+    }
+
+    .collapsed-menu-item.active {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .collapsed-menu-item mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
     /* Back to Dashboard */
     .back-to-dashboard {
       margin-top: auto;
@@ -583,6 +728,12 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
       margin-left: 240px;
       display: flex;
       flex-direction: column;
+      transition: margin-left 0.3s ease;
+    }
+
+    /* Adjust main content when sidebar is collapsed */
+    .admin-layout:has(.sidebar.collapsed) .main-content {
+      margin-left: 70px;
     }
 
     /* Header */
@@ -660,8 +811,16 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
         width: 240px;
       }
 
+      .sidebar.collapsed {
+        width: 70px;
+      }
+
       .main-content {
         margin-left: 240px;
+      }
+
+      .admin-layout:has(.sidebar.collapsed) .main-content {
+        margin-left: 70px;
       }
     }
 
@@ -682,8 +841,11 @@ export class AdminLayoutComponent implements OnInit {
   @Input() fullBleed: boolean = false;
   currentUser: User | null = null;
   pageTitle: string = 'admin.layout.title';
-  breadcrumb: string = 'admin.layout.title';
-  langMenuOpen: boolean = false;
+  breadcrumb: string = 'Administration';
+  langMenuOpen = false;
+
+  // Sidebar collapse state
+  isSidebarCollapsed: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -724,6 +886,7 @@ export class AdminLayoutComponent implements OnInit {
       return;
     }
 
+    this.loadSidebarState();
     // Set page title and breadcrumb based on current route
     this.updatePageInfo();
 
@@ -754,6 +917,23 @@ export class AdminLayoutComponent implements OnInit {
     } else if (currentUrl.includes('/admin/sections')) {
       this.pageTitle = 'admin.sectionSettings.title';
       this.breadcrumb = 'admin.layout.title';
+    }
+  }
+
+  // Sidebar collapse/expand methods
+  toggleSidebar(): void {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+    this.saveSidebarState();
+  }
+
+  private saveSidebarState(): void {
+    localStorage.setItem('admin-sidebar-collapsed', this.isSidebarCollapsed.toString());
+  }
+
+  private loadSidebarState(): void {
+    const savedState = localStorage.getItem('admin-sidebar-collapsed');
+    if (savedState !== null) {
+      this.isSidebarCollapsed = savedState === 'true';
     }
   }
 

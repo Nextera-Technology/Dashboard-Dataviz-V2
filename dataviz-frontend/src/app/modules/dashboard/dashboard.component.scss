@@ -19,6 +19,61 @@
   top: 0;
   left: 0;
   z-index: 1000;
+  transition: width 0.3s ease;
+}
+
+/* Collapsed Sidebar */
+.sidebar.collapsed {
+  width: 70px;
+  padding: 15px 10px;
+}
+
+/* Sidebar Toggle Section */
+.sidebar-toggle-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  padding: 10px 0;
+}
+
+.toggle-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.toggle-btn mat-icon {
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+}
+
+/* Collapsed state styling for toggle button */
+.sidebar.collapsed .sidebar-toggle-section {
+  margin-bottom: 15px;
+  padding: 5px 0;
+}
+
+.sidebar.collapsed .toggle-btn {
+  width: 45px;
+  height: 45px;
 }
 
 /* Logo Container */
@@ -27,11 +82,23 @@
   margin-bottom: 30px;
   padding-bottom: 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
 }
 
 .logo-container img {
   max-width: 200px;
   height: auto;
+  transition: all 0.3s ease;
+}
+
+.sidebar.collapsed .logo-container {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+}
+
+.sidebar.collapsed .logo-container img {
+  max-width: 40px;
+  margin-left: 5px;
 }
 
 /* User Info */
@@ -44,6 +111,13 @@
   background: rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.sidebar.collapsed .user-info {
+  padding: 12px;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 .user-avatar {
@@ -248,6 +322,12 @@
   padding: 20px;
   flex: 1;
   background-color: #f5f8fa;
+  transition: margin-left 0.3s ease;
+}
+
+/* Adjust main content when sidebar is collapsed */
+.dashboard-container:has(.sidebar.collapsed) .main-content {
+  margin-left: 70px;
 }
 
 /* Header */
@@ -309,6 +389,141 @@ header {
 /* Dashboard Content */
 .dashboard-content {
   padding: 0;
+}
+
+/* Frozen Section Header */
+.frozen-sections-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000 !important; /* Force below notifications but above widgets */
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-bottom: 2px solid #dee2e6;
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.sections-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+}
+
+/* Ensure section nav items don't override global z-index */
+.frozen-sections-header .sections-nav,
+.frozen-sections-header .section-nav-item {
+  z-index: inherit !important;
+}
+
+.section-nav-item {
+  display: flex;
+  align-items: center;
+  /* background color now set dynamically via [style.background-color] */
+  border-radius: 8px;
+  padding: 8px 12px;
+  border: 1px solid #e1e5e9;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.section-nav-item:hover {
+  /* Keep existing background color but add overlay effect */
+  border-color: #4caf50;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.section-nav-item:hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.section-nav-item.section-hidden {
+  opacity: 0.6;
+  filter: grayscale(50%);
+}
+
+.section-nav-item.section-hidden::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(128, 128, 128, 0.3);
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.nav-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  margin: 0;
+}
+
+.nav-checkbox-item input[type="checkbox"] {
+  margin: 0;
+  transform: scale(1.1);
+  accent-color: #4caf50;
+  cursor: pointer;
+}
+
+.section-nav-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+  user-select: none;
+}
+
+.section-nav-name.clickable {
+  cursor: pointer;
+  color: #0d47a1;
+}
+
+.section-nav-name.clickable:hover {
+  color: #1565c0;
+  text-decoration: underline;
+}
+
+.section-nav-name:not(.clickable) {
+  color: #9ca3af;
+  cursor: default;
+}
+
+/* Sections Container */
+.sections-container {
+  padding: 0;
+}
+
+.section-visible {
+  display: block;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Job Description Section */
@@ -424,6 +639,42 @@ header {
 .admin-menu-item span {
   flex: 1;
 }
+
+/* Collapsed Menu */
+.collapsed-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 10px;
+  align-items: center;
+}
+
+.collapsed-menu-item {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.collapsed-menu-item:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.collapsed-menu-item mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
 .certification-item {
   margin-bottom: 12px;
 }
@@ -469,8 +720,46 @@ header {
     width: 240px;
   }
 
+  .sidebar.collapsed {
+    width: 70px;
+  }
+
   .main-content {
     margin-left: 240px;
+  }
+
+  .dashboard-container:has(.sidebar.collapsed) .main-content {
+    margin-left: 70px;
+  }
+  
+  .sections-nav {
+    gap: 10px;
+  }
+  
+  .section-nav-item {
+    padding: 6px 10px;
+  }
+  
+  .section-nav-name {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .frozen-sections-header {
+    padding: 10px 15px;
+  }
+  
+  .sections-nav {
+    gap: 8px;
+  }
+  
+  .section-nav-item {
+    padding: 6px 8px;
+  }
+  
+  .section-nav-name {
+    font-size: 12px;
   }
 }
 
@@ -483,5 +772,24 @@ header {
 
   .main-content {
     margin-left: 0;
+  }
+  
+  .frozen-sections-header {
+    padding: 8px 12px;
+  }
+  
+  .sections-nav {
+    gap: 6px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .section-nav-item {
+    padding: 8px 12px;
+    justify-content: flex-start;
+  }
+  
+  .section-nav-name {
+    font-size: 14px;
   }
 }

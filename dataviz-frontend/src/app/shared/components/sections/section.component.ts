@@ -34,7 +34,7 @@ import { SortedBarChartWidgetComponent } from "../widgets/sorted-bar-chart-widge
   template: `
     <div class="section" [style.background-color]="section.background">
       <div class="section-header">
-        <h2>{{ section.title }}</h2>
+        <h2>{{ section.title || section.name }}</h2>
       </div>
 
       <div

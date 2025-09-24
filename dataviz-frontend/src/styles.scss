@@ -38,4 +38,40 @@
 .top-button.outline:hover {
   background: #1E9180;
   color: white;
+}
+
+/* Clean notification z-index - consolidated and safe */
+.mat-mdc-snack-bar-container,
+.mat-snack-bar-container,
+.cdk-overlay-container,
+.swal2-container {
+  z-index: 9999 !important;
+  /* Let framework handle positioning for responsive behavior */
+}
+
+/* Ensure dialogs and modals (page information, analysis) are above everything */
+.mat-dialog-container,
+.mat-mdc-dialog-container,
+.cdk-overlay-pane .mat-dialog-container,
+.cdk-overlay-pane .mat-mdc-dialog-container {
+  z-index: 10000 !important;
+}
+
+/* Modal backdrops - keep below notifications */
+.cdk-overlay-dark-backdrop,
+.cdk-overlay-backdrop {
+  z-index: 9998 !important;
+}
+
+/* Additional notification coverage for edge cases */
+.mat-snack-bar-handset,
+.swal2-toast,
+.cdk-overlay-pane {
+  z-index: 9999 !important;
+}
+
+/* Ensure frozen header stays below notifications */
+body .frozen-sections-header {
+  z-index: 1000 !important;
+  position: sticky !important;
 } 
