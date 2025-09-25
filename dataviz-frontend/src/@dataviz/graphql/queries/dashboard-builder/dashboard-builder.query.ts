@@ -34,13 +34,27 @@ export const gqlGetAllDashboard = gql`
         _id
         name
         isDuplicationProcessInProgress
+        sectionIds {
+          _id
+          name
+          title
+          background
+        }
         sources {
           certification
           classes
         }
         title
         status
+        typeOfUsage
         duplicationType
+        isArchived
+        createdAt
+        updatedAt
+        createdBy {
+          firstName
+          lastName
+        }
         dashboardOriginId {
           _id
           name

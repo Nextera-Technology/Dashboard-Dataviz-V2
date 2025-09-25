@@ -45,6 +45,72 @@
         "empty_description": "Créez votre premier tableau de bord de description de poste pour commencer l'analyse d'évaluation.",
         "empty_cta": "Créer votre premier tableau de bord"
       },
+      "dashboardTable": {
+        "tabs": {
+          "templates": "Modèles",
+          "created": "Tableaux de bord créés",
+          "archived": "Tableaux de bord archivés"
+        },
+        "headers": {
+          "templates": "Modèles de tableaux de bord",
+          "created": "Tableaux de bord créés",
+          "archived": "Tableaux de bord archivés"
+        },
+        "loading": "Chargement des tableaux de bord...",
+        "columns": {
+          "name": "Nom",
+          "dateCreated": "Date de création",
+          "dateModified": "Dernière modification",
+          "type": "Type",
+          "creator": "Créateur",
+          "sections": "Sections",
+          "dataSource": "Source de données",
+          "actions": "Actions"
+        },
+        "actions": {
+          "view": "Voir",
+          "manage": "Gérer",
+          "archive": "Archiver"
+        },
+        "bulk": {
+          "archive_selected": "Archiver la sélection",
+          "restore_selected": "Restaurer la sélection",
+          "delete_selected": "Supprimer la sélection"
+        }
+      },
+      "jobDescriptionTable": {
+        "tabs": {
+          "templates": "Modèles",
+          "created": "Descriptions de poste créées",
+          "archived": "Descriptions de poste archivées"
+        },
+        "headers": {
+          "templates": "Modèles de descriptions de poste",
+          "created": "Descriptions de poste créées",
+          "archived": "Descriptions de poste archivées"
+        },
+        "loading": "Chargement des tableaux de bord de descriptions de poste...",
+        "columns": {
+          "name": "Nom",
+          "dateCreated": "Date de création",
+          "dateModified": "Dernière modification",
+          "type": "Type",
+          "creator": "Créateur",
+          "sections": "Sections",
+          "dataSource": "Source de données",
+          "actions": "Actions"
+        },
+        "actions": {
+          "view": "Voir",
+          "manage": "Gérer",
+          "archive": "Archiver"
+        },
+        "bulk": {
+          "archive_selected": "Archiver la sélection",
+          "restore_selected": "Restaurer la sélection",
+          "delete_selected": "Supprimer la sélection"
+        }
+      },
       "userManagement": {
         "page_title": "Gestion des utilisateurs",
         "subtitle": "Gérez les utilisateurs, les rôles et l'accès",
@@ -146,6 +212,33 @@
         "cancel": "Annuler",
         "save_changes": "Enregistrer les modifications",
         "create_dashboard": "Créer un tableau de bord"
+      },
+      "dashboardCreate": {
+        "page_title": "Ajouter un nouveau tableau de bord",
+        "create_card_title": "Créer un tableau de bord",
+        "create_card_description": "Ceci est un raccourci vers la boîte de dialogue de création de tableau de bord standard. Cliquez sur le bouton ci-dessous pour ouvrir l'assistant de création de tableau de bord.",
+        "create_button": "Créer un nouveau tableau de bord",
+        "tips_title": "Conseils rapides",
+        "tips": {
+          "tip1": "Choisissez un nom descriptif pour votre tableau de bord",
+          "tip2": "Sélectionnez le modèle approprié si disponible",
+          "tip3": "Configurez les sources de données et les paramètres de visualisation",
+          "tip4": "Testez votre tableau de bord avant de le publier"
+        }
+      },
+      "jobDescriptionCreate": {
+        "page_title": "Ajouter un nouveau tableau de bord de description de poste",
+        "create_card_title": "Créer un tableau de bord de description de poste",
+        "create_card_description": "Ceci est un raccourci vers la boîte de dialogue de création de tableau de bord de description de poste standard. Cliquez sur le bouton ci-dessous pour ouvrir l'assistant de création de tableau de bord.",
+        "create_button": "Créer une nouvelle description de poste",
+        "tips_title": "Directives de description de poste",
+        "tips": {
+          "tip1": "Définissez clairement les rôles et responsabilités du poste",
+          "tip2": "Établissez les exigences de compétences appropriées",
+          "tip3": "Configurez les critères d'évaluation",
+          "tip4": "Liez aux sources de données pertinentes",
+          "tip5": "Révisez et validez avant de publier"
+        }
       },
       "widgetSettings": {
         "title": "Paramètres du widget"
@@ -399,7 +492,45 @@
       },
       "no_chart_types": { "title": "Aucun type de graphique", "message": "Aucun type de graphique disponible pour la configuration actuelle du widget." },
       "duplication_failed": { "title": "Échec de la duplication", "message": "Échec de la duplication du tableau de bord. Veuillez réessayer. {error}" },
-      "duplication_in_progress": { "title": "Duplication en cours", "message": "Ce tableau de bord est actuellement en cours de duplication. Veuillez attendre que le processus soit terminé avant de le visualiser." }
+      "duplication_in_progress": { "title": "Duplication en cours", "message": "Ce tableau de bord est actuellement en cours de duplication. Veuillez attendre que le processus soit terminé avant de le visualiser." },
+      "deleted": { "title": "Supprimé", "message": "Supprimé avec succès." },
+      "delete_failed": { "title": "Erreur", "message": "Échec de la suppression. Veuillez réessayer." },
+      "feature_coming_soon": { "title": "Prochainement", "message": "Cette fonctionnalité arrive bientôt." },
+      "error_loading_dashboards": { "title": "Erreur", "message": "Erreur lors du chargement des tableaux de bord." },
+      "confirm_archive_dashboard": {
+        "title": "Êtes-vous sûr ?",
+        "message": "Êtes-vous sûr de vouloir archiver \"{title}\" ?",
+        "confirmButtonText": "Oui, archivez-le !",
+        "cancelButtonText": "Annuler"
+      },
+      "dashboard_archived": { "title": "Archivé", "message": "Tableau de bord archivé avec succès." },
+      "dashboard_restored": { "title": "Restauré", "message": "Tableau de bord restauré avec succès." },
+      "archive_failed": { "title": "Erreur", "message": "Échec de l'archivage. Veuillez réessayer." },
+      "restore_failed": { "title": "Erreur", "message": "Échec de la restauration. Veuillez réessayer." },
+      "confirm_bulk_archive": {
+        "title": "Êtes-vous sûr ?",
+        "message": "Êtes-vous sûr de vouloir archiver {count} éléments sélectionnés ?",
+        "confirmButtonText": "Oui, archivez-les !",
+        "cancelButtonText": "Annuler"
+      },
+      "confirm_bulk_restore": {
+        "title": "Êtes-vous sûr ?",
+        "message": "Êtes-vous sûr de vouloir restaurer {count} éléments sélectionnés ?",
+        "confirmButtonText": "Oui, restaurez-les !",
+        "cancelButtonText": "Annuler"
+      },
+      "confirm_bulk_delete": {
+        "title": "Êtes-vous sûr ?",
+        "message": "Êtes-vous sûr de vouloir supprimer définitivement {count} éléments sélectionnés ?",
+        "confirmButtonText": "Oui, supprimez-les !",
+        "cancelButtonText": "Annuler"
+      },
+      "bulk_archived": { "title": "Archivé", "message": "Éléments sélectionnés archivés avec succès." },
+      "bulk_restored": { "title": "Restauré", "message": "Éléments sélectionnés restaurés avec succès." },
+      "bulk_deleted": { "title": "Supprimé", "message": "Éléments sélectionnés supprimés avec succès." },
+      "bulk_archive_failed": { "title": "Erreur", "message": "Échec de l'archivage des éléments sélectionnés. Veuillez réessayer." },
+      "bulk_restore_failed": { "title": "Erreur", "message": "Échec de la restauration des éléments sélectionnés. Veuillez réessayer." },
+      "bulk_delete_failed": { "title": "Erreur", "message": "Échec de la suppression des éléments sélectionnés. Veuillez réessayer." }
     },
     "dashboard": {
       "sidebar": {
@@ -411,6 +542,28 @@
         "sections": "Sections",
         "selected_sections": "section(s) sélectionnée(s)"
       }
+    },
+    "quicksearch": {
+      "placeholder": "Rechercher...",
+      "searching": "Recherche en cours...",
+      "no_results": "Aucun résultat trouvé",
+      "try_different": "Essayez des mots-clés différents ou vérifiez votre orthographe",
+      "all_results": "Tous les résultats",
+      "users": "Utilisateurs",
+      "dashboards_es": "Tableaux de bord ES",
+      "dashboards_job": "Tableaux de bord Emploi",
+      "sections": "Sections",
+      "widgets": "Widgets",
+      "students": "Étudiants",
+      "user_types": "Types d'utilisateurs",
+      "open": "Ouvrir",
+      "view_permissions": "Voir les permissions",
+      "load_more": "Charger plus",
+      "quick_actions": "Actions rapides",
+      "create_dashboard": "Créer un tableau de bord",
+      "manage_users": "Gérer les utilisateurs",
+      "view_dashboards": "Voir les tableaux de bord",
+      "job_descriptions": "Descriptions d'emploi"
     },
     "shared": {
       "language_changed": "Langue modifiée",
@@ -429,6 +582,7 @@
       },
       "export": {
         "pdf": {
+          "button": "PDF",
           "preparing_title": "Préparation du PDF...",
           "preparing_message": "Temps estimé ~30 secondes",
           "success_title": "Export PDF Réussi",

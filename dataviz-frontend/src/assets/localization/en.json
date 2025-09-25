@@ -45,6 +45,72 @@
         "empty_description": "Create your first dashboard to get started with data visualization.",
         "empty_cta": "Create Your First Dashboard"
       },
+      "dashboardTable": {
+        "tabs": {
+          "templates": "Templates",
+          "created": "Dashboard Created",
+          "archived": "Dashboard Archived"
+        },
+        "headers": {
+          "templates": "Dashboard Templates",
+          "created": "Created Dashboards",
+          "archived": "Archived Dashboards"
+        },
+        "loading": "Loading dashboards...",
+        "columns": {
+          "name": "Name",
+          "dateCreated": "Date Created",
+          "dateModified": "Last Modified",
+          "type": "Type",
+          "creator": "Creator",
+          "sections": "Sections",
+          "dataSource": "Data Source",
+          "actions": "Actions"
+        },
+        "actions": {
+          "view": "View",
+          "manage": "Manage",
+          "archive": "Archive"
+        },
+        "bulk": {
+          "archive_selected": "Archive Selected",
+          "restore_selected": "Restore Selected",
+          "delete_selected": "Delete Selected"
+        }
+      },
+      "jobDescriptionTable": {
+        "tabs": {
+          "templates": "Templates",
+          "created": "Job Description Created",
+          "archived": "Job Description Archived"
+        },
+        "headers": {
+          "templates": "Job Description Templates",
+          "created": "Created Job Descriptions",
+          "archived": "Archived Job Descriptions"
+        },
+        "loading": "Loading job description dashboards...",
+        "columns": {
+          "name": "Name",
+          "dateCreated": "Date Created",
+          "dateModified": "Last Modified",
+          "type": "Type",
+          "creator": "Creator",
+          "sections": "Sections",
+          "dataSource": "Data Source",
+          "actions": "Actions"
+        },
+        "actions": {
+          "view": "View",
+          "manage": "Manage",
+          "archive": "Archive"
+        },
+        "bulk": {
+          "archive_selected": "Archive Selected",
+          "restore_selected": "Restore Selected",
+          "delete_selected": "Delete Selected"
+        }
+      },
       "dashboardFormDialog": {
         "edit_title": "Edit Dashboard",
         "create_title": "Create New Dashboard",
@@ -76,6 +142,33 @@
         "cancel": "Cancel",
         "save_changes": "Save Changes",
         "create_dashboard": "Create Dashboard"
+      },
+      "dashboardCreate": {
+        "page_title": "Add New Dashboard",
+        "create_card_title": "Create Dashboard",
+        "create_card_description": "This is a shortcut to the standard dashboard creation dialog. Click the button below to open the create dashboard wizard.",
+        "create_button": "Create New Dashboard",
+        "tips_title": "Quick Tips",
+        "tips": {
+          "tip1": "Choose a descriptive name for your dashboard",
+          "tip2": "Select the appropriate template if available",
+          "tip3": "Configure data sources and visualization settings",
+          "tip4": "Test your dashboard before publishing"
+        }
+      },
+      "jobDescriptionCreate": {
+        "page_title": "Add New Job Description Dashboard",
+        "create_card_title": "Create Job Description Dashboard",
+        "create_card_description": "This is a shortcut to the standard job description dashboard creation dialog. Click the button below to open the create dashboard wizard.",
+        "create_button": "Create New Job Description",
+        "tips_title": "Job Description Guidelines",
+        "tips": {
+          "tip1": "Define clear job roles and responsibilities",
+          "tip2": "Set appropriate skill requirements",
+          "tip3": "Configure evaluation criteria",
+          "tip4": "Link to relevant data sources",
+          "tip5": "Review and validate before publishing"
+        }
       },
       "widgetSettings": {
         "title": "Widget Settings"
@@ -417,7 +510,67 @@
       },
       "no_chart_types": { "title": "No chart types", "message": "No chart types available for current widget configuration." },
       "duplication_failed": { "title": "Duplication failed", "message": "Failed to duplicate dashboard. Please try again. {error}" },
-      "duplication_in_progress": { "title": "Duplication in Progress", "message": "This dashboard is currently being duplicated. Please wait for the process to complete before viewing." }
+      "duplication_in_progress": { "title": "Duplication in Progress", "message": "This dashboard is currently being duplicated. Please wait for the process to complete before viewing." },
+      "deleted": { "title": "Deleted", "message": "Deleted successfully." },
+      "delete_failed": { "title": "Error", "message": "Failed to delete. Please try again." },
+      "feature_coming_soon": { "title": "Coming soon", "message": "This feature is coming soon." },
+      "error_loading_dashboards": { "title": "Error", "message": "Error loading dashboards." },
+      "confirm_archive_dashboard": {
+        "title": "Are you sure?",
+        "message": "Are you sure you want to archive \"{title}\"?",
+        "confirmButtonText": "Yes, archive it!",
+        "cancelButtonText": "Cancel"
+      },
+      "dashboard_archived": { "title": "Archived", "message": "Dashboard archived successfully." },
+      "dashboard_restored": { "title": "Restored", "message": "Dashboard restored successfully." },
+      "archive_failed": { "title": "Error", "message": "Failed to archive. Please try again." },
+      "restore_failed": { "title": "Error", "message": "Failed to restore. Please try again." },
+      "confirm_bulk_archive": {
+        "title": "Are you sure?",
+        "message": "Are you sure you want to archive {count} selected items?",
+        "confirmButtonText": "Yes, archive them!",
+        "cancelButtonText": "Cancel"
+      },
+      "confirm_bulk_restore": {
+        "title": "Are you sure?",
+        "message": "Are you sure you want to restore {count} selected items?",
+        "confirmButtonText": "Yes, restore them!",
+        "cancelButtonText": "Cancel"
+      },
+      "confirm_bulk_delete": {
+        "title": "Are you sure?",
+        "message": "Are you sure you want to permanently delete {count} selected items?",
+        "confirmButtonText": "Yes, delete them!",
+        "cancelButtonText": "Cancel"
+      },
+      "bulk_archived": { "title": "Archived", "message": "Selected items archived successfully." },
+      "bulk_restored": { "title": "Restored", "message": "Selected items restored successfully." },
+      "bulk_deleted": { "title": "Deleted", "message": "Selected items deleted successfully." },
+      "bulk_archive_failed": { "title": "Error", "message": "Failed to archive selected items. Please try again." },
+      "bulk_restore_failed": { "title": "Error", "message": "Failed to restore selected items. Please try again." },
+      "bulk_delete_failed": { "title": "Error", "message": "Failed to delete selected items. Please try again." }
+    },
+    "quicksearch": {
+      "placeholder": "Search anything...",
+      "searching": "Searching...",
+      "no_results": "No results found",
+      "try_different": "Try different keywords or check your spelling",
+      "all_results": "All Results",
+      "users": "Users",
+      "dashboards_es": "ES Dashboards",
+      "dashboards_job": "Job Dashboards",
+      "sections": "Sections",
+      "widgets": "Widgets",
+      "students": "Students",
+      "user_types": "User Types",
+      "open": "Open",
+      "view_permissions": "View Permissions",
+      "load_more": "Load More",
+      "quick_actions": "Quick Actions",
+      "create_dashboard": "Create Dashboard",
+      "manage_users": "Manage Users",
+      "view_dashboards": "View Dashboards",
+      "job_descriptions": "Job Descriptions"
     },
     "shared": {
       "language_changed": "Language changed",
@@ -436,6 +589,7 @@
       },
       "export": {
         "pdf": {
+          "button": "PDF",
           "preparing_title": "Preparing PDF...",
           "preparing_message": "Estimated time ~30 seconds",
           "success_title": "PDF Export Successful",

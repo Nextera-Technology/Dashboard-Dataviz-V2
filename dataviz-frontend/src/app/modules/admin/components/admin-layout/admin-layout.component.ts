@@ -11,6 +11,7 @@ import { NotificationService } from '../../../../../@dataviz/services/notificati
 import { TranslationService } from '../../../../shared/services/translation/translation.service';
 import { Router } from '@angular/router';
 import { AuthService, User } from '../../../../core/auth/auth.service';
+import { QuickSearchComponent } from '../../../../shared/components/quick-search/quick-search.component';
 
 @Component({
   selector: 'app-admin-layout',
@@ -23,7 +24,8 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
     MatMenuModule,
     MatSnackBarModule,
     MatTooltipModule,
-    TranslatePipe
+    TranslatePipe,
+    QuickSearchComponent
   ],
   template: `
     <div class="admin-layout">
@@ -62,14 +64,61 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
             {{ 'admin.layout.title' | translate }}
           </div>
           <div class="nav-menu">
-            <a routerLink="/admin/dashboard-list" routerLinkActive="active" class="nav-item">
-              <mat-icon>dashboard</mat-icon>
-              <span>{{ 'admin.dashboardList.header_title' | translate }}</span>
-            </a>
-            <a routerLink="/admin/job-description" routerLinkActive="active" class="nav-item">
-              <mat-icon>work</mat-icon>
-              <span>{{ 'admin.layout.jobDescription' | translate }}</span>
-            </a>
+            <!-- Dashboard Builder with Sub-menu -->
+            <div class="nav-item-group">
+              <div class="nav-item" 
+                   [class.expanded]="isDashboardBuilderExpanded" 
+                   (click)="toggleDashboardBuilderMenu()">
+                <mat-icon>dashboard</mat-icon>
+                <span>{{ 'admin.dashboardList.header_title' | translate }}</span>
+                <mat-icon class="expand-icon">{{ isDashboardBuilderExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+              </div>
+              
+              <!-- Dashboard Builder Sub-menu -->
+              <div class="sub-menu" *ngIf="isDashboardBuilderExpanded">
+                <a routerLink="/admin/dashboard-list" routerLinkActive="active" class="sub-nav-item">
+                  <mat-icon>view_module</mat-icon>
+                  <span>Dashboard Card</span>
+                </a>
+                <a routerLink="/admin/dashboard-create" routerLinkActive="active" class="sub-nav-item">
+                  <mat-icon>add_circle</mat-icon>
+                  <span>Add New Dashboard</span>
+                </a>
+                <a routerLink="/admin/dashboard-table" routerLinkActive="active" class="sub-nav-item">
+                  <mat-icon>table_view</mat-icon>
+                  <span>Table of Dashboard</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Job Description with Sub-menu -->
+            <div class="nav-item-group">
+              <div class="nav-item" 
+                   [class.expanded]="isJobDescriptionExpanded" 
+                   (click)="toggleJobDescriptionMenu()">
+                <mat-icon>work</mat-icon>
+                <span>{{ 'admin.layout.jobDescription' | translate }}</span>
+                <mat-icon class="expand-icon">{{ isJobDescriptionExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+              </div>
+              
+              <!-- Job Description Sub-menu -->
+              <div class="sub-menu" *ngIf="isJobDescriptionExpanded">
+                <a routerLink="/admin/job-description" routerLinkActive="active" class="sub-nav-item">
+                  <mat-icon>view_module</mat-icon>
+                  <span>Dashboard Card</span>
+                </a>
+                <a routerLink="/admin/job-description-create" routerLinkActive="active" class="sub-nav-item">
+                  <mat-icon>add_circle</mat-icon>
+                  <span>Add New Dashboard</span>
+                </a>
+                <a routerLink="/admin/job-description-table" routerLinkActive="active" class="sub-nav-item">
+                  <mat-icon>table_view</mat-icon>
+                  <span>Table of Dashboard</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- User Management (no sub-menu) -->
             <a routerLink="/admin/user-management" routerLinkActive="active" class="nav-item">
               <mat-icon>people</mat-icon>
               <span>{{ 'admin.layout.userManagement' | translate }}</span>
@@ -115,6 +164,13 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
             <p class="breadcrumb">{{ breadcrumb && breadcrumb.indexOf('.') > -1 ? (breadcrumb | translate) : breadcrumb }}</p>
           </div>
           
+          <!-- Centered Search Bar -->
+          <div class="header-search">
+            <app-quick-search></app-quick-search>
+          </div>
+          
+          <!-- Header Actions -->
+          <div class="header-actions">
           <!-- User Menu -->
           <div class="user-menu" style="display:flex; align-items:center; gap:8px;">
             <!-- Language dropdown -->
@@ -410,6 +466,7 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
               </button>
             </mat-menu>
           </div>
+          </div>
         </header>
 
         <!-- Page Content -->
@@ -610,6 +667,12 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
       gap: 8px;
     }
 
+    /* Navigation Item Group (for expandable menus) */
+    .nav-item-group {
+      display: flex;
+      flex-direction: column;
+    }
+
     .nav-item {
       display: flex;
       align-items: center;
@@ -623,18 +686,25 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
       font-weight: 500;
       transition: all 0.3s ease;
       border: 1px solid rgba(255, 255, 255, 0.05);
+      cursor: pointer;
     }
 
     .nav-item:hover {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.15);
       transform: translateX(4px);
     }
 
     .nav-item.active {
       background: rgba(255, 255, 255, 0.2);
-    color: #f8fafc;
-    border-left: 3px solid #ffffff;
-    font-weight: 600;
+      color: #f8fafc;
+      border-left: 3px solid #ffffff;
+      font-weight: 600;
+    }
+
+    .nav-item.expanded {
+      background: rgba(255, 255, 255, 0.15);
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
     }
 
     .nav-item mat-icon {
@@ -644,6 +714,82 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
     }
 
     .nav-item span {
+      flex: 1;
+    }
+
+    /* Expand/Collapse Icon */
+    .expand-icon {
+      font-size: 20px !important;
+      width: 20px !important;
+      height: 20px !important;
+      transition: transform 0.3s ease;
+    }
+
+    .nav-item.expanded .expand-icon {
+      transform: rotate(180deg);
+    }
+
+    /* Sub-menu Styles */
+    .sub-menu {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 0 0 8px 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-top: none;
+      overflow: hidden;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        max-height: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        max-height: 200px;
+        transform: translateY(0);
+      }
+    }
+
+    .sub-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px 10px 32px;
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 400;
+      transition: all 0.3s ease;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .sub-nav-item:last-child {
+      border-bottom: none;
+    }
+
+    .sub-nav-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      padding-left: 36px;
+    }
+
+    .sub-nav-item.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: #f8fafc;
+      font-weight: 500;
+      border-left: 2px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .sub-nav-item mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      opacity: 0.8;
+    }
+
+    .sub-nav-item span {
       flex: 1;
     }
 
@@ -741,10 +887,28 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
       background: white;
       padding: 20px 30px;
       border-bottom: 1px solid #e0e0e0;
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
+      gap: 20px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .header-content {
+      justify-self: start;
+    }
+    
+    .header-search {
+      justify-self: center;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .header-actions {
+      justify-self: end;
+      display: flex;
+      align-items: center;
+      gap: 16px;
     }
 
     .header-content h1 {
@@ -758,6 +922,41 @@ import { AuthService, User } from '../../../../core/auth/auth.service';
       margin: 0;
       color: #666;
       font-size: 14px;
+    }
+
+    /* Responsive Header */
+    @media (max-width: 1024px) {
+      .admin-header {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 15px;
+        text-align: center;
+      }
+      
+      .header-content,
+      .header-search,
+      .header-actions {
+        justify-self: center;
+      }
+      
+      .header-content {
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .admin-header {
+        padding: 15px 20px;
+        gap: 12px;
+      }
+      
+      .header-content h1 {
+        font-size: 20px;
+      }
+      
+      .breadcrumb {
+        font-size: 13px;
+      }
     }
 
     /* User Menu */
@@ -847,6 +1046,10 @@ export class AdminLayoutComponent implements OnInit {
   // Sidebar collapse state
   isSidebarCollapsed: boolean = false;
 
+  // Sub-menu expansion states
+  isDashboardBuilderExpanded: boolean = false;
+  isJobDescriptionExpanded: boolean = false;
+
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -935,6 +1138,28 @@ export class AdminLayoutComponent implements OnInit {
     if (savedState !== null) {
       this.isSidebarCollapsed = savedState === 'true';
     }
+    
+    // Load sub-menu states
+    const dashboardBuilderState = localStorage.getItem('admin-dashboard-builder-expanded');
+    if (dashboardBuilderState !== null) {
+      this.isDashboardBuilderExpanded = dashboardBuilderState === 'true';
+    }
+    
+    const jobDescriptionState = localStorage.getItem('admin-job-description-expanded');
+    if (jobDescriptionState !== null) {
+      this.isJobDescriptionExpanded = jobDescriptionState === 'true';
+    }
+  }
+
+  // Sub-menu toggle methods
+  toggleDashboardBuilderMenu(): void {
+    this.isDashboardBuilderExpanded = !this.isDashboardBuilderExpanded;
+    localStorage.setItem('admin-dashboard-builder-expanded', this.isDashboardBuilderExpanded.toString());
+  }
+
+  toggleJobDescriptionMenu(): void {
+    this.isJobDescriptionExpanded = !this.isJobDescriptionExpanded;
+    localStorage.setItem('admin-job-description-expanded', this.isJobDescriptionExpanded.toString());
   }
 
   async logout(): Promise<void> {

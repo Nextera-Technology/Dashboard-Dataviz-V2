@@ -1,0 +1,258 @@
+<div class="quick-search-container" [class.open]="isOpen">
+  <!-- Search Bar (always visible) -->
+  <div class="search-bar" *ngIf="!isOpen" (click)="toggleSearch()">
+    <mat-icon class="search-icon">search</mat-icon>
+    <span class="search-placeholder">{{ 'quicksearch.placeholder' | translate }}</span>
+    <div class="search-shortcut">
+      <span>Ctrl+K</span>
+    </div>
+  </div>
+
+  <!-- Search Modal -->
+  <div class="search-modal" *ngIf="isOpen" (click)="onBackdropClick($event)">
+    <div class="search-dialog" (click)="$event.stopPropagation()">
+      <!-- Search Header -->
+      <div class="search-header">
+        <div class="search-input-wrapper">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input
+            #searchInput
+            type="text"
+            [(ngModel)]="searchQuery"
+            (ngModelChange)="onSearchQueryChange($event)"
+            [placeholder]="'quicksearch.placeholder' | translate"
+            class="search-input"
+            autocomplete="off"
+          />
+          <button class="close-btn" (click)="closeSearch()" *ngIf="searchQuery">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        
+        <!-- Category Tabs -->
+        <div class="category-tabs" *ngIf="searchQuery && !loading">
+          <button 
+            *ngFor="let category of categories" 
+            class="category-tab"
+            [class.active]="selectedCategory === category.key"
+            (click)="selectCategory(category.key)"
+          >
+            <mat-icon>{{ category.icon }}</mat-icon>
+            <span>{{ category.name | translate }}</span>
+            <span class="count" *ngIf="category.count && category.count > 0">
+              ({{ category.count }})
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Search Results -->
+      <div class="search-results" *ngIf="searchQuery">
+        <!-- Loading State -->
+        <div class="loading-state" *ngIf="loading">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>{{ 'quicksearch.searching' | translate }}</p>
+        </div>
+
+        <!-- Results -->
+        <div class="results-container" *ngIf="!loading && currentCategoryResults">
+          <!-- No Results -->
+          <div class="no-results" *ngIf="currentCategoryResults.length === 0">
+            <mat-icon>search_off</mat-icon>
+            <p>{{ 'quicksearch.no_results' | translate }}</p>
+            <small>{{ 'quicksearch.try_different' | translate }}</small>
+          </div>
+
+          <!-- Results List (list/card layouts) -->
+          <div class="results-list" *ngIf="currentCategoryResults.length > 0 && selectedCategory !== 'SECTION' && selectedCategory !== 'WIDGET'">
+            <div 
+              *ngFor="let result of currentCategoryResults" 
+              [ngClass]="['result-item', 'category-' + (selectedCategory === 'ALL' ? (result.category || 'ALL') : selectedCategory)]"
+              (click)="onResultClick(result)"
+            >
+              <!-- User Result -->
+              <div class="result-content" *ngIf="selectedCategory === 'USER' || (selectedCategory === 'ALL' && result.category === 'USER')">
+                <div class="avatar" *ngIf="result.avatarUrl || !result.dashboardType">
+                  <img *ngIf="result.avatarUrl" [src]="result.avatarUrl" alt="Avatar">
+                  <mat-icon *ngIf="!result.avatarUrl">person</mat-icon>
+                </div>
+                <div class="info">
+                  <h3>{{ result.title }}</h3>
+                  <p>{{ result.subtitle }}</p>
+                  <span class="role-badge" *ngIf="result.roleName">{{ result.roleName }}</span>
+                </div>
+                <button class="action-btn" (click)="$event.stopPropagation()">
+                  <mat-icon>settings</mat-icon>
+                </button>
+              </div>
+
+              <!-- Dashboard Result -->
+              <div class="result-content" *ngIf="(selectedCategory === 'ES_DASHBOARD' || selectedCategory === 'JOB_DESC_DASHBOARD' || (selectedCategory === 'ALL' && (result.category === 'ES_DASHBOARD' || result.category === 'JOB_DESC_DASHBOARD'))) && result.dashboardType">
+                <mat-icon class="type-icon">
+                  {{ (selectedCategory === 'ES_DASHBOARD' || (selectedCategory === 'ALL' && result.category === 'ES_DASHBOARD')) ? 'dashboard' : 'work' }}
+                </mat-icon>
+                <div class="info">
+                  <h3>{{ result.title }}</h3>
+                  <p>{{ result.subtitle }}</p>
+                  <div class="meta">
+                    <span class="badge" [class.archived]="result.isArchived">
+                      {{ result.isArchived ? 'Archived' : 'Active' }}
+                    </span>
+                    <span class="badge type">{{ result.dashboardType }}</span>
+                    <span class="date" *ngIf="result.updatedAt">{{ formatDate(result.updatedAt) }}</span>
+                  </div>
+                </div>
+                <div class="actions">
+                  <button class="action-btn primary" (click)="$event.stopPropagation()">
+                    <mat-icon>visibility</mat-icon>
+                    <span>{{ 'quicksearch.open' | translate }}</span>
+                  </button>
+                  <button class="action-btn" (click)="$event.stopPropagation()">
+                    <mat-icon>settings</mat-icon>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Section Result -->
+              <div class="result-content" *ngIf="(selectedCategory === 'SECTION' || (selectedCategory === 'ALL' && result.category === 'SECTION'))">
+                <mat-icon class="type-icon">view_module</mat-icon>
+                <div class="info">
+                  <h3>{{ result.title }}</h3>
+                  <p>{{ result.subtitle }}</p>
+                  <small>Dashboard: {{ result.dashboardName }}</small>
+                </div>
+                <button class="action-btn" (click)="$event.stopPropagation()">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </div>
+
+              <!-- Widget Result -->
+              <div class="result-content" *ngIf="(selectedCategory === 'WIDGET' || (selectedCategory === 'ALL' && result.category === 'WIDGET')) && result.widgetType">
+                <mat-icon class="type-icon">widgets</mat-icon>
+                <div class="info">
+                  <h3>{{ result.title }}</h3>
+                  <p>{{ result.widgetType }} - {{ result.widgetSubType }}</p>
+                  <small>
+                    <span *ngIf="result.chartType">Chart: {{ result.chartType }}<br></span>
+                    <span *ngIf="result.parentName">Section: {{ result.parentName }}<br></span>
+                    <span *ngIf="result.dashboardName">Dashboard: {{ result.dashboardName }}</span>
+                  </small>
+                </div>
+                <button class="action-btn" (click)="$event.stopPropagation()">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </div>
+
+              <!-- Student Result -->
+              <div class="result-content" *ngIf="(selectedCategory === 'STUDENT' || (selectedCategory === 'ALL' && result.category === 'STUDENT')) && result.school">
+                <div class="avatar">
+                  <mat-icon>school</mat-icon>
+                </div>
+                <div class="info">
+                  <h3>{{ result.title }}</h3>
+                  <p>{{ result.subtitle }}</p>
+                  <div class="meta">
+                    <span class="school-badge" [style.background-color]="getSchoolColor(result.school)">
+                      {{ result.school }}
+                    </span>
+                    <span>{{ result.certification }} - {{ result.classes }}</span>
+                  </div>
+                </div>
+                <div class="actions">
+                  <button class="action-btn" (click)="$event.stopPropagation()">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                  <button class="action-btn" (click)="$event.stopPropagation()">
+                    <mat-icon>settings</mat-icon>
+                  </button>
+                </div>
+              </div>
+
+              <!-- User Type Result -->
+              <div class="result-content" *ngIf="(selectedCategory === 'USER_TYPE' || (selectedCategory === 'ALL' && result.category === 'USER_TYPE'))">
+                <mat-icon class="type-icon">shield</mat-icon>
+                <div class="info">
+                  <h3>{{ result.title }}</h3>
+                  <p>{{ result.status || 'User Role' }}</p>
+                </div>
+                <div class="actions">
+                  <button class="action-btn" (click)="$event.stopPropagation()">
+                    <mat-icon>visibility</mat-icon>
+                    <span>{{ 'quicksearch.view_permissions' | translate }}</span>
+                  </button>
+                  <button class="action-btn" (click)="$event.stopPropagation()">
+                    <mat-icon>settings</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Load More (list tabs) -->
+            <div class="load-more" *ngIf="hasMoreResults && selectedCategory !== 'SECTION' && selectedCategory !== 'WIDGET'">
+              <button class="load-more-btn" (click)="loadMore()">
+                {{ 'quicksearch.load_more' | translate }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Grouped Grid Results for SECTION and WIDGET -->
+          <div class="grouped-results" *ngIf="(selectedCategory === 'SECTION' || selectedCategory === 'WIDGET') && groupedResults.length > 0">
+            <div class="result-group" *ngFor="let group of groupedResults">
+              <div class="group-title">
+                <mat-icon>{{ selectedCategory === 'SECTION' ? 'dashboard' : 'view_module' }}</mat-icon>
+                <span>{{ group.group }}</span>
+              </div>
+              <div class="grid-cards">
+                <div class="grid-card" [ngClass]="'category-' + selectedCategory" *ngFor="let result of group.items" (click)="onResultClick(result)">
+                  <div class="grid-card-header">
+                    <mat-icon class="type-icon">{{ selectedCategory === 'SECTION' ? 'view_module' : 'widgets' }}</mat-icon>
+                    <h3>{{ result.title }}</h3>
+                  </div>
+                  <p *ngIf="selectedCategory === 'WIDGET'">{{ result.widgetType }} - {{ result.widgetSubType }}</p>
+                  <p class="muted" *ngIf="selectedCategory === 'WIDGET' && result.chartType">Chart: {{ result.chartType }}</p>
+                  <p class="muted" *ngIf="selectedCategory === 'SECTION'">{{ result.subtitle }}</p>
+                  <div class="grid-card-meta">
+                    <span *ngIf="selectedCategory === 'WIDGET' && result.parentName">Section: {{ result.parentName }}</span>
+                    <span *ngIf="result.dashboardName">Dashboard: {{ result.dashboardName }}</span>
+                  </div>
+                  <div class="grid-card-actions">
+                    <button class="action-btn" (click)="$event.stopPropagation()">
+                      <mat-icon>visibility</mat-icon>
+                      <span>{{ 'quicksearch.open' | translate }}</span>
+                    </button>
+                    <button class="action-btn" (click)="$event.stopPropagation()">
+                      <mat-icon>settings</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions (when no search) -->
+      <div class="quick-actions" *ngIf="!searchQuery">
+        <h3>{{ getTranslation('quicksearch.quick_actions', 'Quick Actions') }}</h3>
+        <div class="action-grid">
+          <button class="quick-action" (click)="quickAction('create-dashboard')">
+            <mat-icon>add_circle</mat-icon>
+            <span>{{ getTranslation('quicksearch.create_dashboard', 'Create Dashboard') }}</span>
+          </button>
+          <button class="quick-action" (click)="quickAction('manage-users')">
+            <mat-icon>people</mat-icon>
+            <span>{{ getTranslation('quicksearch.manage_users', 'Manage Users') }}</span>
+          </button>
+          <button class="quick-action" (click)="quickAction('view-dashboards')">
+            <mat-icon>dashboard</mat-icon>
+            <span>{{ getTranslation('quicksearch.view_dashboards', 'View Dashboards') }}</span>
+          </button>
+          <button class="quick-action" (click)="quickAction('job-descriptions')">
+            <mat-icon>work</mat-icon>
+            <span>{{ getTranslation('quicksearch.job_descriptions', 'Job Descriptions') }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
