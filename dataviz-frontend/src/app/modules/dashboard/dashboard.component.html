@@ -181,10 +181,13 @@
                 </h5>
             </div>
 
-            <!-- language dropdown removed from here and moved into user-menu to align right next to profile -->
+            <!-- QuickSearch in header -->
+            <div class="quicksearch-wrapper">
+              <app-quick-search></app-quick-search>
+            </div>
 
-            <!-- Language dropdown placed to the left of profile icon (right-top) -->
-            <div style="display:flex; align-items:center; gap:8px; margin-left:auto;">
+            <div class="header-right">
+              <!-- Language dropdown placed to the left of profile icon (right-top) -->
               <div class="lang-dropdown" style="position:relative;" (click)="$event.stopPropagation()">
                 <button mat-button class="lang-toggle" aria-haspopup="true" (click)="openLangMenu($event)" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;">
                   <img [src]="currentFlag()" alt="lang" style="width:22px;height:16px;object-fit:cover;border-radius:2px;box-shadow:0 1px 2px rgba(0,0,0,0.1)" />
@@ -203,9 +206,7 @@
               </div>
 
               <!-- User Menu -->
-            </div>
-
-            <div class="user-menu">
+              <div class="user-menu">
                 <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-menu-button">
                     <mat-icon>account_circle</mat-icon>
                 </button>
@@ -220,6 +221,7 @@
                         <span>{{ 'shared.logout' | translate }}</span>
                     </button>
                 </mat-menu>
+              </div>
             </div>
         </header>
 
@@ -229,21 +231,27 @@
             <div class="frozen-sections-header" *ngIf="dashboard?.sectionIds && dashboard.sectionIds.length > 0">
                 <div class="sections-nav">
                     <div class="section-nav-item" *ngFor="let section of dashboard.sectionIds; let i = index" 
-                         [class.section-hidden]="!sectionVisibility[section._id]"
-                         [style.background-color]="getSectionBackgroundColor(section)"
-                         [style.color]="getSectionTextColor(section)">
-                        <label class="nav-checkbox-item">
+                         [class.section-hidden]="!sectionVisibility[section._id]">
+                        
+                        <!-- Checkbox untuk visibility control -->
+                        <div class="nav-checkbox-wrapper">
                             <input type="checkbox" 
                                    [id]="'nav_section_' + section._id" 
                                    [checked]="sectionVisibility[section._id]"
-                                   (change)="toggleSectionVisibility(section._id, $event)">
-                            <span class="section-nav-name" 
-                                  (click)="scrollToSection(section._id)"
-                                  [class.clickable]="sectionVisibility[section._id]"
-                                  [style.color]="getSectionTextColor(section)">
+                                   (change)="toggleSectionVisibility(section._id, $event)"
+                                   (click)="$event.stopPropagation()">
+                        </div>
+                        
+                        <!-- Navigation Button -->
+                        <button class="section-nav-button" 
+                                (click)="navigateToSection(section._id)"
+                                [disabled]="!sectionVisibility[section._id]"
+                                [style.background-color]="getSectionBackgroundColor(section)"
+                                [style.color]="getSectionTextColor(section)">
+                            <span class="section-nav-name">
                                 {{ section.name }}
                             </span>
-                        </label>
+                        </button>
                     </div>
                 </div>
             </div>

@@ -57,6 +57,7 @@
           "archived": "Archived Dashboards"
         },
         "loading": "Loading dashboards...",
+        "search_placeholder": "Search dashboards...",
         "columns": {
           "name": "Name",
           "dateCreated": "Date Created",
@@ -70,7 +71,9 @@
         "actions": {
           "view": "View",
           "manage": "Manage",
-          "archive": "Archive"
+          "archive": "Archive",
+          "restore": "Restore",
+          "delete_permanently": "Delete Permanently"
         },
         "bulk": {
           "archive_selected": "Archive Selected",
@@ -90,6 +93,7 @@
           "archived": "Archived Job Descriptions"
         },
         "loading": "Loading job description dashboards...",
+        "search_placeholder": "Search job descriptions...",
         "columns": {
           "name": "Name",
           "dateCreated": "Date Created",
@@ -103,7 +107,9 @@
         "actions": {
           "view": "View",
           "manage": "Manage",
-          "archive": "Archive"
+          "archive": "Archive",
+          "restore": "Restore",
+          "delete_permanently": "Delete Permanently"
         },
         "bulk": {
           "archive_selected": "Archive Selected",
@@ -301,6 +307,11 @@
         "empty_title": "No Job Description Dashboards Yet",
         "empty_description": "Create your first job description dashboard to get started with evaluation analytics.",
         "empty_cta": "Create Your First Dashboard"
+      },
+      "navigation": {
+        "dashboard_card": "Dashboard Card",
+        "add_new_dashboard": "Add New Dashboard",
+        "table_of_dashboard": "Table of Dashboard"
       },
       "userManagement": {
         "page_title": "User Management",

@@ -81,7 +81,7 @@
                   <p>{{ result.subtitle }}</p>
                   <span class="role-badge" *ngIf="result.roleName">{{ result.roleName }}</span>
                 </div>
-                <button class="action-btn" (click)="$event.stopPropagation()">
+                <button class="action-btn" (click)="manageUsers(); $event.stopPropagation()">
                   <mat-icon>settings</mat-icon>
                 </button>
               </div>
@@ -103,11 +103,11 @@
                   </div>
                 </div>
                 <div class="actions">
-                  <button class="action-btn primary" (click)="$event.stopPropagation()">
+                  <button class="action-btn primary" (click)="viewDashboard(result); $event.stopPropagation()">
                     <mat-icon>visibility</mat-icon>
                     <span>{{ 'quicksearch.open' | translate }}</span>
                   </button>
-                  <button class="action-btn" (click)="$event.stopPropagation()">
+                  <button class="action-btn" (click)="manageDashboard(result); $event.stopPropagation()">
                     <mat-icon>settings</mat-icon>
                   </button>
                 </div>
@@ -121,9 +121,7 @@
                   <p>{{ result.subtitle }}</p>
                   <small>Dashboard: {{ result.dashboardName }}</small>
                 </div>
-                <button class="action-btn" (click)="$event.stopPropagation()">
-                  <mat-icon>visibility</mat-icon>
-                </button>
+                
               </div>
 
               <!-- Widget Result -->
@@ -138,9 +136,7 @@
                     <span *ngIf="result.dashboardName">Dashboard: {{ result.dashboardName }}</span>
                   </small>
                 </div>
-                <button class="action-btn" (click)="$event.stopPropagation()">
-                  <mat-icon>visibility</mat-icon>
-                </button>
+                
               </div>
 
               <!-- Student Result -->
@@ -158,14 +154,7 @@
                     <span>{{ result.certification }} - {{ result.classes }}</span>
                   </div>
                 </div>
-                <div class="actions">
-                  <button class="action-btn" (click)="$event.stopPropagation()">
-                    <mat-icon>visibility</mat-icon>
-                  </button>
-                  <button class="action-btn" (click)="$event.stopPropagation()">
-                    <mat-icon>settings</mat-icon>
-                  </button>
-                </div>
+                
               </div>
 
               <!-- User Type Result -->
@@ -175,15 +164,7 @@
                   <h3>{{ result.title }}</h3>
                   <p>{{ result.status || 'User Role' }}</p>
                 </div>
-                <div class="actions">
-                  <button class="action-btn" (click)="$event.stopPropagation()">
-                    <mat-icon>visibility</mat-icon>
-                    <span>{{ 'quicksearch.view_permissions' | translate }}</span>
-                  </button>
-                  <button class="action-btn" (click)="$event.stopPropagation()">
-                    <mat-icon>settings</mat-icon>
-                  </button>
-                </div>
+                
               </div>
             </div>
 
@@ -215,15 +196,7 @@
                     <span *ngIf="selectedCategory === 'WIDGET' && result.parentName">Section: {{ result.parentName }}</span>
                     <span *ngIf="result.dashboardName">Dashboard: {{ result.dashboardName }}</span>
                   </div>
-                  <div class="grid-card-actions">
-                    <button class="action-btn" (click)="$event.stopPropagation()">
-                      <mat-icon>visibility</mat-icon>
-                      <span>{{ 'quicksearch.open' | translate }}</span>
-                    </button>
-                    <button class="action-btn" (click)="$event.stopPropagation()">
-                      <mat-icon>settings</mat-icon>
-                    </button>
-                  </div>
+                  
                 </div>
               </div>
             </div>

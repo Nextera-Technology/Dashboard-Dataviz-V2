@@ -6,9 +6,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorModule, MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSortModule, MatSort, Sort } from '@angular/material/sort';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { SelectionModel } from '@angular/cdk/collections';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 import { AdminLayoutComponent } from '../../components/admin-layout/admin-layout.component';
@@ -16,6 +18,7 @@ import { DashboardBuilderService } from '../dashboard-builder/dashboard-builder.
 import { Router } from '@angular/router';
 import { ShareDataService } from 'app/shared/services/share-data.service';
 import { NotificationService } from '@dataviz/services/notification/notification.service';
+import { TranslationService } from 'app/shared/services/translation/translation.service';
 
 interface Section {
   _id?: string;
@@ -59,22 +62,49 @@ interface JobDescriptionDashboard {
     MatPaginatorModule,
     MatSortModule,
     MatProgressSpinnerModule,
+    MatFormFieldModule,
+    MatInputModule,
     AdminLayoutComponent,
     TranslatePipe
+  ],
+  providers: [
+    {
+      provide: MatPaginatorIntl,
+      useFactory: (translation: TranslationService) => {
+        const intl = new MatPaginatorIntl();
+        const setLabels = () => {
+          intl.itemsPerPageLabel = translation.translate('admin.userManagement.paginator.items_per_page') || 'Items per page:';
+          intl.changes.next();
+        };
+        setLabels();
+        translation.translationsLoaded$.subscribe(() => setLabels());
+        return intl;
+      },
+      deps: [TranslationService]
+    }
   ],
   template: `
     <app-admin-layout [fullBleed]="true">
       <div class="job-description-table-container">
         <!-- Tabs for Templates, Created, Archived -->
-        <mat-tab-group [(selectedIndex)]="selectedTabIndex" class="job-description-tabs" (selectedTabChange)="attachSorters()">
+        <mat-tab-group [(selectedIndex)]="selectedTabIndex" class="job-description-tabs" (selectedTabChange)="onTabChange()">
           <mat-tab label="{{ 'admin.jobDescriptionTable.tabs.templates' | translate }}">
             <div class="tab-content">
               <div class="dv-table-header">
                 <h2>{{ 'admin.jobDescriptionTable.headers.templates' | translate }}</h2>
-                <div class="bulk-actions" *ngIf="templatesSelection.hasValue()">
-                  <button mat-button color="warn" (click)="archiveSelected('templates')">
-                    {{ 'admin.jobDescriptionTable.bulk.archive_selected' | translate }} ({{ templatesSelection.selected.length }})
-                  </button>
+                <div class="header-actions">
+                  <mat-form-field appearance="outline" class="search-field">
+                    <mat-icon matPrefix>search</mat-icon>
+                    <input matInput placeholder="{{ 'admin.jobDescriptionTable.search_placeholder' | translate }}" (input)="onSearchInput('templates', $event)" [value]="searchValues.templates" />
+                    <button mat-icon-button matSuffix *ngIf="searchValues.templates" aria-label="Clear search" (click)="clearSearch('templates')">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </mat-form-field>
+                  <div class="bulk-actions" *ngIf="templatesSelection.hasValue()">
+                    <button mat-button color="warn" (click)="archiveSelected('templates')">
+                      {{ 'admin.jobDescriptionTable.bulk.archive_selected' | translate }} ({{ templatesSelection.selected.length }})
+                    </button>
+                  </div>
                 </div>
               </div>
               <div class="table-container">
@@ -186,7 +216,7 @@ interface JobDescriptionDashboard {
                   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                 </table>
               </div>
-              <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+              <mat-paginator #templatesPaginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
             </div>
           </mat-tab>
 
@@ -194,11 +224,20 @@ interface JobDescriptionDashboard {
             <div class="tab-content">
               <div class="dv-table-header">
                 <h2>{{ 'admin.jobDescriptionTable.headers.created' | translate }}</h2>
-                <div class="bulk-actions" *ngIf="createdSelection.hasValue()">
-                  <button mat-button color="warn" (click)="archiveSelected('created')">
-                    <mat-icon>archive</mat-icon>
-                    {{ 'admin.jobDescriptionTable.bulk.archive_selected' | translate }} ({{ createdSelection.selected.length }})
-                  </button>
+                <div class="header-actions">
+                  <mat-form-field appearance="outline" class="search-field">
+                    <mat-icon matPrefix>search</mat-icon>
+                    <input matInput placeholder="{{ 'admin.jobDescriptionTable.search_placeholder' | translate }}" (input)="onSearchInput('created', $event)" [value]="searchValues.created" />
+                    <button mat-icon-button matSuffix *ngIf="searchValues.created" aria-label="Clear search" (click)="clearSearch('created')">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </mat-form-field>
+                  <div class="bulk-actions" *ngIf="createdSelection.hasValue()">
+                    <button mat-button color="warn" (click)="archiveSelected('created')">
+                      <mat-icon>archive</mat-icon>
+                      {{ 'admin.jobDescriptionTable.bulk.archive_selected' | translate }} ({{ createdSelection.selected.length }})
+                    </button>
+                  </div>
                 </div>
               </div>
               <!-- Similar table structure for created job descriptions -->
@@ -221,19 +260,19 @@ interface JobDescriptionDashboard {
                   </ng-container>
                   <!-- Other columns same as templates -->
                   <ng-container matColumnDef="name">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.name' | translate }}</th>
                     <td mat-cell *matCellDef="let element">{{ element.name || element.title }}</td>
                   </ng-container>
                   <ng-container matColumnDef="dateCreated">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Date Created</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.dateCreated' | translate }}</th>
                     <td mat-cell *matCellDef="let element">{{ getCreatedDate(element) | date:'short' }}</td>
                   </ng-container>
                   <ng-container matColumnDef="dateModified">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Modified</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.dateModified' | translate }}</th>
                     <td mat-cell *matCellDef="let element">{{ getModifiedDate(element) | date:'short' }}</td>
                   </ng-container>
                   <ng-container matColumnDef="type">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.type' | translate }}</th>
                     <td mat-cell *matCellDef="let element">
                       <span class="type-badge type-job-desc">
                         {{ getDashboardType(element) }}
@@ -241,15 +280,15 @@ interface JobDescriptionDashboard {
                     </td>
                   </ng-container>
                   <ng-container matColumnDef="creator">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Creator</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.creator' | translate }}</th>
                     <td mat-cell *matCellDef="let element">{{ getCreatorName(element) }}</td>
                   </ng-container>
                   <ng-container matColumnDef="sections">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Sections</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.sections' | translate }}</th>
                     <td mat-cell *matCellDef="let element">{{ getSectionCount(element) }}</td>
                   </ng-container>
                   <ng-container matColumnDef="dataSource">
-                    <th mat-header-cell *matHeaderCellDef>Data Source</th>
+                    <th mat-header-cell *matHeaderCellDef>{{ 'admin.jobDescriptionTable.columns.dataSource' | translate }}</th>
                     <td mat-cell *matCellDef="let element">
                       <div class="data-source">
                         <div class="source-title">{{ getDataSourceInfo(element).title }}</div>
@@ -260,7 +299,7 @@ interface JobDescriptionDashboard {
                     </td>
                   </ng-container>
                   <ng-container matColumnDef="actions">
-                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <th mat-header-cell *matHeaderCellDef>{{ 'admin.jobDescriptionTable.columns.actions' | translate }}</th>
                     <td mat-cell *matCellDef="let element">
                       <button mat-icon-button [matMenuTriggerFor]="actionsMenu2">
                         <mat-icon>more_vert</mat-icon>
@@ -268,19 +307,19 @@ interface JobDescriptionDashboard {
                       <mat-menu #actionsMenu2="matMenu">
                         <button mat-menu-item (click)="viewJobDescription(element)">
                           <mat-icon>visibility</mat-icon>
-                          <span>View</span>
+                          <span>{{ 'admin.jobDescriptionTable.actions.view' | translate }}</span>
                         </button>
                         <button mat-menu-item (click)="manageJobDescription(element)">
                           <mat-icon>edit</mat-icon>
-                          <span>Manage</span>
+                          <span>{{ 'admin.jobDescriptionTable.actions.manage' | translate }}</span>
                         </button>
                         <button mat-menu-item (click)="exportToPDF(element)">
                           <mat-icon>picture_as_pdf</mat-icon>
-                          <span>PDF</span>
+                          <span>{{ 'shared.export.pdf.button' | translate }}</span>
                         </button>
                         <button mat-menu-item (click)="archiveJobDescription(element)">
                           <mat-icon>archive</mat-icon>
-                          <span>Archive</span>
+                          <span>{{ 'admin.jobDescriptionTable.actions.archive' | translate }}</span>
                         </button>
                       </mat-menu>
                     </td>
@@ -289,7 +328,7 @@ interface JobDescriptionDashboard {
                   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                 </table>
               </div>
-              <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+              <mat-paginator #createdPaginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
             </div>
           </mat-tab>
 
@@ -297,15 +336,24 @@ interface JobDescriptionDashboard {
             <div class="tab-content">
               <div class="dv-table-header">
                 <h2>{{ 'admin.jobDescriptionTable.headers.archived' | translate }}</h2>
-                <div class="bulk-actions" *ngIf="archivedSelection.hasValue()">
-                  <button mat-button color="primary" (click)="restoreSelected()">
-                    <mat-icon>restore</mat-icon>
-                    {{ 'admin.jobDescriptionTable.bulk.restore_selected' | translate }} ({{ archivedSelection.selected.length }})
-                  </button>
-                  <button mat-button color="warn" (click)="deleteSelected()">
-                    <mat-icon>delete</mat-icon>
-                    {{ 'admin.jobDescriptionTable.bulk.delete_selected' | translate }} ({{ archivedSelection.selected.length }})
-                  </button>
+                <div class="header-actions">
+                  <mat-form-field appearance="outline" class="search-field">
+                    <mat-icon matPrefix>search</mat-icon>
+                    <input matInput placeholder="{{ 'admin.jobDescriptionTable.search_placeholder' | translate }}" (input)="onSearchInput('archived', $event)" [value]="searchValues.archived" />
+                    <button mat-icon-button matSuffix *ngIf="searchValues.archived" aria-label="Clear search" (click)="clearSearch('archived')">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </mat-form-field>
+                  <div class="bulk-actions" *ngIf="archivedSelection.hasValue()">
+                    <button mat-button color="primary" (click)="restoreSelected()">
+                      <mat-icon>restore</mat-icon>
+                      {{ 'admin.jobDescriptionTable.bulk.restore_selected' | translate }} ({{ archivedSelection.selected.length }})
+                    </button>
+                    <button mat-button color="warn" (click)="deleteSelected()">
+                      <mat-icon>delete</mat-icon>
+                      {{ 'admin.jobDescriptionTable.bulk.delete_selected' | translate }} ({{ archivedSelection.selected.length }})
+                    </button>
+                  </div>
                 </div>
               </div>
               <!-- Similar table structure for archived job descriptions -->
@@ -327,19 +375,19 @@ interface JobDescriptionDashboard {
                     </td>
                   </ng-container>
                   <ng-container matColumnDef="name">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.name' | translate }}</th>
                     <td mat-cell *matCellDef="let element">{{ element.name || element.title }}</td>
                   </ng-container>
                   <ng-container matColumnDef="dateCreated">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Date Created</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.dateCreated' | translate }}</th>
                     <td mat-cell *matCellDef="let element">{{ getCreatedDate(element) | date:'short' }}</td>
                   </ng-container>
                   <ng-container matColumnDef="dateModified">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Modified</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.dateModified' | translate }}</th>
                     <td mat-cell *matCellDef="let element">{{ getModifiedDate(element) | date:'short' }}</td>
                   </ng-container>
                   <ng-container matColumnDef="type">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.type' | translate }}</th>
                     <td mat-cell *matCellDef="let element">
                       <span class="type-badge type-job-desc">
                         {{ getDashboardType(element) }}
@@ -347,15 +395,15 @@ interface JobDescriptionDashboard {
                     </td>
                   </ng-container>
                   <ng-container matColumnDef="creator">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Creator</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.creator' | translate }}</th>
                     <td mat-cell *matCellDef="let element">{{ getCreatorName(element) }}</td>
                   </ng-container>
                   <ng-container matColumnDef="sections">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Sections</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.sections' | translate }}</th>
                     <td mat-cell *matCellDef="let element">{{ getSectionCount(element) }}</td>
                   </ng-container>
                   <ng-container matColumnDef="dataSource">
-                    <th mat-header-cell *matHeaderCellDef>Data Source</th>
+                    <th mat-header-cell *matHeaderCellDef>{{ 'admin.jobDescriptionTable.columns.dataSource' | translate }}</th>
                     <td mat-cell *matCellDef="let element">
                       <div class="data-source">
                         <div class="source-title">{{ getDataSourceInfo(element).title }}</div>
@@ -366,7 +414,7 @@ interface JobDescriptionDashboard {
                     </td>
                   </ng-container>
                   <ng-container matColumnDef="actions">
-                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <th mat-header-cell *matHeaderCellDef>{{ 'admin.jobDescriptionTable.columns.actions' | translate }}</th>
                     <td mat-cell *matCellDef="let element">
                       <button mat-icon-button [matMenuTriggerFor]="actionsMenu3">
                         <mat-icon>more_vert</mat-icon>
@@ -374,15 +422,15 @@ interface JobDescriptionDashboard {
                       <mat-menu #actionsMenu3="matMenu">
                         <button mat-menu-item (click)="viewJobDescription(element)">
                           <mat-icon>visibility</mat-icon>
-                          <span>View</span>
+                          <span>{{ 'admin.jobDescriptionTable.actions.view' | translate }}</span>
                         </button>
                         <button mat-menu-item (click)="restoreJobDescription(element)">
                           <mat-icon>restore</mat-icon>
-                          <span>Restore</span>
+                          <span>{{ 'admin.jobDescriptionTable.actions.restore' | translate }}</span>
                         </button>
                         <button mat-menu-item (click)="deleteJobDescription(element)" color="warn">
                           <mat-icon>delete</mat-icon>
-                          <span>Delete Permanently</span>
+                          <span>{{ 'admin.jobDescriptionTable.actions.delete_permanently' | translate }}</span>
                         </button>
                       </mat-menu>
                     </td>
@@ -391,7 +439,7 @@ interface JobDescriptionDashboard {
                   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                 </table>
               </div>
-              <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+              <mat-paginator #archivedPaginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
             </div>
           </mat-tab>
         </mat-tab-group>
@@ -432,6 +480,10 @@ interface JobDescriptionDashboard {
     .bulk-actions { display: flex; gap: 12px; }
     .bulk-actions button { border-radius: 8px; font-weight: 700; text-transform: none; }
 
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .search-field { width: 320px; min-width: 200px; }
+    .search-field .mat-form-field-wrapper { padding: 0 !important; }
+
     .table-container { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(2,6,23,0.06); border: 1px solid #e5eef5; }
 
     .loading-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; color: #6b7280; }
@@ -461,6 +513,15 @@ interface JobDescriptionDashboard {
     ::ng-deep .mat-paginator .mat-select-value-text, ::ng-deep .mat-mdc-paginator .mat-select-value-text,
     ::ng-deep .mat-paginator .mat-paginator-range-label, ::ng-deep .mat-mdc-paginator .mat-paginator-range-label { font-weight: 800 !important; color: #111827 !important; }
 
+    /* Stronger active tab contrast */
+    ::ng-deep .mat-mdc-tab-header .mat-mdc-tab { opacity: .8; transition: background .2s ease, opacity .2s ease; }
+    ::ng-deep .mat-mdc-tab-header .mat-mdc-tab.mdc-tab--active {
+      opacity: 1;
+      background: rgba(255,255,255,0.2);
+      border-bottom: 3px solid #ffffff;
+      border-top-left-radius: 8px; border-top-right-radius: 8px;
+    }
+
     /* Checkbox primary color aligned to sidebar deep blue */
     ::ng-deep .mat-mdc-checkbox .mdc-checkbox__background { border-color: #306e8b !important; }
     ::ng-deep .mat-mdc-checkbox.mat-mdc-checkbox-checked .mdc-checkbox { background-color: #306e8b !important; border-color: #306e8b !important; }
@@ -476,6 +537,9 @@ export class JobDescriptionTableComponent implements OnInit, AfterViewInit {
   @ViewChild('templatesSort') templatesSort!: MatSort;
   @ViewChild('createdSort') createdSort!: MatSort;
   @ViewChild('archivedSort') archivedSort!: MatSort;
+  @ViewChild('templatesPaginator') templatesPaginator!: MatPaginator;
+  @ViewChild('createdPaginator') createdPaginator!: MatPaginator;
+  @ViewChild('archivedPaginator') archivedPaginator!: MatPaginator;
   
   selectedTabIndex = 0;
   displayedColumns: string[] = ['select', 'name', 'dateCreated', 'dateModified', 'type', 'creator', 'sections', 'dataSource', 'actions'];
@@ -492,6 +556,9 @@ export class JobDescriptionTableComponent implements OnInit, AfterViewInit {
   createdData = new MatTableDataSource<JobDescriptionDashboard>([]);
   archivedData = new MatTableDataSource<JobDescriptionDashboard>([]);
 
+  // Search values per tab
+  searchValues: { [key in 'templates' | 'created' | 'archived']: string } = { templates: '', created: '', archived: '' };
+
   constructor(
     private dashboardService: DashboardBuilderService,
     private router: Router,
@@ -505,6 +572,8 @@ export class JobDescriptionTableComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.attachSorters();
+    this.attachPaginators();
+    this.setupFilterPredicates();
   }
 
   async loadJobDescriptionDashboards(): Promise<void> {
@@ -547,6 +616,75 @@ export class JobDescriptionTableComponent implements OnInit, AfterViewInit {
       this.archivedData.sort = this.archivedSort;
       this.archivedData.sortingDataAccessor = this.customSortAccessor.bind(this);
     }
+  }
+
+  attachPaginators(): void {
+    if (this.templatesPaginator) {
+      this.templatesData.paginator = this.templatesPaginator;
+    }
+    if (this.createdPaginator) {
+      this.createdData.paginator = this.createdPaginator;
+    }
+    if (this.archivedPaginator) {
+      this.archivedData.paginator = this.archivedPaginator;
+    }
+  }
+
+  setupFilterPredicates(): void {
+    const predicate = this.buildFilterPredicate();
+    this.templatesData.filterPredicate = predicate;
+    this.createdData.filterPredicate = predicate;
+    this.archivedData.filterPredicate = predicate;
+  }
+
+  buildFilterPredicate(): (data: JobDescriptionDashboard, filter: string) => boolean {
+    return (data: JobDescriptionDashboard, filter: string): boolean => {
+      const term = (filter || '').toLowerCase();
+      if (!term) return true;
+      const name = (data.name || data.title || '').toLowerCase();
+      const creator = ((data.createdBy?.firstName || '') + ' ' + (data.createdBy?.lastName || '')).toLowerCase();
+      const sourceTitle = (data.sources && data.sources[0]?.certification) ? (data.sources[0]!.certification as string).toLowerCase() : '';
+      const sourceClasses = (data.sources && data.sources[0]?.classes || []).join(',').toLowerCase();
+      const type = this.getDashboardType(data).toLowerCase();
+      return (
+        name.includes(term) ||
+        creator.includes(term) ||
+        sourceTitle.includes(term) ||
+        sourceClasses.includes(term) ||
+        type.includes(term)
+      );
+    };
+  }
+
+  onSearchInput(table: 'templates' | 'created' | 'archived', event: Event): void {
+    const val = (event.target as HTMLInputElement).value || '';
+    this.searchValues[table] = val;
+    const ds = this.getDataSourceRef(table);
+    ds.filter = val.trim().toLowerCase();
+    if (ds.paginator) ds.paginator.firstPage();
+  }
+
+  clearSearch(table: 'templates' | 'created' | 'archived'): void {
+    this.searchValues[table] = '';
+    const ds = this.getDataSourceRef(table);
+    ds.filter = '';
+    if (ds.paginator) ds.paginator.firstPage();
+  }
+
+  private getDataSourceRef(table: 'templates' | 'created' | 'archived'): MatTableDataSource<JobDescriptionDashboard> {
+    switch (table) {
+      case 'templates': return this.templatesData;
+      case 'created': return this.createdData;
+      case 'archived': return this.archivedData;
+    }
+  }
+
+  onTabChange(): void {
+    // re-attach to be safe when tab content changes
+    setTimeout(() => {
+      this.attachSorters();
+      this.attachPaginators();
+    });
   }
 
   private organizeJobDescriptionDashboards(): void {

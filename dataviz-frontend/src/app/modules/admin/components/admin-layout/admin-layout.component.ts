@@ -78,15 +78,15 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
               <div class="sub-menu" *ngIf="isDashboardBuilderExpanded">
                 <a routerLink="/admin/dashboard-list" routerLinkActive="active" class="sub-nav-item">
                   <mat-icon>view_module</mat-icon>
-                  <span>Dashboard Card</span>
+                  <span>{{ 'admin.navigation.dashboard_card' | translate }}</span>
                 </a>
                 <a routerLink="/admin/dashboard-create" routerLinkActive="active" class="sub-nav-item">
                   <mat-icon>add_circle</mat-icon>
-                  <span>Add New Dashboard</span>
+                  <span>{{ 'admin.navigation.add_new_dashboard' | translate }}</span>
                 </a>
                 <a routerLink="/admin/dashboard-table" routerLinkActive="active" class="sub-nav-item">
                   <mat-icon>table_view</mat-icon>
-                  <span>Table of Dashboard</span>
+                  <span>{{ 'admin.navigation.table_of_dashboard' | translate }}</span>
                 </a>
               </div>
             </div>
@@ -105,15 +105,15 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
               <div class="sub-menu" *ngIf="isJobDescriptionExpanded">
                 <a routerLink="/admin/job-description" routerLinkActive="active" class="sub-nav-item">
                   <mat-icon>view_module</mat-icon>
-                  <span>Dashboard Card</span>
+                  <span>{{ 'admin.navigation.dashboard_card' | translate }}</span>
                 </a>
                 <a routerLink="/admin/job-description-create" routerLinkActive="active" class="sub-nav-item">
                   <mat-icon>add_circle</mat-icon>
-                  <span>Add New Dashboard</span>
+                  <span>{{ 'admin.navigation.add_new_dashboard' | translate }}</span>
                 </a>
                 <a routerLink="/admin/job-description-table" routerLinkActive="active" class="sub-nav-item">
                   <mat-icon>table_view</mat-icon>
-                  <span>Table of Dashboard</span>
+                  <span>{{ 'admin.navigation.table_of_dashboard' | translate }}</span>
                 </a>
               </div>
             </div>

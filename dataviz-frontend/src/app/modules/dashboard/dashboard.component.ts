@@ -15,6 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { NotificationService } from '@dataviz/services/notification/notification.service';
 import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 import { TranslationService } from 'app/shared/services/translation/translation.service';
+import { QuickSearchComponent } from 'app/shared/components/quick-search/quick-search.component';
 
 import { AuthService, User } from '../../core/auth/auth.service';
 import { DashboardService, DashboardData, FilterData, CertificationFilter, SectionFilter, Section } from '../../shared/services/dashboard.service';
@@ -46,7 +47,8 @@ declare var am5geodata_worldLow: any;
     MatSnackBarModule,
     MatTooltipModule,
     TranslatePipe,
-    SectionComponent
+    SectionComponent,
+    QuickSearchComponent
   ],
   templateUrl: "./dashboard.component.html",
   styleUrl: "./dashboard.component.scss",
@@ -341,7 +343,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   // Toggle section visibility from frozen header
   toggleSectionVisibility(sectionId: string, event: any): void {
     const isChecked = event.target.checked;
-    const wasVisible = this.sectionVisibility[sectionId];
     
     // Update both visibility states immediately
     this.sectionVisibility[sectionId] = isChecked;
@@ -351,17 +352,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.updateVisibleSections();
     this.syncSelectedSectionsFromVisibility();
     
-    if (isChecked && !wasVisible) {
-      // Section is being shown - scroll to it
-      setTimeout(() => {
-        this.scrollToSection(sectionId);
-      }, 100); // Small delay to ensure DOM is updated
-    } else if (!isChecked && wasVisible) {
-      // Section is being hidden - scroll to first visible section
-      setTimeout(() => {
-        this.scrollToFirstVisibleSection();
-      }, 100);
-    }
+    // No auto scrolling - only toggle visibility and button state
   }
   
   // Handle sidebar checkbox changes (pending state)
@@ -392,7 +383,17 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   }
   
-  // Scroll to specific section
+  // Navigate to section (from navigation button)
+  navigateToSection(sectionId: string): void {
+    // Only navigate if section is visible
+    if (!this.sectionVisibility[sectionId]) {
+      return;
+    }
+    
+    this.scrollToSection(sectionId);
+  }
+
+  // Scroll to specific section (internal method)
   scrollToSection(sectionId: string): void {
     if (!this.sectionVisibility[sectionId]) {
       return; // Don't scroll to hidden sections

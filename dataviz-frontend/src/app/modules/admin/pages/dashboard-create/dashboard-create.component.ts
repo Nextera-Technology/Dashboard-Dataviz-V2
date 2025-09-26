@@ -135,7 +135,7 @@ import { Router } from '@angular/router';
 
     .create-btn {
       padding: 12px 24px;
-      font-size: 16px;
+      font-size: 13px;
       font-weight: 600;
       border-radius: 8px;
       text-transform: none;

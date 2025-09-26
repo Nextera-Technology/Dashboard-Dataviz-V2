@@ -12,6 +12,7 @@ import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { TranslationService } from '../../services/translation/translation.service';
 import { Apollo } from 'apollo-angular';
+import { ShareDataService } from 'app/shared/services/share-data.service';
 import { 
   QUICK_SEARCH_QUERY, 
   QuickSearchInput, 
@@ -86,7 +87,8 @@ export class QuickSearchComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private apollo: Apollo,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    private shareDataService: ShareDataService
   ) {}
   
   ngOnInit() {
@@ -319,19 +321,20 @@ export class QuickSearchComponent implements OnInit, OnDestroy {
       this.router.navigate(['/admin/user-management']);
     } else if (cat === 'ES_DASHBOARD' || cat === 'JOB_DESC_DASHBOARD') {
       // Navigate to dashboard view
-      this.router.navigate(['/dashboard', result.id]);
+      this.shareDataService.setDashboardId(result.id);
+      this.router.navigate(['/dashboard']);
     } else if (cat === 'SECTION') {
-      // Navigate to section
-      this.router.navigate(['/admin/sections', result.id]);
+      // Not implemented yet (requires parent dashboard id) - skip
+      return;
     } else if (cat === 'WIDGET') {
-      // Navigate to widget settings
-      this.router.navigate(['/admin/widgets', result.id]);
+      // Not implemented yet (requires parent dashboard id) - skip
+      return;
     } else if (cat === 'STUDENT') {
-      // Navigate to student profile
-      this.router.navigate(['/admin/students', result.id]);
+      // Not implemented (no student route) - skip
+      return;
     } else if (cat === 'USER_TYPE') {
-      // Navigate to role management
-      this.router.navigate(['/admin/roles', result.id]);
+      // Not implemented (no roles route) - skip
+      return;
     }
     
     this.closeSearch();
@@ -360,5 +363,24 @@ export class QuickSearchComponent implements OnInit, OnDestroy {
   getTranslation(key: string, fallback: string): string {
     const translation = this.translationService.translate(key);
     return translation && translation !== key ? translation : fallback;
+  }
+
+  // Action handlers for explicit buttons
+  viewDashboard(result: QuickSearchResult): void {
+    if (!result?.id) return;
+    this.shareDataService.setDashboardId(result.id);
+    this.router.navigate(['/dashboard']);
+    this.closeSearch();
+  }
+
+  manageDashboard(result: QuickSearchResult): void {
+    if (!result?.id) return;
+    this.router.navigate(['/admin/dashboard-builder', result.id]);
+    this.closeSearch();
+  }
+
+  manageUsers(): void {
+    this.router.navigate(['/admin/user-management']);
+    this.closeSearch();
   }
 }

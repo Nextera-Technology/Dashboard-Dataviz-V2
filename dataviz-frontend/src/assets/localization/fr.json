@@ -57,6 +57,7 @@
           "archived": "Tableaux de bord archivés"
         },
         "loading": "Chargement des tableaux de bord...",
+        "search_placeholder": "Rechercher des tableaux de bord...",
         "columns": {
           "name": "Nom",
           "dateCreated": "Date de création",
@@ -70,7 +71,9 @@
         "actions": {
           "view": "Voir",
           "manage": "Gérer",
-          "archive": "Archiver"
+          "archive": "Archiver",
+          "restore": "Restaurer",
+          "delete_permanently": "Supprimer définitivement"
         },
         "bulk": {
           "archive_selected": "Archiver la sélection",
@@ -90,6 +93,7 @@
           "archived": "Descriptions de poste archivées"
         },
         "loading": "Chargement des tableaux de bord de descriptions de poste...",
+        "search_placeholder": "Rechercher des descriptions de poste...",
         "columns": {
           "name": "Nom",
           "dateCreated": "Date de création",
@@ -103,13 +107,20 @@
         "actions": {
           "view": "Voir",
           "manage": "Gérer",
-          "archive": "Archiver"
+          "archive": "Archiver",
+          "restore": "Restaurer",
+          "delete_permanently": "Supprimer définitivement"
         },
         "bulk": {
           "archive_selected": "Archiver la sélection",
           "restore_selected": "Restaurer la sélection",
           "delete_selected": "Supprimer la sélection"
         }
+      },
+      "navigation": {
+        "dashboard_card": "Carte de tableau de bord",
+        "add_new_dashboard": "Ajouter un nouveau tableau de bord",
+        "table_of_dashboard": "Table des tableaux de bord"
       },
       "userManagement": {
         "page_title": "Gestion des utilisateurs",
