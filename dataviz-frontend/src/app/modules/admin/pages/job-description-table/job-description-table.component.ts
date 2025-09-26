@@ -490,9 +490,9 @@ interface JobDescriptionDashboard {
     .loading-container p { margin-top: 12px; font-size: 0.9rem; }
 
     .job-description-table { width: 100%; border-collapse: separate; border-spacing: 0; }
-    .job-description-table th, .job-description-table td { padding: 14px 20px; text-align: left; vertical-align: middle; font-weight: 700; }
-    .job-description-table th { background: linear-gradient(180deg, #ffffff, #f3f7fb); color: #1f2937; font-size: 0.75rem; letter-spacing: .02em; border-bottom: 1px solid #e5eef5; position: sticky; top: 0; z-index: 2; }
-    .job-description-table td { border-bottom: 1px solid #eef2f7; font-size: 0.95rem; font-weight: 700; }
+    .job-description-table th, .job-description-table td { padding: 14px 20px; text-align: left; vertical-align: middle; font-weight: 400; }
+    .job-description-table th { background: linear-gradient(180deg, #ffffff, #f3f7fb); color: #1f2937; font-size: 0.75rem; letter-spacing: .02em; border-bottom: 1px solid #e5eef5; position: sticky; top: 0; z-index: 2; font-weight: 600; }
+    .job-description-table td { border-bottom: 1px solid #eef2f7; font-size: 0.95rem; font-weight: 400; }
     .job-description-table .mat-mdc-row:nth-child(even), .job-description-table .data-row:nth-child(even) { background: #f7fbff; }
     .job-description-table tr:hover { background: #eef6fb; transition: background .15s ease; }
 
@@ -770,7 +770,7 @@ export class JobDescriptionTableComponent implements OnInit, AfterViewInit {
   }
 
   getDashboardType(dashboard: JobDescriptionDashboard): string {
-    return 'Job Description';
+    return 'Employability Survey';
   }
 
   getCreatorName(dashboard: JobDescriptionDashboard): string {

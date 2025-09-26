@@ -16,6 +16,7 @@ import { ShareDataService } from "app/shared/services/share-data.service";
 import Swal from 'sweetalert2';
 import { NotificationService } from '@dataviz/services/notification/notification.service';
 import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
+import { TranslationService } from 'app/shared/services/translation/translation.service';
 
 // Create a specialized service for Job Description dashboards
 @Injectable({
@@ -85,7 +86,8 @@ export class JobDescriptionListComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private shareDataService: ShareDataService,
-    private notifier: NotificationService
+    private notifier: NotificationService,
+    private translationService: TranslationService
   ) {}
 
   ngOnInit(): void {
@@ -226,17 +228,22 @@ export class JobDescriptionListComponent implements OnInit {
             
             // Show success message
             const message = result.openWithAllData
-              ? 'Dashboard opened with all school data'
-              : `Dashboard opened with school filter: ${result.selectedSchools.join(', ')}`;
+              ? this.translationService.translate('shared.dashboard.notifications.opened_all_data')
+              : this.translationService.translate('shared.dashboard.notifications.opened_filtered_data').replace('{{schools}}', result.selectedSchools.join(', '));
             
-            await this.notifier.success(message, 'Dashboard Opened');
+            const title = this.translationService.translate('shared.dashboard.notifications.opened_title');
+            await this.notifier.success(message, title);
           } else {
-            await this.notifier.error('Failed to open dashboard with school filter', 'Error');
+            const errorMessage = this.translationService.translate('shared.dashboard.notifications.failed_open_filter');
+            const errorTitle = this.translationService.translate('shared.dashboard.notifications.error_title');
+            await this.notifier.error(errorMessage, errorTitle);
           }
         } catch (error) {
           loadingDialogRef.close();
           console.error('Error opening dashboard:', error);
-          await this.notifier.error('Failed to open dashboard. Please try again.', 'Error');
+          const errorMessage = this.translationService.translate('shared.dashboard.notifications.failed_open_generic');
+          const errorTitle = this.translationService.translate('shared.dashboard.notifications.error_title');
+          await this.notifier.error(errorMessage, errorTitle);
         }
       }
     });

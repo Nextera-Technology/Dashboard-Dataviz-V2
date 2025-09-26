@@ -537,7 +537,7 @@ interface Dashboard {
     .dashboard-table { width: 100%; border-collapse: separate; border-spacing: 0; }
 
     .dashboard-table th, .dashboard-table td {
-      padding: 14px 20px; text-align: left; vertical-align: middle; font-weight: 700;
+      padding: 14px 20px; text-align: left; vertical-align: middle; font-weight: 400;
     }
 
     .dashboard-table th {
@@ -547,9 +547,10 @@ interface Dashboard {
       letter-spacing: .02em;
       border-bottom: 1px solid #e5eef5;
       position: sticky; top: 0; z-index: 2;
+      font-weight: 600;
     }
 
-    .dashboard-table td { border-bottom: 1px solid #eef2f7; font-size: 0.95rem; font-weight: 700; }
+    .dashboard-table td { border-bottom: 1px solid #eef2f7; font-size: 0.95rem; font-weight: 400; }
 
     .dashboard-table .mat-mdc-row:nth-child(even), .dashboard-table .data-row:nth-child(even) { background: #f7fbff; }
     .dashboard-table tr:hover { background: #eef6fb; transition: background .15s ease; }
@@ -829,9 +830,9 @@ export class DashboardTableComponent implements OnInit, AfterViewInit {
   getDashboardType(dashboard: Dashboard): string {
     // Determine type based on typeOfUsage or status
     if (dashboard.typeOfUsage === 'JOB_DESCRIPTION_EVALUATION') {
-      return 'Job Description';
+      return 'Employability Survey';
     }
-    return 'Dashboard';
+    return 'Employability Survey';
   }
 
   getCreatorName(dashboard: Dashboard): string {

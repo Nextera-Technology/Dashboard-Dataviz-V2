@@ -282,17 +282,22 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
             
             // Show success message
             const message = result.openWithAllData
-              ? 'Dashboard opened with all school data'
-              : `Dashboard opened with school filter: ${result.selectedSchools.join(', ')}`;
+              ? this.translation.translate('shared.dashboard.notifications.opened_all_data')
+              : this.translation.translate('shared.dashboard.notifications.opened_filtered_data').replace('{{schools}}', result.selectedSchools.join(', '));
             
-            await this.notifier.success(message, 'Dashboard Opened');
+            const title = this.translation.translate('shared.dashboard.notifications.opened_title');
+            await this.notifier.success(message, title);
           } else {
-            await this.notifier.error('Failed to open dashboard with school filter', 'Error');
+            const errorMessage = this.translation.translate('shared.dashboard.notifications.failed_open_filter');
+            const errorTitle = this.translation.translate('shared.dashboard.notifications.error_title');
+            await this.notifier.error(errorMessage, errorTitle);
           }
         } catch (error) {
           loadingDialogRef.close();
           console.error('Error opening dashboard:', error);
-          await this.notifier.error('Failed to open dashboard. Please try again.', 'Error');
+          const errorMessage = this.translation.translate('shared.dashboard.notifications.failed_open_generic');
+          const errorTitle = this.translation.translate('shared.dashboard.notifications.error_title');
+          await this.notifier.error(errorMessage, errorTitle);
         }
       }
     });

@@ -609,6 +609,16 @@
           "error_message": "Failed to generate PDF. Please try again later.",
           "confirm_button": "OK"
         }
+      },
+      "dashboard": {
+        "notifications": {
+          "opened_all_data": "Dashboard opened with all school data",
+          "opened_filtered_data": "Dashboard opened with school filter: {{schools}}",
+          "opened_title": "Dashboard Opened",
+          "failed_open_filter": "Failed to open dashboard with school filter",
+          "failed_open_generic": "Failed to open dashboard. Please try again.",
+          "error_title": "Error"
+        }
       }
     }
   }

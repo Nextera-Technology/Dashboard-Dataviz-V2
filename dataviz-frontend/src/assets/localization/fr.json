@@ -602,6 +602,16 @@
           "error_message": "Impossible de générer le PDF. Veuillez réessayer plus tard.",
           "confirm_button": "OK"
         }
+      },
+      "dashboard": {
+        "notifications": {
+          "opened_all_data": "Tableau de bord ouvert avec toutes les données d'école",
+          "opened_filtered_data": "Tableau de bord ouvert avec filtre d'école : {{schools}}",
+          "opened_title": "Tableau de Bord Ouvert",
+          "failed_open_filter": "Échec de l'ouverture du tableau de bord avec filtre d'école",
+          "failed_open_generic": "Échec de l'ouverture du tableau de bord. Veuillez réessayer.",
+          "error_title": "Erreur"
+        }
       }
     }
   }
