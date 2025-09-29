@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, HostListener } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, HostListener, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -22,6 +22,7 @@ import { DashboardService, DashboardData, FilterData, CertificationFilter, Secti
 import { SectionComponent } from '../../shared/components/sections/section.component';
 import { DashboardBuilderService } from '../admin/pages/dashboard-builder/dashboard-builder.service';
 import { ShareDataService } from 'app/shared/services/share-data.service';
+import { Subscription } from 'rxjs';
 
 declare var am5: any;
 declare var am5xy: any;
@@ -53,7 +54,7 @@ declare var am5geodata_worldLow: any;
   templateUrl: "./dashboard.component.html",
   styleUrl: "./dashboard.component.scss",
 })
-export class DashboardComponent implements OnInit, AfterViewInit {
+export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('revenueChart') revenueChartRef!: ElementRef;
   @ViewChild('salesChart') salesChartRef!: ElementRef;
   @ViewChild('userActivityChart') userActivityChartRef!: ElementRef;
@@ -85,6 +86,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   // Sidebar collapse state
   isSidebarCollapsed: boolean = false;
+
+  // Subscriptions
+  private shareSub: Subscription = new Subscription();
 
   get filteredCertifications() {
     if (!this.certificationSearch) {
@@ -172,6 +176,16 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
     this.loadSidebarState();
     this.loadDashboards();
+
+    // React to dashboardId changes from Quick Search when navigating to the same route
+    this.shareSub.add(
+      this.shareDataService.dashboardId$.subscribe((id) => {
+        if (id && id !== this.dashboardId) {
+          this.dashboardId = id;
+          this.loadDashboards();
+        }
+      })
+    );
   }
 
   async loadDashboards() {
@@ -502,5 +516,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     if (savedState !== null) {
       this.isSidebarCollapsed = savedState === 'true';
     }
+  }
+
+  ngOnDestroy(): void {
+    this.shareSub?.unsubscribe();
   }
 }

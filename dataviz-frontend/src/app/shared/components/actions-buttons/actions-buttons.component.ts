@@ -4,6 +4,7 @@ import { ScopeDialogComponent } from '../action-dialogs/scope-dialog/scope-dialo
 import { InformationDialogComponent } from '../action-dialogs/information-dialog/information-dialog.component';
 import { ShareDataService } from 'app/shared/services/share-data.service';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 import { RepositoryFactory } from '@dataviz/repositories/repository.factory';
 import { DashboardBuilderRepository } from '@dataviz/repositories/dashboard-builder/dashboard-builder.repository';
 import { environment } from 'environments/environment';
@@ -20,7 +21,7 @@ import { toPng, toBlob } from 'html-to-image';
 
 @Component({
   selector: 'app-actions-buttons',
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './actions-buttons.component.html',
   styleUrl: './actions-buttons.component.scss'
 })

@@ -599,8 +599,11 @@
         "list": "List"
       },
       "export": {
+        "csv": "Export CSV",
+        "json": "Export JSON",
+        "excel": "Export Excel",
         "pdf": {
-          "button": "PDF",
+          "button": "Export PDF",
           "preparing_title": "Preparing PDF...",
           "preparing_message": "Estimated time ~30 seconds",
           "success_title": "PDF Export Successful",

@@ -167,6 +167,19 @@ export class QuickSearchComponent implements OnInit, OnDestroy {
     this.groupedResults = [];
     this.currentPage = 1;
     this.hasMoreResults = false;
+    this.loading = false;
+
+    // Reset counts shown on the category tabs
+    this.categories.forEach(c => c.count = 0);
+
+    // Important: emit a different value so distinctUntilChanged doesn't suppress
+    // the same query when reopening (e.g., "test" -> close -> reopen -> "test").
+    // This ensures the next identical query triggers performSearch again.
+    try {
+      this.searchSubject.next('');
+    } catch (e) {
+      // no-op
+    }
   }
   
   onSearchQueryChange(query: string) {
