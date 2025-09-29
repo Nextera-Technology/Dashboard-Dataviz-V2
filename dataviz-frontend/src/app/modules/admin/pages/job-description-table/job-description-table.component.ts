@@ -153,7 +153,7 @@ interface JobDescriptionDashboard {
                   <ng-container matColumnDef="type">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.type' | translate }}</th>
                     <td mat-cell *matCellDef="let element">
-                      <span class="type-badge type-job-desc">
+                      <span class="type-badge type-job-desc" style="text-align:center">
                         {{ getDashboardType(element) }}
                       </span>
                     </td>
@@ -770,7 +770,7 @@ export class JobDescriptionTableComponent implements OnInit, AfterViewInit {
   }
 
   getDashboardType(dashboard: JobDescriptionDashboard): string {
-    return 'Employability Survey';
+    return 'Job Description';
   }
 
   getCreatorName(dashboard: JobDescriptionDashboard): string {

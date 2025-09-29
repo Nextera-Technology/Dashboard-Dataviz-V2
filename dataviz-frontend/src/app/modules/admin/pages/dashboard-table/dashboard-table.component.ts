@@ -156,7 +156,7 @@ interface Dashboard {
                   <ng-container matColumnDef="type">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.dashboardTable.columns.type' | translate }}</th>
                     <td mat-cell *matCellDef="let element">
-                      <span class="type-badge type-dashboard">
+                      <span class="type-badge type-dashboard" style="text-align:center">
                         {{ getDashboardType(element) }}
                       </span>
                     </td>
@@ -830,7 +830,7 @@ export class DashboardTableComponent implements OnInit, AfterViewInit {
   getDashboardType(dashboard: Dashboard): string {
     // Determine type based on typeOfUsage or status
     if (dashboard.typeOfUsage === 'JOB_DESCRIPTION_EVALUATION') {
-      return 'Employability Survey';
+      return 'Job Description';
     }
     return 'Employability Survey';
   }
