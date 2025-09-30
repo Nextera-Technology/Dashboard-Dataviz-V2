@@ -106,32 +106,69 @@
             <button class="clear-filters" (click)="applySectionFilters()">{{ 'dashboard.sidebar.apply_filters' | translate }}</button>
         </div>
 
-        <!-- Job Description Section -->
-        <div class="job-description-section" *ngIf="isAdminUser() && !isSidebarCollapsed">
-            <div class="section-title job-description-title">
-                <span class="section-icon">📋</span>
-                {{ 'admin.layout.jobDescription' | translate }}
-            </div>
-            <div class="job-description-menu">
-                <a routerLink="/admin/job-description" class="job-description-menu-item">
-                    <mat-icon>work</mat-icon>
-                    <span>{{ 'admin.jobDescriptionList.header_title' | translate }}</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Admin Navigation Section -->
+        <!-- Admin Navigation Section with Expandable Menus -->
         <div class="admin-section" *ngIf="isAdminUser() && !isSidebarCollapsed">
             <div class="section-title admin-title">
                 <span class="section-icon">⚙️</span>
                 {{ 'admin.layout.title' | translate }}
             </div>
             <div class="admin-menu">
-                <a routerLink="/admin/dashboard-list" class="admin-menu-item">
-                    <mat-icon>dashboard</mat-icon>
-                    <span>{{ 'admin.dashboardList.header_title' | translate }}</span>
-                </a>
-                <a routerLink="/admin/user-management" class="admin-menu-item">
+                <!-- Dashboard Builder with Sub-menu -->
+                <div class="nav-item-group">
+                    <div class="nav-item" 
+                         [class.expanded]="isDashboardBuilderExpanded" 
+                         (click)="toggleDashboardBuilderMenu()">
+                        <mat-icon>dashboard</mat-icon>
+                        <span>{{ 'admin.dashboardList.header_title' | translate }}</span>
+                        <mat-icon class="expand-icon">{{ isDashboardBuilderExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+                    </div>
+                    
+                    <!-- Dashboard Builder Sub-menu -->
+                    <div class="sub-menu" *ngIf="isDashboardBuilderExpanded">
+                        <a routerLink="/admin/dashboard-list" routerLinkActive="active" class="sub-nav-item">
+                            <mat-icon>view_module</mat-icon>
+                            <span>{{ 'admin.navigation.dashboard_card' | translate }}</span>
+                        </a>
+                        <a routerLink="/admin/dashboard-create" routerLinkActive="active" class="sub-nav-item">
+                            <mat-icon>add_circle</mat-icon>
+                            <span>{{ 'admin.navigation.add_new_dashboard' | translate }}</span>
+                        </a>
+                        <a routerLink="/admin/dashboard-table" routerLinkActive="active" class="sub-nav-item">
+                            <mat-icon>table_view</mat-icon>
+                            <span>{{ 'admin.navigation.table_of_dashboard' | translate }}</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Job Description with Sub-menu -->
+                <div class="nav-item-group">
+                    <div class="nav-item" 
+                         [class.expanded]="isJobDescriptionExpanded" 
+                         (click)="toggleJobDescriptionMenu()">
+                        <mat-icon>work</mat-icon>
+                        <span>{{ 'admin.layout.jobDescription' | translate }}</span>
+                        <mat-icon class="expand-icon">{{ isJobDescriptionExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+                    </div>
+                    
+                    <!-- Job Description Sub-menu -->
+                    <div class="sub-menu" *ngIf="isJobDescriptionExpanded">
+                        <a routerLink="/admin/job-description" routerLinkActive="active" class="sub-nav-item">
+                            <mat-icon>view_module</mat-icon>
+                            <span>{{ 'admin.navigation.dashboard_card' | translate }}</span>
+                        </a>
+                        <a routerLink="/admin/job-description-create" routerLinkActive="active" class="sub-nav-item">
+                            <mat-icon>add_circle</mat-icon>
+                            <span>{{ 'admin.navigation.add_new_dashboard' | translate }}</span>
+                        </a>
+                        <a routerLink="/admin/job-description-table" routerLinkActive="active" class="sub-nav-item">
+                            <mat-icon>table_view</mat-icon>
+                            <span>{{ 'admin.navigation.table_of_dashboard' | translate }}</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- User Management (no sub-menu) -->
+                <a routerLink="/admin/user-management" routerLinkActive="active" class="nav-item">
                     <mat-icon>people</mat-icon>
                     <span>{{ 'admin.layout.userManagement' | translate }}</span>
                 </a>
@@ -150,16 +187,16 @@
                 <mat-icon>view_agenda</mat-icon>
             </div>
 
+            <!-- Admin Dashboard Builder Icon -->
+            <a *ngIf="isAdminUser()" routerLink="/admin/dashboard-list" class="collapsed-menu-item" 
+               [matTooltip]="'admin.dashboardList.header_title' | translate" matTooltipPosition="right">
+                <mat-icon>dashboard</mat-icon>
+            </a>
+
             <!-- Job Description Icon (Admin only) -->
             <a *ngIf="isAdminUser()" routerLink="/admin/job-description" class="collapsed-menu-item" 
                [matTooltip]="'admin.layout.jobDescription' | translate" matTooltipPosition="right">
                 <mat-icon>work</mat-icon>
-            </a>
-
-            <!-- Admin Dashboard Icon -->
-            <a *ngIf="isAdminUser()" routerLink="/admin/dashboard-list" class="collapsed-menu-item" 
-               [matTooltip]="'admin.dashboardList.header_title' | translate" matTooltipPosition="right">
-                <mat-icon>dashboard</mat-icon>
             </a>
 
             <!-- Admin User Management Icon -->

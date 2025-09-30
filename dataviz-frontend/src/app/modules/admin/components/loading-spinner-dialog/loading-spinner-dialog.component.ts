@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
+import { TranslationService } from 'app/shared/services/translation/translation.service';
 
 export interface LoadingSpinnerDialogData {
   message: string;
@@ -15,7 +17,8 @@ export interface LoadingSpinnerDialogData {
     CommonModule,
     MatDialogModule,
     MatProgressSpinnerModule,
-    MatIconModule
+    MatIconModule,
+    TranslatePipe
   ],
   template: `
     <div class="loading-spinner-dialog">
@@ -31,7 +34,7 @@ export interface LoadingSpinnerDialogData {
           <div class="loading-icon">
             <mat-icon class="dashboard-icon">dashboard</mat-icon>
           </div>
-          <h3 class="loading-title">Processing Request</h3>
+          <h3 class="loading-title">{{ 'shared.dashboard.loading.processing_title' | translate }}</h3>
           <p class="loading-message">{{ data.message }}</p>
           
           <div class="loading-dots">
@@ -212,6 +215,7 @@ export interface LoadingSpinnerDialogData {
 export class LoadingSpinnerDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<LoadingSpinnerDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: LoadingSpinnerDialogData
+    @Inject(MAT_DIALOG_DATA) public data: LoadingSpinnerDialogData,
+    private translationService: TranslationService
   ) {}
 }

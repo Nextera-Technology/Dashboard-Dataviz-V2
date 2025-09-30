@@ -614,6 +614,11 @@
           "failed_open_filter": "Échec de l'ouverture du tableau de bord avec filtre d'école",
           "failed_open_generic": "Échec de l'ouverture du tableau de bord. Veuillez réessayer.",
           "error_title": "Erreur"
+        },
+        "loading": {
+          "processing_title": "Traitement de la Demande",
+          "opening_dashboard": "Ouverture du tableau de bord...",
+          "applying_school_filters": "Application des filtres d'école : {{schools}}..."
         }
       }
     }

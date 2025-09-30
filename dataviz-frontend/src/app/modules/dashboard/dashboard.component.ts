@@ -87,6 +87,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   // Sidebar collapse state
   isSidebarCollapsed: boolean = false;
 
+  // Expandable sub-menu states
+  isDashboardBuilderExpanded: boolean = false;
+  isJobDescriptionExpanded: boolean = false;
+
   // Subscriptions
   private shareSub: Subscription = new Subscription();
 
@@ -175,6 +179,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.loadSidebarState();
+    this.loadExpandableMenuState();
     this.loadDashboards();
 
     // React to dashboardId changes from Quick Search when navigating to the same route
@@ -516,6 +521,30 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (savedState !== null) {
       this.isSidebarCollapsed = savedState === 'true';
     }
+  }
+
+  // Expandable menu state management
+  private loadExpandableMenuState(): void {
+    const dashboardBuilderState = localStorage.getItem('dashboard-view-dashboard-builder-expanded');
+    const jobDescriptionState = localStorage.getItem('dashboard-view-job-description-expanded');
+    
+    if (dashboardBuilderState !== null) {
+      this.isDashboardBuilderExpanded = dashboardBuilderState === 'true';
+    }
+    
+    if (jobDescriptionState !== null) {
+      this.isJobDescriptionExpanded = jobDescriptionState === 'true';
+    }
+  }
+
+  toggleDashboardBuilderMenu(): void {
+    this.isDashboardBuilderExpanded = !this.isDashboardBuilderExpanded;
+    localStorage.setItem('dashboard-view-dashboard-builder-expanded', this.isDashboardBuilderExpanded.toString());
+  }
+
+  toggleJobDescriptionMenu(): void {
+    this.isJobDescriptionExpanded = !this.isJobDescriptionExpanded;
+    localStorage.setItem('dashboard-view-job-description-expanded', this.isJobDescriptionExpanded.toString());
   }
 
   ngOnDestroy(): void {

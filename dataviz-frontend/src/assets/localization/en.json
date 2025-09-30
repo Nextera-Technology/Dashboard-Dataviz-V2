@@ -621,6 +621,11 @@
           "failed_open_filter": "Failed to open dashboard with school filter",
           "failed_open_generic": "Failed to open dashboard. Please try again.",
           "error_title": "Error"
+        },
+        "loading": {
+          "processing_title": "Processing Request",
+          "opening_dashboard": "Opening dashboard...",
+          "applying_school_filters": "Applying school filters: {{schools}}..."
         }
       }
     }

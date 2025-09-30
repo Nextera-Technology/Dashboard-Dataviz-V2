@@ -196,6 +196,11 @@ export class JobDescriptionListComponent implements OnInit {
         this.dialog.closeAll();
         
         // Show loading spinner
+        const loadingMessage = result.openWithAllData 
+          ? this.translationService.translate('shared.dashboard.loading.opening_dashboard')
+          : this.translationService.translate('shared.dashboard.loading.applying_school_filters')
+            .replace('{{schools}}', result.selectedSchools.join(', '));
+            
         const loadingDialogRef = this.dialog.open(LoadingSpinnerDialogComponent, {
           width: '400px',
           disableClose: true,
@@ -203,9 +208,7 @@ export class JobDescriptionListComponent implements OnInit {
           backdropClass: 'loading-backdrop',
           panelClass: 'loading-dialog',
           data: {
-            message: result.openWithAllData 
-              ? 'Opening dashboard...' 
-              : `Applying school filters: ${result.selectedSchools.join(', ')}...`
+            message: loadingMessage
           }
         });
         
