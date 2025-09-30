@@ -504,7 +504,34 @@ export class UserManagementComponent implements OnInit, AfterViewInit {
         this.loadUsers(); // Reload the list
       },
       error: (error) => {
-        this.notifier.errorKey('notifications.user_create_error', { error: error.message || '' });
+        const code = (error && (error.code || error?.originalError?.code)) || '';
+        const graphQLErrors =
+          error?.graphQLErrors ||
+          error?.originalError?.graphQLErrors ||
+          error?.originalError?.error?.graphQLErrors ||
+          error?.originalError?.errors ||
+          error?.errors ||
+          error?.originalError?.networkError?.result?.errors ||
+          error?.networkError?.result?.errors ||
+          [];
+        const gqMsg = Array.isArray(graphQLErrors) && graphQLErrors[0]?.message;
+        const netMsg = error?.originalError?.networkError?.result?.errors?.[0]?.message || error?.networkError?.result?.errors?.[0]?.message;
+        const origMsg = error?.originalError?.message;
+        const topMsg = error?.message;
+        const wrapperRe = /Failed to process the (mutation|query) request/i;
+        const pickMsg = (...vals: any[]) => {
+          for (const v of vals) {
+            if (typeof v === 'string' && v.trim() && !wrapperRe.test(v)) return v;
+          }
+          return '';
+        };
+        const bestMsg = String(pickMsg(gqMsg, netMsg, origMsg, topMsg));
+
+        if (code === 'EMAIL_ALREADY_IN_USE' || /email\s+already\s+in\s+use/i.test(bestMsg)) {
+          this.notifier.errorKey('notifications.email_already_in_use');
+        } else {
+          this.notifier.errorKey('notifications.user_create_error', { error: bestMsg });
+        }
       }
     });
   }

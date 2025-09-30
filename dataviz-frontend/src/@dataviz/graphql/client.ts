@@ -30,6 +30,8 @@ export class GraphqlClient {
             throw {
                 message: `Failed to process the mutation request: ${mutation?.definitions?.[0]?.name?.value}`,
                 originalError: error,
+                graphQLErrors: (error as any)?.graphQLErrors,
+                networkError: (error as any)?.networkError,
                 queryOrMutation: mutation.loc?.source.body,
                 input: JSON.stringify(variables),
             };
@@ -80,6 +82,8 @@ export class GraphqlClient {
             throw {
                 message: `Failed to process the mutation request: ${mutation?.definitions?.[0]?.name?.value}`,
                 originalError: error,
+                graphQLErrors: (error as any)?.graphQLErrors,
+                networkError: (error as any)?.networkError,
                 queryOrMutation: mutation.loc?.source.body,
                 input: JSON.stringify(variables),
                 isUseMultipart, // Include this to track if multipart was used
@@ -111,6 +115,8 @@ export class GraphqlClient {
             throw {
                 message: `Failed to process the query request: ${query?.definitions?.[0]?.name?.value}`,
                 originalError: error,
+                graphQLErrors: (error as any)?.graphQLErrors,
+                networkError: (error as any)?.networkError,
                 queryOrMutation: query.loc?.source.body,
                 input: JSON.stringify(variables),
             };

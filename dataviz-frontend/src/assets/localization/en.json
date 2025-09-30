@@ -489,6 +489,7 @@
       "save_failed": { "title": "Save failed", "message": "Failed to save section. Please try again." },
       "user_created": { "title": "Created", "message": "User created successfully" },
       "user_create_error": { "title": "Unable to Create User", "message": "We couldn't create this user account. Please verify the information and try again. {error}" },
+      "email_already_in_use": { "title": "Email already in use", "message": "This email address is already registered. Please use another email." },
       "user_updated": { "title": "Updated", "message": "User updated successfully" },
       "user_update_error": { "title": "Error", "message": "Error updating user: {error}" },
       "user_deleted": { "title": "Deleted", "message": "User deleted successfully" },

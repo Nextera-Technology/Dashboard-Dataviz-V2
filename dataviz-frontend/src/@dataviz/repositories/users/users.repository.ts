@@ -21,6 +21,72 @@ export class UsersRepository {
   constructor() {}
 
   /**
+   * Extract a meaningful message and a normalized code from GraphQL/Apollo style errors
+   */
+  private extractGraphQLErrorInfo(err: any): { code: string; message: string } {
+    const pick = (...vals: any[]) => vals.find((v) => typeof v === 'string' && v.trim().length > 0);
+
+    // Try to locate GraphQL errors array from various wrappers
+    const graphQLErrors =
+      err?.graphQLErrors ||
+      err?.networkError?.result?.errors ||
+      err?.originalError?.graphQLErrors ||
+      err?.originalError?.error?.graphQLErrors ||
+      err?.originalError?.errors ||
+      err?.errors ||
+      err?.response?.errors ||
+      err?.originalError?.networkError?.result?.errors ||
+      err?.networkError?.result?.errors ||
+      [];
+
+    const firstGQLError = Array.isArray(graphQLErrors) && graphQLErrors.length > 0 ? graphQLErrors[0] : undefined;
+    const nestedMessage = pick(
+      firstGQLError?.message,
+      err?.originalError?.message,
+      err?.originalError?.networkError?.message,
+      err?.originalError?.networkError?.result?.errors?.[0]?.message,
+      err?.message,
+    );
+    const rawMessage = (nestedMessage || '').toString();
+
+    const extensions = firstGQLError?.extensions || err?.originalError?.extensions || err?.extensions || {};
+    const stack = (extensions?.stacktrace || []).join(' ') || '';
+    const status = extensions?.status;
+    const text = `${err?.message || ''} ${err?.originalError?.message || ''} ${rawMessage} ${stack} ${JSON.stringify(err?.originalError || {})}`.toLowerCase();
+
+    // As a last resort, deep-scan object for any string containing our target phrases
+    const deepScanFor = (needle: RegExp): boolean => {
+      const seen = new Set<any>();
+      const stackArr: any[] = [err, err?.originalError];
+      while (stackArr.length) {
+        const cur = stackArr.pop();
+        if (!cur || typeof cur !== 'object' || seen.has(cur)) continue;
+        seen.add(cur);
+        for (const k of Object.keys(cur)) {
+          const v: any = (cur as any)[k];
+          if (typeof v === 'string' && needle.test(v.toLowerCase())) return true;
+          if (v && typeof v === 'object') stackArr.push(v);
+        }
+      }
+      return false;
+    };
+
+    // Normalize common backend duplicates for email-in-use
+    const isEmailInUse =
+      /email\s+already\s+in\s+use/.test(text) ||
+      (/duplicate key|e11000/.test(text) && /email/.test(text)) ||
+      status === 409 ||
+      /conflictexception/.test(text) ||
+      deepScanFor(/email\s+already\s+in\s+use/);
+
+    if (isEmailInUse) {
+      return { code: 'EMAIL_ALREADY_IN_USE', message: rawMessage || 'Email already in use' };
+    }
+
+    return { code: 'USER_CREATE_FAILED', message: rawMessage || 'Failed to create user.' };
+  }
+
+  /**
    * Create a new user using GraphQL.
    * @param {any} input - The input data for the user.
    * @returns {Promise<any>} - The creation result.
@@ -37,8 +103,10 @@ export class UsersRepository {
 
       return mutationResult?.createUser;
     } catch (error) {
+      const info = this.extractGraphQLErrorInfo(error);
       throw {
-        message: 'Failed to create user.',
+        code: info.code,
+        message: info.message,
         originalError: error,
         queryOrMutation: mutation,
         input: JSON.stringify(variables),
@@ -63,7 +131,7 @@ export class UsersRepository {
       return mutationResult?.login;
     } catch (error) {
       throw {
-        message: 'Failed to create user.',
+        message: 'Failed to login.',
         originalError: error,
         queryOrMutation: mutation,
         input: JSON.stringify(variables),
