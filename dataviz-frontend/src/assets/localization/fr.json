@@ -470,7 +470,7 @@
       "section_saved": { "title": "Section enregistrée", "message": "Modifications de la section enregistrées avec succès !" },
       "save_failed": { "title": "Échec de l'enregistrement", "message": "Échec de l'enregistrement de la section. Veuillez réessayer." },
       "user_created": { "title": "Créé", "message": "Utilisateur créé avec succès" },
-      "user_create_error": { "title": "Erreur", "message": "Erreur lors de la création de l'utilisateur : {error}" },
+      "user_create_error": { "title": "Impossible de Créer l'Utilisateur", "message": "Nous n'avons pas pu créer ce compte utilisateur. Veuillez vérifier les informations et réessayer. {error}" },
       "user_updated": { "title": "Mis à jour", "message": "Utilisateur mis à jour avec succès" },
       "user_update_error": { "title": "Erreur", "message": "Erreur lors de la mise à jour de l'utilisateur : {error}" },
       "user_deleted": { "title": "Supprimé", "message": "Utilisateur supprimé avec succès" },

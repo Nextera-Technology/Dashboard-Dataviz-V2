@@ -92,3 +92,37 @@ button[type="submit"].mat-mdc-button-disabled,
   margin-top: 9px;        // Align with language dropdown top position
   text-align: left;       // Align to left
 }
+
+/* Fix whitespace issue on smaller screens and zoom */
+.flex.min-w-0.flex-auto {
+  min-height: 100vh;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Ensure both panels take full height without overflow */
+.flex.min-w-0.flex-auto > div {
+  height: 100vh;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+/* Responsive adjustments for smaller screens */
+@media screen and (max-width: 1440px) {
+  .flex.min-w-0.flex-auto > div {
+    height: auto;
+    min-height: 100vh;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .flex.min-w-0.flex-auto {
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  .flex.min-w-0.flex-auto > div {
+    height: auto;
+    min-height: 100vh;
+  }
+}
