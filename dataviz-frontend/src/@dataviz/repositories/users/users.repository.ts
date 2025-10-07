@@ -171,22 +171,33 @@ export class UsersRepository {
         const lastName = u.lastName || '';
         const name = `${firstName}${lastName ? ' ' + lastName : ''}`.trim() || '';
 
-        // Determine role if backend provides roleName; otherwise fallback to 'visitor'
-        let role = 'visitor';
+        // Determine role if backend provides roleName
+        let role = 'certifier admin'; // Default to lowest privilege role
         try {
-          if (u?.userTypeId) {
-            if (typeof u.userTypeId === 'object') {
-              if (u.userTypeId.roleName) role = u.userTypeId.roleName;
-              // if it's an object with $oid we can't infer role name here
-            } else if (typeof u.userTypeId === 'string') {
-              // backend returned plain id string — keep fallback
-            }
-          } else if (Array.isArray(u?.userTypeIds) && u.userTypeIds.length > 0) {
+          // Priority 1: userTypeIds array
+          if (Array.isArray(u?.userTypeIds) && u.userTypeIds.length > 0) {
             const first = u.userTypeIds[0];
-            if (first?.roleName) role = first.roleName;
+            if (first?.roleName) {
+              role = first.roleName;
+            }
+          }
+          // Priority 2: userTypeId object
+          else if (u?.userTypeId && typeof u.userTypeId === 'object') {
+            if (u.userTypeId.roleName) {
+              role = u.userTypeId.roleName;
+            }
+          }
+          // Priority 3: direct roleName field
+          else if (u?.roleName) {
+            role = u.roleName;
+          }
+          
+          // Map 'operator' to 'super admin' for consistency
+          if (role.toLowerCase().trim() === 'operator') {
+            role = 'super admin';
           }
         } catch (e) {
-          role = 'visitor';
+          role = 'certifier admin';
         }
 
         const lastLogin = parseDate(u.lastLogin) || parseDate(u.updatedAt) || parseDate(u.createdAt);

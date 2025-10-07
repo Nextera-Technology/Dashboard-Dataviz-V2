@@ -105,3 +105,11 @@ export const gqlDuplicateDashboardFromOther = gql`
     }
   }
 `;
+
+export const gqlExportDashboardData = gql`
+  mutation GetExportedDashboardData($input: ExportDashboardDataInput!) {
+    getExportedDashboardData(input: $input) {
+      filename
+    }
+  }
+`;

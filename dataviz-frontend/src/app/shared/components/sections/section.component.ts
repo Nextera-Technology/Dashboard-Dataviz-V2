@@ -43,6 +43,9 @@ import { SortedBarChartWidgetComponent } from "../widgets/sorted-bar-chart-widge
         <ng-container *ngFor="let widget of visibleWidgets">
           <!-- Metric Widget -->
           <div
+            [attr.id]="'chart-div-' + (widget._id || widget.id)"
+            [attr.data-widget-id]="widget._id || widget.id"
+            [attr.data-widget-type]="widget.widgetType || widget.chartType"
             [class.col-span-1]="widget.columnSize === 1"
             [class.col-span-2]="widget.columnSize === 2"
             [class.col-span-3]="widget.columnSize === 3"

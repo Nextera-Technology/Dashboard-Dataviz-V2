@@ -3,6 +3,20 @@ import { RepositoryFactory } from "@dataviz/repositories/repository.factory";
 import { BehaviorSubject, Observable, of, throwError } from "rxjs";
 import { delay, tap } from "rxjs/operators";
 
+// User Roles - Only 4 roles allowed
+export enum UserRole {
+  SUPER_ADMIN = 'super admin',
+  ADMTC_DIRECTOR = 'admtc director',
+  ACADEMIC_DIRECTOR = 'academic director',
+  CERTIFIER_ADMIN = 'certifier admin'
+}
+
+// Roles with full admin access
+export const ADMIN_ROLES = [UserRole.SUPER_ADMIN, UserRole.ADMTC_DIRECTOR];
+
+// All allowed roles
+export const ALLOWED_ROLES = Object.values(UserRole);
+
 export interface User {
   id: string;
   name: string;
@@ -47,7 +61,7 @@ export class AuthService {
       name: "John Doe",
       email: "john@example.com",
       password: "password123",
-      role: "operator",
+      role: UserRole.SUPER_ADMIN,
       status: "active",
       lastLogin: new Date(),
     },
@@ -56,7 +70,7 @@ export class AuthService {
       name: "Jane Smith",
       email: "jane@example.com",
       password: "password123",
-      role: "visitor",
+      role: UserRole.CERTIFIER_ADMIN,
       status: "active",
       lastLogin: new Date(Date.now() - 86400000),
     },
@@ -65,7 +79,7 @@ export class AuthService {
       name: "Admin User",
       email: "admin@example.com",
       password: "admin123",
-      role: "operator",
+      role: UserRole.ADMTC_DIRECTOR,
       status: "active",
       lastLogin: new Date(),
     },
@@ -74,7 +88,7 @@ export class AuthService {
       name: "Bob Johnson",
       email: "bob@example.com",
       password: "password123",
-      role: "visitor",
+      role: UserRole.ACADEMIC_DIRECTOR,
       status: "inactive",
     },
   ];
@@ -90,8 +104,41 @@ export class AuthService {
       const result = await this.userRepository?.loginUser(email, password);
       if (result?.user?._id) {
         const userData = result?.user;
-        userData['role'] = 'operator'
-        userData['status'] = 'active'
+        
+        // Extract role from backend response
+        let backendRole = null;
+        
+        // Try to get role from userTypeIds array (priority)
+        if (Array.isArray(userData.userTypeIds) && userData.userTypeIds.length > 0) {
+          const firstType = userData.userTypeIds[0];
+          backendRole = firstType?.roleName || null;
+        }
+        // Fallback: Try to get from userTypeId object
+        else if (userData.userTypeId && typeof userData.userTypeId === 'object') {
+          backendRole = userData.userTypeId.roleName || null;
+        }
+        // Fallback: Try to get from direct roleName field
+        else if (userData.roleName) {
+          backendRole = userData.roleName;
+        }
+        // Last fallback: Try from role field
+        else if (userData.role) {
+          backendRole = userData.role;
+        }
+        
+        // Map backend role to frontend role (operator → super admin)
+        const mappedRole = this.mapBackendRoleToFrontend(backendRole);
+        
+        // If no valid role from backend, default to Certifier Admin (lowest privilege)
+        userData['role'] = mappedRole || UserRole.CERTIFIER_ADMIN;
+        userData['status'] = 'active';
+        
+        console.log('Login user role mapping:', {
+          backendRole,
+          mappedRole,
+          finalRole: userData['role']
+        });
+        
         this.currentUserSubject.next(userData);
         localStorage.setItem("currentUser", JSON.stringify(userData));
       }
@@ -152,19 +199,73 @@ export class AuthService {
   }
 
   /**
-   * Check if user has operator role
+   * Check if user has admin access (Super admin or Admtc director)
    */
-  isOperator(): boolean {
+  hasAdminAccess(): boolean {
     const user = this.getCurrentUser();
-    return user?.role === "operator";
+    if (!user || !user.role) return false;
+    // Normalize to lowercase for case-insensitive comparison
+    const normalizedRole = user.role.toLowerCase().trim();
+    return ADMIN_ROLES.some(adminRole => adminRole.toLowerCase() === normalizedRole);
   }
 
   /**
-   * Check if user has visitor role
+   * Check if user has super admin role
    */
-  isVisitor(): boolean {
+  isSuperAdmin(): boolean {
     const user = this.getCurrentUser();
-    return user?.role === "visitor";
+    if (!user?.role) return false;
+    // Case-insensitive comparison
+    return user.role.toLowerCase().trim() === UserRole.SUPER_ADMIN.toLowerCase();
+  }
+
+  /**
+   * Check if user role is in allowed roles
+   */
+  hasAllowedRole(): boolean {
+    const user = this.getCurrentUser();
+    if (!user || !user.role) return false;
+    // Case-insensitive comparison
+    const normalizedRole = user.role.toLowerCase().trim();
+    return ALLOWED_ROLES.some(allowedRole => allowedRole.toLowerCase() === normalizedRole);
+  }
+
+  /**
+   * Get user role display name
+   */
+  getRoleDisplayName(role: string): string {
+    switch (role) {
+      case UserRole.SUPER_ADMIN:
+        return 'Super Admin';
+      case UserRole.ADMTC_DIRECTOR:
+        return 'Admtc Director';
+      case UserRole.ACADEMIC_DIRECTOR:
+        return 'Academic Director';
+      case UserRole.CERTIFIER_ADMIN:
+        return 'Certifier Admin';
+      default:
+        return role;
+    }
+  }
+
+  /**
+   * Map backend role to frontend role (operator → super admin)
+   * Handles case-insensitive and whitespace normalization
+   */
+  private mapBackendRoleToFrontend(backendRole: string | null | undefined): string | null {
+    if (!backendRole || typeof backendRole !== 'string') return null;
+    
+    // Normalize: lowercase, trim, and collapse multiple spaces
+    const normalized = backendRole.toLowerCase().trim().replace(/\s+/g, ' ');
+    
+    // Map 'operator' to 'super admin'
+    if (normalized === 'operator') {
+      return UserRole.SUPER_ADMIN;
+    }
+    
+    // Check if it's already a valid frontend role (case-insensitive)
+    const validRole = ALLOWED_ROLES.find(r => r.toLowerCase().replace(/\s+/g, ' ') === normalized);
+    return validRole || null;
   }
 
   // CRUD Operations for User Management
@@ -249,7 +350,7 @@ export class AuthService {
     const newUser: User = {
       id: Date.now().toString(),
       ...userData,
-      role: userData.role || 'visitor',
+      role: userData.role || UserRole.CERTIFIER_ADMIN,
       status: "active",
     };
 

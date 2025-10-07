@@ -90,16 +90,47 @@ export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
 
             // Notify user using SweetAlert2 and redirect using replace to avoid back-navigation
             import('sweetalert2').then(({ default: Swal }) => {
-              Swal.fire({
-                icon: 'warning',
-                title: 'Session Expired',
-                text: 'Your session has expired. Please login again.',
-                confirmButtonText: 'OK',
-                allowOutsideClick: false,
-                allowEscapeKey: false
-              }).then(() => {
-                window.location.replace('/auth/login');
-              });
+              // Get current language and translations
+              const currentLang = localStorage.getItem('app-language') || 'en';
+              
+              // Fetch translation file
+              fetch(`${window.location.origin}/assets/localization/${currentLang}.json`)
+                .then(res => res.json())
+                .then(translations => {
+                  const title = translations?.shared?.session_expired?.title || 'Session Expired';
+                  const message = translations?.shared?.session_expired?.message || 'Your session has expired. Please login again.';
+                  const confirmButton = translations?.shared?.session_expired?.confirm_button || 'OK';
+                  
+                  Swal.fire({
+                    icon: 'warning',
+                    title: title,
+                    text: message,
+                    confirmButtonText: confirmButton,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    customClass: {
+                      container: 'session-expired-alert'
+                    }
+                  }).then(() => {
+                    window.location.replace('/auth/login');
+                  });
+                })
+                .catch(() => {
+                  // Fallback to English if translation fetch fails
+                  Swal.fire({
+                    icon: 'warning',
+                    title: 'Session Expired',
+                    text: 'Your session has expired. Please login again.',
+                    confirmButtonText: 'OK',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    customClass: {
+                      container: 'session-expired-alert'
+                    }
+                  }).then(() => {
+                    window.location.replace('/auth/login');
+                  });
+                });
             }).catch(err => {
               console.error('Failed to load SweetAlert2:', err);
               try { alert('Session Expired. Please login again.'); } catch (e) { /* ignore */ }

@@ -50,6 +50,10 @@ export const gqlLogin = gql`
         phoneNumber
         profilePicture
         status
+        userTypeIds {
+          _id
+          roleName
+        }
       }
     }
   }

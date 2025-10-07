@@ -57,6 +57,11 @@
   z-index: 10000 !important;
 }
 
+/* Session expired notification - highest priority */
+.swal2-container.session-expired-alert {
+  z-index: 10001 !important;
+}
+
 /* Modal backdrops - keep below notifications */
 .cdk-overlay-dark-backdrop,
 .cdk-overlay-backdrop {

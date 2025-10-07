@@ -10,6 +10,10 @@ export class ShareDataService {
   private isDashboard: boolean = false; 
   private dashboardIdSubject = new BehaviorSubject<string | null>(null);
   public dashboardId$ = this.dashboardIdSubject.asObservable();
+  
+  // Track which dashboard is actually loaded in DashboardComponent
+  private loadedDashboardIdSubject = new BehaviorSubject<string | null>(null);
+  public loadedDashboardId$ = this.loadedDashboardIdSubject.asObservable();
 
   constructor() {
     // Initialize dashboardId from localStorage if available
@@ -39,5 +43,14 @@ export class ShareDataService {
   }
   getIsDashboard(): boolean {
     return this.isDashboard;
+  }
+
+  // Mark which dashboard has been fully loaded by DashboardComponent
+  setLoadedDashboardId(id: string) {
+    this.loadedDashboardIdSubject.next(id);
+  }
+
+  getLoadedDashboardId(): string | null {
+    return this.loadedDashboardIdSubject.getValue();
   }
 }

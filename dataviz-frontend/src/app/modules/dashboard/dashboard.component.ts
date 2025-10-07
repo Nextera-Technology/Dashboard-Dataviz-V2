@@ -200,6 +200,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       if (result) {
         this.dashboardOriginal = result;
         this.dashboard = { ...this.dashboardOriginal };
+        // Notify other services which dashboard is actually loaded
+        if (this.dashboardId) {
+          this.shareDataService.setLoadedDashboardId(this.dashboardId);
+        }
         if(this.dashboardOriginal && this.dashboardOriginal.sectionIds) {
           this.sectionsList = this.dashboardOriginal.sectionIds || [];
           this.sectionsList.forEach(section => {
@@ -329,7 +333,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isAdminUser(): boolean {
-    return this.currentUser?.role === 'operator';
+    // Check if user has admin access (Super Admin or Admtc Director)
+    return this.authService.hasAdminAccess();
   }
 
   isJobDescriptionDashboard(): boolean {

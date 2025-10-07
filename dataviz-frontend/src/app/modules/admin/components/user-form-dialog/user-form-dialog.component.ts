@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 import { RepositoryFactory } from '@dataviz/repositories/repository.factory';
 import { TranslationService } from 'app/shared/services/translation/translation.service';
+import { UserRole, ALLOWED_ROLES } from '../../../../core/auth/auth.service';
 
 export interface UserFormData {
   id?: string;
@@ -105,7 +106,7 @@ export class UserFormDialogComponent implements OnInit {
       lastName: [data?.name ? (data.name.split(' ').slice(1).join(' ') || '') : '', Validators.required],
       email: [data?.email || '', [Validators.required, Validators.email]],
       password: ['', data && data.id ? [] : [Validators.required]],
-      role: [data?.role || 'visitor', Validators.required],
+      role: [data?.role || UserRole.CERTIFIER_ADMIN, Validators.required],
     });
 
     // create repository via factory to fetch role types
@@ -113,22 +114,72 @@ export class UserFormDialogComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Initialize with 4 allowed roles only
+    this.initializeAllowedRoles();
+    
+    // Optionally fetch from backend and filter
     if (this.userRepo?.getAllUserTypes) {
       this.userRepo.getAllUserTypes()
         .then((types: any[]) => {
-          this.roles = types || [];
-          this.rolesDisplayed = (this.roles || []).map(r => {
-            const key = `admin.userManagement.roles.${(r.roleName || '').toLowerCase()}`;
-            const translated = this.translation.translate(key);
-            const label = (translated && translated !== key) ? translated : ((r.roleName || '') ? (r.roleName.charAt(0).toUpperCase() + r.roleName.slice(1).toLowerCase()) : '');
-            return { id: r.id, roleName: r.roleName, label };
+          // Filter only allowed roles from backend
+          const backendRoles = types || [];
+          const filteredRoles = backendRoles.filter(r => {
+            const normalized = (r.roleName || '').toLowerCase().trim();
+            // Map operator to super admin
+            if (normalized === 'operator') return true;
+            return ALLOWED_ROLES.some(allowedRole => allowedRole.toLowerCase() === normalized);
           });
+          
+          if (filteredRoles.length > 0) {
+            this.roles = filteredRoles.map(r => {
+              const normalized = (r.roleName || '').toLowerCase().trim();
+              // Map operator to super admin
+              const mappedRole = normalized === 'operator' ? UserRole.SUPER_ADMIN : r.roleName;
+              return { id: r.id, roleName: mappedRole };
+            });
+            this.rolesDisplayed = this.roles.map(r => {
+              const key = `admin.userManagement.roles.${this.getRoleKey(r.roleName)}`;
+              const translated = this.translation.translate(key);
+              const label = (translated && translated !== key) ? translated : this.getRoleDisplayName(r.roleName);
+              return { id: r.id, roleName: r.roleName, label };
+            });
+          } else {
+            // Fallback to allowed roles if backend returns empty
+            this.initializeAllowedRoles();
+          }
         })
         .catch(() => {
-          this.roles = [{ id: 'visitor', roleName: 'Visitor' }, { id: 'operator', roleName: 'Operator' }];
-          this.rolesDisplayed = this.roles.map(r => ({ id: r.id, roleName: r.roleName, label: r.roleName }));
+          // Fallback to allowed roles on error
+          this.initializeAllowedRoles();
         });
     }
+  }
+  
+  private initializeAllowedRoles() {
+    // Initialize with 4 allowed roles
+    this.roles = ALLOWED_ROLES.map((role, index) => ({
+      id: `role-${index}`,
+      roleName: role
+    }));
+    
+    this.rolesDisplayed = this.roles.map(r => {
+      const key = `admin.userManagement.roles.${this.getRoleKey(r.roleName)}`;
+      const translated = this.translation.translate(key);
+      const label = (translated && translated !== key) ? translated : this.getRoleDisplayName(r.roleName);
+      return { id: r.id, roleName: r.roleName, label };
+    });
+  }
+  
+  private getRoleKey(roleName: string): string {
+    return roleName.toLowerCase().replace(/\s+/g, '_');
+  }
+  
+  private getRoleDisplayName(roleName: string): string {
+    // Capitalize each word
+    return roleName
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
   }
 
   onSubmit() {

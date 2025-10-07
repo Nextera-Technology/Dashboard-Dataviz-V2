@@ -18,6 +18,10 @@
       }
     },
     "admin": {
+      "access_denied": {
+        "title": "Access Denied",
+        "message": "You do not have permission to access the admin area. Only Super Admin and Admtc Director have full access."
+      },
       "layout": {
         "title": "Administration",
         "userManagement": "User Management",
@@ -334,9 +338,10 @@
           "items_per_page": "Items per page:"
         },
         "roles": {
-          "visitor": "Visitor",
-          "operator": "Operator",
-          "admin": "Admin"
+          "super_admin": "Super Admin",
+          "admtc_director": "Admtc Director",
+          "academic_director": "Academic Director",
+          "certifier_admin": "Certifier Admin"
         },
         "form": {
           "create_title": "Create New User",
@@ -588,6 +593,11 @@
       "language_changed": "Language changed",
       "close": "Close",
       "logout": "Logout",
+      "session_expired": {
+        "title": "Session Expired",
+        "message": "Your session has expired. Please login again.",
+        "confirm_button": "OK"
+      },
       "worldMapWidget": {
         "students_total_label": "Total Data :",
         "no_students": "No Students Data",
@@ -607,10 +617,15 @@
           "button": "Export PDF",
           "preparing_title": "Preparing PDF...",
           "preparing_message": "Estimated time ~30 seconds",
+          "preparing_dashboard_title": "Preparing Dashboard PDF...",
+          "preparing_dashboard_message": "Capturing widgets: {{current}}/{{total}}...",
           "success_title": "PDF Export Successful",
           "success_message": "Your PDF has been generated and downloaded.",
+          "dashboard_success_title": "Dashboard PDF Export Successful",
+          "dashboard_success_message": "Your dashboard PDF with {{count}} widgets has been generated and downloaded.",
           "error_title": "Export Failed",
           "error_message": "Failed to generate PDF. Please try again later.",
+          "dashboard_error_message": "Failed to export dashboard PDF. Please try again later.",
           "confirm_button": "OK"
         }
       },

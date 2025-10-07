@@ -18,6 +18,10 @@
       }
     },
     "admin": {
+      "access_denied": {
+        "title": "Accès Refusé",
+        "message": "Vous n'avez pas la permission d'accéder à la zone d'administration. Seuls le Super Admin et le Directeur Admtc ont un accès complet."
+      },
       "layout": {
         "title": "Administration",
         "userManagement": "Gestion des utilisateurs",
@@ -143,9 +147,10 @@
           "items_per_page": "Éléments par page :"
         },
         "roles": {
-          "visitor": "Visiteur",
-          "operator": "Opérateur",
-          "admin": "Admin"
+          "super_admin": "Super Admin",
+          "admtc_director": "Directeur Admtc",
+          "academic_director": "Directeur Académique",
+          "certifier_admin": "Administrateur Certifieur"
         },
         "form": {
           "create_title": "Créer un nouvel utilisateur",
@@ -581,6 +586,11 @@
       "language_changed": "Langue modifiée",
       "close": "Fermer",
       "logout": "Se déconnecter",
+      "session_expired": {
+        "title": "Session Expirée",
+        "message": "Votre session a expiré. Veuillez vous reconnecter.",
+        "confirm_button": "OK"
+      },
       "worldMapWidget": {
         "students_total_label": "Nombre total :",
         "no_students": "Aucune donnée d’étudiants",
@@ -600,10 +610,15 @@
           "button": "Exporter PDF",
           "preparing_title": "Préparation du PDF...",
           "preparing_message": "Temps estimé ~30 secondes",
+          "preparing_dashboard_title": "Préparation du PDF du Tableau de Bord...",
+          "preparing_dashboard_message": "Capture des widgets : {{current}}/{{total}}...",
           "success_title": "Export PDF Réussi",
           "success_message": "Votre PDF a été généré et téléchargé.",
+          "dashboard_success_title": "Export PDF du Tableau de Bord Réussi",
+          "dashboard_success_message": "Votre PDF de tableau de bord avec {{count}} widgets a été généré et téléchargé.",
           "error_title": "Échec de l'Export",
           "error_message": "Impossible de générer le PDF. Veuillez réessayer plus tard.",
+          "dashboard_error_message": "Échec de l'export PDF du tableau de bord. Veuillez réessayer plus tard.",
           "confirm_button": "OK"
         }
       },

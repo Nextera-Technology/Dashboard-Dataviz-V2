@@ -19,7 +19,7 @@ import { MatInputModule } from '@angular/material/input';
 import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 import { UserFormDialogComponent, UserFormData } from '../../components/user-form-dialog/user-form-dialog.component';
 import { AdminLayoutComponent } from '../../components/admin-layout/admin-layout.component';
-import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../core/auth/auth.service';
+import { AuthService, User, CreateUserData, UpdateUserData, UserRole } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-user-management',
@@ -113,7 +113,7 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
                 <ng-container matColumnDef="role">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.userManagement.table.columns.role' | translate }}</th>
                   <td mat-cell *matCellDef="let user">
-                    <span class="role-badge" [ngClass]="user.role">{{user.role | titlecase}}</span>
+                    <span class="role-badge" [ngClass]="getRoleClass(user.role)">{{getRoleLabel(user.role)}}</span>
                   </td>
                 </ng-container>
 
@@ -354,9 +354,10 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
     }
 
     .role-badge { display: inline-flex; padding: 6px 10px; border-radius: 999px; font-size: 0.8rem; color: #065f46; background: #ecfdf5; }
-    .role-badge.admin { background: #f0f9ff; color: #075985; }
-    .role-badge.user { background: #fff7ed; color: #92400e; }
-    .role-badge.visitor { background: #f0f9ff; color: #075985; }
+    .role-badge.super-admin { background:rgb(240, 241, 255); color: #075985; font-weight: 500; }
+    .role-badge.admtc-director { background: #fef3c7; color: #92400e; font-weight: 500; }
+    .role-badge.academic-director { background: #e0e7ff; color: #3730a3; font-weight: 500; }
+    .role-badge.certifier-admin { background: #ecfdf5; color: #065f46; font-weight: 500; }
 
     .status-badge { display: inline-flex; padding: 6px 10px; border-radius: 999px; font-size: 0.8rem; }
     .status-badge.active { background: #ecfdf5; color: #065f46; }
@@ -466,7 +467,7 @@ export class UserManagementComponent implements OnInit, AfterViewInit {
     const dialogRef = this.dialog.open(UserFormDialogComponent, {
       width: '720px',
       maxWidth: '95vw',
-      data: { name: '', email: '', role: 'visitor' }
+      data: { name: '', email: '', role: UserRole.CERTIFIER_ADMIN }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -494,7 +495,7 @@ export class UserManagementComponent implements OnInit, AfterViewInit {
     const createData: CreateUserData = {
       name: data.name,
       email: data.email,
-      password: 'default123', // In real app, generate or ask for password
+      password: (data as any).password || 'default123', // Use password from form or fallback to default
       role: data.role
     };
 
@@ -594,9 +595,23 @@ export class UserManagementComponent implements OnInit, AfterViewInit {
 
   getRoleColor(role: string): string {
     switch (role) {
-      case 'operator': return 'accent';
-      case 'visitor': return 'primary';
+      case UserRole.SUPER_ADMIN: return 'accent';
+      case UserRole.ADMTC_DIRECTOR: return 'warn';
       default: return 'primary';
     }
+  }
+  
+  getRoleLabel(role: string): string {
+    // Capitalize only first letter of each word (e.g., "certifier admin" → "Certifier Admin")
+    if (!role) return '';
+    return role
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+  
+  getRoleClass(role: string): string {
+    return role.toLowerCase().replace(/\s+/g, '-');
   }
 }

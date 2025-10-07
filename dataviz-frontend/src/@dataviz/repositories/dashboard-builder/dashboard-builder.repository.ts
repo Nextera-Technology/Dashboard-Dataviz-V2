@@ -18,6 +18,7 @@ import {
   gqlDeleteWidget,
   gqlWidgetSourceData,
   gqlExportWidgetData,
+  gqlExportDashboardData,
   gqlRegenerateAutoAnalysisDashboard,
   gqlDuplicateDashboardFromOther
 } from "@dataviz/graphql/mutations/dashboard-builder/dashboard-builder.mutation";
@@ -625,6 +626,44 @@ export class DashboardBuilderRepository {
         message: "Failed to get school dropdown options.",
         originalError: error,
         queryOrMutation: query,
+        input: JSON.stringify(variables),
+      };
+    }
+  }
+
+  /**
+   * Export dashboard data (all widgets) to PDF via GraphQL
+   * @param payload - Dashboard export payload with widgets array
+   * @returns {Promise<{filename: string}>} - The exported file info
+   */
+  async exportDashboardData(payload: {
+    dashboardId: string;
+    exportType: string;
+    lang: string;
+    widgets: Array<{
+      widgetId: string;
+      displayChartFilename: string | null;
+      lineChartFilename: string | null;
+    }>;
+  }) {
+    if (!payload.dashboardId || !payload.exportType) {
+      throw new Error("dashboardId and exportType are required");
+    }
+    
+    const mutation = gqlExportDashboardData;
+    const variables = { input: payload };
+
+    try {
+      const mutationResult = await this._client.GraphqlMutate(
+        mutation,
+        variables
+      );
+      return mutationResult?.getExportedDashboardData;
+    } catch (error) {
+      throw {
+        message: "Failed to export dashboard data.",
+        originalError: error,
+        queryOrMutation: mutation,
         input: JSON.stringify(variables),
       };
     }

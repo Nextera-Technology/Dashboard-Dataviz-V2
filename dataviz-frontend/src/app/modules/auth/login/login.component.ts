@@ -122,8 +122,21 @@ export class LoginComponent implements OnInit {
           throw new Error(this.translation.translate('notifications.login_failed.message') || 'Oops! That email or password doesn\'t match. Try again');
         }
 
-        await this.notifier.successKey('notifications.welcome_back', { name: `${user.user.lastName} ${user.user.firstName}` });
-        this.router.navigate(["/admin/dashboard-list"]);
+        // Check if user has admin access
+        const hasAdminAccess = this.authService.hasAdminAccess();
+        
+        if (hasAdminAccess) {
+          // Only show welcome notification for users with admin access
+          await this.notifier.successKey('notifications.welcome_back', { name: `${user.user.lastName} ${user.user.firstName}` });
+          this.router.navigate(["/admin/dashboard-list"]);
+        } else {
+          // User logged in successfully but doesn't have admin access
+          // Logout immediately and show access denied
+          this.authService.logout();
+          await this.notifier.errorKey('admin.access_denied');
+          this.isLoading = false;
+          // Stay on login page
+        }
       } catch (error) {
         this.isLoading = false;
         

@@ -19,6 +19,10 @@ import { Router } from '@angular/router';
 import { ShareDataService } from 'app/shared/services/share-data.service';
 import { NotificationService } from '@dataviz/services/notification/notification.service';
 import { TranslationService } from 'app/shared/services/translation/translation.service';
+import { DashboardExportService } from 'app/shared/services/dashboard-export/dashboard-export.service';
+import { DatavizPlatformService } from '@dataviz/services/platform/platform.service';
+import { environment } from 'environments/environment';
+import Swal from 'sweetalert2';
 
 interface Section {
   _id?: string;
@@ -496,7 +500,7 @@ interface JobDescriptionDashboard {
     .job-description-table .mat-mdc-row:nth-child(even), .job-description-table .data-row:nth-child(even) { background: #f7fbff; }
     .job-description-table tr:hover { background: #eef6fb; transition: background .15s ease; }
 
-    .type-badge { padding: 6px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; color: #fff; background: linear-gradient(135deg, #97cce4 0%, #306e8b 100%); }
+    .type-badge { padding: 6px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; color: #fff; background: linear-gradient(135deg, #97cce4 0%, #306e8b 100%); text-align: center; }
 
     .data-source { display: flex; flex-direction: column; gap: 4px; }
     .source-title { font-weight: 700; color: #111827; font-size: 0.85rem; }
@@ -563,7 +567,10 @@ export class JobDescriptionTableComponent implements OnInit, AfterViewInit {
     private dashboardService: DashboardBuilderService,
     private router: Router,
     private shareDataService: ShareDataService,
-    private notifier: NotificationService
+    private notifier: NotificationService,
+    private exportService: DashboardExportService,
+    private translationService: TranslationService,
+    private platform: DatavizPlatformService
   ) {}
 
   ngOnInit(): void {
@@ -809,9 +816,78 @@ export class JobDescriptionTableComponent implements OnInit, AfterViewInit {
     }
   }
 
-  exportToPDF(dashboard: JobDescriptionDashboard): void {
-    // TODO: Implement PDF export functionality
-    this.notifier.infoKey('notifications.feature_coming_soon');
+  async exportToPDF(dashboard: JobDescriptionDashboard): Promise<void> {
+    if (!dashboard?._id) {
+      await this.notifier.errorKey('shared.export.pdf.error_title');
+      return;
+    }
+
+    try {
+      // Show loading with progress
+      Swal.fire({
+        title: this.translationService.translate('shared.export.pdf.preparing_dashboard_title'),
+        html: this.translationService.translate('shared.export.pdf.preparing_dashboard_message')
+          .replace('{{current}}', '0')
+          .replace('{{total}}', '...')
+          + '<br><div class="swal2-loading-dots"><span>.</span><span>.</span><span>.</span></div>',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          const dots = Swal.getHtmlContainer()?.querySelector('.swal2-loading-dots');
+          if (dots) (dots as HTMLElement).classList.add('animated');
+        }
+      });
+
+      // Export with progress updates
+      let widgetCount = 0;
+      const filename = await this.exportService.exportDashboardPDF(
+        dashboard._id,
+        (current: number, total: number) => {
+          widgetCount = total;
+          Swal.update({
+            html: this.translationService.translate('shared.export.pdf.preparing_dashboard_message')
+              .replace('{{current}}', String(current))
+              .replace('{{total}}', String(total))
+              + '<br><div class="swal2-loading-dots animated"><span>.</span><span>.</span><span>.</span></div>'
+          });
+        }
+      );
+
+      // Build download URL
+      const base = environment.fileUrl || '';
+      let url = filename.startsWith('http') ? filename : `${base}${filename}`;
+      const needsDownloadParam = this.platform.isIOS || this.platform.isSafari || this.platform.isMac;
+      if (needsDownloadParam) {
+        url += (url.includes('?') ? '&' : '?') + 'download=true';
+      }
+
+      // Trigger download
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `jobdesc-dashboard-${dashboard._id}.pdf`;
+      anchor.target = '_blank';
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+
+      // Success message
+      Swal.fire({
+        icon: 'success',
+        title: this.translationService.translate('shared.export.pdf.dashboard_success_title'),
+        text: this.translationService.translate('shared.export.pdf.dashboard_success_message')
+          .replace('{{count}}', String(widgetCount)),
+        showConfirmButton: false,
+        timer: 3000
+      });
+    } catch (error) {
+      console.error('Error exporting Job Description dashboard PDF:', error);
+      Swal.fire({
+        icon: 'error',
+        title: this.translationService.translate('shared.export.pdf.error_title'),
+        text: this.translationService.translate('shared.export.pdf.dashboard_error_message'),
+        confirmButtonText: this.translationService.translate('shared.export.pdf.confirm_button')
+      });
+    }
   }
 
   async archiveJobDescription(dashboard: JobDescriptionDashboard): Promise<void> {
