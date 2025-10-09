@@ -629,5 +629,21 @@
           "applying_school_filters": "Applying school filters: {{schools}}..."
         }
       }
+    },
+    "chat": {
+      "title": "AI Assistant",
+      "tooltip": "Chat with AI Assistant",
+      "open_chat": "Open chat",
+      "close": "Close",
+      "minimize": "Minimize",
+      "restore": "Restore",
+      "status_online": "Online",
+      "click_to_restore": "Click to restore chat",
+      "welcome_message": "Hello! How can I help you today?",
+      "input_placeholder": "Type your message here...",
+      "send_message": "Send message",
+      "clear_history": "Clear chat history",
+      "error_message": "Sorry, I encountered an error. Please try again later.",
+      "no_response": "I received your message but couldn't generate a response."
     }
   }

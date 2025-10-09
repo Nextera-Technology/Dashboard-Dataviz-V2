@@ -622,5 +622,21 @@
           "applying_school_filters": "Application des filtres d'école : {{schools}}..."
         }
       }
+    },
+    "chat": {
+      "title": "Assistant IA",
+      "tooltip": "Discuter avec l'Assistant IA",
+      "open_chat": "Ouvrir le chat",
+      "close": "Fermer",
+      "minimize": "Réduire",
+      "restore": "Restaurer",
+      "status_online": "En ligne",
+      "click_to_restore": "Cliquez pour restaurer le chat",
+      "welcome_message": "Bonjour! Comment puis-je vous aider aujourd'hui?",
+      "input_placeholder": "Tapez votre message ici...",
+      "send_message": "Envoyer le message",
+      "clear_history": "Effacer l'historique du chat",
+      "error_message": "Désolé, j'ai rencontré une erreur. Veuillez réessayer plus tard.",
+      "no_response": "J'ai reçu votre message mais je n'ai pas pu générer de réponse."
     }
   }

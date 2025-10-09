@@ -1,0 +1,119 @@
+<!-- Floating Chat Button -->
+<button 
+  *ngIf="!isOpen" 
+  class="chat-floating-button" 
+  (click)="toggleChat()"
+  [attr.aria-label]="'chat.open_chat' | translate"
+  matTooltip="{{ 'chat.tooltip' | translate }}"
+  matTooltipPosition="left">
+  <mat-icon>chat</mat-icon>
+  <span class="chat-badge" *ngIf="messages.length > 1">{{ messages.length - 1 }}</span>
+</button>
+
+<!-- Chat Window -->
+<div class="chat-window" *ngIf="isOpen" [class.minimized]="isMinimized">
+  
+  <!-- Chat Header -->
+  <div class="chat-header">
+    <div class="header-left">
+      <mat-icon class="header-icon">smart_toy</mat-icon>
+      <div class="header-title">
+        <span class="title-text">{{ 'chat.title' | translate }}</span>
+        <span class="status-indicator"></span>
+        <span class="status-text">{{ 'chat.status_online' | translate }}</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <!-- Restore button (only when minimized) -->
+      <button 
+        *ngIf="isMinimized"
+        mat-icon-button 
+        (click)="restoreChat()"
+        [attr.aria-label]="'chat.restore' | translate"
+        matTooltip="{{ 'chat.restore' | translate }}">
+        <mat-icon>open_in_full</mat-icon>
+      </button>
+      <!-- Minimize button (only when not minimized) -->
+      <button 
+        *ngIf="!isMinimized"
+        mat-icon-button 
+        (click)="minimizeChat()"
+        [attr.aria-label]="'chat.minimize' | translate"
+        matTooltip="{{ 'chat.minimize' | translate }}">
+        <mat-icon>horizontal_rule</mat-icon>
+      </button>
+      <!-- Close button (always visible) -->
+      <button 
+        mat-icon-button 
+        (click)="closeChat()"
+        [attr.aria-label]="'chat.close' | translate"
+        matTooltip="{{ 'chat.close' | translate }}">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Minimized Preview removed: restore only via icon button -->
+
+  <!-- Chat Body -->
+  <div class="chat-body" #chatBody *ngIf="!isMinimized">
+    <div class="messages-container">
+      <div 
+        *ngFor="let msg of messages" 
+        class="message-wrapper"
+        [ngClass]="msg.sender">
+        
+        <div class="message-bubble">
+          <div class="message-content">
+            <div class="message-icon" *ngIf="msg.sender === 'ai'">
+              <mat-icon>smart_toy</mat-icon>
+            </div>
+            <div class="message-text">{{ msg.text }}</div>
+          </div>
+          <div class="message-time">{{ formatTime(msg.timestamp) }}</div>
+        </div>
+      </div>
+
+      <!-- Loading Indicator -->
+      <div class="message-wrapper ai" *ngIf="isLoading">
+        <div class="message-bubble typing">
+          <div class="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Footer -->
+  <div class="chat-footer" *ngIf="!isMinimized">
+    <button 
+      mat-icon-button 
+      class="action-button"
+      (click)="clearChat()"
+      [attr.aria-label]="'chat.clear_history' | translate">
+      <mat-icon>delete_outline</mat-icon>
+    </button>
+    
+    <div class="input-container">
+      <textarea
+        #messageInput
+        [(ngModel)]="userInput"
+        [placeholder]="'chat.input_placeholder' | translate"
+        (keypress)="onKeyPress($event)"
+        [disabled]="isLoading"
+        rows="1"></textarea>
+    </div>
+    
+    <button 
+      mat-icon-button 
+      class="send-button"
+      (click)="send()"
+      [disabled]="!userInput.trim() || isLoading"
+      [attr.aria-label]="'chat.send_message' | translate">
+      <mat-icon>send</mat-icon>
+    </button>
+  </div>
+</div>
