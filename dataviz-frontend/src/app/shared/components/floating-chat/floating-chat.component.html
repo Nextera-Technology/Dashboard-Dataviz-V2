@@ -6,7 +6,7 @@
   [attr.aria-label]="'chat.open_chat' | translate"
   matTooltip="{{ 'chat.tooltip' | translate }}"
   matTooltipPosition="left">
-  <mat-icon>chat</mat-icon>
+  <img src="icons/robot.png" alt="AI Assistant" class="robot-icon">
   <span class="chat-badge" *ngIf="messages.length > 1">{{ messages.length - 1 }}</span>
 </button>
 
@@ -16,7 +16,7 @@
   <!-- Chat Header -->
   <div class="chat-header">
     <div class="header-left">
-      <mat-icon class="header-icon">smart_toy</mat-icon>
+      <img src="icons/robot.png" alt="AI" class="header-icon robot-icon">
       <div class="header-title">
         <span class="title-text">{{ 'chat.title' | translate }}</span>
         <span class="status-indicator"></span>
@@ -66,9 +66,9 @@
         <div class="message-bubble">
           <div class="message-content">
             <div class="message-icon" *ngIf="msg.sender === 'ai'">
-              <mat-icon>smart_toy</mat-icon>
+              <img src="icons/robot.png" alt="AI" class="robot-icon">
             </div>
-            <div class="message-text">{{ msg.text }}</div>
+            <div class="message-text" [innerHTML]="msg.text | markdown"></div>
           </div>
           <div class="message-time">{{ formatTime(msg.timestamp) }}</div>
         </div>

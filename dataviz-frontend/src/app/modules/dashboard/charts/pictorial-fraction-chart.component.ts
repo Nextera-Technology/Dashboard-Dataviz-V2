@@ -55,7 +55,7 @@ interface Widget {
           {{ 'shared.worldMapWidget.students_total_label' | translate }} {{ data && data.length && data[0].totalData ?? data[0].totalData || 0 }}
         </div>
 
-        <!-- Manual Legend (sembunyikan untuk tile 1-row agar tidak overflow) -->
+        <!-- Manual Legend (hide for 1-row tiles to avoid overflow) -->
         <div class="manual-legend" *ngIf="data">
           <div *ngFor="let item of data" class="legend-item">
             <span class="legend-color"></span>

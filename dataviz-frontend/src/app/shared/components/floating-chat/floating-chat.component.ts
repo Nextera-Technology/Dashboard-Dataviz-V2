@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ChatService, ChatResponse } from '../../services/chat.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { TranslationService } from '../../services/translation/translation.service';
+import { MarkdownPipe } from '../../pipes/markdown.pipe';
 
 export interface Message {
   sender: 'user' | 'ai';
@@ -25,7 +26,8 @@ export interface Message {
     MatButtonModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
-    TranslatePipe
+    TranslatePipe,
+    MarkdownPipe
   ],
   templateUrl: './floating-chat.component.html',
   styleUrls: ['./floating-chat.component.scss']

@@ -262,7 +262,7 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
   // State to prevent multiple submissions and show spinner
   isSaving = false;
 
-  // Tambahan: Array template background colors yang memastikan kontras baik dengan teks
+  // Additional: Array of template background colors that ensure good contrast with text
   templateColors: string[] = [
     '#FFD79A', // Warm peach
     '#FECACA', // Soft coral
@@ -272,7 +272,7 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
     '#FDE68A'  // Warm yellow
   ];
 
-  // Tambahan: Method untuk set background color dari template
+  // Additional: Method to set background color from template
   setTemplateColor(color: string): void {
     this.widgetForm.get('background')?.setValue(color);
   }

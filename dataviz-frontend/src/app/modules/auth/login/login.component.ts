@@ -110,7 +110,7 @@ export class LoginComponent implements OnInit {
       this.isLoading = true;
       this.errorMessage = "";
       const credentials: LoginCredentials = this.loginForm.value;
-      const previousValues = { ...credentials }; // simpan nilai saat submit
+      const previousValues = { ...credentials }; // Save values at submit time
 
       try {
         const user = await this.authService.userLogin(credentials?.email, credentials?.password);
@@ -127,10 +127,10 @@ export class LoginComponent implements OnInit {
       } catch (error) {
         this.isLoading = false;
         
-        // restore nilai dulu (jika komponen sempat di-reset/reinitialized)
+        // Restore previous values (in case component was reset/reinitialized)
         this.loginForm.patchValue(previousValues);
         
-        // lalu set errorMessage setelah patchValue, agar tidak ter-clear oleh valueChanges
+        // Then set errorMessage after patchValue, to prevent it from being cleared by valueChanges
         this.errorMessage =
           error.message ||
           (this.translation.translate('notifications.login_failed.message') || "Oops! That email or password doesn’t match. Try again");
