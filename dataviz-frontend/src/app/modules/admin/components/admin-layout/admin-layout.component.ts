@@ -64,61 +64,19 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
             {{ 'admin.layout.title' | translate }}
           </div>
           <div class="nav-menu">
-            <!-- Dashboard Builder with Sub-menu -->
-            <div class="nav-item-group">
-              <div class="nav-item" 
-                   [class.expanded]="isDashboardBuilderExpanded" 
-                   (click)="toggleDashboardBuilderMenu()">
-                <mat-icon>dashboard</mat-icon>
-                <span>{{ 'admin.dashboardList.header_title' | translate }}</span>
-                <mat-icon class="expand-icon">{{ isDashboardBuilderExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
-              </div>
-              
-              <!-- Dashboard Builder Sub-menu -->
-              <div class="sub-menu" *ngIf="isDashboardBuilderExpanded">
-                <a routerLink="/admin/dashboard-list" routerLinkActive="active" class="sub-nav-item">
-                  <mat-icon>view_module</mat-icon>
-                  <span>{{ 'admin.navigation.dashboard_card' | translate }}</span>
-                </a>
-                <a routerLink="/admin/dashboard-create" routerLinkActive="active" class="sub-nav-item">
-                  <mat-icon>add_circle</mat-icon>
-                  <span>{{ 'admin.navigation.add_new_dashboard' | translate }}</span>
-                </a>
-                <a routerLink="/admin/dashboard-table" routerLinkActive="active" class="sub-nav-item">
-                  <mat-icon>table_view</mat-icon>
-                  <span>{{ 'admin.navigation.table_of_dashboard' | translate }}</span>
-                </a>
-              </div>
-            </div>
+            <!-- Dashboard Builder - Direct Link -->
+            <a routerLink="/admin/dashboard-list" routerLinkActive="active" class="nav-item">
+              <mat-icon>dashboard</mat-icon>
+              <span>{{ 'admin.dashboardList.header_title' | translate }}</span>
+            </a>
 
-            <!-- Job Description with Sub-menu -->
-            <div class="nav-item-group">
-              <div class="nav-item" 
-                   [class.expanded]="isJobDescriptionExpanded" 
-                   (click)="toggleJobDescriptionMenu()">
-                <mat-icon>work</mat-icon>
-                <span>{{ 'admin.layout.jobDescription' | translate }}</span>
-                <mat-icon class="expand-icon">{{ isJobDescriptionExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
-              </div>
-              
-              <!-- Job Description Sub-menu -->
-              <div class="sub-menu" *ngIf="isJobDescriptionExpanded">
-                <a routerLink="/admin/job-description" routerLinkActive="active" class="sub-nav-item">
-                  <mat-icon>view_module</mat-icon>
-                  <span>{{ 'admin.navigation.dashboard_card' | translate }}</span>
-                </a>
-                <a routerLink="/admin/job-description-create" routerLinkActive="active" class="sub-nav-item">
-                  <mat-icon>add_circle</mat-icon>
-                  <span>{{ 'admin.navigation.add_new_dashboard' | translate }}</span>
-                </a>
-                <a routerLink="/admin/job-description-table" routerLinkActive="active" class="sub-nav-item">
-                  <mat-icon>table_view</mat-icon>
-                  <span>{{ 'admin.navigation.table_of_dashboard' | translate }}</span>
-                </a>
-              </div>
-            </div>
+            <!-- Job Description - Direct Link -->
+            <a routerLink="/admin/job-description" routerLinkActive="active" class="nav-item">
+              <mat-icon>work</mat-icon>
+              <span>{{ 'admin.layout.jobDescription' | translate }}</span>
+            </a>
 
-            <!-- User Management (no sub-menu) -->
+            <!-- User Management -->
             <a routerLink="/admin/user-management" routerLinkActive="active" class="nav-item">
               <mat-icon>people</mat-icon>
               <span>{{ 'admin.layout.userManagement' | translate }}</span>
@@ -171,6 +129,19 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
           
           <!-- Header Actions -->
           <div class="header-actions">
+            <!-- Create Dashboard Button (shown only on dashboard-list routes) -->
+            <button
+              *ngIf="showCreateButton()"
+              mat-raised-button
+              color="primary"
+              (click)="onCreateDashboard()"
+              class="create-dashboard-btn px-6 py-2 rounded-2xl text-white font-semibold shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+            >
+              <div class="flex items-center gap-2">
+                <mat-icon>add</mat-icon>
+                <span>{{ getCreateButtonText() | translate }}</span>
+              </div>
+            </button>
           <!-- User Menu -->
           <div class="user-menu" style="display:flex; align-items:center; gap:8px;">
             <!-- Language dropdown -->
@@ -911,6 +882,34 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
       gap: 16px;
     }
 
+    .create-dashboard-btn {
+      border: none;
+      outline: none;
+      cursor: pointer;
+      background-color: #3b82f6 !important; // Solid blue color
+      color: white !important; // White text color
+      
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        color: white !important; // White icon color
+      }
+      
+      span {
+        color: white !important; // White text color
+      }
+      
+      &:hover {
+        background-color: #2563eb !important; // Darker blue on hover
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4) !important;
+      }
+      
+      &:active {
+        transform: scale(0.98) !important;
+      }
+    }
+
     .header-content h1 {
       margin: 0 0 5px 0;
       color: #333;
@@ -1046,9 +1045,7 @@ export class AdminLayoutComponent implements OnInit {
   // Sidebar collapse state
   isSidebarCollapsed: boolean = false;
 
-  // Sub-menu expansion states
-  isDashboardBuilderExpanded: boolean = false;
-  isJobDescriptionExpanded: boolean = false;
+  // Removed sub-menu expansion states - using direct navigation now
 
   constructor(
     private authService: AuthService,
@@ -1139,32 +1136,45 @@ export class AdminLayoutComponent implements OnInit {
       this.isSidebarCollapsed = savedState === 'true';
     }
     
-    // Load sub-menu states
-    const dashboardBuilderState = localStorage.getItem('admin-dashboard-builder-expanded');
-    if (dashboardBuilderState !== null) {
-      this.isDashboardBuilderExpanded = dashboardBuilderState === 'true';
-    }
-    
-    const jobDescriptionState = localStorage.getItem('admin-job-description-expanded');
-    if (jobDescriptionState !== null) {
-      this.isJobDescriptionExpanded = jobDescriptionState === 'true';
-    }
+    // Removed sub-menu state loading - using direct navigation now
   }
 
-  // Sub-menu toggle methods
-  toggleDashboardBuilderMenu(): void {
-    this.isDashboardBuilderExpanded = !this.isDashboardBuilderExpanded;
-    localStorage.setItem('admin-dashboard-builder-expanded', this.isDashboardBuilderExpanded.toString());
-  }
-
-  toggleJobDescriptionMenu(): void {
-    this.isJobDescriptionExpanded = !this.isJobDescriptionExpanded;
-    localStorage.setItem('admin-job-description-expanded', this.isJobDescriptionExpanded.toString());
-  }
+  // Removed sub-menu toggle methods - using direct navigation now
 
   async logout(): Promise<void> {
     this.authService.logout();
     await this.notifier.toastKey('notifications.logged_out', 'success', undefined, 3000).catch(()=>{});
     this.router.navigate(['/auth/login']);
+  }
+
+  /**
+   * Check if create button should be shown based on current route
+   */
+  showCreateButton(): boolean {
+    const url = this.router.url;
+    return url.includes('/admin/dashboard-list') || 
+           url.includes('/admin/dashboard-table') ||
+           url.includes('/admin/job-description') ||
+           url.includes('/admin/job-description-table');
+  }
+
+  /**
+   * Get the appropriate create button text based on current route
+   */
+  getCreateButtonText(): string {
+    const url = this.router.url;
+    if (url.includes('/admin/job-description')) {
+      return 'admin.dashboardList.create_button';
+    }
+    return 'admin.dashboardList.create_button';
+  }
+
+  /**
+   * Handle create dashboard button click
+   * Emit event to child component via window event
+   */
+  onCreateDashboard(): void {
+    // Dispatch custom event that child component can listen to
+    window.dispatchEvent(new CustomEvent('admin-create-dashboard'));
   }
 } 

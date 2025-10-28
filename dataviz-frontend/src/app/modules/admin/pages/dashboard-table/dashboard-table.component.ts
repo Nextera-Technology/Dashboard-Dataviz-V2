@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
@@ -19,6 +19,8 @@ import { Router } from '@angular/router';
 import { ShareDataService } from 'app/shared/services/share-data.service';
 import { NotificationService } from '@dataviz/services/notification/notification.service';
 import { TranslationService } from 'app/shared/services/translation/translation.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DashboardFormDialogComponent, DashboardFormDialogData } from '../../components/dashboard-form-dialog/dashboard-form-dialog.component';
 
 interface Section {
   _id?: string;
@@ -88,6 +90,27 @@ interface Dashboard {
   template: `
     <app-admin-layout [fullBleed]="true">
       <div class="dashboard-table-container">
+        <!-- Horizontal Navigation Bar (Card | Table) -->
+        <div class="navigation-bar" style="margin-bottom: 24px;">
+          <div style="backdrop-filter: blur(12px); background: rgba(255, 255, 255, 0.7); border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 8px; display: inline-flex; gap: 8px;">
+            <button
+              (click)="navigateToCardView()"
+              class="nav-btn"
+              style="color: #64748b; background: transparent; border: none; cursor: pointer; padding: 8px 24px; border-radius: 12px; font-weight: 600; transition: all 0.3s; display: flex; align-items: center; gap: 8px;"
+            >
+              <mat-icon style="font-size: 18px; width: 18px; height: 18px;">view_module</mat-icon>
+              <span>Card</span>
+            </button>
+            <button
+              class="nav-btn active"
+              style="background: linear-gradient(135deg, #3b82f6, #6366f1); color: white; border: none; cursor: pointer; padding: 8px 24px; border-radius: 12px; font-weight: 600; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); transition: all 0.3s; display: flex; align-items: center; gap: 8px;"
+            >
+              <mat-icon style="font-size: 18px; width: 18px; height: 18px;">table_view</mat-icon>
+              <span>Table</span>
+            </button>
+          </div>
+        </div>
+
         <!-- Tabs for Templates, Created, Archived -->
         <mat-tab-group [(selectedIndex)]="selectedTabIndex" class="dashboard-tabs">
           <mat-tab label="{{ 'admin.dashboardTable.tabs.templates' | translate }}">
@@ -597,7 +620,7 @@ interface Dashboard {
     .empty-state p { margin: 0; font-size: .9rem; }
   `]
 })
-export class DashboardTableComponent implements OnInit, AfterViewInit {
+export class DashboardTableComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('templatesSort') templatesSort!: MatSort;
   @ViewChild('createdSort') createdSort!: MatSort;
   @ViewChild('archivedSort') archivedSort!: MatSort;
@@ -623,15 +646,61 @@ export class DashboardTableComponent implements OnInit, AfterViewInit {
   // Search values per tab
   searchValues: { [key in 'templates' | 'created' | 'archived']: string } = { templates: '', created: '', archived: '' };
 
+  private createDashboardListener: any;
+
   constructor(
     private dashboardService: DashboardBuilderService,
     private router: Router,
     private shareDataService: ShareDataService,
-    private notifier: NotificationService
+    private notifier: NotificationService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
     this.loadDashboards();
+    
+    // Listen for create dashboard event from header button
+    this.createDashboardListener = () => this.handleCreateDashboard();
+    window.addEventListener('admin-create-dashboard', this.createDashboardListener);
+  }
+
+  ngOnDestroy(): void {
+    // Clean up event listener
+    if (this.createDashboardListener) {
+      window.removeEventListener('admin-create-dashboard', this.createDashboardListener);
+    }
+  }
+
+  /**
+   * Handle create dashboard button click from header
+   * Opens dialog, then redirects to card view with auto-scroll to new dashboard
+   */
+  handleCreateDashboard(): void {
+    const dialogRef = this.dialog.open<
+      DashboardFormDialogComponent,
+      DashboardFormDialogData,
+      any
+    >(DashboardFormDialogComponent, {
+      width: '600px',
+      data: {},
+      panelClass: 'modern-dialog',
+      backdropClass: 'modern-backdrop',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      // Ensure any stacked dialogs are closed to prevent aria-hidden/focus conflicts
+      this.dialog.closeAll();
+      // If dialog returned a dashboard id (string), redirect to card view with that id
+      if (typeof result === 'string' && result.length > 0) {
+        // Navigate to card view with the new dashboard id as query param
+        this.router.navigate(['/admin/dashboard-list'], {
+          queryParams: { scrollTo: result }
+        });
+      } else if (result === true) {
+        // If just true (shouldn't happen with new flow), redirect to card view
+        this.router.navigate(['/admin/dashboard-list']);
+      }
+    });
   }
 
   ngAfterViewInit(): void {
@@ -1029,5 +1098,12 @@ export class DashboardTableComponent implements OnInit, AfterViewInit {
         this.isLoading = false;
       }
     }
+  }
+
+  /**
+   * Navigate to card view (dashboard-list page)
+   */
+  navigateToCardView(): void {
+    this.router.navigate(['/admin/dashboard-list']);
   }
 }

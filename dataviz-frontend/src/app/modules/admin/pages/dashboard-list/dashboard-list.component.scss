@@ -72,6 +72,57 @@
   z-index: 10;
 }
 
+/* Navigation Bar (Card/Table Toggle) */
+.navigation-bar {
+  position: relative;
+  z-index: 9;
+}
+
+.nav-btn {
+  color: #64748b;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+  }
+  
+  &.active {
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+  
+  mat-icon {
+    font-size: 1.125rem;
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+}
+
+/* Search Bar Styling */
+.search-bar {
+  position: relative;
+  z-index: 9;
+  
+  input {
+    outline: none;
+    
+    &::placeholder {
+      color: #94a3b8;
+    }
+    
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
 @keyframes headerGlow {
   0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.3; }
   50% { transform: scale(1.1) rotate(180deg); opacity: 0.6; }

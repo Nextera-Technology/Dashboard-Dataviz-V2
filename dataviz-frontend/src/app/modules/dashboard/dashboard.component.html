@@ -113,61 +113,19 @@
                 {{ 'admin.layout.title' | translate }}
             </div>
             <div class="admin-menu">
-                <!-- Dashboard Builder with Sub-menu -->
-                <div class="nav-item-group">
-                    <div class="nav-item" 
-                         [class.expanded]="isDashboardBuilderExpanded" 
-                         (click)="toggleDashboardBuilderMenu()">
-                        <mat-icon>dashboard</mat-icon>
-                        <span>{{ 'admin.dashboardList.header_title' | translate }}</span>
-                        <mat-icon class="expand-icon">{{ isDashboardBuilderExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
-                    </div>
-                    
-                    <!-- Dashboard Builder Sub-menu -->
-                    <div class="sub-menu" *ngIf="isDashboardBuilderExpanded">
-                        <a routerLink="/admin/dashboard-list" routerLinkActive="active" class="sub-nav-item">
-                            <mat-icon>view_module</mat-icon>
-                            <span>{{ 'admin.navigation.dashboard_card' | translate }}</span>
-                        </a>
-                        <a routerLink="/admin/dashboard-create" routerLinkActive="active" class="sub-nav-item">
-                            <mat-icon>add_circle</mat-icon>
-                            <span>{{ 'admin.navigation.add_new_dashboard' | translate }}</span>
-                        </a>
-                        <a routerLink="/admin/dashboard-table" routerLinkActive="active" class="sub-nav-item">
-                            <mat-icon>table_view</mat-icon>
-                            <span>{{ 'admin.navigation.table_of_dashboard' | translate }}</span>
-                        </a>
-                    </div>
-                </div>
+                <!-- Dashboard Builder - Direct Link -->
+                <a routerLink="/admin/dashboard-list" routerLinkActive="active" class="nav-item">
+                    <mat-icon>dashboard</mat-icon>
+                    <span>{{ 'admin.dashboardList.header_title' | translate }}</span>
+                </a>
 
-                <!-- Job Description with Sub-menu -->
-                <div class="nav-item-group">
-                    <div class="nav-item" 
-                         [class.expanded]="isJobDescriptionExpanded" 
-                         (click)="toggleJobDescriptionMenu()">
-                        <mat-icon>work</mat-icon>
-                        <span>{{ 'admin.layout.jobDescription' | translate }}</span>
-                        <mat-icon class="expand-icon">{{ isJobDescriptionExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
-                    </div>
-                    
-                    <!-- Job Description Sub-menu -->
-                    <div class="sub-menu" *ngIf="isJobDescriptionExpanded">
-                        <a routerLink="/admin/job-description" routerLinkActive="active" class="sub-nav-item">
-                            <mat-icon>view_module</mat-icon>
-                            <span>{{ 'admin.navigation.dashboard_card' | translate }}</span>
-                        </a>
-                        <a routerLink="/admin/job-description-create" routerLinkActive="active" class="sub-nav-item">
-                            <mat-icon>add_circle</mat-icon>
-                            <span>{{ 'admin.navigation.add_new_dashboard' | translate }}</span>
-                        </a>
-                        <a routerLink="/admin/job-description-table" routerLinkActive="active" class="sub-nav-item">
-                            <mat-icon>table_view</mat-icon>
-                            <span>{{ 'admin.navigation.table_of_dashboard' | translate }}</span>
-                        </a>
-                    </div>
-                </div>
+                <!-- Job Description - Direct Link -->
+                <a routerLink="/admin/job-description" routerLinkActive="active" class="nav-item">
+                    <mat-icon>work</mat-icon>
+                    <span>{{ 'admin.layout.jobDescription' | translate }}</span>
+                </a>
 
-                <!-- User Management (no sub-menu) -->
+                <!-- User Management -->
                 <a routerLink="/admin/user-management" routerLinkActive="active" class="nav-item">
                     <mat-icon>people</mat-icon>
                     <span>{{ 'admin.layout.userManagement' | translate }}</span>

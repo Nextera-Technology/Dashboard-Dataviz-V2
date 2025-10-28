@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, Injectable } from "@angular/core";
 import { CommonModule, DatePipe } from "@angular/common";
-import { Router } from "@angular/router";
+import { FormsModule } from "@angular/forms";
+import { Router, ActivatedRoute } from "@angular/router";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
@@ -59,6 +60,7 @@ interface Dashboard {
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -74,16 +76,26 @@ interface Dashboard {
   templateUrl: "./job-description-list.component.html",
   styleUrl: "./job-description-list.component.scss",
 })
-export class JobDescriptionListComponent implements OnInit {
+export class JobDescriptionListComponent implements OnInit, OnDestroy {
   dashboards: Dashboard[] = [];
+  filteredDashboards: Dashboard[] = [];
   // Map to store expansion state for sources per dashboard
   dashboardSourcesExpansionState: Map<string, boolean> = new Map();
   initialVisibleSources = 1; // Number of sources to show initially before collapsing
   isLoading = false;
+  
+  // View mode: 'card' or 'table'
+  viewMode: 'card' | 'table' = 'card';
+  
+  // Search query
+  searchQuery: string = '';
+
+  private createDashboardListener: any;
 
   constructor(
     private dashboardService: DashboardBuilderService,
     private router: Router,
+    private route: ActivatedRoute,
     private dialog: MatDialog,
     private shareDataService: ShareDataService,
     private notifier: NotificationService,
@@ -92,6 +104,39 @@ export class JobDescriptionListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDashboards();
+    
+    // Listen for create dashboard event from admin layout header
+    this.createDashboardListener = this.handleCreateDashboard.bind(this);
+    window.addEventListener('admin-create-dashboard', this.createDashboardListener);
+    
+    // Listen for scrollTo query parameter (from table view redirect)
+    this.route.queryParams.subscribe(params => {
+      if (params['scrollTo']) {
+        const dashboardId = params['scrollTo'];
+        // Wait for dashboards to load, then scroll
+        setTimeout(() => this.scrollToDashboard(dashboardId), 300);
+        // Clear the query param after scrolling
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: {},
+          queryParamsHandling: 'merge'
+        });
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    // Clean up event listener
+    if (this.createDashboardListener) {
+      window.removeEventListener('admin-create-dashboard', this.createDashboardListener);
+    }
+  }
+
+  /**
+   * Handle create dashboard event from header button
+   */
+  handleCreateDashboard(): void {
+    this.createNewDashboard();
   }
 
   /**
@@ -109,6 +154,7 @@ export class JobDescriptionListComponent implements OnInit {
       
       if (result?.data) {
         this.dashboards = result?.data;
+        this.filteredDashboards = [...this.dashboards];
         
         // Initialize expansion state for new dashboards
         this.dashboards.forEach(dashboard => {
@@ -116,6 +162,11 @@ export class JobDescriptionListComponent implements OnInit {
             this.dashboardSourcesExpansionState.set(dashboard._id, false);
           }
         });
+        
+        // Apply search filter if there's a query
+        if (this.searchQuery) {
+          this.onSearch(this.searchQuery);
+        }
       }
     } catch (error) {
       console.error("Error loading dashboards:", error);
@@ -438,5 +489,56 @@ export class JobDescriptionListComponent implements OnInit {
       event.stopPropagation();
       this.toggleSourcesExpansion(dashboardId);
     }
+  }
+
+  /**
+   * Switch view mode between card and table
+   * When table is selected, redirect to job-description-table page
+   */
+  setViewMode(mode: 'card' | 'table'): void {
+    if (mode === 'table') {
+      // Redirect to table view page
+      this.router.navigate(['/admin/job-description-table']);
+    } else {
+      this.viewMode = mode;
+      localStorage.setItem('job-description-list-view-mode', mode);
+    }
+  }
+
+  /**
+   * Search/filter dashboards
+   */
+  onSearch(query: string): void {
+    this.searchQuery = query.toLowerCase().trim();
+    
+    if (!this.searchQuery) {
+      this.filteredDashboards = [...this.dashboards];
+      return;
+    }
+    
+    this.filteredDashboards = this.dashboards.filter(dashboard => {
+      // Search in title
+      if (dashboard.title?.toLowerCase().includes(this.searchQuery)) {
+        return true;
+      }
+      
+      // Search in name
+      if (dashboard.name?.toLowerCase().includes(this.searchQuery)) {
+        return true;
+      }
+      
+      // Search in sources certification names
+      if (dashboard.sources) {
+        const hasMatchInSources = dashboard.sources.some(source => 
+          source.certification?.toLowerCase().includes(this.searchQuery) ||
+          source.classes?.some(cls => cls.toLowerCase().includes(this.searchQuery))
+        );
+        if (hasMatchInSources) {
+          return true;
+        }
+      }
+      
+      return false;
+    });
   }
 }
