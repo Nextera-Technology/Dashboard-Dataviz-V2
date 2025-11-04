@@ -24,6 +24,7 @@ import { Subscription } from "rxjs";
 import { DashboardBuilderService } from "../../pages/dashboard-builder/dashboard-builder.service";
 import { ReplaceUnderscoresPipe } from "@dataviz/pipes/replace-underscores/replace-underscores.pipe";
 import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
+import { TranslationService } from 'app/shared/services/translation/translation.service';
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 // Import the new chart selection dialog and its data interfaces
@@ -282,9 +283,15 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
     return this.dashboard?.typeOfUsage === 'JOB_DESCRIPTION_EVALUATION';
   }
 
-  // Get the appropriate widget types based on dashboard type
+  // Get the appropriate widget types based on dashboard type (sorted alphabetically by translated label)
   get availableWidgetTypes(): WidgetTypeOption[] {
-    return this.isJobDescriptionDashboard ? this.jobDescriptionWidgetTypes : this.widgetTypes;
+    const types = this.isJobDescriptionDashboard ? this.jobDescriptionWidgetTypes : this.widgetTypes;
+    // Sort by translated label alphabetically (A-Z)
+    return [...types].sort((a, b) => {
+      const labelA = this.translationService.translate(`admin.widgetTypes.${a.value}`) || a.label;
+      const labelB = this.translationService.translate(`admin.widgetTypes.${b.value}`) || b.label;
+      return labelA.localeCompare(labelB);
+    });
   }
 
   constructor(
@@ -294,7 +301,8 @@ export class WidgetFormDialogComponent implements OnInit, OnDestroy {
     private dashboardService: DashboardBuilderService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog, // Inject MatDialog for opening new dialogs
-    private notifier: NotificationService
+    private notifier: NotificationService,
+    private translationService: TranslationService
   ) {
     this.dashboard = data.dashboard;
     this.currentSection = data.section;

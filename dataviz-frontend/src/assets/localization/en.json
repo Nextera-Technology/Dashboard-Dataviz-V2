@@ -27,6 +27,8 @@
         "header_title": "Dashboard Builder",
         "header_subtitle": "Create and manage your interactive dashboards",
         "create_button": "Create Dashboard",
+        "view_mode_card": "Card",
+        "view_mode_table": "Table",
         "search_placeholder": "Search dashboards by name, title, or data source...",
         "active_badge": "Active",
         "data_sources": "Data Sources",
@@ -182,6 +184,8 @@
       }
       ,
       "sectionFormDialog": {
+        "edit_title": "Edit Section",
+        "create_title": "Create New Section",
         "section_title_label": "Section Title",
         "title_required": "Title is required",
         "section_name_label": "Section Name (Slug)",
@@ -291,6 +295,8 @@
         "header_title": "Job Description Dashboards",
         "header_subtitle": "Manage dashboards for job description evaluation",
         "create_button": "Create Dashboard",
+        "view_mode_card": "Card",
+        "view_mode_table": "Table",
         "search_placeholder": "Search job descriptions by name, title, or data source...",
         "active_badge": "Active",
         "data_sources": "Data Sources",
@@ -393,7 +399,15 @@
         "REGION": "Region",
         "GENDER": "Gender",
         "EDUCATION_LEVEL_TARGET": "Education Level Target",
-        "FLOW": "Flow"
+        "FLOW": "Flow",
+        "JOBDESC_COMPANY_SECTORS": "Company Sectors",
+        "JOBDESC_WORKING_DAYS": "Working Days",
+        "JOBDESC_COMPETENCY_AUTONOMY": "Competency Autonomy",
+        "JOBDESC_COMPETENCY_USAGE": "Competency Usage",
+        "JOBDESC_PROFESSIONAL_EVALUATIONS": "Professional Evaluations",
+        "JOBDESC_COMPETENCY_COVERAGE": "Competency Coverage",
+        "JOBDESC_COMPETENCY_SCORES": "Competency Score",
+        "JOBDESC_COMPETENCY_SCORE_DISTRIBUTION": "Competency Distribution"
       },
       "widgetSubTypes": {
         "STUDY_RATE": "Study Rate",
@@ -600,6 +614,9 @@
       "display": {
         "side": "Side",
         "list": "List"
+      },
+      "pagination": {
+        "page": "Page"
       },
       "export": {
         "csv": "Export CSV",

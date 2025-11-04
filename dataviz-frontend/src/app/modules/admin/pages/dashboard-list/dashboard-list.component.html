@@ -101,7 +101,7 @@
         >
           <div class="flex items-center gap-2">
             <mat-icon class="text-lg">view_module</mat-icon>
-            <span>Card</span>
+            <span>{{ 'admin.dashboardList.view_mode_card' | translate }}</span>
           </div>
         </button>
         <button
@@ -111,7 +111,7 @@
         >
           <div class="flex items-center gap-2">
             <mat-icon class="text-lg">table_view</mat-icon>
-            <span>Table</span>
+            <span>{{ 'admin.dashboardList.view_mode_table' | translate }}</span>
           </div>
         </button>
       </div>
@@ -122,10 +122,10 @@
       <div class="backdrop-blur-xl bg-white/70 rounded-3xl shadow-md border border-white/20 p-8">
         <div class="flex flex-col gap-6">
           <div class="text-center sm:text-left">
-            <h1 class="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-slate-800 via-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+            <h1 class="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-slate-800 via-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
               {{ 'admin.dashboardList.header_title' | translate }}
             </h1>
-            <p class="text-slate-600 text-lg font-medium">{{ 'admin.dashboardList.header_subtitle' | translate }}</p>
+            <p class="text-slate-600 text-base font-medium">{{ 'admin.dashboardList.header_subtitle' | translate }}</p>
           </div>
         </div>
       </div>
@@ -170,7 +170,7 @@
               </div>
             </div>
 
-            <h2 class="text-2xl font-bold text-slate-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">
+            <h2 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">
               {{ dashboard.title }}
             </h2>
             <p class="text-slate-600 font-medium">{{ dashboard.name }}</p>

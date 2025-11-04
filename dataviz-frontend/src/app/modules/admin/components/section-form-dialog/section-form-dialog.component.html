@@ -1,7 +1,7 @@
 <div class="section-form-dialog flex flex-col bg-white shadow-2xl border border-gray-300 overflow-hidden">
   <div class="header flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50">
     <h2 class="text-xl font-semibold text-gray-800">
-      {{ isEditMode ? ('admin.dashboardFormDialog.edit_title' | translate) : ('admin.dashboardFormDialog.create_title' | translate) }}
+      {{ isEditMode ? ('admin.sectionFormDialog.edit_title' | translate) : ('admin.sectionFormDialog.create_title' | translate) }}
     </h2>
     <button mat-icon-button (click)="onCancel()" aria-label="Close dialog">
       <mat-icon class="text-gray-600 hover:text-gray-800">close</mat-icon>
@@ -52,7 +52,7 @@
       </button>
       <button color="primary" type="submit" [disabled]="sectionForm.invalid"
         class="px-6 py-2.5 bg-blue-600 text-white  outline-none rounded-lg font-medium shadow-sm hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/15  disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none transition-all duration-200">
-        {{ isEditMode ?  ('admin.dashboardFormDialog.save_changes' | translate) : ('admin.dashboardBuilder.add_section' | translate) }}
+        {{ isEditMode ?  ('admin.userManagement.form.save_changes' | translate) : ('admin.dashboardBuilder.add_section' | translate) }}
       </button>
     </mat-dialog-actions>
   </form>

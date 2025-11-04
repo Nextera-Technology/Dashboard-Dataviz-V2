@@ -54,11 +54,11 @@ declare var am5percent: any;
             </div>
           </div>
 
-          <div class="legend-nav" *ngIf="totalPages > 1">
+          <div class="legend-nav" *ngIf="legendItems && legendItems.length">
             <button mat-icon-button class="nav-btn" [disabled]="currentPage === 1" (click)="prevPage()">
               <mat-icon>chevron_left</mat-icon>
             </button>
-            <span class="page-indicator">Page {{ currentPage }}/{{ totalPages }}</span>
+            <span class="page-indicator">{{ 'shared.pagination.page' | translate }} {{ currentPage }}/{{ totalPages }}</span>
             <button mat-icon-button class="nav-btn" [disabled]="currentPage === totalPages" (click)="nextPage()">
               <mat-icon>chevron_right</mat-icon>
             </button>
@@ -91,6 +91,7 @@ declare var am5percent: any;
         min-height: 120px;
         display: flex;
         flex-direction: column;
+        overflow: hidden; /* Ensure content never overflows the tile */
       }
 
       /* More compact spacing for 1-row tiles (e.g., 1x1 or 2x1) */
@@ -189,6 +190,12 @@ declare var am5percent: any;
         justify-content: flex-start;
       }
 
+      /* In list mode for 1x1 tiles, shrink chart area to free space for legend */
+      .chart-box.list-mode.short-row .chart-container {
+        min-height: 70px;
+        height: 70px;
+      }
+
       /* Manual Legend - Keep if you intend to use it, otherwise remove */
       .manual-legend {
         display: flex;
@@ -201,6 +208,11 @@ declare var am5percent: any;
       .legend-grid-container {
         margin-top: 8px;
         width: 100%;
+      }
+      /* Prevent legend from overflowing on very small tiles */
+      .chart-box.list-mode.short-row .legend-grid-container {
+        overflow: hidden;
+        padding-bottom: 26px; /* reserve space for overlay pagination */
       }
       .legend-grid {
         display: grid;
@@ -265,6 +277,37 @@ declare var am5percent: any;
       }
       .legend-nav .nav-btn[disabled] { opacity: 0.4; }
       .legend-nav .page-indicator { font-size: 12px; color: #607d8b; }
+
+      /* On very small tiles (1x1), overlay pagination at bottom so it never gets clipped */
+      .chart-box.list-mode.short-row .legend-nav {
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        left: auto;
+        transform: none;
+        z-index: 101; /* above display-mode toggle */
+        background: rgba(255,255,255,0.92);
+        padding: 2px 6px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      }
+
+      /* Smaller controls in 1x1 list mode */
+      .chart-box.list-mode.short-row .legend-nav .nav-btn {
+        width: 26px;
+        height: 26px;
+        min-width: 26px;
+        padding: 0;
+      }
+      .chart-box.list-mode.short-row .legend-nav .nav-btn .mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        line-height: 18px;
+      }
+      .chart-box.list-mode.short-row .legend-nav .page-indicator {
+        font-size: 11px;
+      }
 
       /* Responsive */
       @media (max-width: 768px) {
@@ -416,7 +459,7 @@ export class PieChartWidgetComponent implements OnInit, OnDestroy {
         am5percent.PieChart.new(this.root, {
           layout: this.root.verticalLayout,
           innerRadius: am5.percent(50),
-          radius: isShortRow ? am5.percent(35) : am5.percent(60),
+          radius: isSmall ? am5.percent(30) : (isShortRow ? am5.percent(40) : am5.percent(60)),
         })
       );
       this.series = this.chart.series.push(
@@ -602,7 +645,7 @@ export class PieChartWidgetComponent implements OnInit, OnDestroy {
     // Extremely small (1x1): 1 column x 3 rows
     if (colSize <= 1 && rowSize <= 1) {
       columns = 1;
-      rows = 3;
+      rows = 2; // Reduce rows for strict 1x1 to prevent overflow
     }
     // Short height (<=1 row): 2 columns x 2 rows
     else if (rowSize <= 1) {

@@ -27,6 +27,8 @@
         "header_title": "Tableaux de bord Description de poste",
         "header_subtitle": "Gérez les tableaux de bord pour l'évaluation des descriptions de poste",
         "create_button": "Créer un tableau de bord",
+        "view_mode_card": "Carte",
+        "view_mode_table": "Tableau",
         "search_placeholder": "Rechercher des descriptions de poste par nom, titre ou source de données...",
         "active_badge": "Actif",
         "data_sources": "Sources de données",
@@ -175,6 +177,8 @@
         "header_title": "Constructeur de tableaux de bord",
         "header_subtitle": "Créez et gérez vos tableaux de bord interactifs",
         "create_button": "Créer un tableau de bord",
+        "view_mode_card": "Carte",
+        "view_mode_table": "Tableau",
         "search_placeholder": "Rechercher des tableaux de bord par nom, titre ou source de données...",
         "active_badge": "Actif",
         "data_sources": "Sources de données",
@@ -257,6 +261,8 @@
         "title": "Paramètres du widget"
       },
       "sectionFormDialog": {
+        "edit_title": "Modifier la section",
+        "create_title": "Créer une nouvelle section",
         "section_title_label": "Titre de la section",
         "title_required": "Le titre est requis",
         "section_name_label": "Nom de la section (slug)",
@@ -387,7 +393,15 @@
         "REGION": "Région",
         "GENDER": "Genre",
         "EDUCATION_LEVEL_TARGET": "Niveau d'éducation cible",
-        "FLOW": "Flux"
+        "FLOW": "Flux",
+        "JOBDESC_COMPANY_SECTORS": "Secteurs d'entreprise",
+        "JOBDESC_WORKING_DAYS": "Jours de travail",
+        "JOBDESC_COMPETENCY_AUTONOMY": "Autonomie des compétences",
+        "JOBDESC_COMPETENCY_USAGE": "Utilisation des compétences",
+        "JOBDESC_PROFESSIONAL_EVALUATIONS": "Évaluations professionnelles",
+        "JOBDESC_COMPETENCY_COVERAGE": "Couverture des compétences",
+        "JOBDESC_COMPETENCY_SCORES": "Score de compétence",
+        "JOBDESC_COMPETENCY_SCORE_DISTRIBUTION": "Distribution des compétences"
       },
       "widgetSubTypes": {
         "STUDY_RATE": "Taux d'études",
@@ -584,11 +598,14 @@
       "close": "Fermer",
       "logout": "Se déconnecter",
       "worldMapWidget": {
-        "students_total_label": "Nombre total :",
-        "no_students": "Aucune donnée d’étudiants",
-        "salary_total_label": "Nombre total :",
+        "students_total_label": "Total des données :",
+        "no_students": "Aucune donnée d'étudiants",
+        "salary_total_label": "Total des données :",
         "salary_currency_suffix": "€",
         "no_salary": "Aucune donnée salariale"
+      },
+      "pagination": {
+        "page": "Page"
       },
       "display": {
         "side": "Côté",
