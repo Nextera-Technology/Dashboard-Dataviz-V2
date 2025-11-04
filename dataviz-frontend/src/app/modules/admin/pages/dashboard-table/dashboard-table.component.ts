@@ -99,14 +99,14 @@ interface Dashboard {
               style="color: #64748b; background: transparent; border: none; cursor: pointer; padding: 8px 24px; border-radius: 12px; font-weight: 600; transition: all 0.3s; display: flex; align-items: center; gap: 8px;"
             >
               <mat-icon style="font-size: 18px; width: 18px; height: 18px;">view_module</mat-icon>
-              <span>Card</span>
+              <span>{{ 'admin.dashboardList.view_mode_card' | translate }}</span>
             </button>
             <button
               class="nav-btn active"
               style="background: linear-gradient(135deg, #3b82f6, #6366f1); color: white; border: none; cursor: pointer; padding: 8px 24px; border-radius: 12px; font-weight: 600; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); transition: all 0.3s; display: flex; align-items: center; gap: 8px;"
             >
               <mat-icon style="font-size: 18px; width: 18px; height: 18px;">table_view</mat-icon>
-              <span>Table</span>
+              <span>{{ 'admin.dashboardList.view_mode_table' | translate }}</span>
             </button>
           </div>
         </div>

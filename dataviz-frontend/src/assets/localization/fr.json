@@ -26,7 +26,7 @@
       "jobDescriptionList": {
         "header_title": "Tableaux de bord Description de poste",
         "header_subtitle": "Gérez les tableaux de bord pour l'évaluation des descriptions de poste",
-        "create_button": "Créer un tableau de bord",
+        "create_button": "Créer un de bord",
         "view_mode_card": "Carte",
         "view_mode_table": "Tableau",
         "search_placeholder": "Rechercher des descriptions de poste par nom, titre ou source de données...",
@@ -176,7 +176,7 @@
       "dashboardList": {
         "header_title": "Constructeur de tableaux de bord",
         "header_subtitle": "Créez et gérez vos tableaux de bord interactifs",
-        "create_button": "Créer un tableau de bord",
+        "create_button": "Créer un de bord",
         "view_mode_card": "Carte",
         "view_mode_table": "Tableau",
         "search_placeholder": "Rechercher des tableaux de bord par nom, titre ou source de données...",
