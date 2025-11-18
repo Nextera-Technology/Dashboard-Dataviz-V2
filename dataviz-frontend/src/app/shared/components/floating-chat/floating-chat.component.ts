@@ -42,6 +42,7 @@ export class FloatingChatComponent implements OnInit, AfterViewChecked {
   userInput = '';
   isLoading = false;
   private shouldScrollToBottom = false;
+  private welcomeIndex: number | null = null;
 
   constructor(
     private chatService: ChatService,
@@ -49,11 +50,23 @@ export class FloatingChatComponent implements OnInit, AfterViewChecked {
   ) {}
 
   ngOnInit(): void {
-    // Welcome message - delay to ensure translation service is ready
-    setTimeout(() => {
-      const welcomeMsg = this.translation.translate('chat.welcome_message');
-      this.addAiMessage(welcomeMsg || 'Hello! How can I help you today?');
-    }, 100);
+    this.translation.translationsLoaded$.subscribe((lang) => {
+      if (!lang) return;
+
+      const newWelcome = this.translation.translate('chat.welcome_message');
+
+      // If welcome message already exists, update it
+      if (this.welcomeIndex !== null && this.messages[this.welcomeIndex]) {
+        this.messages[this.welcomeIndex].text = newWelcome;
+        return;
+      }
+
+      // Otherwise add the welcome message
+      this.addAiMessage(newWelcome);
+
+      // Save index of welcome message
+      this.welcomeIndex = this.messages.length - 1;
+    });
   }
 
   ngAfterViewChecked(): void {
