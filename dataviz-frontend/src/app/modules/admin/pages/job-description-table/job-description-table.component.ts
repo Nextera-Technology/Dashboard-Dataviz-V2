@@ -556,7 +556,8 @@ interface JobDescriptionDashboard {
     /* Strengthen tab label and indicator specificity under this component */
     ::ng-deep .job-description-tabs .mdc-tab-indicator .mdc-tab-indicator__content { background: var(--accent-dark) !important; height: 3px !important; }
     ::ng-deep .job-description-tabs .mat-mdc-tab .mdc-tab__text-label { color: rgba(255,255,255,0.85) !important; font-weight: 700; }
-    ::ng-deep .job-description-tabs .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label { color: #ffffff !important; font-weight: 800; }
+    :host-context(.theme-dark) ::ng-deep .job-description-tabs .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label { color: #ffffff !important; font-weight: 800; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
+    :host-context(:not(.theme-dark)) ::ng-deep .job-description-tabs .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label { color: var(--text-primary) !important; font-weight: 800; }
 
     ::ng-deep .mat-mdc-checkbox .mdc-checkbox__background { border-color: var(--primary-dark) !important; }
     ::ng-deep .mat-mdc-checkbox.mat-mdc-checkbox-checked .mdc-checkbox { background-color: var(--primary-dark) !important; border-color: var(--primary-dark) !important; }
