@@ -659,17 +659,21 @@ interface Dashboard {
     :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-page-size-label { color: rgba(255,255,255,0.80) !important; }
     :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-select-value { color: rgba(255,255,255,0.90) !important; }
     :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-select-arrow { color: rgba(255,255,255,0.85) !important; }
-    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-icon-button mat-icon { color: rgba(255,255,255,0.95) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-icon-button mat-icon { color: #ffffff !important; }
     :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-icon-button:hover mat-icon { color: #ffffff !important; }
-    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-icon-button[disabled] mat-icon { color: rgba(255,255,255,0.70) !important; opacity: 1 !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-icon-button[disabled] mat-icon { color: #ffffff !important; opacity: 1 !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-icon-button { color: #ffffff !important; opacity: 1 !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-icon-button.mdc-icon-button--disabled { opacity: 1 !important; }
     :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-next mat-icon,
     :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-previous mat-icon,
     :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-first mat-icon,
-    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-last mat-icon { color: rgba(255,255,255,0.95) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-last mat-icon { color: #ffffff !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-icon { fill: #ffffff !important; stroke: #ffffff !important; opacity: 1 !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-button-touch-target { background: transparent !important; }
     :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-next[disabled] mat-icon,
     :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-previous[disabled] mat-icon,
     :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-first[disabled] mat-icon,
-    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-last[disabled] mat-icon { color: rgba(255,255,255,0.70) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-last[disabled] mat-icon { color: #ffffff !important; opacity: 1 !important; }
 
     :host-context(.theme-dark) .dashboard-table td button mat-icon { color: rgba(255,255,255,0.92) !important; }
 
