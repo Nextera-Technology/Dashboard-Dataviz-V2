@@ -598,6 +598,16 @@ interface Dashboard {
     .header-actions { display: flex; align-items: center; gap: 12px; }
     .search-field { width: 320px; min-width: 200px; }
     .search-field .mat-form-field-wrapper { padding: 0 !important; }
+    :host-context(.theme-dark) ::ng-deep .dashboard-table-container .search-field .mat-mdc-form-field { background: rgba(255,255,255,0.08) !important; border-radius: 12px !important; }
+    :host-context(.theme-dark) ::ng-deep .dashboard-table-container .search-field .mdc-notched-outline { border-radius: 12px !important; }
+    :host-context(.theme-dark) ::ng-deep .dashboard-table-container .search-field .mdc-notched-outline__notch,
+    :host-context(.theme-dark) ::ng-deep .dashboard-table-container .search-field .mdc-notched-outline__leading,
+    :host-context(.theme-dark) ::ng-deep .dashboard-table-container .search-field .mdc-notched-outline__trailing { border-color: rgba(255,255,255,0.22) !important; }
+    :host-context(.theme-dark) ::ng-deep .dashboard-table-container .search-field .mat-mdc-form-field-focus-overlay { display: none !important; }
+    :host-context(.theme-dark) ::ng-deep .dashboard-table-container .search-field .mat-mdc-input-element { color: #ffffff !important; }
+    :host-context(.theme-dark) ::ng-deep .dashboard-table-container .search-field .mat-mdc-input-element::placeholder { color: rgba(255,255,255,0.85) !important; }
+    :host-context(.theme-dark) ::ng-deep .dashboard-table-container .search-field mat-icon { color: #ffffff !important; }
+    :host-context(.theme-dark) ::ng-deep .dashboard-table-container .search-field .mat-mdc-form-field-focus-overlay { background: rgba(59,130,246,0.25) !important; }
 
     .table-container {
       background: var(--bg-primary);
@@ -676,6 +686,8 @@ interface Dashboard {
     :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-last[disabled] mat-icon { color: #ffffff !important; opacity: 1 !important; }
 
     :host-context(.theme-dark) .dashboard-table td button mat-icon { color: rgba(255,255,255,0.92) !important; }
+    :host-context(.theme-dark) ::ng-deep .dashboard-table-container td button[mat-icon-button] mat-icon,
+    :host-context(.theme-dark) ::ng-deep .dashboard-table-container th button[mat-icon-button] mat-icon { color: #ffffff !important; }
 
     /* Paginator: adopt Inter + stronger text like user management */
     mat-paginator { background: var(--bg-primary); border-top: 1px solid var(--border-color); border-radius: 0 0 12px 12px; }

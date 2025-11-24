@@ -597,6 +597,24 @@ interface JobDescriptionDashboard {
     ::ng-deep .job-description-table-container .mat-mdc-paginator .mat-mdc-icon-button, ::ng-deep .job-description-table-container .mat-mdc-paginator .mat-mdc-select { color: var(--text-primary) !important; }
     ::ng-deep .job-description-table-container .mat-mdc-form-field .mat-mdc-input-element { color: var(--text-primary) !important; }
     ::ng-deep .job-description-table-container .mat-mdc-form-field .mdc-notched-outline__notch, ::ng-deep .job-description-table-container .mat-mdc-form-field .mdc-notched-outline__leading, ::ng-deep .job-description-table-container .mat-mdc-form-field .mdc-notched-outline__trailing { border-color: var(--border-color) !important; }
+
+    :host-context(.theme-dark) ::ng-deep .job-description-table-container .search-field .mat-mdc-form-field { background: rgba(255,255,255,0.08) !important; border-radius: 12px !important; }
+    :host-context(.theme-dark) ::ng-deep .job-description-table-container .search-field .mdc-notched-outline { border-radius: 12px !important; }
+    :host-context(.theme-dark) ::ng-deep .job-description-table-container .search-field .mdc-notched-outline__notch,
+    :host-context(.theme-dark) ::ng-deep .job-description-table-container .search-field .mdc-notched-outline__leading,
+    :host-context(.theme-dark) ::ng-deep .job-description-table-container .search-field .mdc-notched-outline__trailing { border-color: rgba(255,255,255,0.22) !important; }
+    :host-context(.theme-dark) ::ng-deep .job-description-table-container .search-field .mat-mdc-form-field-focus-overlay { display: none !important; }
+    :host-context(.theme-dark) ::ng-deep .job-description-table-container .search-field .mat-mdc-input-element { color: #ffffff !important; }
+    :host-context(.theme-dark) ::ng-deep .job-description-table-container .search-field .mat-mdc-input-element::placeholder { color: rgba(255,255,255,0.85) !important; }
+    :host-context(.theme-dark) ::ng-deep .job-description-table-container .search-field mat-icon { color: #ffffff !important; }
+    :host-context(.theme-dark) ::ng-deep .job-description-table-container .search-field .mat-mdc-form-field-focus-overlay { background: rgba(59,130,246,0.25) !important; }
+
+    :host-context(.theme-dark) ::ng-deep .job-description-table-container td button[mat-icon-button] mat-icon,
+    :host-context(.theme-dark) ::ng-deep .job-description-table-container th button[mat-icon-button] mat-icon { color: #ffffff !important; }
+    :host-context(.theme-dark) ::ng-deep .job-description-table-container .mat-mdc-menu-panel { background: linear-gradient(135deg, rgba(15,23,42,0.85), rgba(2,6,23,0.80)) !important; border: 1px solid rgba(255,255,255,0.14) !important; box-shadow: 0 12px 32px rgba(2,6,23,0.50) !important; }
+    :host-context(.theme-dark) ::ng-deep .job-description-table-container .mat-mdc-menu-item { color: rgba(255,255,255,0.92) !important; }
+    :host-context(.theme-dark) ::ng-deep .job-description-table-container .mat-mdc-menu-item:hover { background: rgba(255,255,255,0.08) !important; }
+    :host-context(.theme-dark) ::ng-deep .job-description-table-container .mat-mdc-menu-item mat-icon { color: rgba(255,255,255,0.92) !important; }
   `]
 })
 export class JobDescriptionTableComponent implements OnInit, AfterViewInit, OnDestroy {
