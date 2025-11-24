@@ -487,14 +487,16 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
       z-index: 1;
     }
 
-    .toggle-btn { width: 30px; height: 30px; border-radius: 10px; border: 1px solid var(--dv-rail-border); background: var(--dv-item-bg); color: var(--dv-text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 6px rgba(17,24,39,0.08); transition: all 0.2s ease; }
+    .toggle-btn { width: 36px; height: 36px; border-radius: 12px; border: 1.5px solid var(--dv-rail-border); background: linear-gradient(180deg, #ffffff, #f3f4f6); color: var(--text-primary); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(17,24,39,0.08); transition: all 0.2s ease; }
 
-    .toggle-btn:hover { background: var(--dv-item-hover-bg); border-color: var(--dv-rail-border); color: #0f172a; }
+    .toggle-btn:hover { background: linear-gradient(180deg, #f7fafc, #eef2ff); border-color: rgba(59,130,246,0.35); color: #0f172a; box-shadow: 0 0 0 3px rgba(59,130,246,0.18), 0 6px 14px rgba(17,24,39,0.12); }
+
+    .toggle-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,0.28); }
 
     .toggle-btn mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
     }
 
     /* Collapsed state styling for toggle button */
