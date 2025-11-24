@@ -29,7 +29,7 @@ export interface UserFormData {
           <h2 class="text-2xl font-bold text-gray-900 mb-1">{{ data?.id ? ('admin.userManagement.form.edit_title' | translate) : ('admin.userManagement.form.create_title' | translate) }}</h2>
           <p class="text-sm text-gray-500">{{ 'admin.userManagement.form.subtitle' | translate }}</p>
         </div>
-        <button (click)="onCancel()" class="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 text-gray-400 hover:text-gray-600">
+        <button (click)="onCancel()" class="p-2 rounded-lg hover:bg-white/10 transition-colors duration-200 text-white/80 hover:text-white">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>

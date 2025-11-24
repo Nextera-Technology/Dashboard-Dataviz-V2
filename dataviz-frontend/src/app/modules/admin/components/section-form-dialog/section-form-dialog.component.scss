@@ -37,3 +37,20 @@ mat-form-field {
 .mat-mdc-form-field-infix {
   width: auto !important;
 }
+
+:host-context(.theme-dark) .section-form-dialog { background: var(--dv-rail-bg) !important; border-color: var(--dv-rail-border) !important; color: rgba(255,255,255,0.92) !important; }
+:host-context(.theme-dark) .section-form-dialog .header { background: var(--dv-rail-bg) !important; border-bottom-color: var(--dv-rail-border) !important; }
+:host-context(.theme-dark) .section-form-dialog .header h2 { color: rgba(255,255,255,0.92) !important; }
+:host-context(.theme-dark) .section-form-dialog .header mat-icon { color: rgba(255,255,255,0.85) !important; }
+
+:host-context(.theme-dark) .section-form-dialog label { color: rgba(255,255,255,0.92) !important; }
+:host-context(.theme-dark) .section-form-dialog input,
+:host-context(.theme-dark) .section-form-dialog select { background: var(--dv-item-bg) !important; color: rgba(255,255,255,0.92) !important; border-color: var(--dv-rail-border) !important; }
+:host-context(.theme-dark) .section-form-dialog input::placeholder,
+:host-context(.theme-dark) .section-form-dialog select::placeholder { color: rgba(255,255,255,0.85) !important; }
+
+:host-context(.theme-dark) .section-form-dialog .text-red-400 { color: #ef4444 !important; }
+:host-context(.theme-dark) .section-form-dialog .border-gray-200 { border-color: var(--dv-rail-border) !important; }
+:host-context(.theme-dark) .section-form-dialog .bg-gray-50 { background: var(--dv-item-bg) !important; }
+:host-context(.theme-dark) .section-form-dialog .text-gray-700 { color: rgba(255,255,255,0.92) !important; }
+:host-context(.theme-dark) .section-form-dialog .mat-dialog-actions button { color: rgba(255,255,255,0.92) !important; }

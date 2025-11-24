@@ -499,6 +499,11 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
       height: 20px;
     }
 
+    /* Dark mode: make collapse button match ambient */
+    :host-context(.theme-dark) .toggle-btn { background: var(--dv-item-bg) !important; color: #bfdbfe !important; border-color: var(--dv-rail-border) !important; box-shadow: 0 4px 12px rgba(2,6,23,0.35) !important; }
+    :host-context(.theme-dark) .toggle-btn:hover { background: var(--dv-item-hover-bg) !important; color: #ffffff !important; border-color: rgba(59,130,246,0.35) !important; box-shadow: 0 0 0 3px rgba(59,130,246,0.18), 0 6px 14px rgba(2,6,23,0.45) !important; }
+    :host-context(.theme-dark) .toggle-btn mat-icon { color: inherit !important; }
+
     /* Collapsed state styling for toggle button */
     .sidebar.collapsed .logo-row { padding: 6px 6px 10px; margin-bottom: 6px; }
 

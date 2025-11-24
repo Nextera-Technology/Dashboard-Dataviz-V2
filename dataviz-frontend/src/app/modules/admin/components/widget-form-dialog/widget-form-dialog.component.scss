@@ -116,3 +116,21 @@ mat-form-field {
   width: 20px;
   height: 20px;
 }
+
+:host-context(.theme-dark) .widget-config-dialog { background: var(--dv-rail-bg) !important; color: rgba(255,255,255,0.92) !important; }
+:host-context(.theme-dark) .widget-config-dialog .header { background: linear-gradient(90deg, #2563eb, #3b82f6) !important; color: #ffffff !important; }
+:host-context(.theme-dark) .widget-config-dialog .header mat-icon { color: rgba(255,255,255,0.9) !important; }
+
+:host-context(.theme-dark) .widget-config-dialog div,
+:host-context(.theme-dark) .widget-config-dialog label { color: rgba(255,255,255,0.92) !important; }
+
+:host-context(.theme-dark) .widget-config-dialog input,
+:host-context(.theme-dark) .widget-config-dialog select { background: var(--dv-item-bg) !important; color: rgba(255,255,255,0.92) !important; border-color: var(--dv-rail-border) !important; }
+:host-context(.theme-dark) .widget-config-dialog input::placeholder,
+:host-context(.theme-dark) .widget-config-dialog select::placeholder { color: rgba(255,255,255,0.85) !important; }
+
+:host-context(.theme-dark) .widget-config-dialog .text-red-400 { color: #ef4444 !important; }
+:host-context(.theme-dark) .widget-config-dialog .bg-white { background: var(--dv-item-bg) !important; }
+:host-context(.theme-dark) .widget-config-dialog .border-gray-300 { border-color: var(--dv-rail-border) !important; }
+:host-context(.theme-dark) .widget-config-dialog .text-gray-700 { color: rgba(255,255,255,0.92) !important; }
+:host-context(.theme-dark) .widget-config-dialog .sticky-actions button { color: rgba(255,255,255,0.92) !important; }

@@ -7,29 +7,25 @@
             </h1>
             <div class="w-full flex justify-between items-center">
                 <div class="header-left flex items-center gap-4">
-                    <button mat-button (click)="goBack()" class="text-blue-600 hover:text-blue-800">
+                    <button mat-button (click)="goBack()" class="btn-back">
                         <mat-icon>arrow_back</mat-icon>
                         <span class="ml-2">{{ 'admin.dashboardBuilder.back_to_dashboards' | translate }}</span>
                     </button>
                 </div>
                 <div class="header-actions flex gap-3">
-                    <button mat-button (click)="viewDashboard()" [matTooltip]="('admin.dashboardBuilder.view_dashboard' | translate)" [matTooltipClass]="'inter-tooltip'"
-                        class="flex items-center space-x-1 px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors duration-200">
+                    <button mat-button (click)="viewDashboard()" [matTooltip]="('admin.dashboardBuilder.view_dashboard' | translate)" [matTooltipClass]="'inter-tooltip'" class="btn-view">
                         <mat-icon>visibility</mat-icon>
                         <span>{{ 'admin.dashboardBuilder.view_dashboard' | translate }}</span>
                     </button>
-                    <button mat-button (click)="regenerateAnalysis()" [matTooltip]="('admin.dashboardBuilder.regenerate_analysis' | translate)" [matTooltipClass]="'inter-tooltip'"
-                        class="flex items-center space-x-1 px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors duration-200">
+                    <button mat-button (click)="regenerateAnalysis()" [matTooltip]="('admin.dashboardBuilder.regenerate_analysis' | translate)" [matTooltipClass]="'inter-tooltip'" class="btn-regenerate">
                         <mat-icon>refresh</mat-icon>
                         <span>{{ 'admin.dashboardBuilder.regenerate_analysis' | translate }}</span>
                     </button>
-                    <button mat-button (click)="addSection()" [matTooltip]="('admin.dashboardBuilder.add_section' | translate)" [matTooltipClass]="'inter-tooltip'"
-                        class="flex items-center space-x-1 px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors duration-200">
+                    <button mat-button (click)="addSection()" [matTooltip]="('admin.dashboardBuilder.add_section' | translate)" [matTooltipClass]="'inter-tooltip'" class="btn-add">
                         <mat-icon>add</mat-icon>
                         <span>{{ 'admin.dashboardBuilder.add_section' | translate }}</span>
                     </button>
-                    <button mat-raised-button color="primary" (click)="saveDashboard()" [matTooltip]="('admin.dashboardBuilder.save_dashboard' | translate)" [matTooltipClass]="'inter-tooltip'"
-                        class="flex items-center space-x-2 px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+                    <button mat-raised-button color="primary" (click)="saveDashboard()" [matTooltip]="('admin.dashboardBuilder.save_dashboard' | translate)" [matTooltipClass]="'inter-tooltip'" class="btn-save">
                         <mat-icon>save</mat-icon>
                         <span>{{ 'admin.dashboardBuilder.save_dashboard' | translate }}</span>
                     </button>
@@ -91,7 +87,7 @@
                             [style.background-color]="section?.background || '#ffffff'"
                             cdkDropList cdkDropListOrientation="mixed" [cdkDropListData]="section?.widgetIds"
                             (cdkDropListDropped)="onWidgetDrop($event, i)">
-                            <div class="widget-card rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-400 transition-all duration-300 ease-in-out cursor-grab flex flex-col"
+                            <div class="widget-card rounded-lg shadow-sm hover:shadow-md transition-all duration-300 ease-in-out cursor-grab flex flex-col"
                                 [style.background-color]="widget?.background || '#ffffff'"
                                 *ngFor="let widget of section?.widgetIds; trackBy: trackById" cdkDrag
                                 [class.col-span-1]="widget.columnSize === 1"
