@@ -2,6 +2,8 @@
   min-width: 450px;
   max-width: 90vw;
   max-height: 90vh;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
 }
 
 /* Angular Material specific overrides for full width inputs */
@@ -32,4 +34,30 @@ mat-form-field {
 
 ::ng-deep .mat-mdc-dialog-surface{
   background: transparent;
+}
+
+/* Dark theme alignment */
+:host-context(.theme-dark) .dashboard-form-dialog .header {
+  background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+  color: #ffffff;
+}
+
+.dashboard-form-dialog .header { border-bottom: 1px solid var(--border-color); }
+.dashboard-form-dialog .header h2 { color: #ffffff; }
+.dashboard-form-dialog .header p { color: rgba(255,255,255,0.85); }
+
+.dashboard-form-dialog .dialog-content,
+.dashboard-form-dialog .grid,
+.dashboard-form-dialog input,
+.dashboard-form-dialog select {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+.dashboard-form-dialog input::placeholder { color: var(--text-muted); }
+
+.dashboard-form-dialog .fuse-dialog-actions,
+.dashboard-form-dialog .px-8.py-6.bg-gray-50 {
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
 }

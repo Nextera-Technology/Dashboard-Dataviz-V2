@@ -196,8 +196,8 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
     .search-field .mat-input-element {
       font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial !important;
       font-weight: 600 !important;
-      font-size: 1rem !important; /* typed text */
-      color: #111827 !important;
+      font-size: 1rem !important;
+      color: var(--text-primary) !important;
       padding: 4px 6px !important;
     }
 
@@ -207,7 +207,7 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
       font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial !important;
       font-weight: 600 !important;
       font-size: 0.60rem !important; /* <- adjust this value to change placeholder size */
-      color: #9ca3af !important;
+      color: var(--text-muted) !important;
       opacity: 1 !important;
     }
 
@@ -215,9 +215,10 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
     .user-management {
       padding: 28px;
       font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      color: #111827;
-      width: 100%; /* ensure wrapper spans available content width */
+      color: var(--text-primary);
+      width: 100%;
       box-sizing: border-box;
+      background: var(--bg-primary);
     }
 
     .um-toolbar {
@@ -239,7 +240,7 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
 
     .um-sub {
       font-size: 0.875rem;
-      color: #6b7280;
+      color: var(--text-muted);
       margin-top: 4px;
     }
 
@@ -290,8 +291,10 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 8px 30px rgba(17,24,39,0.04);
-      width: 100%; /* force card to stretch to container */
+      width: 100%;
       box-sizing: border-box;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
     }
 
     .table-wrap {
@@ -312,40 +315,39 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
-      /* allow table to shrink to container width */
       min-width: 0;
-      background: white;
+      background: var(--bg-primary);
       table-layout: auto;
     }
 
     .user-table th, .user-table td {
       padding: 14px 20px;
       text-align: left;
-      border-bottom: 1px solid #f3f4f6;
+      border-bottom: 1px solid var(--border-color);
       vertical-align: middle;
       font-size: 0.95rem;
       overflow: visible;
-      white-space: nowrap; /* keep default for larger screens */
+      white-space: nowrap;
+      color: var(--text-primary);
     }
 
     /* Make header sticky and visually distinct */
     .user-table .header-row th {
-      background: linear-gradient(180deg, #ffffff, #fbfbfb);
+      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
       position: sticky;
       top: 0;
       z-index: 2;
-      box-shadow: inset 0 -1px 0 #eef2ff;
+      box-shadow: inset 0 -1px 0 var(--border-color);
       font-weight: 800;
-      color: #374151;
+      color: var(--text-primary);
     }
+    :host-context(.theme-dark) .user-table .header-row th { background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.06)); }
 
-    .user-table .data-row:nth-child(even) {
-      background: #fbfbfc;
-    }
+    .user-table .data-row:nth-child(even) { background: rgba(255,255,255,0.06); }
+    :host-context(.theme-dark) .user-table .data-row:nth-child(even) { background: rgba(255,255,255,0.03); }
 
-    .user-table .data-row:hover {
-      background: #f8fafc;
-    }
+    .user-table .data-row:hover { background: rgba(255,255,255,0.10); }
+    :host-context(.theme-dark) .user-table .data-row:hover { background: rgba(255,255,255,0.06); }
 
     /* Role & status badges retain smaller weight */
     .role-badge, .status-badge {
@@ -353,14 +355,14 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
       font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
 
-    .role-badge { display: inline-flex; padding: 6px 10px; border-radius: 999px; font-size: 0.8rem; color: #065f46; background: #ecfdf5; }
-    .role-badge.admin { background: #f0f9ff; color: #075985; }
-    .role-badge.user { background: #fff7ed; color: #92400e; }
-    .role-badge.visitor { background: #f0f9ff; color: #075985; }
+    .role-badge { display: inline-flex; padding: 6px 10px; border-radius: 999px; font-size: 0.8rem; }
+    .role-badge.admin { background: rgba(59,130,246,0.15); color: #075985; }
+    .role-badge.user { background: rgba(245,158,11,0.15); color: #92400e; }
+    .role-badge.visitor { background: rgba(59,130,246,0.15); color: #075985; }
 
     .status-badge { display: inline-flex; padding: 6px 10px; border-radius: 999px; font-size: 0.8rem; }
-    .status-badge.active { background: #ecfdf5; color: #065f46; }
-    .status-badge.inactive { background: #fff7f2; color: #7f1d1d; }
+    .status-badge.active { background: rgba(16,185,129,0.15); color: #065f46; }
+    .status-badge.inactive { background: rgba(244,63,94,0.15); color: #7f1d1d; }
 
     /* Ensure action buttons are visible and not cut off */
     .mat-column-actions { width: 200px; max-width: 200px; text-align: center; }
@@ -388,6 +390,16 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
         word-break: break-word;
       }
     }
+    /* Paginator text color */
+    ::ng-deep .mat-paginator .mat-select-value-text, ::ng-deep .mat-mdc-paginator .mat-select-value-text,
+    ::ng-deep .mat-paginator .mat-paginator-range-label, ::ng-deep .mat-mdc-paginator .mat-paginator-range-label {
+      color: var(--text-primary) !important;
+    }
+
+    /* Tab header separators if any mat-tab present inside this page later */
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-tab-header .mat-mdc-tab { border-right: 1px solid rgba(255,255,255,0.12); }
+    :host-context(:not(.theme-dark)) ::ng-deep .mat-mdc-tab-header .mat-mdc-tab { border-right: 1px solid rgba(255,255,255,0.18); }
+    ::ng-deep .mat-mdc-tab-header .mat-mdc-tab:last-child { border-right: none; }
   `]
 })
 export class UserManagementComponent implements OnInit, AfterViewInit {

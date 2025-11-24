@@ -85,6 +85,21 @@ export interface UserFormData {
     `
     .user-form { width: 520px; max-width: calc(100vw - 48px); }
     @media (max-width: 520px) { .flex-1 { min-width: 0; } .flex { flex-direction: column; } }
+
+    :host ::ng-deep .mat-mdc-dialog-container { background: transparent; }
+
+    .dashboard-form-dialog { background: var(--bg-primary); border-color: var(--border-color); }
+    .dashboard-form-dialog .header { background: linear-gradient(135deg, var(--primary-light), var(--primary-dark)); color: #ffffff; border-bottom: 1px solid var(--border-color); }
+    .dashboard-form-dialog .header h2 { color: #ffffff; }
+    .dashboard-form-dialog .header .text-sm { color: rgba(255,255,255,0.85); }
+
+    .dashboard-form-dialog input,
+    .dashboard-form-dialog select { color: var(--text-primary); background: var(--bg-primary); border-color: var(--border-color); }
+    .dashboard-form-dialog input::placeholder { color: var(--text-muted); }
+
+    .dashboard-form-dialog .px-8.py-6.bg-gray-50 { background: var(--bg-primary); border-top: 1px solid var(--border-color); }
+    .dashboard-form-dialog .px-6.py-2.5.bg-blue-600 { background: var(--primary-dark); }
+    .dashboard-form-dialog .px-6.py-2.5.text-gray-700.bg-white { color: var(--text-primary); background: var(--bg-primary); border-color: var(--border-color); }
     `
   ]
 })
