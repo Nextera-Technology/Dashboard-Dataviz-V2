@@ -165,5 +165,20 @@ body {
 }
 
 .border-warn {
-    border-color: var(--warn-color);
-} 
+  border-color: var(--warn-color);
+}
+
+/* Dark theme: Angular Material dialog surfaces */
+.theme-dark .mat-mdc-dialog-container .mdc-dialog__surface,
+.theme-dark .mat-mdc-dialog-container .mat-mdc-dialog-surface {
+    background: linear-gradient(135deg, rgba(11,17,34,0.95), rgba(6,12,24,0.92)) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid rgba(255,255,255,0.18) !important;
+    box-shadow: 0 22px 46px rgba(2,6,23,0.60) !important;
+    backdrop-filter: blur(10px) !important;
+}
+.theme-dark .mat-mdc-dialog-container .mat-mdc-dialog-content,
+.theme-dark .mat-mdc-dialog-container .mat-mdc-dialog-actions {
+    background: transparent !important;
+    color: var(--text-primary) !important;
+}

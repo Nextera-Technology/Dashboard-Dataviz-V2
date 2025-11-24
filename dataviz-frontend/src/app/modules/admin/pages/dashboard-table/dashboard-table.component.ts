@@ -649,6 +649,30 @@ interface Dashboard {
     ::ng-deep .mat-mdc-menu-item { font-size: 0.95rem; padding: 10px 14px; font-weight: 700; }
     ::ng-deep .mat-mdc-menu-item mat-icon { margin-right: 10px; color: var(--text-primary); }
 
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-menu-panel { background: linear-gradient(135deg, rgba(15,23,42,0.85), rgba(2,6,23,0.80)) !important; border: 1px solid rgba(255,255,255,0.14) !important; box-shadow: 0 12px 32px rgba(2,6,23,0.50) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-menu-item { color: rgba(255,255,255,0.92) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-menu-item:hover { background: rgba(255,255,255,0.08) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-menu-item mat-icon { color: rgba(255,255,255,0.92) !important; }
+
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator { background: linear-gradient(135deg, rgba(15,23,42,0.60), rgba(2,6,23,0.50)) !important; border: 1px solid rgba(255,255,255,0.14) !important; box-shadow: 0 8px 24px rgba(2,6,23,0.35) !important; border-radius: 12px; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-range-label { color: rgba(255,255,255,0.80) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-page-size-label { color: rgba(255,255,255,0.80) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-select-value { color: rgba(255,255,255,0.90) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-select-arrow { color: rgba(255,255,255,0.85) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-icon-button mat-icon { color: rgba(255,255,255,0.95) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-icon-button:hover mat-icon { color: #ffffff !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-icon-button[disabled] mat-icon { color: rgba(255,255,255,0.70) !important; opacity: 1 !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-next mat-icon,
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-previous mat-icon,
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-first mat-icon,
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-last mat-icon { color: rgba(255,255,255,0.95) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-next[disabled] mat-icon,
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-previous[disabled] mat-icon,
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-first[disabled] mat-icon,
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-last[disabled] mat-icon { color: rgba(255,255,255,0.70) !important; }
+
+    :host-context(.theme-dark) .dashboard-table td button mat-icon { color: rgba(255,255,255,0.92) !important; }
+
     /* Paginator: adopt Inter + stronger text like user management */
     mat-paginator { background: var(--bg-primary); border-top: 1px solid var(--border-color); border-radius: 0 0 12px 12px; }
     ::ng-deep .mat-mdc-paginator, ::ng-deep .mat-paginator { background: transparent; }

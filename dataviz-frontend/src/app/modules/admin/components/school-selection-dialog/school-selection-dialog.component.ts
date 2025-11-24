@@ -282,6 +282,59 @@ export interface SchoolSelectionResult {
     .animate-spin {
       animation: spin 1s linear infinite;
     }
+
+    /* Dark theme glassmorphism overrides */
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+      background: linear-gradient(135deg, rgba(11,17,34,0.95), rgba(6,12,24,0.92)) !important;
+      border: 1px solid rgba(255,255,255,0.18) !important;
+      box-shadow: 0 22px 46px rgba(2,6,23,0.60) !important;
+      color: var(--text-primary) !important;
+      backdrop-filter: blur(10px) !important;
+    }
+    :host-context(.theme-dark) .fuse-dialog-header { border-color: rgba(255,255,255,0.12) !important; background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04)) !important; }
+    :host-context(.theme-dark) .fuse-dialog-title h1 { color: var(--text-primary) !important; }
+    :host-context(.theme-dark) .fuse-dialog-title p { color: var(--text-secondary) !important; }
+
+    :host-context(.theme-dark) .fuse-option-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.05)) !important;
+      border-color: rgba(255,255,255,0.20) !important;
+    }
+    :host-context(.theme-dark) .fuse-option-card.selected {
+      background: rgba(59,130,246,0.12) !important;
+      border-color: rgba(59,130,246,0.65) !important;
+    }
+    :host-context(.theme-dark) .fuse-option-title { color: var(--text-primary) !important; }
+    :host-context(.theme-dark) .fuse-option-paragraf { color: rgba(226,232,240,0.85) !important; }
+    :host-context(.theme-dark) .fuse-search-input { background: rgba(255,255,255,0.10) !important; border-color: rgba(255,255,255,0.22) !important; color: var(--text-primary) !important; }
+    :host-context(.theme-dark) .fuse-search-input::placeholder { color: rgba(255,255,255,0.70) !important; }
+    :host-context(.theme-dark) .fuse-schools-container { background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.05)) !important; border-color: rgba(255,255,255,0.20) !important; }
+    :host-context(.theme-dark) .fuse-school-item:hover { background: rgba(255,255,255,0.08) !important; }
+    :host-context(.theme-dark) .fuse-dialog-actions { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04)) !important; border-color: rgba(255,255,255,0.16) !important; }
+    :host-context(.theme-dark) .fuse-cancel-button { color: rgba(226,232,240,0.85) !important; border-color: rgba(255,255,255,0.20) !important; }
+    :host-context(.theme-dark) .fuse-confirm-button { background: linear-gradient(135deg, #3b82f6, #6366f1) !important; color: #ffffff !important; }
+    :host-context(.theme-dark) .fuse-confirm-button[disabled] { background: rgba(148,163,184,0.55) !important; color: #ffffff !important; }
+
+    /* Controls contrast: radio/checkbox/icons */
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-radio-button .mdc-label { color: var(--text-primary) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-radio-button .mdc-radio__outer-circle { border-color: rgba(255,255,255,0.85) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-radio-button .mdc-radio__inner-circle { border-color: #3b82f6 !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-checkbox .mdc-label { color: var(--text-primary) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-checkbox .mdc-checkbox__background { border-color: rgba(255,255,255,0.85) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-checkbox.mat-mdc-checkbox-checked .mdc-checkbox__background { background-color: #3b82f6 !important; border-color: #3b82f6 !important; }
+    :host-context(.theme-dark) .fuse-dialog mat-icon { color: rgba(255,255,255,0.92) !important; }
+
+    /* Dark theme: remove light circles behind icons */
+    :host-context(.theme-dark) .bg-primary-50,
+    :host-context(.theme-dark) .bg-blue-50,
+    :host-context(.theme-dark) .bg-indigo-50,
+    :host-context(.theme-dark) .bg-gray-100 {
+      background: rgba(255,255,255,0.08) !important;
+      border: 1px solid rgba(255,255,255,0.16) !important;
+    }
+    :host-context(.theme-dark) .text-primary-600,
+    :host-context(.theme-dark) .text-blue-600,
+    :host-context(.theme-dark) .text-indigo-600,
+    :host-context(.theme-dark) .text-gray-600 { color: rgba(255,255,255,0.92) !important; }
   `]
 })
 export class SchoolSelectionDialogComponent implements OnInit {
