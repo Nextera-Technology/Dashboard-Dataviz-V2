@@ -546,6 +546,23 @@ interface JobDescriptionDashboard {
     ::ng-deep .mat-paginator .mat-select-value-text, ::ng-deep .mat-mdc-paginator .mat-select-value-text,
     ::ng-deep .mat-paginator .mat-paginator-range-label, ::ng-deep .mat-mdc-paginator .mat-paginator-range-label { font-weight: 800 !important; color: var(--text-primary) !important; }
 
+    /* Dark theme paginator glassmorphism (match dashboard-table) */
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator {
+      background: linear-gradient(135deg, rgba(15,23,42,0.60), rgba(2,6,23,0.50)) !important;
+      border: 1px solid rgba(255,255,255,0.14) !important;
+      box-shadow: 0 8px 24px rgba(2,6,23,0.35) !important;
+      border-radius: 12px !important;
+    }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-range-label,
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-page-size-label { color: rgba(255,255,255,0.85) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-select-value { color: rgba(255,255,255,0.90) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-select-arrow { color: rgba(255,255,255,0.90) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-icon-button mat-icon { color: #ffffff !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-icon-button { color: #ffffff !important; opacity: 1 !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-icon-button.mdc-icon-button--disabled { opacity: 1 !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-icon { fill: #ffffff !important; stroke: #ffffff !important; opacity: 1 !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-paginator .mat-mdc-button-touch-target { background: transparent !important; }
+
     ::ng-deep .mat-mdc-tab-header .mat-mdc-tab { opacity: .9; transition: background .2s ease, opacity .2s ease; }
     ::ng-deep .mat-mdc-tab-header .mat-mdc-tab.mdc-tab--active {
       opacity: 1;
