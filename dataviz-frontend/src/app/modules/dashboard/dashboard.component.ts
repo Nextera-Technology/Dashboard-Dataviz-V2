@@ -458,20 +458,19 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   
   // Get contrasting text color based on background color
   getSectionTextColor(section: any): string {
-    const backgroundColor = section?.background || 'var(--dv-item-bg)';
-    
-    // Convert color to RGB values for luminance calculation
-    const rgb = this.hexToRgb(backgroundColor) || this.parseRgba(backgroundColor);
-    
+    const bg = section?.background || '';
+
+    const rgb = this.hexToRgb(bg) || this.parseRgba(bg);
+
     if (rgb) {
-      // Calculate relative luminance
       const luminance = this.calculateLuminance(rgb.r, rgb.g, rgb.b);
-      
-      // Return dark text for light backgrounds, light text for dark backgrounds
       return luminance > 0.5 ? '#333333' : '#ffffff';
     }
-    
-    // Default to theme text
+
+    if (this.currentTheme === 'theme-dark' || this.currentTheme === 'theme-navy') {
+      return 'rgba(255,255,255,0.92)';
+    }
+
     return 'var(--text-primary)';
   }
   
