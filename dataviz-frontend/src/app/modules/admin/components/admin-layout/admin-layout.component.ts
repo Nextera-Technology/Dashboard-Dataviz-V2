@@ -122,10 +122,6 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
           
           <!-- Header Actions -->
           <div class="header-actions">
-            <button mat-icon-button (click)="toggleTheme()" class="theme-toggle" [matTooltip]="currentTheme === 'theme-dark' ? 'Light mode' : 'Dark mode'">
-              <mat-icon>{{ currentTheme === 'theme-dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
-            </button>
-            <!-- Create Dashboard Button (shown only on dashboard-list routes) -->
             <button
               *ngIf="showCreateButton()"
               mat-raised-button
@@ -138,6 +134,9 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
                 <span>{{ getCreateButtonText() | translate }}</span>
               </div>
             </button>
+            <button mat-icon-button (click)="toggleTheme()" class="theme-toggle" [matTooltip]="currentTheme === 'theme-dark' ? 'Light mode' : 'Dark mode'">
+              <mat-icon>{{ currentTheme === 'theme-dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+            </button>
           <!-- User Menu -->
           <div class="user-menu" style="display:flex; align-items:center; gap:8px;">
             <!-- Language dropdown -->
@@ -145,7 +144,7 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
               <button mat-button class="lang-toggle" aria-haspopup="true" (click)="openLangMenu($event)" style="display:flex;align-items:center;padding:6px 8px;">
                 <img [src]="currentFlag()" alt="lang" style="width:22px;height:16px;object-fit:cover;border-radius:2px;box-shadow:0 1px 2px rgba(0,0,0,0.1)" />
               </button>
-              <div *ngIf="langMenuOpen" class="lang-menu" style="position:absolute;right:0;top:36px;background:#fff;border:1px solid #e6e6e6;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.08);overflow:hidden;min-width:140px;z-index:8500">
+              <div *ngIf="langMenuOpen" class="lang-menu" style="position:absolute;right:0;top:36px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.08);overflow:hidden;min-width:140px;z-index:8500">
                 <button class="lang-item" (click)="setLanguage('en')" style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:transparent;border:none;width:100%;text-align:left"> 
                   <img src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/gb.svg" alt="EN" style="width:20px;height:14px;object-fit:cover" />
                   <span>English</span>
@@ -796,6 +795,9 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
       font-size: 11px;
       text-transform: capitalize;
     }
+
+    .lang-menu { background: var(--bg-primary); border: 1px solid var(--border-color); }
+    .lang-item span { color: var(--text-primary); }
 
     /* Page Content */
     .page-content {

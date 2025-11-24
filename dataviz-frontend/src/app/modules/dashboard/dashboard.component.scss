@@ -868,3 +868,6 @@ header {
   }
 }
 .sidebar-footer { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--dv-rail-border); display: flex; justify-content: center; }
+
+.lang-menu { background: var(--bg-primary) !important; border: 1px solid var(--border-color) !important; }
+.lang-item span { color: var(--text-primary) !important; }

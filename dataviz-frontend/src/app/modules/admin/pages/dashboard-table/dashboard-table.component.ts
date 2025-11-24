@@ -92,21 +92,24 @@ interface Dashboard {
       <div class="dashboard-table-container">
         <!-- Horizontal Navigation Bar (Card | Table) -->
         <div class="navigation-bar" style="margin-bottom: 24px;">
-          <div style="backdrop-filter: blur(12px); background: rgba(255, 255, 255, 0.7); border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 8px; display: inline-flex; gap: 8px;">
+          <div class="backdrop-blur-xl bg-white/70 rounded-2xl shadow-sm border border-white/20 p-2 inline-flex gap-2">
             <button
               (click)="navigateToCardView()"
-              class="nav-btn"
-              style="color: #64748b; background: transparent; border: none; cursor: pointer; padding: 8px 24px; border-radius: 12px; font-weight: 600; transition: all 0.3s; display: flex; align-items: center; gap: 8px;"
+              class="nav-btn px-6 py-2 rounded-xl font-semibold transition-all duration-300"
             >
-              <mat-icon style="font-size: 18px; width: 18px; height: 18px;">view_module</mat-icon>
-              <span>{{ 'admin.dashboardList.view_mode_card' | translate }}</span>
+              <div class="flex items-center gap-2">
+                <mat-icon class="text-lg">view_module</mat-icon>
+                <span>{{ 'admin.dashboardList.view_mode_card' | translate }}</span>
+              </div>
             </button>
             <button
-              class="nav-btn active"
-              style="background: linear-gradient(135deg, #3b82f6, #6366f1); color: white; border: none; cursor: pointer; padding: 8px 24px; border-radius: 12px; font-weight: 600; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); transition: all 0.3s; display: flex; align-items: center; gap: 8px;"
+              class="nav-btn px-6 py-2 rounded-xl font-semibold transition-all duration-300"
+              [class.active]="true"
             >
-              <mat-icon style="font-size: 18px; width: 18px; height: 18px;">table_view</mat-icon>
-              <span>{{ 'admin.dashboardList.view_mode_table' | translate }}</span>
+              <div class="flex items-center gap-2">
+                <mat-icon class="text-lg">table_view</mat-icon>
+                <span>{{ 'admin.dashboardList.view_mode_table' | translate }}</span>
+              </div>
             </button>
           </div>
         </div>
@@ -481,20 +484,20 @@ interface Dashboard {
 
     .dashboard-table-container {
       padding: 28px;
-      background: #F5F8FA; /* match admin layout main bg */
+      background: var(--bg-secondary);
       min-height: 100vh;
     }
 
     .dashboard-tabs {
-      background: white;
+      background: var(--bg-primary);
       border-radius: 16px;
-      box-shadow: 0 8px 30px rgba(17,24,39,0.04);
+      box-shadow: 0 8px 30px rgba(17,24,39,0.06);
       overflow: hidden;
     }
 
     /* Tab header: use sidebar gradient */
     ::ng-deep .mat-mdc-tab-group .mat-mdc-tab-header {
-      background: linear-gradient(135deg, #97cce4 0%, #306e8b 100%);
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-dark) 100%);
     }
     /* Remove default MDC overlays/borders that can appear as dark bars */
     ::ng-deep .mat-mdc-tab-header { box-shadow: none !important; border-bottom: none !important; }
@@ -516,20 +519,45 @@ interface Dashboard {
 
     .tab-content { padding: 24px; }
 
+    /* Navigation Bar (Card/Table Toggle) */
+    .navigation-bar {
+      position: relative;
+      z-index: 9;
+    }
+
+    .nav-btn {
+      color: #64748b;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nav-btn:hover {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
+    .nav-btn.active {
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      color: white;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
     .dv-table-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
       padding-bottom: 12px;
-      border-bottom: 1px solid #e5eef5;
+      border-bottom: 1px solid var(--border-color);
       background: transparent !important;
       box-shadow: none !important;
     }
 
     .dv-table-header h2 {
       margin: 0;
-      color: #1f2937;
+      color: var(--text-primary);
       font-size: 1.25rem;
       font-weight: 800;
       position: relative;
@@ -544,16 +572,16 @@ interface Dashboard {
     .search-field .mat-form-field-wrapper { padding: 0 !important; }
 
     .table-container {
-      background: white;
+      background: var(--bg-primary);
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 8px 24px rgba(2,6,23,0.06);
-      border: 1px solid #e5eef5;
+      border: 1px solid var(--border-color);
     }
 
     .loading-container {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      padding: 60px 20px; color: #6b7280;
+      padding: 60px 20px; color: var(--text-secondary);
     }
     .loading-container p { margin-top: 12px; font-size: 0.9rem; }
 
@@ -564,54 +592,67 @@ interface Dashboard {
     }
 
     .dashboard-table th {
-      background: linear-gradient(180deg, #ffffff, #f3f7fb);
-      color: #1f2937;
+      background: var(--dv-item-bg);
+      color: var(--text-primary);
       font-size: 0.75rem;
       letter-spacing: .02em;
-      border-bottom: 1px solid #e5eef5;
+      border-bottom: 1px solid var(--border-color);
       position: sticky; top: 0; z-index: 2;
       font-weight: 600;
     }
 
-    .dashboard-table td { border-bottom: 1px solid #eef2f7; font-size: 0.95rem; font-weight: 400; }
+    .dashboard-table td { border-bottom: 1px solid var(--border-color); font-size: 0.95rem; font-weight: 400; color: var(--text-primary); }
 
-    .dashboard-table .mat-mdc-row:nth-child(even), .dashboard-table .data-row:nth-child(even) { background: #f7fbff; }
-    .dashboard-table tr:hover { background: #eef6fb; transition: background .15s ease; }
+    .dashboard-table .mat-mdc-row:nth-child(even), .dashboard-table .data-row:nth-child(even) { background: var(--dv-item-bg); }
+    .dashboard-table tr:hover { background: var(--dv-item-hover-bg); transition: background .15s ease; }
 
     .type-badge {
       padding: 6px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; color: #fff;
-      background: linear-gradient(135deg, #97cce4 0%, #306e8b 100%);
+      background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent-dark) 100%);
     }
 
     .data-source { display: flex; flex-direction: column; gap: 4px; }
-    .source-title { font-weight: 700; color: #111827; font-size: 0.85rem; }
-    .source-classes { font-size: 0.75rem; color: #6b7280; font-weight: 600; }
+    .source-title { font-weight: 700; color: var(--text-primary); font-size: 0.85rem; }
+    .source-classes { font-size: 0.75rem; color: var(--text-secondary); font-weight: 600; }
 
     /* Menu */
     ::ng-deep .mat-mdc-menu-panel { border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
     ::ng-deep .mat-mdc-menu-item { font-size: 0.95rem; padding: 10px 14px; font-weight: 700; }
-    ::ng-deep .mat-mdc-menu-item mat-icon { margin-right: 10px; color: #374151; }
+    ::ng-deep .mat-mdc-menu-item mat-icon { margin-right: 10px; color: var(--text-primary); }
 
     /* Paginator: adopt Inter + stronger text like user management */
-    mat-paginator { background: #fff; border-top: 1px solid #e5eef5; border-radius: 0 0 12px 12px; }
+    mat-paginator { background: var(--bg-primary); border-top: 1px solid var(--border-color); border-radius: 0 0 12px 12px; }
     ::ng-deep .mat-mdc-paginator, ::ng-deep .mat-paginator { background: transparent; }
     ::ng-deep .mat-paginator .mat-select-value-text, ::ng-deep .mat-mdc-paginator .mat-select-value-text,
     ::ng-deep .mat-paginator .mat-paginator-range-label, ::ng-deep .mat-mdc-paginator .mat-paginator-range-label {
-      font-weight: 800 !important; color: #111827 !important;
+      font-weight: 800 !important; color: var(--text-primary) !important;
     }
 
     /* Stronger active tab contrast */
     ::ng-deep .mat-mdc-tab-header .mat-mdc-tab { opacity: .8; transition: background .2s ease, opacity .2s ease; }
     ::ng-deep .mat-mdc-tab-header .mat-mdc-tab.mdc-tab--active {
       opacity: 1;
-      background: rgba(255,255,255,0.2);
-      border-bottom: 3px solid #ffffff;
+      background: var(--dv-item-hover-bg);
+      border-bottom: 3px solid var(--primary-light);
       border-top-left-radius: 8px; border-top-right-radius: 8px;
     }
 
     /* Checkbox primary color aligned to sidebar deep blue */
-    ::ng-deep .mat-mdc-checkbox .mdc-checkbox__background { border-color: #306e8b !important; }
-    ::ng-deep .mat-mdc-checkbox.mat-mdc-checkbox-checked .mdc-checkbox { background-color: #306e8b !important; border-color: #306e8b !important; }
+    ::ng-deep .mat-mdc-checkbox .mdc-checkbox__background { border-color: var(--primary-dark) !important; }
+    ::ng-deep .mat-mdc-checkbox.mat-mdc-checkbox-checked .mdc-checkbox { background-color: var(--primary-dark) !important; border-color: var(--primary-dark) !important; }
+
+    /* Enforce dark/light theme on Angular Material table elements */
+    ::ng-deep .mat-mdc-table { background: var(--bg-primary) !important; }
+    ::ng-deep .mat-mdc-header-cell { background: var(--dv-item-bg) !important; color: var(--text-primary) !important; border-bottom: 1px solid var(--border-color) !important; }
+    ::ng-deep .mat-mdc-cell { color: var(--text-primary) !important; }
+    ::ng-deep .mat-sort-header-content { color: var(--text-primary) !important; }
+    ::ng-deep .mat-mdc-row:nth-child(even) { background: var(--dv-item-bg) !important; }
+    ::ng-deep .mat-mdc-row:hover { background: var(--dv-item-hover-bg) !important; }
+    ::ng-deep .mat-mdc-paginator .mat-mdc-icon-button, ::ng-deep .mat-mdc-paginator .mat-mdc-select { color: var(--text-primary) !important; }
+    ::ng-deep .mat-mdc-form-field .mat-mdc-input-element { color: var(--text-primary) !important; }
+    ::ng-deep .mat-mdc-form-field .mdc-notched-outline__notch,
+    ::ng-deep .mat-mdc-form-field .mdc-notched-outline__leading,
+    ::ng-deep .mat-mdc-form-field .mdc-notched-outline__trailing { border-color: var(--border-color) !important; }
 
     /* Empty state */
     .empty-state { text-align: center; padding: 60px 20px; color: #6b7280; }
