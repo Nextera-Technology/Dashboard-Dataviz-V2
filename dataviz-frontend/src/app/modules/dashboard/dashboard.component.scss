@@ -223,6 +223,9 @@ header {
   grid-column: 1;
 }
 
+.theme-toggle { color: var(--text-secondary); }
+.theme-toggle:hover { color: var(--text-primary); }
+
 .header-right {
   grid-column: 3;
   display: flex;
