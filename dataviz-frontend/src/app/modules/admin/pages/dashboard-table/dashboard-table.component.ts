@@ -549,6 +549,9 @@ interface Dashboard {
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 8px 24px;
+      border-radius: 12px;
+      font-weight: 600;
     }
     .nav-btn:hover {
       background: rgba(59, 130, 246, 0.1);
@@ -559,6 +562,15 @@ interface Dashboard {
       color: white;
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
+
+    /* Dark theme glassmorphism for navigation container */
+    :host-context(.theme-dark) .navigation-bar .backdrop-blur-xl {
+      background: linear-gradient(135deg, rgba(15,23,42,0.55), rgba(2,6,23,0.45)) !important;
+      border-color: rgba(255,255,255,0.12) !important;
+      box-shadow: 0 10px 30px rgba(2,6,23,0.35) !important;
+    }
+    :host-context(.theme-dark) .navigation-bar .nav-btn mat-icon { color: rgba(255,255,255,0.85) !important; }
+    :host-context(.theme-dark) .navigation-bar .nav-btn span { color: var(--text-primary) !important; }
 
     .dv-table-header {
       display: flex;
