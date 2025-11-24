@@ -171,7 +171,7 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
       font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial !important;
       font-weight: 800 !important;
       font-size: 0.95rem !important;
-      color: #111827 !important;
+      color: var(--text-primary) !important;
     }
 
     /* Also force font inside the select overlay panel (options list) */
@@ -181,7 +181,7 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
       font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial !important;
       font-weight: 800 !important;
       font-size: 0.95rem !important;
-      color: #111827 !important;
+      color: var(--text-primary) !important;
     }
 
     /* make paginator select width comfortable */
@@ -282,6 +282,8 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
       white-space: nowrap;
       font-weight: 700;
       font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: var(--primary-dark) !important;
+      color: #ffffff !important;
     }
     
 
@@ -361,13 +363,16 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
     .role-badge.visitor { background: rgba(59,130,246,0.15); color: #075985; }
 
     .status-badge { display: inline-flex; padding: 6px 10px; border-radius: 999px; font-size: 0.8rem; }
-    .status-badge.active { background: rgba(16,185,129,0.15); color: #065f46; }
-    .status-badge.inactive { background: rgba(244,63,94,0.15); color: #7f1d1d; }
+    .status-badge.active { background: rgba(16,185,129,0.18); color: #065f46; }
+    .status-badge.inactive { background: rgba(244,63,94,0.18); color: #7f1d1d; }
+    :host-context(.theme-dark) .status-badge.active { background: rgba(16,185,129,0.28); color: #ffffff; border: 1px solid rgba(16,185,129,0.45); }
+    :host-context(.theme-dark) .status-badge.inactive { background: rgba(244,63,94,0.28); color: #ffffff; border: 1px solid rgba(244,63,94,0.45); }
 
     /* Ensure action buttons are visible and not cut off */
     .mat-column-actions { width: 200px; max-width: 200px; text-align: center; }
     .actions-cell { display: flex; gap: 8px; justify-content: center; align-items: center; overflow: visible; }
     .action-btn { border-radius: 8px; width: 44px; height: 44px; min-width: 44px; min-height: 44px; }
+    :host-context(.theme-dark) .action-btn { background: rgba(255,255,255,0.08); color: #ffffff; border: 1px solid rgba(255,255,255,0.15); }
     .action-btn mat-icon { font-size: 20px; }
 
     /* Responsive tweaks */
@@ -390,11 +395,11 @@ import { AuthService, User, CreateUserData, UpdateUserData } from '../../../../c
         word-break: break-word;
       }
     }
-    /* Paginator text color */
     ::ng-deep .mat-paginator .mat-select-value-text, ::ng-deep .mat-mdc-paginator .mat-select-value-text,
     ::ng-deep .mat-paginator .mat-paginator-range-label, ::ng-deep .mat-mdc-paginator .mat-paginator-range-label {
       color: var(--text-primary) !important;
     }
+    ::ng-deep .mat-paginator, ::ng-deep .mat-mdc-paginator { background: var(--bg-primary) !important; border-top: 1px solid var(--border-color) !important; }
 
     /* Tab header separators if any mat-tab present inside this page later */
     :host-context(.theme-dark) ::ng-deep .mat-mdc-tab-header .mat-mdc-tab { border-right: 1px solid rgba(255,255,255,0.12); }

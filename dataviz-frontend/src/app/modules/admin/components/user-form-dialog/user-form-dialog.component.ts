@@ -88,18 +88,22 @@ export interface UserFormData {
 
     :host ::ng-deep .mat-mdc-dialog-container { background: transparent; }
 
-    .dashboard-form-dialog { background: var(--bg-primary); border-color: var(--border-color); }
-    .dashboard-form-dialog .header { background: linear-gradient(135deg, var(--primary-light), var(--primary-dark)); color: #ffffff; border-bottom: 1px solid var(--border-color); }
-    .dashboard-form-dialog .header h2 { color: #ffffff; }
-    .dashboard-form-dialog .header .text-sm { color: rgba(255,255,255,0.85); }
+    .dashboard-form-dialog { background: var(--bg-primary) !important; border-color: var(--border-color) !important; }
+    .dashboard-form-dialog .header { background: linear-gradient(135deg, var(--primary-light), var(--primary-dark)) !important; color: #ffffff !important; border-bottom: 1px solid var(--border-color) !important; }
+    .dashboard-form-dialog .header h2 { color: #ffffff !important; }
+    .dashboard-form-dialog .header .text-sm { color: rgba(255,255,255,0.85) !important; }
 
     .dashboard-form-dialog input,
-    .dashboard-form-dialog select { color: var(--text-primary); background: var(--bg-primary); border-color: var(--border-color); }
-    .dashboard-form-dialog input::placeholder { color: var(--text-muted); }
+    .dashboard-form-dialog select { color: var(--text-primary) !important; background: var(--bg-primary) !important; border-color: var(--border-color) !important; }
+    .dashboard-form-dialog input::placeholder { color: var(--text-muted) !important; }
+    .dashboard-form-dialog input:-webkit-autofill,
+    .dashboard-form-dialog input:-webkit-autofill:hover,
+    .dashboard-form-dialog input:-webkit-autofill:focus,
+    .dashboard-form-dialog select:-webkit-autofill { -webkit-box-shadow: 0 0 0px 1000px var(--bg-primary) inset !important; -webkit-text-fill-color: var(--text-primary) !important; caret-color: var(--text-primary) !important; }
 
-    .dashboard-form-dialog .px-8.py-6.bg-gray-50 { background: var(--bg-primary); border-top: 1px solid var(--border-color); }
-    .dashboard-form-dialog .px-6.py-2.5.bg-blue-600 { background: var(--primary-dark); }
-    .dashboard-form-dialog .px-6.py-2.5.text-gray-700.bg-white { color: var(--text-primary); background: var(--bg-primary); border-color: var(--border-color); }
+    .dashboard-form-dialog .px-8.py-6.bg-gray-50 { background: var(--bg-primary) !important; border-top: 1px solid var(--border-color) !important; }
+    .dashboard-form-dialog .px-6.py-2\\.5.bg-blue-600 { background: var(--primary-dark) !important; }
+    .dashboard-form-dialog .px-6.py-2\\.5.text-gray-700.bg-white { color: var(--text-primary) !important; background: var(--bg-primary) !important; border-color: var(--border-color) !important; }
     `
   ]
 })
