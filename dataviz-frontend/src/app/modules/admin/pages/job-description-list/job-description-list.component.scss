@@ -343,6 +343,62 @@ button:focus,
   outline-offset: 2px;
 }
 
+/* Dark theme glassmorphism overrides */
+:host-context(.theme-dark) .navigation-bar .backdrop-blur-xl,
+:host-context(.theme-dark) .header-container .backdrop-blur-xl,
+:host-context(.theme-dark) .search-bar .backdrop-blur-xl {
+  background: linear-gradient(135deg, rgba(15,23,42,0.55), rgba(2,6,23,0.45)) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  box-shadow: 0 10px 30px rgba(2,6,23,0.35) !important;
+}
+
+:host-context(.theme-dark) .search-bar input {
+  color: var(--text-primary) !important;
+  background: rgba(255,255,255,0.08) !important;
+  border-color: rgba(255,255,255,0.16) !important;
+}
+:host-context(.theme-dark) .search-bar input::placeholder { color: rgba(255,255,255,0.70) !important; }
+:host-context(.theme-dark) .search-bar input:focus { border-color: var(--primary-light) !important; box-shadow: 0 0 0 2px rgba(59,130,246,0.25) !important; }
+:host-context(.theme-dark) .search-bar mat-icon { color: rgba(255,255,255,0.80) !important; }
+
+:host-context(.theme-dark) .dashboard-card {
+  background: linear-gradient(180deg, rgba(15,23,42,0.55), rgba(15,23,42,0.40)) !important;
+  backdrop-filter: blur(8px) !important;
+  border-color: rgba(255,255,255,0.14) !important;
+  box-shadow: 0 6px 20px rgba(2,6,23,0.30) !important;
+}
+
+:host-context(.theme-dark) .dashboard-card h2 { color: var(--text-primary) !important; }
+:host-context(.theme-dark) .dashboard-card p { color: var(--text-secondary) !important; }
+:host-context(.theme-dark) .sources-section h3 { color: var(--text-primary) !important; }
+
+:host-context(.theme-dark) .source-item {
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04)) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+}
+:host-context(.theme-dark) .source-item .font-bold { color: var(--text-primary) !important; }
+:host-context(.theme-dark) .classes-tags span { color: var(--text-primary) !important; background: rgba(255,255,255,0.08) !important; border-color: rgba(255,255,255,0.16) !important; }
+
+:host-context(.theme-dark) .expand-btn {
+  background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04)) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  color: var(--text-primary) !important;
+}
+:host-context(.theme-dark) .expand-btn mat-icon { color: rgba(255,255,255,0.85) !important; }
+
+:host-context(.theme-dark) .no-sources {
+  background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04)) !important;
+  border-color: rgba(255,255,255,0.18) !important;
+}
+:host-context(.theme-dark) .no-sources p { color: var(--text-secondary) !important; }
+
+/* Ensure glass containers keep readable text */
+:host-context(.theme-dark) .backdrop-blur-xl span,
+:host-context(.theme-dark) .backdrop-blur-xl p,
+:host-context(.theme-dark) .backdrop-blur-xl h1,
+:host-context(.theme-dark) .backdrop-blur-xl h2,
+:host-context(.theme-dark) .backdrop-blur-xl h3 { color: var(--text-primary) !important; }
+
 /* High contrast mode support */
 @media (prefers-contrast: high) {
   .dashboard-card {
