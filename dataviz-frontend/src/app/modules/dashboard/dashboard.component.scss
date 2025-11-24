@@ -228,6 +228,11 @@ header {
   font-weight: 400;
 }
 
+.home-btn { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 10px; background: var(--dv-item-bg); color: var(--text-primary); border: 1px solid var(--dv-rail-border); text-decoration: none; }
+.home-btn:hover { background: var(--dv-item-hover-bg); border-color: var(--dv-rail-border); transform: translateY(-1px); }
+.home-btn mat-icon { font-size: 18px; width: 18px; height: 18px; }
+.home-btn span { font-size: 12px; font-weight: 600; }
+
 /* User Menu */
 .user-menu {
   display: flex;

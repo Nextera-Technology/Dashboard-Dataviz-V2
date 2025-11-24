@@ -100,31 +100,7 @@
         </div>
 
         <!-- Admin Navigation Section with Expandable Menus -->
-        <div class="admin-section" *ngIf="isAdminUser() && !isSidebarCollapsed">
-            <div class="section-title admin-title">
-                <span class="section-icon">⚙️</span>
-                {{ 'admin.layout.title' | translate }}
-            </div>
-            <div class="admin-menu">
-                <!-- Dashboard Builder - Direct Link -->
-                <a routerLink="/admin/dashboard-list" routerLinkActive="active" class="nav-item">
-                    <mat-icon>dashboard</mat-icon>
-                    <span>{{ 'admin.dashboardList.header_title' | translate }}</span>
-                </a>
-
-                <!-- Job Description - Direct Link -->
-                <a routerLink="/admin/job-description" routerLinkActive="active" class="nav-item">
-                    <mat-icon>work</mat-icon>
-                    <span>{{ 'admin.layout.jobDescription' | translate }}</span>
-                </a>
-
-                <!-- User Management -->
-                <a routerLink="/admin/user-management" routerLinkActive="active" class="nav-item">
-                    <mat-icon>people</mat-icon>
-                    <span>{{ 'admin.layout.userManagement' | translate }}</span>
-                </a>
-            </div>
-        </div>
+        
 
         <!-- Collapsed Icon Menu -->
         <div class="collapsed-menu" *ngIf="isSidebarCollapsed">
@@ -139,22 +115,22 @@
             </div>
 
             <!-- Admin Dashboard Builder Icon -->
-            <a *ngIf="isAdminUser()" routerLink="/admin/dashboard-list" class="collapsed-menu-item" 
+            <!-- <a *ngIf="isAdminUser()" routerLink="/admin/dashboard-list" class="collapsed-menu-item" 
                [matTooltip]="'admin.dashboardList.header_title' | translate" matTooltipPosition="right">
                 <mat-icon>dashboard</mat-icon>
-            </a>
+            </a> -->
 
             <!-- Job Description Icon (Admin only) -->
-            <a *ngIf="isAdminUser()" routerLink="/admin/job-description" class="collapsed-menu-item" 
+            <!-- <a *ngIf="isAdminUser()" routerLink="/admin/job-description" class="collapsed-menu-item" 
                [matTooltip]="'admin.layout.jobDescription' | translate" matTooltipPosition="right">
                 <mat-icon>work</mat-icon>
-            </a>
+            </a> -->
 
             <!-- Admin User Management Icon -->
-            <a *ngIf="isAdminUser()" routerLink="/admin/user-management" class="collapsed-menu-item" 
+            <!-- <a *ngIf="isAdminUser()" routerLink="/admin/user-management" class="collapsed-menu-item" 
                [matTooltip]="'admin.layout.userManagement' | translate" matTooltipPosition="right">
                 <mat-icon>people</mat-icon>
-            </a>
+            </a> -->
         </div>
         <div class="sidebar-footer">
           <button type="button" (click)="toggleSidebar()" class="toggle-btn" [attr.aria-label]="isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'" [attr.aria-pressed]="isSidebarCollapsed">
@@ -180,6 +156,10 @@
             </div>
 
             <div class="header-right">
+              <a mat-button routerLink="/admin/dashboard-list" class="home-btn" [matTooltip]="'Home'" matTooltipPosition="below">
+                <mat-icon>home</mat-icon>
+                <span>Home</span>
+              </a>
               <button mat-icon-button (click)="toggleTheme()" class="theme-toggle" [matTooltip]="currentTheme === 'theme-dark' ? 'Light mode' : 'Dark mode'">
                 <mat-icon>{{ currentTheme === 'theme-dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
               </button>
