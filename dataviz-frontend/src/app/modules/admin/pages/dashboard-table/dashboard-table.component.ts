@@ -498,24 +498,40 @@ interface Dashboard {
     /* Tab header: use sidebar gradient */
     ::ng-deep .mat-mdc-tab-group .mat-mdc-tab-header {
       background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-dark) 100%);
+      border-bottom: 1px solid var(--border-color) !important;
     }
     /* Remove default MDC overlays/borders that can appear as dark bars */
     ::ng-deep .mat-mdc-tab-header { box-shadow: none !important; border-bottom: none !important; }
     ::ng-deep .mat-mdc-tab-header::before,
     ::ng-deep .mat-mdc-tab-header::after { display: none !important; background: transparent !important; }
-    ::ng-deep .mat-mdc-tab-header .mdc-tab-indicator .mdc-tab-indicator__content { background: transparent !important; border: none !important; }
+    ::ng-deep .mat-mdc-tab-header .mdc-tab-indicator .mdc-tab-indicator__content { background: var(--accent-dark) !important; height: 3px !important; border: none !important; }
     ::ng-deep .mat-mdc-tab-header .mat-mdc-tab .mdc-tab__ripple { background: transparent !important; }
     ::ng-deep .mat-mdc-tab-header .mat-mdc-tab .mdc-tab__content { background: transparent !important; }
 
     ::ng-deep .mat-mdc-tab .mdc-tab__text-label {
-      color: rgba(255,255,255,0.9) !important;
+      color: rgba(255,255,255,0.85) !important;
       font-weight: 700;
+      position: relative;
+      z-index: 2;
     }
 
     ::ng-deep .mat-mdc-tab-header .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
-      color: #fff !important;
+      color: #ffffff !important;
       font-weight: 800;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+      mix-blend-mode: normal;
     }
+
+    ::ng-deep .mat-mdc-tab-header .mat-mdc-tab:not(.mdc-tab--active) .mdc-tab__text-label {
+      color: rgba(255,255,255,0.78) !important;
+    }
+
+    /* Theme-specific tab label contrast */
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-tab .mdc-tab__text-label { color: rgba(255,255,255,0.85) !important; }
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-tab-header .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label { color: #ffffff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
+
+    :host-context(:not(.theme-dark)) ::ng-deep .mat-mdc-tab .mdc-tab__text-label { color: #ffffff !important; text-shadow: none; }
+    :host-context(:not(.theme-dark)) ::ng-deep .mat-mdc-tab-header .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label { color: var(--text-primary) !important; text-shadow: none; }
 
     .tab-content { padding: 24px; }
 
@@ -592,13 +608,14 @@ interface Dashboard {
     }
 
     .dashboard-table th {
-      background: var(--dv-item-bg);
+      background: var(--dv-rail-bg);
       color: var(--text-primary);
       font-size: 0.75rem;
       letter-spacing: .02em;
       border-bottom: 1px solid var(--border-color);
       position: sticky; top: 0; z-index: 2;
       font-weight: 600;
+      text-transform: uppercase;
     }
 
     .dashboard-table td { border-bottom: 1px solid var(--border-color); font-size: 0.95rem; font-weight: 400; color: var(--text-primary); }
@@ -629,13 +646,17 @@ interface Dashboard {
     }
 
     /* Stronger active tab contrast */
-    ::ng-deep .mat-mdc-tab-header .mat-mdc-tab { opacity: .8; transition: background .2s ease, opacity .2s ease; }
+    ::ng-deep .mat-mdc-tab-header .mat-mdc-tab { opacity: .9; transition: background .2s ease, opacity .2s ease; }
     ::ng-deep .mat-mdc-tab-header .mat-mdc-tab.mdc-tab--active {
       opacity: 1;
       background: var(--dv-item-hover-bg);
       border-bottom: 3px solid var(--primary-light);
       border-top-left-radius: 8px; border-top-right-radius: 8px;
     }
+    /* Vertical separators between tabs */
+    :host-context(.theme-dark) ::ng-deep .mat-mdc-tab-header .mat-mdc-tab { border-right: 1px solid rgba(255,255,255,0.12); }
+    :host-context(:not(.theme-dark)) ::ng-deep .mat-mdc-tab-header .mat-mdc-tab { border-right: 1px solid rgba(255,255,255,0.18); }
+    ::ng-deep .mat-mdc-tab-header .mat-mdc-tab:last-child { border-right: none; }
 
     /* Checkbox primary color aligned to sidebar deep blue */
     ::ng-deep .mat-mdc-checkbox .mdc-checkbox__background { border-color: var(--primary-dark) !important; }
@@ -643,9 +664,12 @@ interface Dashboard {
 
     /* Enforce dark/light theme on Angular Material table elements */
     ::ng-deep .mat-mdc-table { background: var(--bg-primary) !important; }
-    ::ng-deep .mat-mdc-header-cell { background: var(--dv-item-bg) !important; color: var(--text-primary) !important; border-bottom: 1px solid var(--border-color) !important; }
+    ::ng-deep .mat-mdc-header-cell { background: var(--dv-rail-bg) !important; color: var(--text-primary) !important; border-bottom: 1px solid var(--border-color) !important; }
     ::ng-deep .mat-mdc-cell { color: var(--text-primary) !important; }
     ::ng-deep .mat-sort-header-content { color: var(--text-primary) !important; }
+    ::ng-deep .mat-sort-header-arrow { opacity: 1 !important; color: var(--text-primary) !important; }
+    ::ng-deep .mat-sort-header-indicator { color: var(--text-primary) !important; }
+    ::ng-deep .mat-sort-header-stem, ::ng-deep .mat-sort-header-pointer-left, ::ng-deep .mat-sort-header-pointer-right, ::ng-deep .mat-sort-header-pointer-middle { border-color: var(--text-primary) !important; }
     ::ng-deep .mat-mdc-row:nth-child(even) { background: var(--dv-item-bg) !important; }
     ::ng-deep .mat-mdc-row:hover { background: var(--dv-item-hover-bg) !important; }
     ::ng-deep .mat-mdc-paginator .mat-mdc-icon-button, ::ng-deep .mat-mdc-paginator .mat-mdc-select { color: var(--text-primary) !important; }
