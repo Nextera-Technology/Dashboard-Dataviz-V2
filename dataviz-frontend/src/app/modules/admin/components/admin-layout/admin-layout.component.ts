@@ -30,19 +30,14 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
   template: `
     <div class="admin-layout">
       <!-- Sidebar -->
-      <aside class="sidebar" [class.collapsed]="isSidebarCollapsed">
-        <div class="logo-container">
-          <img 
-            src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/Nextera%20Logo%20Career%20Insight%20White%20text.png"
-            alt="Nextera Logo"
-          />
-        </div>
-
-        <!-- Toggle Button - positioned above user info -->
-        <div class="sidebar-toggle-section">
-          <button (click)="toggleSidebar()" class="toggle-btn" [attr.aria-label]="isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'">
-            <mat-icon>{{ isSidebarCollapsed ? 'menu' : 'menu_open' }}</mat-icon>
-          </button>
+      <aside class="sidebar" [class.collapsed]="isSidebarCollapsed" [attr.aria-expanded]="!isSidebarCollapsed">
+        <div class="logo-row">
+          <div class="logo-container">
+            <img 
+              src="https://staging-alumni-dataviz.s3.ap-southeast-1.amazonaws.com/public/logo+with+text+right.png"
+              alt="Nextera Logo"
+            />
+          </div>
         </div>
 
         <!-- User Info -->
@@ -105,17 +100,15 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
           </a>
         </div>
 
-        <!-- Back to Dashboard -->
-        <!-- <div class="back-to-dashboard">
-          <a routerLink="/dashboard" class="back-link">
-            <mat-icon>arrow_back</mat-icon>
-            <span>View Dashboard</span>
-          </a>
-        </div> -->
+        <div class="sidebar-footer">
+          <button type="button" (click)="toggleSidebar()" class="toggle-btn" [attr.aria-label]="isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'" [attr.aria-pressed]="isSidebarCollapsed">
+            <mat-icon>{{ isSidebarCollapsed ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+          </button>
+        </div>
       </aside>
 
       <!-- Main Content -->
-      <main class="main-content">
+      <main class="main-content" [class.collapsed]="isSidebarCollapsed">
         <header class="admin-header">
           <div class="header-content">
             <h1>{{ pageTitle && pageTitle.indexOf('.') > -1 ? (pageTitle | translate) : pageTitle }}</h1>
@@ -129,6 +122,9 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
           
           <!-- Header Actions -->
           <div class="header-actions">
+            <button mat-icon-button (click)="toggleTheme()" class="theme-toggle" [matTooltip]="currentTheme === 'theme-dark' ? 'Light mode' : 'Dark mode'">
+              <mat-icon>{{ currentTheme === 'theme-dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+            </button>
             <!-- Create Dashboard Button (shown only on dashboard-list routes) -->
             <button
               *ngIf="showCreateButton()"
@@ -146,9 +142,8 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
           <div class="user-menu" style="display:flex; align-items:center; gap:8px;">
             <!-- Language dropdown -->
             <div class="lang-dropdown" style="position:relative;" (click)="$event.stopPropagation()">
-              <button mat-button class="lang-toggle" aria-haspopup="true" (click)="openLangMenu($event)" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;">
+              <button mat-button class="lang-toggle" aria-haspopup="true" (click)="openLangMenu($event)" style="display:flex;align-items:center;padding:6px 8px;">
                 <img [src]="currentFlag()" alt="lang" style="width:22px;height:16px;object-fit:cover;border-radius:2px;box-shadow:0 1px 2px rgba(0,0,0,0.1)" />
-                <span style="font-size:11px;font-weight:600;line-height:1">{{ translation.getCurrentLanguage() | uppercase }}</span>
               </button>
               <div *ngIf="langMenuOpen" class="lang-menu" style="position:absolute;right:0;top:36px;background:#fff;border:1px solid #e6e6e6;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.08);overflow:hidden;min-width:140px;z-index:8500">
                 <button class="lang-item" (click)="setLanguage('en')" style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:transparent;border:none;width:100%;text-align:left"> 
@@ -452,181 +447,99 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
       display: flex;
       min-height: 100vh;
       font-family: 'Inter';
-      background: #F5F8FA;
+      background: var(--bg-secondary);
     }
 
     /* Sidebar Styles */
     .sidebar {
-      width: 240px;
+      width: 220px;
       height: 100vh;
-      background: linear-gradient(135deg, #97cce4 0%, #306e8b 100%);
-      color: white;
-      padding: 20px;
+      background: var(--dv-rail-bg);
+      color: var(--text-primary);
+      padding: 14px;
       overflow-y: auto;
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 6px 24px rgba(17, 24, 39, 0.06);
+      border-right: 1px solid var(--dv-rail-border);
       position: fixed;
       top: 0;
       left: 0;
       z-index: 1000;
       display: flex;
       flex-direction: column;
-      transition: width 0.3s ease;
+      transition: width 0.25s ease;
     }
 
     /* Collapsed Sidebar */
     .sidebar.collapsed {
-      width: 70px;
-      padding: 15px 10px;
+      width: 64px;
+      padding: 12px 8px;
     }
 
-    /* Sidebar Toggle Section - positioned after logo, before user info */
-    .sidebar-toggle-section {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 25px;
-      padding: 10px 0;
-    }
-
-    .toggle-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: none;
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
+    .logo-row {
       display: flex;
       align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      justify-content: space-between;
+      padding: 8px 6px 12px;
+      border-bottom: 1px solid var(--dv-rail-border);
+      margin-bottom: 10px;
+      position: sticky;
+      top: 0;
+      background: var(--dv-rail-bg);
+      z-index: 1;
     }
 
-    .toggle-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: scale(1.05);
-      border-color: rgba(255, 255, 255, 0.5);
-    }
+    .toggle-btn { width: 30px; height: 30px; border-radius: 10px; border: 1px solid var(--dv-rail-border); background: var(--dv-item-bg); color: var(--dv-text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 6px rgba(17,24,39,0.08); transition: all 0.2s ease; }
+
+    .toggle-btn:hover { background: var(--dv-item-hover-bg); border-color: var(--dv-rail-border); color: #0f172a; }
 
     .toggle-btn mat-icon {
-      font-size: 22px;
-      width: 22px;
-      height: 22px;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
     }
 
     /* Collapsed state styling for toggle button */
-    .sidebar.collapsed .sidebar-toggle-section {
-      margin-bottom: 20px;
-      padding: 5px 0;
-    }
-
-    .sidebar.collapsed .toggle-btn {
-      width: 45px;
-      height: 45px;
-    }
+    .sidebar.collapsed .logo-row { padding: 6px 6px 10px; margin-bottom: 6px; }
 
     /* Logo Container */
     .logo-container {
-      text-align: center;
-      margin-bottom: 20px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
       transition: all 0.3s ease;
     }
 
     .logo-container img {
-      max-width: 200px;
+      max-width: 110px;
       height: auto;
       transition: all 0.3s ease;
     }
 
-    .sidebar.collapsed .logo-container {
-      margin-bottom: 20px;
-      padding-bottom: 15px;
-    }
-
-    .sidebar.collapsed .logo-container img {
-      max-width: 40px;
-      margin-left: 5px;
-    }
+    .sidebar.collapsed .logo-container img { max-width: 24px; margin-left: 2px; }
 
     /* User Info */
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 25px;
-      padding: 15px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      backdrop-filter: blur(10px);
-      transition: all 0.3s ease;
-    }
+    .user-info { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; padding: 10px; background: var(--dv-item-bg); border-radius: 16px; border: 1px solid var(--dv-rail-border); transition: all 0.3s ease; color: var(--dv-text-muted); }
 
-    .sidebar.collapsed .user-info {
-      padding: 12px;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
+    .sidebar.collapsed .user-info { display: none; }
 
-    .user-avatar {
-      width: 40px;
-      height: 40px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .user-avatar { width: 36px; height: 36px; background: var(--dv-item-hover-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 
-    .user-avatar mat-icon {
-      color: white;
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
-    }
+    .user-avatar mat-icon { color: var(--dv-text-muted); font-size: 18px; width: 18px; height: 18px; }
 
     .user-details {
       flex: 1;
     }
 
-    .user-name {
-      font-size: 14px;
-      font-weight: 600;
-      margin: 0 0 2px 0;
-      color: white;
-    }
+    .user-name { font-size: 12px; font-weight: 600; margin: 0 0 2px 0; color: var(--text-primary); }
 
-    .user-email {
-      font-size: 12px;
-      margin: 0 0 2px 0;
-      color: rgba(255, 255, 255, 0.8);
-    }
+    .user-email { font-size: 11px; margin: 0 0 2px 0; color: var(--text-secondary); }
 
-    .user-role {
-      font-size: 11px;
-      margin: 0;
-      color: rgba(255, 255, 255, 0.7);
-      text-transform: capitalize;
-    }
+    .user-role { font-size: 10px; margin: 0; color: var(--text-secondary); text-transform: capitalize; }
 
     /* Admin Navigation */
-    .admin-nav {
-      flex: 1;
-      margin-bottom: 20px;
-    }
+    .admin-nav { flex: 1; margin-bottom: 16px; }
 
-    .section-title {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 15px;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .section-title { font-size: 12px; font-weight: 700; margin-bottom: 10px; color: var(--dv-text-muted); letter-spacing: .08em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
 
     .section-icon {
       font-size: 18px;
@@ -635,7 +548,7 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
     .nav-menu {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     /* Navigation Item Group (for expandable menus) */
@@ -644,33 +557,12 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
       flex-direction: column;
     }
 
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 16px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      color: white;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      cursor: pointer;
-    }
+    .nav-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--dv-item-bg); border-radius: 12px; color: var(--text-primary); text-decoration: none; font-size: 12.5px; font-weight: 600; transition: all 0.2s ease; border: 1px solid var(--dv-rail-border); cursor: pointer; }
 
-    .nav-item:hover {
-      background: rgba(255, 255, 255, 0.15);
-      transform: translateX(4px);
-    }
+    .nav-item:hover { background: var(--dv-item-hover-bg); }
 
-    .nav-item.active {
-      background: rgba(255, 255, 255, 0.2);
-      color: #f8fafc;
-      border-left: 3px solid #ffffff;
-      font-weight: 600;
-    }
+    .nav-item.active { background: var(--dv-accent); color: #ffffff; border-color: transparent; box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
+    .nav-item.active mat-icon { color: #ffffff; }
 
     .nav-item.expanded {
       background: rgba(255, 255, 255, 0.15);
@@ -678,11 +570,7 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
       border-bottom-right-radius: 0;
     }
 
-    .nav-item mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
-    }
+    .nav-item mat-icon { font-size: 16px; width: 16px; height: 16px; color: var(--dv-accent); }
 
     .nav-item span {
       flex: 1;
@@ -701,10 +589,7 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
     }
 
     /* Sub-menu Styles */
-    .sub-menu {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 0 0 8px 8px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+    .sub-menu { background: var(--dv-item-bg); border-radius: 0 0 12px 12px; border: 1px solid var(--dv-rail-border);
       border-top: none;
       overflow: hidden;
       animation: slideDown 0.3s ease;
@@ -723,87 +608,35 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
       }
     }
 
-    .sub-nav-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 16px 10px 32px;
-      color: rgba(255, 255, 255, 0.8);
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 400;
-      transition: all 0.3s ease;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
+    .sub-nav-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px 8px 24px; color: #334155; text-decoration: none; font-size: 12px; font-weight: 500; transition: all 0.2s ease; border-bottom: 1px solid var(--dv-rail-border); }
 
     .sub-nav-item:last-child {
       border-bottom: none;
     }
 
-    .sub-nav-item:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      padding-left: 36px;
-    }
+    .sub-nav-item:hover { background: var(--dv-item-hover-bg); color: #0f172a; }
 
-    .sub-nav-item.active {
-      background: rgba(255, 255, 255, 0.15);
-      color: #f8fafc;
-      font-weight: 500;
-      border-left: 2px solid rgba(255, 255, 255, 0.8);
-    }
+    .sub-nav-item.active { background: var(--dv-item-active-bg); color: #0f172a; }
 
-    .sub-nav-item mat-icon {
-      font-size: 16px;
-      width: 16px;
-      height: 16px;
-      opacity: 0.8;
-    }
+    .sub-nav-item mat-icon { font-size: 14px; width: 14px; height: 14px; color: var(--dv-accent); }
 
     .sub-nav-item span {
       flex: 1;
     }
 
     /* Collapsed Menu */
-    .collapsed-menu {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      padding-top: 10px;
-      align-items: center;
-    }
+    .collapsed-menu { display: flex; flex-direction: column; gap: 10px; padding-top: 8px; align-items: center; }
 
-    .collapsed-menu-item {
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      color: white;
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: 1px solid transparent;
-    }
+    .collapsed-menu-item { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--dv-item-bg); border-radius: 14px; color: #334155; text-decoration: none; cursor: pointer; transition: all 0.2s ease; border: 1px solid var(--dv-rail-border); }
 
-    .collapsed-menu-item:hover {
-      background: rgba(255, 255, 255, 0.2);
-      border-color: rgba(255, 255, 255, 0.3);
-      transform: scale(1.05);
-    }
+    .collapsed-menu-item:hover { background: var(--dv-item-hover-bg); }
 
-    .collapsed-menu-item.active {
-      background: rgba(255, 255, 255, 0.3);
-      border-color: rgba(255, 255, 255, 0.5);
-    }
+    .collapsed-menu-item.active { background: var(--dv-accent); border-color: transparent; color: #fff; }
+    .collapsed-menu-item.active mat-icon { color: #fff; }
 
-    .collapsed-menu-item mat-icon {
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
-    }
+    .collapsed-menu-item mat-icon { font-size: 18px; width: 18px; height: 18px; color: var(--dv-accent); }
+
+    .sidebar-footer { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--dv-rail-border); display: flex; justify-content: center; }
 
     /* Back to Dashboard */
     .back-to-dashboard {
@@ -840,24 +673,17 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
     }
 
     /* Main Content */
-    .main-content {
-      flex: 1;
-      margin-left: 240px;
-      display: flex;
-      flex-direction: column;
-      transition: margin-left 0.3s ease;
-    }
+    .main-content { flex: 1; margin-left: 220px; display: flex; flex-direction: column; transition: margin-left 0.3s ease; }
 
-    /* Adjust main content when sidebar is collapsed */
-    .admin-layout:has(.sidebar.collapsed) .main-content {
-      margin-left: 70px;
+    .main-content.collapsed {
+      margin-left: 64px;
     }
 
     /* Header */
     .admin-header {
-      background: white;
+      background: var(--bg-primary);
       padding: 20px 30px;
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid var(--border-color);
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       align-items: center;
@@ -881,45 +707,25 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
       align-items: center;
       gap: 16px;
     }
+    .theme-toggle { color: var(--text-secondary); }
+    .theme-toggle:hover { color: var(--text-primary); }
 
-    .create-dashboard-btn {
-      border: none;
-      outline: none;
-      cursor: pointer;
-      background-color: #3b82f6 !important; // Solid blue color
-      color: white !important; // White text color
-      
-      mat-icon {
-        font-size: 20px;
-        width: 20px;
-        height: 20px;
-        color: white !important; // White icon color
-      }
-      
-      span {
-        color: white !important; // White text color
-      }
-      
-      &:hover {
-        background-color: #2563eb !important; // Darker blue on hover
-        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4) !important;
-      }
-      
-      &:active {
-        transform: scale(0.98) !important;
-      }
-    }
+    .create-dashboard-btn { border: none; outline: none; cursor: pointer; background-color: var(--dv-accent) !important; color: white !important; }
+    .create-dashboard-btn mat-icon { font-size: 20px; width: 20px; height: 20px; color: white !important; }
+    .create-dashboard-btn span { color: white !important; }
+    .create-dashboard-btn:hover { background-color: var(--primary-dark) !important; box-shadow: 0 8px 20px rgba(59,130,246,0.4) !important; }
+    .create-dashboard-btn:active { transform: scale(0.98) !important; }
 
     .header-content h1 {
       margin: 0 0 5px 0;
-      color: #333;
+      color: var(--text-primary);
       font-size: 24px;
       font-weight: 600;
     }
 
     .breadcrumb {
       margin: 0;
-      color: #666;
+      color: var(--text-secondary);
       font-size: 14px;
     }
 
@@ -964,29 +770,29 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
     }
 
     .user-menu-button {
-      color: #333;
+      color: var(--text-primary);
     }
 
     .menu-header {
       padding: 16px;
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid var(--border-color);
     }
 
     .menu-name {
       margin: 0 0 4px 0;
       font-weight: 600;
-      color: #333;
+      color: var(--text-primary);
     }
 
     .menu-email {
       margin: 0 0 4px 0;
-      color: #666;
+      color: var(--text-secondary);
       font-size: 12px;
     }
 
     .menu-role {
       margin: 0;
-      color: #999;
+      color: var(--text-secondary);
       font-size: 11px;
       text-transform: capitalize;
     }
@@ -1004,35 +810,9 @@ import { QuickSearchComponent } from '../../../../shared/components/quick-search
     }
 
     /* Responsive Design */
-    @media (max-width: 1024px) {
-      .sidebar {
-        width: 240px;
-      }
+    @media (max-width: 1024px) { .sidebar { width: 200px; } .main-content { margin-left: 200px; } .main-content.collapsed { margin-left: 64px; } }
 
-      .sidebar.collapsed {
-        width: 70px;
-      }
-
-      .main-content {
-        margin-left: 240px;
-      }
-
-      .admin-layout:has(.sidebar.collapsed) .main-content {
-        margin-left: 70px;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-      }
-
-      .main-content {
-        margin-left: 0;
-      }
-    }
+    @media (max-width: 640px) { .sidebar { width: 172px; } .main-content { margin-left: 172px; } .main-content.collapsed { margin-left: 64px; } .nav-item { font-size: 12px; padding: 8px 10px; } }
   `]
 })
 export class AdminLayoutComponent implements OnInit {
@@ -1041,6 +821,7 @@ export class AdminLayoutComponent implements OnInit {
   pageTitle: string = 'admin.layout.title';
   breadcrumb: string = 'Administration';
   langMenuOpen = false;
+  currentTheme: string = (localStorage.getItem('dv-theme') || 'theme-navy');
 
   // Sidebar collapse state
   isSidebarCollapsed: boolean = false;
@@ -1104,6 +885,7 @@ export class AdminLayoutComponent implements OnInit {
     } catch (e) {
       console.warn('Failed to register global appLogout handler', e);
     }
+    this.applyTheme(this.currentTheme);
   }
 
   updatePageInfo(): void {
@@ -1177,4 +959,15 @@ export class AdminLayoutComponent implements OnInit {
     // Dispatch custom event that child component can listen to
     window.dispatchEvent(new CustomEvent('admin-create-dashboard'));
   }
-} 
+  applyTheme(theme: string): void {
+    const themes = ['theme-default','theme-brand','theme-teal','theme-dark','theme-navy'];
+    themes.forEach(t => document.body.classList.remove(t));
+    document.body.classList.add(theme);
+    localStorage.setItem('dv-theme', theme);
+    this.currentTheme = theme;
+  }
+
+  toggleTheme(): void {
+    this.applyTheme(this.currentTheme === 'theme-dark' ? 'theme-navy' : 'theme-dark');
+  }
+}

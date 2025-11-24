@@ -29,7 +29,7 @@ bootstrapApplication(AppComponent, {
                     'lg': '1280px',
                     'xl': '1440px'
                 },
-                theme: 'theme-default',
+                theme: 'theme-navy',
                 themes: [
                     {
                         id: 'theme-default',

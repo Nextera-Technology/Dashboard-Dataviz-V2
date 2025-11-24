@@ -145,6 +145,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     shareDataService.setIsDashboard(true);
   }
 
+  currentTheme: string = (localStorage.getItem('dv-theme') || 'theme-navy');
+
   setLanguage(lang: string): void {
     this.translation.setLanguage(lang);
     const msg = this.translation.translate('shared.language_changed') || 'Language changed';
@@ -180,6 +182,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.loadSidebarState();
     this.loadDashboards();
+    this.applyTheme(this.currentTheme);
 
     // React to dashboardId changes from Quick Search when navigating to the same route
     this.shareSub.add(
@@ -449,14 +452,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (section?.background) {
       return section.background;
     }
-    
     // Default background color for navigation items
-    return 'rgba(255, 255, 255, 0.9)';
+    return 'var(--dv-item-bg)';
   }
   
   // Get contrasting text color based on background color
   getSectionTextColor(section: any): string {
-    const backgroundColor = section?.background || 'rgba(255, 255, 255, 0.9)';
+    const backgroundColor = section?.background || 'var(--dv-item-bg)';
     
     // Convert color to RGB values for luminance calculation
     const rgb = this.hexToRgb(backgroundColor) || this.parseRgba(backgroundColor);
@@ -469,8 +471,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       return luminance > 0.5 ? '#333333' : '#ffffff';
     }
     
-    // Default to dark text
-    return '#333333';
+    // Default to theme text
+    return 'var(--text-primary)';
   }
   
   // Helper function to convert hex to RGB
@@ -526,5 +528,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.shareSub?.unsubscribe();
+  }
+
+  applyTheme(theme: string): void {
+    const themes = ['theme-default','theme-brand','theme-teal','theme-dark','theme-navy'];
+    themes.forEach(t => document.body.classList.remove(t));
+    document.body.classList.add(theme);
+    localStorage.setItem('dv-theme', theme);
+    this.currentTheme = theme;
+  }
+
+  toggleTheme(): void {
+    this.applyTheme(this.currentTheme === 'theme-dark' ? 'theme-navy' : 'theme-dark');
   }
 }
