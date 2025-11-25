@@ -170,22 +170,15 @@ export class ActionsButtonsComponent implements OnInit {
         return;
       }
 
-      // Show loading notification
-      Swal.fire({
-        title: this.translationService.translate('shared.export.pdf.preparing_title'),
-        html: `${this.translationService.translate('shared.export.pdf.preparing_message')}<br><div class="swal2-loading-dots"><span>.</span><span>.</span><span>.</span></div>`,
-        allowOutsideClick: false,
-        showConfirmButton: false,
-        didOpen: () => {
-          // Add animated loading dots
-          const dots = Swal.getHtmlContainer()?.querySelector('.swal2-loading-dots');
-          if (dots) {
-            dots.classList.add('animated');
-          }
-        }
-      });
-
       this.exportLoading = true;
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'info',
+        title: this.translationService.translate('shared.export.pdf.preparing_title'),
+        showConfirmButton: false,
+        timer: 2000
+      });
       
       try {
         // 1) Export chart image from widget (displayChart)
@@ -331,21 +324,25 @@ export class ActionsButtonsComponent implements OnInit {
         anchor.click();
         document.body.removeChild(anchor);
 
-        // Show success message
+        Swal.close();
         Swal.fire({
+          toast: true,
+          position: 'top-end',
           icon: 'success',
           title: this.translationService.translate('shared.export.pdf.success_title'),
-          text: this.translationService.translate('shared.export.pdf.success_message'),
           showConfirmButton: false,
           timer: 2000
         });
         
       } catch (error) {
+        Swal.close();
         Swal.fire({
+          toast: true,
+          position: 'top-end',
           icon: 'error',
           title: this.translationService.translate('shared.export.pdf.error_title'),
-          text: this.translationService.translate('shared.export.pdf.error_message'),
-          confirmButtonText: this.translationService.translate('shared.export.pdf.confirm_button')
+          showConfirmButton: false,
+          timer: 2500
         });
       } finally {
         this.exportLoading = false;
@@ -353,11 +350,14 @@ export class ActionsButtonsComponent implements OnInit {
       
     } catch (e) {
       this.exportLoading = false;
+      Swal.close();
       Swal.fire({
+        toast: true,
+        position: 'top-end',
         icon: 'error',
         title: this.translationService.translate('shared.export.pdf.error_title'),
-        text: this.translationService.translate('shared.export.pdf.error_message'),
-        confirmButtonText: this.translationService.translate('shared.export.pdf.confirm_button')
+        showConfirmButton: false,
+        timer: 2500
       });
     }
   }
