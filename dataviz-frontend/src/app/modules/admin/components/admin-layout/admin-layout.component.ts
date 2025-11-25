@@ -12,6 +12,7 @@ import { TranslationService } from '../../../../shared/services/translation/tran
 import { Router } from '@angular/router';
 import { AuthService, User } from '../../../../core/auth/auth.service';
 import { QuickSearchComponent } from '../../../../shared/components/quick-search/quick-search.component';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-layout',
@@ -895,6 +896,13 @@ export class AdminLayoutComponent implements OnInit {
       console.warn('Failed to register global appLogout handler', e);
     }
     this.applyTheme(this.currentTheme);
+
+    try {
+      const shown = localStorage.getItem('dv-welcome-modal-shown');
+      if (shown !== 'true') {
+        this.openWelcomeModal();
+      }
+    } catch {}
   }
 
   updatePageInfo(): void {
@@ -978,5 +986,105 @@ export class AdminLayoutComponent implements OnInit {
 
   toggleTheme(): void {
     this.applyTheme(this.currentTheme === 'theme-dark' ? 'theme-navy' : 'theme-dark');
+  }
+
+  private openWelcomeModal(): void {
+    const lastId = localStorage.getItem('dashboardId');
+    const html = `
+      <div style="text-align:left;">
+        <div style="font-size:20px;font-weight:700;margin-bottom:8px;">What do you want to do today?</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">Tell us what you're looking for or choose from recent actions</div>
+
+        <div id="welcome-search" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--dv-rail-border);border-radius:12px;background:var(--dv-item-bg);">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--dv-item-hover-bg);color:var(--text-secondary);font-size:14px;">🔎</span>
+          <input type="text" placeholder="I want to create a new survey, view analytics, find alumni..." style="flex:1;border:none;background:transparent;color:var(--text-primary);outline:none;font-size:13px;" />
+        </div>
+
+        <div style="margin-top:16px;font-size:12px;color:var(--text-secondary);">Quick actions</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+          <button id="action-create-es" style="display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--dv-rail-border);border-radius:12px;background:var(--dv-item-bg);cursor:pointer;">
+            <span style="font-size:18px;">📊</span>
+            <div style="text-align:left;">
+              <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Create employability survey dashboard</div>
+              <div style="font-size:11px;color:var(--text-secondary);">New dashboard</div>
+            </div>
+          </button>
+          <button id="action-create-jd" style="display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--dv-rail-border);border-radius:12px;background:var(--dv-item-bg);cursor:pointer;">
+            <span style="font-size:18px;">🗂️</span>
+            <div style="text-align:left;">
+              <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Create job description dashboard</div>
+              <div style="font-size:11px;color:var(--text-secondary);">New dashboard</div>
+            </div>
+          </button>
+          <button id="action-view-es" style="display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--dv-rail-border);border-radius:12px;background:var(--dv-item-bg);cursor:pointer;">
+            <span style="font-size:18px;">📄</span>
+            <div style="text-align:left;">
+              <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Enter view dashboard employability survey (last)</div>
+              <div style="font-size:11px;color:var(--text-secondary);">Uses last dashboard</div>
+            </div>
+          </button>
+          <button id="action-view-jd" style="display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--dv-rail-border);border-radius:12px;background:var(--dv-item-bg);cursor:pointer;">
+            <span style="font-size:18px;">📄</span>
+            <div style="text-align:left;">
+              <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Enter view dashboard job description (last)</div>
+              <div style="font-size:11px;color:var(--text-secondary);">Uses last dashboard</div>
+            </div>
+          </button>
+          <button id="action-quick-search" style="display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--dv-rail-border);border-radius:12px;background:var(--dv-item-bg);cursor:pointer;">
+            <span style="font-size:18px;">🔎</span>
+            <div style="text-align:left;">
+              <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Quick search</div>
+              <div style="font-size:11px;color:var(--text-secondary);">Same behavior as header search</div>
+            </div>
+          </button>
+        </div>
+        <div style="margin-top:14px;font-size:11px;color:var(--text-secondary);">You can close this and continue; it appears only on first entry.</div>
+      </div>
+      <style>
+        :root.theme-dark & { color: #ffffff; }
+      </style>
+    `;
+
+    Swal.fire({
+      html,
+      width: 720,
+      padding: '0',
+      showConfirmButton: false,
+      showCloseButton: true,
+      allowOutsideClick: true,
+      allowEscapeKey: true,
+      background: 'var(--dv-item-bg)',
+      didOpen: () => {
+        localStorage.setItem('dv-welcome-modal-shown', 'true');
+        const container = Swal.getHtmlContainer();
+        if (!container) return;
+
+        const goDashboard = (id: string | null) => {
+          if (id) {
+            try { localStorage.setItem('dashboardId', id); } catch {}
+            this.router.navigate(['/dashboard']);
+          } else {
+            this.router.navigate(['/admin/dashboard-list']);
+          }
+          Swal.close();
+        };
+
+        const openQuickSearch = () => {
+          try {
+            const ev = new KeyboardEvent('keydown', { key: 'k', ctrlKey: true });
+            document.dispatchEvent(ev);
+          } catch {}
+          Swal.close();
+        };
+
+        const searchInput = container.querySelector('#welcome-search input') as HTMLInputElement | null;
+        searchInput?.addEventListener('focus', openQuickSearch);
+        container.querySelector('#action-quick-search')?.addEventListener('click', openQuickSearch);
+        container.querySelector('#action-create-es')?.addEventListener('click', () => { this.router.navigate(['/admin/dashboard-create']); Swal.close(); });
+        container.querySelector('#action-create-jd')?.addEventListener('click', () => { this.router.navigate(['/admin/job-description-create']); Swal.close(); });
+        container.querySelector('#action-view-es')?.addEventListener('click', () => goDashboard(lastId));
+        container.querySelector('#action-view-jd')?.addEventListener('click', () => goDashboard(lastId));
+      }
+    });
   }
 }
