@@ -176,8 +176,19 @@ export class ActionsButtonsComponent implements OnInit {
         position: 'top-end',
         icon: 'info',
         title: this.translationService.translate('shared.export.pdf.preparing_title'),
-        showConfirmButton: false,
-        timer: 2000
+        html: `
+          <div style="display:flex;align-items:center;margin-top:8px;">
+            <div style="position:relative;width:22px;height:22px;margin-right:8px;">
+              <div style="position:absolute;inset:0;border-radius:50%;border:2px solid rgba(0,0,0,0.12);"></div>
+              <div style="position:absolute;inset:0;border-radius:50%;border:2px solid #3b82f6;border-top-color:transparent;animation:swalSpin 0.9s linear infinite;"></div>
+            </div>
+            <div style="font-size:13px;opacity:0.85;">Processing PDF...</div>
+          </div>
+          <style>@keyframes swalSpin{to{transform:rotate(360deg)}}</style>
+        `,
+        allowOutsideClick: true,
+        allowEscapeKey: true,
+        showConfirmButton: false
       });
       
       try {
