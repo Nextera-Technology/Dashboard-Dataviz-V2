@@ -18,8 +18,10 @@ import {
   gqlDeleteWidget,
   gqlWidgetSourceData,
   gqlExportWidgetData,
+  gqlExportDashboardData,
   gqlRegenerateAutoAnalysisDashboard,
-  gqlDuplicateDashboardFromOther
+  gqlDuplicateDashboardFromOther,
+  gqlMergeAsset
 } from "@dataviz/graphql/mutations/dashboard-builder/dashboard-builder.mutation";
 import { gqlUploadPublicAsset } from "@dataviz/graphql/mutations/file/file-upload.mutation";
 import { environment } from 'environments/environment';
@@ -463,6 +465,68 @@ export class DashboardBuilderRepository {
     } catch (error) {
       throw {
         message: "Failed to export widget data.",
+        originalError: error,
+        queryOrMutation: mutation,
+        input: JSON.stringify(variables),
+      };
+    }
+  }
+
+  /**
+   * Export full dashboard data to a single PDF.
+   */
+  async exportDashboardData(
+    dashboardId: string,
+    exportType: string,
+    widgets: Array<{ widgetId: string; lineChartFilename?: string | null; displayChartFilename?: string | null }>
+  ) {
+    if (!dashboardId || !exportType) {
+      throw new Error("dashboardId and exportType are required");
+    }
+    const mutation = gqlExportDashboardData as any;
+    const input: any = {
+      dashboardId,
+      exportType,
+      lang: this.translation.getCurrentLanguage().toUpperCase() === 'FR' ? 'FR' : 'EN',
+      widgets: (widgets || []).map(w => ({
+        widgetId: w.widgetId,
+        lineChartFilename: w.lineChartFilename ?? null,
+        displayChartFilename: w.displayChartFilename ?? null
+      }))
+    };
+    const variables = { input };
+
+    try {
+      const mutationResult = await this._client.GraphqlMutate(
+        mutation,
+        variables
+      );
+      return (mutationResult as any)?.getExportedDashboardData;
+    } catch (error) {
+      throw {
+        message: "Failed to export dashboard data.",
+        originalError: error,
+        queryOrMutation: mutation,
+        input: JSON.stringify(variables),
+      };
+    }
+  }
+
+  async mergeAsset(urls: string[], fileName: string) {
+    if (!urls || !urls.length) {
+      throw new Error("urls is required");
+    }
+    const mutation = gqlMergeAsset as any;
+    const variables = { urls, fileName } as any;
+    try {
+      const mutationResult = await this._client.GraphqlMutate(
+        mutation,
+        variables
+      );
+      return (mutationResult as any)?.mergeAsset;
+    } catch (error) {
+      throw {
+        message: "Failed to merge assets.",
         originalError: error,
         queryOrMutation: mutation,
         input: JSON.stringify(variables),

@@ -94,6 +94,22 @@ export const gqlExportWidgetData = gql`
   }
 `;
 
+export const gqlExportDashboardData = gql`
+  mutation GetExportedDashboardData($input: ExportDashboardDataInput!) {
+    getExportedDashboardData(input: $input) {
+      filename
+    }
+  }
+`;
+
+export const gqlMergeAsset = gql`
+  mutation MergeAsset($urls: [String!]!, $fileName: String!) {
+    mergeAsset(urls: $urls, fileName: $fileName) {
+      filename
+    }
+  }
+`;
+
 export const gqlDuplicateDashboardFromOther = gql`
   mutation duplicateDashboardFromOther($input: DuplicateDashboardInput!) {
     duplicateDashboardFromOther(input: $input) {

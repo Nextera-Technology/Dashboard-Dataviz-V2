@@ -22,10 +22,17 @@ import { AuthService, User } from '../../core/auth/auth.service';
 import { DashboardService, DashboardData, FilterData, CertificationFilter, SectionFilter, Section } from '../../shared/services/dashboard.service';
 import { SectionComponent } from '../../shared/components/sections/section.component';
 import { DashboardBuilderService } from '../admin/pages/dashboard-builder/dashboard-builder.service';
+import { RepositoryFactory } from '@dataviz/repositories/repository.factory';
+import { DashboardBuilderRepository } from '@dataviz/repositories/dashboard-builder/dashboard-builder.repository';
+import { environment } from 'environments/environment';
+import Swal from 'sweetalert2';
+// @ts-ignore
+import { toBlob } from 'html-to-image';
+import { Apollo, gql } from 'apollo-angular';
+import * as am5plugins_exporting from '@amcharts/amcharts5/plugins/exporting';
 import { ShareDataService } from 'app/shared/services/share-data.service';
 import { Subscription } from 'rxjs';
 
-declare var am5: any;
 declare var am5xy: any;
 declare var am5percent: any;
 declare var am5map: any;
@@ -94,6 +101,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   // Subscriptions
   private shareSub: Subscription = new Subscription();
 
+  exportLoading = false;
+  private dashboardRepo: DashboardBuilderRepository;
+
   get filteredCertifications() {
     if (!this.certificationSearch) {
       return this.certifications;
@@ -140,9 +150,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private notifier: NotificationService,
     private shareDataService: ShareDataService
     ,
-    public translation: TranslationService
+    public translation: TranslationService,
+    private apollo: Apollo
   ) {
     shareDataService.setIsDashboard(true);
+    this.dashboardRepo = RepositoryFactory.createRepository('dashboard-builder') as DashboardBuilderRepository;
   }
 
   currentTheme: string = (localStorage.getItem('dv-theme') || 'theme-navy');
@@ -153,6 +165,696 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const closeLabel = this.translation.translate('shared.close') || 'Close';
     this.snackBar.open(msg, closeLabel, { duration: 1500 });
     this.langMenuOpen = false;
+  }
+
+  async exportFullDashboardToPDF(): Promise<void> {
+    if (!this.dashboard || !this.dashboardId) return;
+    const allWidgets: any[] = (this.dashboard.sectionIds || [])
+      .flatMap((section: any) => (section.widgetIds || []))
+      .filter((w: any) => w && (w.visible !== false));
+    const widgets = allWidgets.map((w: any) => ({ widgetId: w._id || w.id }));
+    if (!widgets.length) {
+      const t = this.translation.translate('shared.export.pdf.error_title');
+      const m = this.translation.translate('shared.export.pdf.error_message');
+      await this.notifier.error(t || 'Export Failed', m || 'Failed to generate PDF');
+      return;
+    }
+
+    this.exportLoading = true;
+    try {
+      this.showExportHud(widgets.length);
+
+      let processed = 0;
+      let succeeded = 0;
+      const failed: Array<{index:number; title:string; id:string}> = [];
+      const pdfUrls: string[] = [];
+      const progressUpdate = () => {
+        this.updateExportHud(processed, widgets.length, succeeded);
+      };
+
+      // Build payload with images per widget
+      for (let idx = 0; idx < allWidgets.length; idx++) {
+        const w = allWidgets[idx];
+        const id = w._id || w.id;
+        const title = w.title || w.name || '';
+        let displayChartS3Key: string | undefined;
+        let lineChartS3Key: string | undefined;
+
+        try {
+          const widgetContainer = this.findWidgetContainerById(id) || this.findWidgetBoxElementByTitle(title);
+          if (widgetContainer) {
+            try {
+              displayChartS3Key = await this.withTimeout(this.exportDomElementToPNG(widgetContainer), 8000);
+            } catch {}
+            if (!displayChartS3Key) {
+              const fileFromWidget = await this.withTimeout(this.exportChartElementFallback(widgetContainer), 8000).catch(()=>undefined);
+              if (fileFromWidget) {
+                const uploadWidget = await this.dashboardRepo.uploadPublicAsset(fileFromWidget, 'IMAGE');
+                displayChartS3Key = uploadWidget?.s3Key;
+              }
+            }
+          }
+          const isCard = !!(w && (w.chartType === 'CARD'));
+          if (isCard && !displayChartS3Key) {
+            try {
+              if (w?.widgetSubType === 'STATUS_WAVE_BREAKDOWN') {
+                displayChartS3Key = await this.withTimeout(this.renderStatusByWaveCardCanvas(w), 9000);
+              }
+            } catch {}
+            if (!displayChartS3Key) {
+              try {
+                displayChartS3Key = await this.withTimeout(this.renderMetricCardCanvas(w), 9000);
+              } catch {}
+            }
+            if (!displayChartS3Key) {
+              try {
+                displayChartS3Key = await this.withTimeout(this.captureWidgetCardImage(id, title, w), 9000);
+              } catch {}
+            }
+          }
+          // Do not fall back to amCharts exporter for display image; UI must match exactly
+        } catch {}
+
+        try {
+          lineChartS3Key = await this.generateInformationChartS3Key(id);
+        } catch {}
+
+        if (!displayChartS3Key) {
+          const box = this.findWidgetBoxElementByTitle(title);
+          if (box) {
+            const blob = await this.withTimeout(toBlob(box, { quality: 0.98, backgroundColor: '#ffffff', pixelRatio: 2, skipFonts: true } as any), 8000).catch(()=>undefined);
+            if (blob) {
+              const fallbackFile = new File([blob], `widget-${id}-display.png`, { type: 'image/png' });
+              const upload2 = await this.dashboardRepo.uploadPublicAsset(fallbackFile, 'IMAGE');
+              displayChartS3Key = upload2?.s3Key;
+            }
+          }
+        }
+
+        try {
+          const res = await this.dashboardRepo.exportWidgetData(
+            id,
+            'PDF',
+            displayChartS3Key || null,
+            lineChartS3Key || null
+          );
+          const filename: string = (res && (res.filename || res?.fileName)) || '';
+          if (filename) {
+            const base = environment.fileUrl || '';
+            const url = filename.startsWith('http') ? filename : `${base}${filename}`;
+            pdfUrls.push(url);
+            try { localStorage.setItem(`DV_WIDGET_PDF_${id}`, url); } catch {}
+            succeeded += 1;
+          } else {
+            failed.push({ index: idx + 1, title: title || '', id });
+          }
+        } catch {
+          failed.push({ index: idx + 1, title: title || '', id });
+        }
+        processed += 1;
+        progressUpdate();
+      }
+
+      if (pdfUrls.length === 0) {
+        this.hideExportHud();
+        const eTitle = this.translation.translate('shared.export.pdf.error_title') || 'Export Failed';
+        const eMsg = 'All widgets failed to capture images. No PDF generated.';
+        await this.notifier.error(eTitle, eMsg);
+        return;
+      }
+      const mergedName = this.buildMergedFileName();
+      const mergeRes = await this.dashboardRepo.mergeAsset(pdfUrls, mergedName);
+      const mergedFile: string = (mergeRes && (mergeRes.filename || mergeRes?.fileName)) || '';
+      if (!mergedFile) throw new Error('No merged filename returned');
+
+      const base = environment.fileUrl || '';
+      let url = mergedFile.startsWith('http') ? mergedFile : `${base}${mergedFile}`;
+
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `dashboard-${this.dashboardId}.pdf`;
+      anchor.target = '_blank';
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+
+      this.hideExportHud();
+      const sTitle = this.translation.translate('shared.export.pdf.success_title') || 'PDF Export Successful';
+      const skipped = failed.length ? ` • Skipped ${failed.length}` : '';
+      const sMsg = `Generated PDF for ${pdfUrls.length} widgets${skipped}.`;
+      await this.notifier.success(sTitle, sMsg);
+      if (failed.length) {
+        const list = failed.map(f => `${f.index}. ${f.title || f.id}`).join('\n');
+        await Swal.fire({ icon: 'warning', title: 'Some widgets skipped', html: `<pre style="text-align:left">${list}</pre>` });
+      }
+    } catch (e) {
+      this.hideExportHud();
+      const eTitle = this.translation.translate('shared.export.pdf.error_title') || 'Export Failed';
+      const eMsg = this.translation.translate('shared.export.pdf.error_message') || 'Failed to generate PDF. Please try again later.';
+      await this.notifier.error(eTitle, eMsg);
+    } finally {
+      this.exportLoading = false;
+    }
+  }
+
+  private findWidgetBoxElementByTitle(title: string): HTMLElement | null {
+    if (!title) return null;
+    const norm = (s: string) => (s || '').replace(/\s+/g, ' ').trim();
+    const target = norm(title);
+
+    const titleEls = Array.from(document.querySelectorAll('.chart-title, .metric-title, .text-title')) as HTMLElement[];
+    for (const el of titleEls) {
+      const txt = norm(el.textContent || '');
+      if (txt === target) {
+        const chartBox = el.closest('.chart-box');
+        if (chartBox instanceof HTMLElement) return chartBox;
+        const textBox = el.closest('.text-box');
+        if (textBox instanceof HTMLElement) return textBox;
+        const widget = el.closest('.widget');
+        if (widget instanceof HTMLElement) return widget;
+        const parent = el.parentElement as HTMLElement | null;
+        if (parent) return parent;
+      }
+    }
+    return null;
+  }
+
+  private findChartContainerByWidget(widgetId: string, title: string): HTMLElement | null {
+    const ids = [
+      `pie-chart-div-${widgetId}`,
+      `bar-chart-div-${widgetId}`,
+      `line-chart-div-${widgetId}`,
+      `column-chart-div-${widgetId}`,
+      `sankey-chart-div-${widgetId}`,
+      `map-div-${widgetId}`,
+      `map-chart-div-${widgetId}`,
+      `students-map-chart-div-${widgetId}`,
+      `salary-map-chart-div-${widgetId}`,
+      `chart-div-${widgetId}`,
+      `widget-chart-${widgetId}`
+    ];
+    for (const id of ids) {
+      const el = document.getElementById(id);
+      if (el) return el as HTMLElement;
+    }
+    const boxes = Array.from(document.querySelectorAll('.chart-box')) as HTMLElement[];
+    for (const box of boxes) {
+      const t = box.querySelector('.chart-title');
+      if (t && (t.textContent || '').trim() === (title || '').trim()) {
+        const inner = box.querySelector('.chart-container');
+        if (inner instanceof HTMLElement) return inner;
+        return box;
+      }
+    }
+    const worldMapContainers = Array.from(document.querySelectorAll('.map-chart-container')) as HTMLElement[];
+    if (worldMapContainers.length) return worldMapContainers[0];
+    return null;
+  }
+
+  private findWidgetContainerById(widgetId: string): HTMLElement | null {
+    if (!widgetId) return null;
+    const el = document.querySelector(`[data-widget-id="${widgetId}"]`);
+    if (el instanceof HTMLElement) {
+      const innerBox = el.querySelector('.chart-box, .text-box');
+      if (innerBox instanceof HTMLElement) return innerBox as HTMLElement;
+      return el as HTMLElement;
+    }
+    const boxes = Array.from(document.querySelectorAll('.chart-box')) as HTMLElement[];
+    for (const box of boxes) {
+      const idAttr = box.getAttribute('data-widget-id');
+      if (idAttr === widgetId) return box;
+    }
+    return null;
+  }
+
+  private async captureWidgetCardImage(widgetId: string, title: string, widget?: any): Promise<string | undefined> {
+    const source = this.findWidgetContainerById(widgetId) || this.findWidgetBoxElementByTitle(title);
+    if (!source) return await this.renderMetricCardImageFromData(widgetId, widget);
+    const off = document.createElement('div');
+    off.style.position = 'fixed';
+    off.style.left = '-10000px';
+    off.style.top = '0';
+    off.style.background = '#ffffff';
+    off.style.boxSizing = 'border-box';
+    const w = Math.max(source.offsetWidth || 600, 400);
+    const h = Math.max(source.offsetHeight || 300, 250);
+    off.style.width = w + 'px';
+    off.style.height = h + 'px';
+    const clone = source.cloneNode(true) as HTMLElement;
+    clone.style.transform = 'none';
+    clone.style.boxSizing = 'border-box';
+    off.appendChild(clone);
+    document.body.appendChild(off);
+    try {
+      const blob = await toBlob(off as any, { quality: 0.98, backgroundColor: '#ffffff', pixelRatio: 2, skipFonts: true } as any);
+      if (!blob) return await this.renderMetricCardImageFromData(widgetId, widget);
+      const file = new File([blob], `widget-${widgetId}-card.png`, { type: 'image/png' });
+      const upload = await this.dashboardRepo.uploadPublicAsset(file, 'IMAGE');
+      return upload?.s3Key;
+    } catch {
+      return await this.renderMetricCardImageFromData(widgetId, widget);
+    } finally {
+      document.body.removeChild(off);
+    }
+  }
+
+  private async renderMetricCardImageFromData(widgetId: string, widget?: any): Promise<string | undefined> {
+    const w: any = widget || null;
+    if (!w) return undefined;
+    const container = document.createElement('div');
+    container.style.position = 'fixed';
+    container.style.left = '-10000px';
+    container.style.top = '0';
+    container.style.background = '#ffffff';
+    container.style.boxSizing = 'border-box';
+    container.style.width = '600px';
+    container.style.height = '300px';
+    const card = document.createElement('div');
+    card.style.position = 'relative';
+    card.style.textAlign = 'center';
+    card.style.borderRadius = '12px';
+    card.style.padding = '20px';
+    card.style.minHeight = '150px';
+    card.style.display = 'flex';
+    card.style.flexDirection = 'column';
+    card.style.overflow = 'hidden';
+    card.style.height = '100%';
+    card.style.backgroundColor = (w.background || '#ffffff');
+    const content = document.createElement('div');
+    content.style.flex = '1';
+    content.style.display = 'flex';
+    content.style.flexDirection = 'column';
+    content.style.justifyContent = 'center';
+    content.style.alignItems = 'center';
+    content.style.paddingTop = '20px';
+    const titleEl = document.createElement('h3');
+    titleEl.textContent = w.title || '';
+    titleEl.style.fontFamily = 'Inter, Arial, sans-serif';
+    titleEl.style.fontSize = '18px';
+    titleEl.style.fontWeight = '600';
+    titleEl.style.color = '#00454d';
+    titleEl.style.margin = '0 0 15px 0';
+    titleEl.style.lineHeight = '1.3';
+    const items = document.createElement('div');
+    items.style.display = 'flex';
+    items.style.flexWrap = 'wrap';
+    items.style.gap = '1rem';
+    items.style.width = '100%';
+    items.style.justifyContent = 'center';
+    items.style.alignItems = 'center';
+    const dataArr = Array.isArray(w.data) ? w.data : [];
+    for (let i = 0; i < dataArr.length; i++) {
+      const item: any = dataArr[i] || {};
+      const block = document.createElement('div');
+      block.style.flex = '1 1 auto';
+      block.style.minWidth = '100px';
+      block.style.maxWidth = '33%';
+      const sub = document.createElement('div');
+      const hasName = !!item.name;
+      sub.textContent = hasName ? String(item.name) : '';
+      sub.style.fontSize = '14px';
+      sub.style.color = '#666';
+      sub.style.marginTop = '8px';
+      sub.style.lineHeight = '1.4';
+      sub.style.maxWidth = '90%';
+      sub.style.display = hasName ? 'block' : 'none';
+      const val = document.createElement('div');
+      const len = dataArr.length;
+      val.textContent = (item.percentage !== undefined && item.percentage !== null) ? `${item.percentage}%` : '';
+      val.style.fontSize = len > 5 ? '10px' : (len >= 4 ? '15px' : (len > 2 ? '24px' : '30px'));
+      val.style.fontWeight = 'bold';
+      val.style.color = '#1e9180';
+      val.style.margin = '10px 0';
+      val.style.lineHeight = '1';
+      block.appendChild(val);
+      block.appendChild(sub);
+      items.appendChild(block);
+    }
+    content.appendChild(titleEl);
+    content.appendChild(items);
+    card.appendChild(content);
+    container.appendChild(card);
+    document.body.appendChild(container);
+    try {
+      const blob = await toBlob(container as any, { quality: 0.98, backgroundColor: '#ffffff', pixelRatio: 2, skipFonts: true } as any);
+      if (!blob) return undefined;
+      const file = new File([blob], `widget-${widgetId}-card.png`, { type: 'image/png' });
+      const upload = await this.dashboardRepo.uploadPublicAsset(file, 'IMAGE');
+      return upload?.s3Key;
+    } finally {
+      document.body.removeChild(container);
+    }
+  }
+
+  private async renderMetricCardCanvas(widget: any): Promise<string | undefined> {
+    try {
+      const w = widget || {};
+      const dataArr: any[] = Array.isArray(w.data) ? w.data : [];
+      const width = 800;
+      const height = 420;
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return undefined;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0,0,width,height);
+      const bg = w.background || '#ffffff';
+      const r = 16;
+      ctx.beginPath();
+      ctx.moveTo(20+r, 20);
+      ctx.lineTo(width-20-r, 20);
+      ctx.quadraticCurveTo(width-20, 20, width-20, 20+r);
+      ctx.lineTo(width-20, height-20-r);
+      ctx.quadraticCurveTo(width-20, height-20, width-20-r, height-20);
+      ctx.lineTo(20+r, height-20);
+      ctx.quadraticCurveTo(20, height-20, 20, height-20-r);
+      ctx.lineTo(20, 20+r);
+      ctx.quadraticCurveTo(20, 20, 20+r, 20);
+      ctx.closePath();
+      ctx.fillStyle = bg;
+      ctx.fill();
+      ctx.fillStyle = '#00454d';
+      ctx.font = '600 22px Arial';
+      const title = String(w.title || '');
+      const maxTitleWidth = width - 80;
+      let titleText = title;
+      if (ctx.measureText(titleText).width > maxTitleWidth) {
+        while (titleText.length && ctx.measureText(titleText + '…').width > maxTitleWidth) titleText = titleText.slice(0, -1);
+        titleText = titleText + '…';
+      }
+      ctx.fillText(titleText, 40, 64);
+      const areaX = 40;
+      const areaY = 90;
+      const areaW = width - 80;
+      const areaH = height - 130;
+      const count = Math.max(1, dataArr.length);
+      const cols = Math.min(3, count);
+      const rows = Math.ceil(count / cols);
+      const cellW = areaW / cols;
+      const cellH = areaH / rows;
+      let idx = 0;
+      for (let rIdx = 0; rIdx < rows; rIdx++) {
+        for (let cIdx = 0; cIdx < cols; cIdx++) {
+          if (idx >= count) break;
+          const item = dataArr[idx] || {};
+          const x = areaX + cIdx * cellW;
+          const y = areaY + rIdx * cellH;
+          const val = (item.percentage !== undefined && item.percentage !== null) ? `${item.percentage}%` : '';
+          const name = item.name ? String(item.name) : '';
+          const len = count;
+          const valSize = len > 5 ? 18 : (len >= 4 ? 22 : (len > 2 ? 26 : 32));
+          ctx.fillStyle = '#1e9180';
+          ctx.font = `700 ${valSize}px Arial`;
+          const valW = ctx.measureText(val).width;
+          ctx.fillText(val, x + (cellW - valW)/2, y + cellH/2 - 8);
+          if (name) {
+            ctx.fillStyle = '#666666';
+            ctx.font = '500 14px Arial';
+            let nm = name;
+            const maxW = cellW - 16;
+            if (ctx.measureText(nm).width > maxW) {
+              while (nm.length && ctx.measureText(nm + '…').width > maxW) nm = nm.slice(0, -1);
+              nm = nm + '…';
+            }
+            const nmW = ctx.measureText(nm).width;
+            ctx.fillText(nm, x + (cellW - nmW)/2, y + cellH/2 + 18);
+          }
+          idx++;
+        }
+      }
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob((b)=>resolve(b),'image/png',0.95));
+      if (!blob) return undefined;
+      const file = new File([blob], `widget-${w._id || w.id || Date.now()}-card.png`, { type: 'image/png' });
+      const upload = await this.dashboardRepo.uploadPublicAsset(file, 'IMAGE');
+      return upload?.s3Key;
+    } catch {
+      return undefined;
+    }
+  }
+
+  private async renderStatusByWaveCardCanvas(widget: any): Promise<string | undefined> {
+    try {
+      const w = widget || {};
+      const dataArr: any[] = Array.isArray(w.data) ? w.data : [];
+      const waves = Array.from(new Set(dataArr.map(d => d.wave))).sort((a,b)=>a-b);
+      const headers = waves.map(wv => `EE${wv}`);
+      const catMap: { [key: string]: { label: string; color: string; border: string } } = {
+        'En activité professionnelle': { label: "A un emploi", color: '#e8f0fb', border: '#3b82f6' },
+        "En recherche d'emploi": { label: 'Recherche', color: '#fff2e3', border: '#f59e0b' },
+        "En poursuite d'études (formation initiale ou alternance)": { label: 'Poursuit des études', color: '#e7f8f5', border: '#10b981' },
+        'Inactif (ex : congés maternité, maladie longue, sabbatique, césure...)': { label: 'Inactif', color: '#fde7ee', border: '#db2777' },
+        'Non répondant': { label: 'Non répondant', color: '#edeafc', border: '#7c3aed' }
+      };
+      const categories = Object.keys(catMap);
+      const rows = categories.map(cat => {
+        const vals = waves.map(wv => {
+          const hit = dataArr.find(d => d.wave === wv && d.name === cat);
+          return hit ? (hit.percentage || 0) : 0;
+        });
+        return { cat, vals };
+      });
+      const width = 1020;
+      const height = 560;
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return undefined;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0,0,width,height);
+      // card background with rounded corners
+      const r = 18;
+      ctx.beginPath();
+      ctx.moveTo(16+r, 16);
+      ctx.lineTo(width-16-r, 16);
+      ctx.quadraticCurveTo(width-16, 16, width-16, 16+r);
+      ctx.lineTo(width-16, height-16-r);
+      ctx.quadraticCurveTo(width-16, height-16, width-16-r, height-16);
+      ctx.lineTo(16+r, height-16);
+      ctx.quadraticCurveTo(16, height-16, 16, height-16-r);
+      ctx.lineTo(16, 16+r);
+      ctx.quadraticCurveTo(16, 16, 16+r, 16);
+      ctx.closePath();
+      ctx.fillStyle = w.background || '#ffffff';
+      ctx.fill();
+      // title
+      ctx.fillStyle = '#064e49';
+      ctx.font = '700 24px Arial';
+      const title = String(w.title || '');
+      const maxTitleWidth = width - 120;
+      let titleText = title;
+      if (ctx.measureText(titleText).width > maxTitleWidth) {
+        while (titleText.length && ctx.measureText(titleText + '…').width > maxTitleWidth) titleText = titleText.slice(0, -1);
+        titleText = titleText + '…';
+      }
+      ctx.fillText(titleText, 48, 72);
+      // headers
+      ctx.fillStyle = '#0ea5a3';
+      ctx.font = '600 16px Arial';
+      const gridX = 48;
+      const gridY = 110;
+      const catColW = 200;
+      const cols = Math.max(1, headers.length);
+      const colW = (width - gridX*2 - catColW) / cols;
+      headers.forEach((h, i) => {
+        const tx = gridX + catColW + i*colW + colW/2;
+        const tw = ctx.measureText(h).width;
+        ctx.fillText(h, tx - tw/2, gridY);
+      });
+      // rows
+      const rowH = 72;
+      const gapY = 16;
+      rows.forEach((row, ri) => {
+        const label = catMap[row.cat]?.label || row.cat;
+        const color = catMap[row.cat]?.color || '#eef2f7';
+        const border = catMap[row.cat]?.border || '#94a3b8';
+        const y = gridY + 24 + ri*(rowH + gapY);
+        // label
+        ctx.fillStyle = '#15616d';
+        ctx.font = '600 15px Arial';
+        const lw = ctx.measureText(label).width;
+        ctx.fillText(label, gridX + Math.max(0, (catColW - lw)/2 - 8), y + rowH/2 + 6);
+        // values
+        row.vals.forEach((val, ci) => {
+          const x = gridX + catColW + ci*colW;
+          const wCell = colW - 14;
+          const hCell = rowH;
+          // pill with left border color
+          ctx.beginPath();
+          const rx = 12;
+          ctx.moveTo(x + rx, y);
+          ctx.lineTo(x + wCell - rx, y);
+          ctx.quadraticCurveTo(x + wCell, y, x + wCell, y + rx);
+          ctx.lineTo(x + wCell, y + hCell - rx);
+          ctx.quadraticCurveTo(x + wCell, y + hCell, x + wCell - rx, y + hCell);
+          ctx.lineTo(x + rx, y + hCell);
+          ctx.quadraticCurveTo(x, y + hCell, x, y + hCell - rx);
+          ctx.lineTo(x, y + rx);
+          ctx.quadraticCurveTo(x, y, x + rx, y);
+          ctx.closePath();
+          ctx.fillStyle = color;
+          ctx.fill();
+          // left border accent
+          ctx.fillStyle = border;
+          ctx.fillRect(x, y, 6, hCell);
+          // value text
+          const txt = `${val}%`;
+          ctx.fillStyle = '#0f172a';
+          ctx.font = '700 18px Arial';
+          const tw = ctx.measureText(txt).width;
+          ctx.fillText(txt, x + wCell/2 - tw/2, y + hCell/2 + 6);
+        });
+      });
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob((b)=>resolve(b),'image/png',0.95));
+      if (!blob) return undefined;
+      const file = new File([blob], `widget-${w._id || w.id || Date.now()}-status-card.png`, { type: 'image/png' });
+      const upload = await this.dashboardRepo.uploadPublicAsset(file, 'IMAGE');
+      return upload?.s3Key;
+    } catch {
+      return undefined;
+    }
+  }
+
+  private async exportChartElementFallback(container: HTMLElement): Promise<File | undefined> {
+    try {
+      const canvas: HTMLCanvasElement | null = container.querySelector('canvas');
+      if (canvas) {
+        const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob((b) => resolve(b), 'image/png', 0.92));
+        if (blob) {
+          return new File([blob], `chart-${Date.now()}.png`, { type: 'image/png' });
+        }
+      }
+      const svg: SVGElement | null = container.querySelector('svg');
+      if (svg) {
+        const cloned = svg.cloneNode(true) as SVGElement;
+        const serializer = new XMLSerializer();
+        const svgString = serializer.serializeToString(cloned);
+        const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        let width = 1200;
+        let height = 800;
+        const viewBox = cloned.getAttribute('viewBox');
+        if (viewBox) {
+          const parts = viewBox.split(/\s+/).map(Number);
+          if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
+            width = Math.max(600, Math.floor(parts[2]));
+            height = Math.max(400, Math.floor(parts[3]));
+          }
+        }
+        const outCanvas = document.createElement('canvas');
+        outCanvas.width = width;
+        outCanvas.height = height;
+        const ctx = outCanvas.getContext('2d');
+        if (!ctx) return undefined;
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        const pngBlob = await new Promise<Blob | undefined>((resolve) => {
+          img.onload = () => {
+            try {
+              ctx.drawImage(img, 0, 0, width, height);
+              outCanvas.toBlob((b) => resolve(b || undefined), 'image/png', 0.92);
+            } catch {
+              resolve(undefined);
+            } finally {
+              URL.revokeObjectURL(url);
+            }
+          };
+          img.onerror = () => { URL.revokeObjectURL(url); resolve(undefined); };
+          img.src = url;
+        });
+        if (pngBlob) {
+          return new File([pngBlob], `chart-${Date.now()}.png`, { type: 'image/png' });
+        }
+      }
+      const blob = await toBlob(container as any, { quality: 0.95, backgroundColor: '#ffffff', pixelRatio: 1, skipFonts: true } as any);
+      if (blob) return new File([blob], `chart-${Date.now()}.png`, { type: 'image/png' });
+      return undefined;
+    } catch {
+      return undefined;
+    }
+  }
+
+  private async createPlaceholderImageFile(title: string): Promise<File> {
+    const w = 800, h = 450;
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d')!;
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle = '#0d6efd'; ctx.font = 'bold 20px Inter, Arial';
+    ctx.fillText(title || 'Widget', 24, 40);
+    ctx.fillStyle = '#888'; ctx.font = '16px Inter, Arial';
+    ctx.fillText('No chart image available', 24, 80);
+    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob((b)=>resolve(b),'image/png',0.92));
+    return new File([blob!], `placeholder-${Date.now()}.png`, { type: 'image/png' });
+  }
+
+  private async withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error('timeout')), ms);
+      promise.then((v) => { clearTimeout(timer); resolve(v); }).catch((e) => { clearTimeout(timer); reject(e); });
+    });
+  }
+  private async generateInformationChartS3Key(widgetId: string): Promise<string | undefined> {
+    try {
+      const query = gql`
+        mutation GetWidgetDataSources($widgetId: String!) {
+          getWidgetDataSources(widgetId: $widgetId) {
+            dataSources { name count wave }
+          }
+        }
+      `;
+      const resp: any = await this.apollo.mutate({ mutation: query, variables: { widgetId } }).toPromise();
+      const dataSources: Array<{ name: string; count: number; wave?: any }>= resp?.data?.getWidgetDataSources?.dataSources || [];
+      if (!dataSources.length || !(window as any).am5) return undefined;
+
+      const aggregatedMap: Map<string, any> = new Map();
+      for (const src of dataSources) {
+        const hasWave = src?.wave !== undefined && src?.wave !== null && src?.wave !== '';
+        const waveLabel = hasWave ? src.wave : null;
+        const key = `${src?.name ?? 'Unknown'}__${hasWave ? waveLabel : 'NOWAVE'}`;
+        if (!aggregatedMap.has(key)) {
+          aggregatedMap.set(key, {
+            category: hasWave ? `${src?.name ?? 'Unknown'} (Wave ${waveLabel})` : `${src?.name ?? 'Unknown'}`,
+            count: src?.count ?? 0
+          });
+        } else {
+          const current = aggregatedMap.get(key);
+          current.count += (src?.count ?? 0);
+        }
+      }
+      const chartData = Array.from(aggregatedMap.values());
+      if (!chartData.length) return undefined;
+
+      const container = document.createElement('div');
+      container.style.position = 'fixed';
+      container.style.left = '-10000px';
+      container.style.top = '0';
+      container.style.width = '1200px';
+      container.style.height = Math.max(400, chartData.length * 40) + 'px';
+      document.body.appendChild(container);
+
+      const root = (window as any).am5.Root.new(container);
+      let s3Key: string | undefined;
+      try {
+        const chart = (window as any).am5xy.XYChart.new(root, { panX: false, panY: false, layout: root.verticalLayout });
+        root.container.children.push(chart);
+        const yRenderer = (window as any).am5xy.AxisRendererY.new(root, { minGridDistance: 20 });
+        const yAxis = chart.yAxes.push((window as any).am5xy.CategoryAxis.new(root, { categoryField: 'category', renderer: yRenderer }));
+        const xAxis = chart.xAxes.push((window as any).am5xy.ValueAxis.new(root, { min: 0, renderer: (window as any).am5xy.AxisRendererX.new(root, {}) }));
+        const series = chart.series.push((window as any).am5xy.ColumnSeries.new(root, { xAxis, yAxis, valueXField: 'count', categoryYField: 'category' }));
+        yAxis.data.setAll(chartData);
+        series.data.setAll(chartData);
+
+        const s3OrUndefined = await this.exportChartToPNG(root as any);
+        s3Key = s3OrUndefined || undefined;
+      } finally {
+        root.dispose();
+        document.body.removeChild(container);
+      }
+
+      return s3Key;
+    } catch {
+      return undefined;
+    }
   }
 
   @HostListener('document:click')
@@ -539,5 +1241,176 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleTheme(): void {
     this.applyTheme(this.currentTheme === 'theme-dark' ? 'theme-navy' : 'theme-dark');
+  }
+  private buildMergedFileName(): string {
+    const name = (this.dashboard as any)?.name || 'dashboard';
+    const source = this.getDataSourceDisplay?.() || this.getDataSourceDisplay();
+    const clean = (s: string) => (s || '').replace(/[\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim();
+    const base = clean(name);
+    const cls = clean(source);
+    return cls ? `${base} - ${cls}` : base;
+  }
+  private getChartRoot(container: HTMLElement): any {
+    const anyContainer = container as any;
+    if (anyContainer._amRoot) return anyContainer._amRoot as any;
+    const roots = (window as any).am5?.registry?.rootElements as any;
+    if (roots && roots.length) {
+      for (let i = 0; i < roots.length; i++) {
+        const root = roots[i] || (roots.getIndex ? roots.getIndex(i) : null);
+        if (root && root.dom === container) return root;
+        const nearest = container.closest('.chart-box') || container.closest('[data-widget-id]') || container;
+        if (root?.dom && nearest && nearest.contains(root.dom)) return root;
+      }
+      if (roots.length === 1) return roots[0] || (roots.getIndex ? roots.getIndex(0) : null);
+    }
+    return null;
+  }
+
+  private async exportChartToPNG(root: any): Promise<string | undefined> {
+    try {
+      let exporting: any;
+      const children = root.container.children as any;
+      if (children && children.each) {
+        children.each((child: any) => {
+          if (child instanceof (am5plugins_exporting as any).Exporting) exporting = child;
+        });
+      }
+      if (!exporting) {
+        exporting = (am5plugins_exporting as any).Exporting.new(root, {
+          menu: (am5plugins_exporting as any).ExportingMenu.new(root, {})
+        });
+      }
+      const dataUrl = await exporting.export('png', { quality: 0.8, scale: 2 } as any);
+      if (!dataUrl || typeof dataUrl !== 'string') return undefined;
+      const blob = await this.dataURLtoBlob(dataUrl);
+      const file = new File([blob], `chart-${Date.now()}.png`, { type: 'image/png' });
+      const upload = await this.dashboardRepo.uploadPublicAsset(file, 'IMAGE');
+      return upload?.s3Key;
+    } catch {
+      return undefined;
+    }
+  }
+
+  private async dataURLtoBlob(dataURL: string): Promise<Blob> {
+    const arr = dataURL.split(',');
+    const match = arr[0].match(/:(.*?);/);
+    const mime = match && match[1] ? match[1] : 'image/png';
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+  }
+  private async exportDomElementToPNG(element: HTMLElement): Promise<string | undefined> {
+    try {
+      if (!element || !element.offsetWidth || !element.offsetHeight) return undefined;
+      const blob = await toBlob(element as any, {
+        quality: 0.98,
+        width: Math.max(element.offsetWidth, 400),
+        height: Math.max(element.offsetHeight, 300),
+        backgroundColor: '#ffffff',
+        pixelRatio: 2,
+        cacheBust: true,
+        skipFonts: true,
+        style: { transform: 'scale(1)', transformOrigin: 'top left' },
+        filter: (node: any) => {
+          if (node && node.classList) {
+            const exclude = ['export-wrapper','display-mode-toggle','mat-menu','cdk-overlay','material-icons','mat-icon'];
+            return !exclude.some(cls => node.classList.contains(cls));
+          }
+          return true;
+        }
+      } as any);
+      if (!blob) return undefined;
+      const file = new File([blob], `metric-widget-${Date.now()}.png`, { type: 'image/png' });
+      const upload = await this.dashboardRepo.uploadPublicAsset(file, 'IMAGE');
+      return upload?.s3Key;
+    } catch {
+      return undefined;
+    }
+  }
+  private exportHudEl: HTMLElement | null = null;
+  private exportHudDragActive = false;
+  private exportHudDragStartX = 0;
+  private exportHudDragStartY = 0;
+  private exportHudStartLeft = 0;
+  private exportHudStartTop = 0;
+  private showExportHud(total: number): void {
+    const existing = document.getElementById('pdf-export-hud');
+    if (existing) existing.remove();
+    const el = document.createElement('div');
+    el.id = 'pdf-export-hud';
+    el.style.position = 'fixed';
+    el.style.top = '12px';
+    el.style.right = '12px';
+    el.style.zIndex = '9999';
+    el.style.background = '#ffffff';
+    el.style.border = '1px solid rgba(0,0,0,0.1)';
+    el.style.borderRadius = '10px';
+    el.style.boxShadow = '0 8px 24px rgba(0,0,0,0.12)';
+    el.style.padding = '10px 12px';
+    el.style.cursor = 'move';
+    el.style.userSelect = 'none';
+    el.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="position:relative;width:22px;height:22px;">
+          <div style="position:absolute;inset:0;border-radius:50%;border:2px solid rgba(0,0,0,0.12);"></div>
+          <div style="position:absolute;inset:0;border-radius:50%;border:2px solid #3b82f6;border-top-color:transparent;animation:pdfHudSpin 0.9s linear infinite;"></div>
+        </div>
+        <div style="font-size:13px;opacity:0.85;">
+          <div id="pdf-hud-title">${this.translation.translate('shared.export.pdf.preparing_title') || 'Preparing PDF...'}</div>
+          <div id="pdf-hud-progress" style="margin-top:4px;font-weight:600;">0/${total} widgets • 0 ok</div>
+        </div>
+      </div>
+      <style>@keyframes pdfHudSpin{to{transform:rotate(360deg)}}</style>
+    `;
+    document.body.appendChild(el);
+    this.exportHudEl = el;
+    setTimeout(() => {
+      const rect = el.getBoundingClientRect();
+      const left = window.innerWidth - rect.width - 12;
+      el.style.left = left + 'px';
+      el.style.right = 'auto';
+    }, 0);
+    const down = (evt: MouseEvent) => {
+      this.exportHudDragActive = true;
+      this.exportHudDragStartX = evt.clientX;
+      this.exportHudDragStartY = evt.clientY;
+      const rect = el.getBoundingClientRect();
+      this.exportHudStartLeft = rect.left;
+      this.exportHudStartTop = rect.top;
+      document.addEventListener('mousemove', move);
+      document.addEventListener('mouseup', up);
+    };
+    const move = (evt: MouseEvent) => {
+      if (!this.exportHudDragActive) return;
+      const dx = evt.clientX - this.exportHudDragStartX;
+      const dy = evt.clientY - this.exportHudDragStartY;
+      const nextLeft = this.exportHudStartLeft + dx;
+      const nextTop = this.exportHudStartTop + dy;
+      el.style.left = Math.max(0, Math.min(nextLeft, window.innerWidth - el.offsetWidth)) + 'px';
+      el.style.top = Math.max(0, Math.min(nextTop, window.innerHeight - el.offsetHeight)) + 'px';
+    };
+    const up = () => {
+      this.exportHudDragActive = false;
+      document.removeEventListener('mousemove', move);
+      document.removeEventListener('mouseup', up);
+    };
+    el.addEventListener('mousedown', down);
+  }
+  private updateExportHud(processed: number, total: number, succeeded: number): void {
+    const el = this.exportHudEl;
+    if (!el) return;
+    const p = el.querySelector('#pdf-hud-progress');
+    if (p) p.textContent = `${processed}/${total} widgets • ${succeeded} ok`;
+  }
+  private hideExportHud(): void {
+    if (this.exportHudEl) {
+      this.exportHudEl.remove();
+      this.exportHudEl = null;
+      this.exportHudDragActive = false;
+    }
   }
 }
