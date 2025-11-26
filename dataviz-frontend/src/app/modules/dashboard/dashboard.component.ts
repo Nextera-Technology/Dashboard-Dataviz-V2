@@ -796,13 +796,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private async generateInformationChartS3Key(widgetId: string): Promise<string | undefined> {
     try {
       const query = gql`
-        mutation GetWidgetDataSources($widgetId: String!) {
-          getWidgetDataSources(widgetId: $widgetId) {
+        mutation GetWidgetDataSources($widgetId: String!, $limitSource: Float) {
+          getWidgetDataSources(widgetId: $widgetId, limitSource: $limitSource) {
             dataSources { name count wave }
           }
         }
       `;
-      const resp: any = await this.apollo.mutate({ mutation: query, variables: { widgetId } }).toPromise();
+      const resp: any = await this.apollo.mutate({ mutation: query, variables: { widgetId, limitSource: 10 } }).toPromise();
       const dataSources: Array<{ name: string; count: number; wave?: any }>= resp?.data?.getWidgetDataSources?.dataSources || [];
       if (!dataSources.length || !(window as any).am5) return undefined;
 

@@ -644,15 +644,15 @@ export class ActionsButtonsComponent implements OnInit {
     try {
       // 1) Fetch information data (dataSources) via the same query used in InformationDialog
       const query = gql`
-        mutation GetWidgetDataSources($widgetId: String!) {
-          getWidgetDataSources(widgetId: $widgetId) {
+        mutation GetWidgetDataSources($widgetId: String!, $limitSource: Float) {
+          getWidgetDataSources(widgetId: $widgetId, limitSource: $limitSource) {
             dataSources { name count wave }
           }
         }
       `;
       const resp: any = await this.apollo.mutate({
         mutation: query,
-        variables: { widgetId }
+        variables: { widgetId, limitSource: 10 }
       }).toPromise();
 
       const dataSources: Array<{ name: string; count: number; wave?: any }>= resp?.data?.getWidgetDataSources?.dataSources || [];
