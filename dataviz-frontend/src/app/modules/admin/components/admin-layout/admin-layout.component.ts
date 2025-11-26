@@ -903,8 +903,8 @@ export class AdminLayoutComponent implements OnInit {
     this.applyTheme(this.currentTheme);
 
     try {
-      const shown = localStorage.getItem('dv-welcome-modal-shown');
-      if (shown !== 'true') {
+      const shown = sessionStorage.getItem('dv-welcome-modal-session-shown');
+      if (!shown) {
         this.openWelcomeModal();
       }
     } catch {}
@@ -1071,7 +1071,7 @@ export class AdminLayoutComponent implements OnInit {
       allowEscapeKey: true,
       background: 'var(--dv-item-bg)',
       didOpen: () => {
-        localStorage.setItem('dv-welcome-modal-shown', 'true');
+        sessionStorage.setItem('dv-welcome-modal-session-shown', 'true');
         const container = Swal.getHtmlContainer();
         if (!container) return;
 
