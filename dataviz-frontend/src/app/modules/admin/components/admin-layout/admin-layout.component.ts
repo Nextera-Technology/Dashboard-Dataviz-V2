@@ -8,6 +8,9 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 import { NotificationService } from '../../../../../@dataviz/services/notification/notification.service';
+import { Apollo } from 'apollo-angular';
+import { QUICK_SEARCH_QUERY } from '../../../../../@dataviz/graphql/queries/quick-search/quick-search.query';
+import { ShareDataService } from 'app/shared/services/share-data.service';
 import { TranslationService } from '../../../../shared/services/translation/translation.service';
 import { Router } from '@angular/router';
 import { AuthService, User } from '../../../../core/auth/auth.service';
@@ -843,7 +846,9 @@ export class AdminLayoutComponent implements OnInit {
     private router: Router,
     private snackBar: MatSnackBar,
     public translation: TranslationService,
-    private notifier: NotificationService
+    private notifier: NotificationService,
+    private apollo: Apollo,
+    private shareDataService: ShareDataService
   ) {}
 
   setLanguage(lang: string): void {
@@ -991,57 +996,68 @@ export class AdminLayoutComponent implements OnInit {
   private openWelcomeModal(): void {
     const lastId = localStorage.getItem('dashboardId');
     const html = `
-      <div style="text-align:left;">
-        <div style="font-size:20px;font-weight:700;margin-bottom:8px;">What do you want to do today?</div>
-        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">Tell us what you're looking for or choose from recent actions</div>
-
-        <div id="welcome-search" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--dv-rail-border);border-radius:12px;background:var(--dv-item-bg);">
-          <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--dv-item-hover-bg);color:var(--text-secondary);font-size:14px;">🔎</span>
-          <input type="text" placeholder="I want to create a new survey, view analytics, find alumni..." style="flex:1;border:none;background:transparent;color:var(--text-primary);outline:none;font-size:13px;" />
+      <div class="welcome-modal" style="text-align:left;">
+        <div class="wm-header" style="padding:16px 18px;border-bottom:1px solid var(--dv-rail-border);background:linear-gradient(135deg,var(--dv-item-bg),var(--dv-item-hover-bg));border-top-left-radius:16px;border-top-right-radius:16px;">
+          <div style="font-size:20px;font-weight:800;">What do you want to do today?</div>
+          <div style="font-size:12px;color:var(--text-secondary);">Tell us what you're looking for or choose from quick actions</div>
         </div>
 
-        <div style="margin-top:16px;font-size:12px;color:var(--text-secondary);">Quick actions</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
-          <button id="action-create-es" style="display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--dv-rail-border);border-radius:12px;background:var(--dv-item-bg);cursor:pointer;">
-            <span style="font-size:18px;">📊</span>
-            <div style="text-align:left;">
-              <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Create employability survey dashboard</div>
-              <div style="font-size:11px;color:var(--text-secondary);">New dashboard</div>
-            </div>
-          </button>
-          <button id="action-create-jd" style="display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--dv-rail-border);border-radius:12px;background:var(--dv-item-bg);cursor:pointer;">
-            <span style="font-size:18px;">🗂️</span>
-            <div style="text-align:left;">
-              <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Create job description dashboard</div>
-              <div style="font-size:11px;color:var(--text-secondary);">New dashboard</div>
-            </div>
-          </button>
-          <button id="action-view-es" style="display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--dv-rail-border);border-radius:12px;background:var(--dv-item-bg);cursor:pointer;">
-            <span style="font-size:18px;">📄</span>
-            <div style="text-align:left;">
-              <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Enter view dashboard employability survey (last)</div>
-              <div style="font-size:11px;color:var(--text-secondary);">Uses last dashboard</div>
-            </div>
-          </button>
-          <button id="action-view-jd" style="display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--dv-rail-border);border-radius:12px;background:var(--dv-item-bg);cursor:pointer;">
-            <span style="font-size:18px;">📄</span>
-            <div style="text-align:left;">
-              <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Enter view dashboard job description (last)</div>
-              <div style="font-size:11px;color:var(--text-secondary);">Uses last dashboard</div>
-            </div>
-          </button>
-          <button id="action-quick-search" style="display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--dv-rail-border);border-radius:12px;background:var(--dv-item-bg);cursor:pointer;">
-            <span style="font-size:18px;">🔎</span>
-            <div style="text-align:left;">
-              <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Quick search</div>
-              <div style="font-size:11px;color:var(--text-secondary);">Same behavior as header search</div>
-            </div>
-          </button>
+        <div class="wm-body" style="padding:16px 18px;">
+          <div id="welcome-search" style="display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--dv-rail-border);border-radius:14px;background:var(--dv-item-bg);box-shadow:0 6px 16px rgba(17,24,39,0.08);">
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--dv-item-hover-bg);color:var(--text-secondary);font-size:14px;">🔎</span>
+            <input id="wm-search-input" type="text" placeholder="Search users, dashboards..." style="flex:1;border:none;background:transparent;color:var(--text-primary);outline:none;font-size:13px;" />
+          </div>
+
+          <div id="wm-results" style="margin-top:12px;">
+            <div style="font-size:12px;color:var(--text-secondary);">Type to search. Results will appear here.</div>
+          </div>
+
+          <div style="margin-top:16px;font-size:12px;color:var(--text-secondary);">Quick actions</div>
+          <div class="wm-actions" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+            <button id="action-create-es" class="wm-action">
+              <span class="wm-action-icon">📊</span>
+              <div class="wm-action-text">
+                <div class="wm-action-title">Create employability survey dashboard</div>
+                <div class="wm-action-sub">New dashboard</div>
+              </div>
+            </button>
+            <button id="action-create-jd" class="wm-action">
+              <span class="wm-action-icon">🗂️</span>
+              <div class="wm-action-text">
+                <div class="wm-action-title">Create job description dashboard</div>
+                <div class="wm-action-sub">New dashboard</div>
+              </div>
+            </button>
+            <button id="action-view-es" class="wm-action">
+              <span class="wm-action-icon">📄</span>
+              <div class="wm-action-text">
+                <div class="wm-action-title">Enter view dashboard employability survey (last)</div>
+                <div class="wm-action-sub">Uses last dashboard</div>
+              </div>
+            </button>
+            <button id="action-view-jd" class="wm-action">
+              <span class="wm-action-icon">📄</span>
+              <div class="wm-action-text">
+                <div class="wm-action-title">Enter view dashboard job description (last)</div>
+                <div class="wm-action-sub">Uses last dashboard</div>
+              </div>
+            </button>
+          </div>
+          <div style="margin-top:14px;font-size:11px;color:var(--text-secondary);">You can close this and continue; it appears only on first entry.</div>
         </div>
-        <div style="margin-top:14px;font-size:11px;color:var(--text-secondary);">You can close this and continue; it appears only on first entry.</div>
       </div>
       <style>
-        :root.theme-dark & { color: #ffffff; }
+        .wm-action { display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--dv-rail-border);border-radius:14px;background:var(--dv-item-bg);cursor:pointer;transition:transform .15s ease, box-shadow .15s ease; }
+        .wm-action:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(17,24,39,0.10); }
+        .wm-action-icon { font-size:18px; }
+        .wm-action-title { font-size:13px;font-weight:600;color:var(--text-primary); }
+        .wm-action-sub { font-size:11px;color:var(--text-secondary); }
+        .wm-result-item { display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--dv-rail-border); border-radius:12px; background:var(--dv-item-bg); cursor:pointer; }
+        .wm-result-item + .wm-result-item { margin-top:8px; }
+        .wm-result-icon { width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:6px; background:var(--dv-item-hover-bg); font-size:14px; }
+        .wm-result-title { font-size:13px; font-weight:600; color:var(--text-primary); }
+        .wm-result-sub { font-size:11px; color:var(--text-secondary); }
+        .wm-chip { font-size:10px; padding:2px 6px; border-radius:8px; background:var(--dv-item-hover-bg); color:var(--text-secondary); margin-left:auto; }
       </style>
     `;
 
@@ -1062,24 +1078,81 @@ export class AdminLayoutComponent implements OnInit {
         const goDashboard = (id: string | null) => {
           if (id) {
             try { localStorage.setItem('dashboardId', id); } catch {}
+            this.shareDataService.setDashboardId(id);
             this.router.navigate(['/dashboard']);
           } else {
             this.router.navigate(['/admin/dashboard-list']);
           }
           Swal.close();
         };
+        
+        const resultsEl = container.querySelector('#wm-results') as HTMLElement | null;
+        const searchInput = container.querySelector('#wm-search-input') as HTMLInputElement | null;
+        let debounceTimer: any = null;
+        const renderResults = (items: any[]) => {
+          if (!resultsEl) return;
+          if (!items || items.length === 0) {
+            resultsEl.innerHTML = `<div style="font-size:12px;color:var(--text-secondary);">No results found.</div>`;
+            return;
+          }
+          resultsEl.innerHTML = items.map((item: any) => {
+            const cat = (item.category || '').toLowerCase();
+            const icon = cat.includes('job') ? '🗂️' : (cat.includes('es') ? '📊' : (cat.includes('user') ? '👤' : '🔎'));
+            const subtitle = cat.includes('job') ? 'job description' : (cat.includes('es') ? 'employability survey' : (cat.includes('user') ? 'user' : (item.subtitle || '')));
+            return `
+              <div class="wm-result-item" data-id="${item.id || ''}" data-cat="${item.category || ''}">
+                <span class="wm-result-icon">${icon}</span>
+                <div>
+                  <div class="wm-result-title">${item.title || item.name || 'Untitled'}</div>
+                  <div class="wm-result-sub">${subtitle}</div>
+                </div>
+                <span class="wm-chip">${item.category || ''}</span>
+              </div>
+            `;
+          }).join('');
 
-        const openQuickSearch = () => {
-          try {
-            const ev = new KeyboardEvent('keydown', { key: 'k', ctrlKey: true });
-            document.dispatchEvent(ev);
-          } catch {}
-          Swal.close();
+          // Bind clicks
+          resultsEl.querySelectorAll('.wm-result-item').forEach(el => {
+            el.addEventListener('click', () => {
+              const id = (el as HTMLElement).getAttribute('data-id');
+              const cat = ((el as HTMLElement).getAttribute('data-cat') || '').toUpperCase();
+              if (cat.includes('USER')) {
+                this.router.navigate(['/admin/user-management']);
+                Swal.close();
+                return;
+              }
+              if (id) {
+                this.shareDataService.setDashboardId(id);
+                this.router.navigate(['/dashboard']);
+                Swal.close();
+              }
+            });
+          });
         };
 
-        const searchInput = container.querySelector('#welcome-search input') as HTMLInputElement | null;
-        searchInput?.addEventListener('focus', openQuickSearch);
-        container.querySelector('#action-quick-search')?.addEventListener('click', openQuickSearch);
+        const performSearch = async (query: string) => {
+          if (!query || query.length < 2) { renderResults([]); return; }
+          try {
+            const result = await this.apollo.query<any>({
+              query: QUICK_SEARCH_QUERY,
+              variables: { input: { query, categories: null, limit: 8, page: 1 } },
+              fetchPolicy: 'network-only'
+            }).toPromise();
+            const flat = (result?.data?.quickSearch?.results || []).flatMap((cat: any) =>
+              (cat.items || []).map((it: any) => ({ ...it, category: cat.category }))
+            );
+            renderResults(flat);
+          } catch (e) {
+            renderResults([]);
+          }
+        };
+
+        searchInput?.addEventListener('input', (e: any) => {
+          const q = (e.target?.value || '').toString();
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(() => performSearch(q), 300);
+        });
+
         container.querySelector('#action-create-es')?.addEventListener('click', () => { this.router.navigate(['/admin/dashboard-create']); Swal.close(); });
         container.querySelector('#action-create-jd')?.addEventListener('click', () => { this.router.navigate(['/admin/job-description-create']); Swal.close(); });
         container.querySelector('#action-view-es')?.addEventListener('click', () => goDashboard(lastId));

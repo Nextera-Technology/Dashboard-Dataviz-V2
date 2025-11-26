@@ -24,7 +24,7 @@
         "jobDescription": "Job Description"
       },
       "dashboardList": {
-        "header_title": "Dashboard Builder",
+        "header_title": "Employability Survey",
         "header_subtitle": "Create and manage your interactive dashboards",
         "create_button": "Create Dashboard",
         "view_mode_card": "Card",
@@ -597,7 +597,7 @@
       "quick_actions": "Quick Actions",
       "create_dashboard": "Create Dashboard",
       "manage_users": "Manage Users",
-      "view_dashboards": "View Dashboards",
+      "view_dashboards": "Employability Surveys",
       "job_descriptions": "Job Descriptions"
     },
     "shared": {
