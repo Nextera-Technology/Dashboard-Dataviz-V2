@@ -1287,11 +1287,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           menu: (am5plugins_exporting as any).ExportingMenu.new(root, {})
         });
       }
+      const domEl = root?.dom as HTMLElement;
+      const prevBg = domEl ? domEl.style.background : '';
+      if (domEl) domEl.style.background = '#ffffff';
       const dataUrl = await exporting.export('png', { quality: 0.8, scale: 2 } as any);
       if (!dataUrl || typeof dataUrl !== 'string') return undefined;
       const blob = await this.dataURLtoBlob(dataUrl);
       const file = new File([blob], `chart-${Date.now()}.png`, { type: 'image/png' });
       const upload = await this.dashboardRepo.uploadPublicAsset(file, 'IMAGE');
+      if (domEl) domEl.style.background = prevBg;
       return upload?.s3Key;
     } catch {
       return undefined;
@@ -1354,6 +1358,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     el.style.right = '12px';
     el.style.zIndex = '9999';
     el.style.background = '#ffffff';
+    el.style.color = '#0f172a';
     el.style.border = '1px solid rgba(0,0,0,0.1)';
     el.style.borderRadius = '10px';
     el.style.boxShadow = '0 8px 24px rgba(0,0,0,0.12)';
