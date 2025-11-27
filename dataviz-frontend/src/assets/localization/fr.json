@@ -613,10 +613,10 @@
       "view_permissions": "Voir les permissions",
       "load_more": "Charger plus",
       "quick_actions": "Actions rapides",
-      "create_dashboard": "Créer un tableau de bord",
-      "manage_users": "Gérer les utilisateurs",
-      "view_dashboards": "Voir les tableaux de bord",
-      "job_descriptions": "Descriptions d'emploi"
+      "create_es_dashboard": "Créer un DataViz Enquêtes Employabilité",
+      "create_jd_dashboard": "Créer un DataViz Fiches de Poste",
+      "view_es_dashboards": "Voir Enquêtes Employabilité",
+      "view_jd_dashboards": "Voir les Fiches de postes"
     },
     "shared": {
       "language_changed": "Langue modifiée",

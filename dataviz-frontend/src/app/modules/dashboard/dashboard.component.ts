@@ -897,20 +897,51 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  async loadDashboards() {
+  private duplicationRetryCount = 0;
+  private readonly maxDuplicationRetries = 10;
+
+  async loadDashboards(isRetry: boolean = false) {
     try {
-      const filter = {};
       const result = await this.dashboardService.getOneDashboard(this.dashboardId);
+
+      // If dashboard duplication is still in progress, wait and retry a few times
+      if (result?.isDuplicationProcessInProgress) {
+        if (!isRetry) {
+          await this.notifier.infoKey('notifications.duplication_in_progress', undefined, 4000);
+        }
+
+        if (this.duplicationRetryCount < this.maxDuplicationRetries) {
+          this.duplicationRetryCount++;
+          setTimeout(() => {
+            this.loadDashboards(true);
+          }, 1500);
+        }
+        return;
+      }
+
+      this.duplicationRetryCount = 0;
+
       if (result) {
         this.dashboardOriginal = result;
         this.dashboard = { ...this.dashboardOriginal };
-        if(this.dashboardOriginal && this.dashboardOriginal.sectionIds) {
+
+        // Reset section-related state before repopulating
+        this.sectionsList = [];
+        this.selectedSections = [];
+        this.sectionVisibility = {};
+        this.sidebarSectionVisibility = {};
+
+        if (this.dashboardOriginal && this.dashboardOriginal.sectionIds) {
           this.sectionsList = this.dashboardOriginal.sectionIds || [];
           this.sectionsList.forEach(section => {
-            this.selectedSections.push(section.name);
+            if (section?.name) {
+              this.selectedSections.push(section.name);
+            }
             // Initialize all sections as visible by default
-            this.sectionVisibility[section._id] = true;
-            this.sidebarSectionVisibility[section._id] = true;
+            if (section?._id) {
+              this.sectionVisibility[section._id] = true;
+              this.sidebarSectionVisibility[section._id] = true;
+            }
           });
           this.updateVisibleSections();
           this.updateSelectionCounts();
