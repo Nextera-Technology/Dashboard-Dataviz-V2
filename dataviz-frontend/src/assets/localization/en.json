@@ -48,6 +48,10 @@
         "empty_description": "Create your first dashboard to get started with data visualization.",
         "empty_cta": "Create Your First Dashboard"
       },
+      "dashboardTypes": {
+        "employability_survey": "Employability Survey",
+        "job_description": "Job Description"
+      },
       "dashboardTable": {
         "tabs": {
           "templates": "Templates",

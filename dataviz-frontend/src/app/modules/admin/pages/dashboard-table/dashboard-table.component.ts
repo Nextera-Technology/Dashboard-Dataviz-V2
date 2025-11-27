@@ -770,7 +770,8 @@ export class DashboardTableComponent implements OnInit, AfterViewInit, OnDestroy
     private router: Router,
     private shareDataService: ShareDataService,
     private notifier: NotificationService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translationService: TranslationService
   ) {}
 
   ngOnInit(): void {
@@ -1016,9 +1017,9 @@ export class DashboardTableComponent implements OnInit, AfterViewInit, OnDestroy
   getDashboardType(dashboard: Dashboard): string {
     // Determine type based on typeOfUsage or status
     if (dashboard.typeOfUsage === 'JOB_DESCRIPTION_EVALUATION') {
-      return 'Job Description';
+      return this.translationService.translate('admin.dashboardTypes.job_description') || 'Job Description';
     }
-    return 'Employability Survey';
+    return this.translationService.translate('admin.dashboardTypes.employability_survey') || 'Employability Survey';
   }
 
   getCreatorName(dashboard: Dashboard): string {

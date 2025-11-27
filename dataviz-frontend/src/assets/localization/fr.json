@@ -48,7 +48,11 @@
         "empty_description": "Créez votre premier tableau de bord de description de poste pour commencer l'analyse d'évaluation.",
         "empty_cta": "Créer votre premier tableau de bord"
       },
-      "dashboardTable": {
+      "dashboardTypes": {
+          "employability_survey": "Enquête sur l'employabilité",
+          "job_description": "Description de poste"
+        },
+        "dashboardTable": {
         "tabs": {
           "templates": "Modèles",
           "created": "Tableaux de bord créés",
@@ -174,7 +178,7 @@
         }
       },
       "dashboardList": {
-        "header_title": "Constructeur de tableaux de bord",
+        "header_title": "Enquête sur l'employabilité",
         "header_subtitle": "Créez et gérez vos tableaux de bord interactifs",
         "create_button": "Créer un de bord",
         "view_mode_card": "Carte",
