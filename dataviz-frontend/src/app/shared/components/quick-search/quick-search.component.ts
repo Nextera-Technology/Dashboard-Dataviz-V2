@@ -7,7 +7,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { DashboardFormDialogComponent, DashboardFormDialogData } from '../../../../app/modules/admin/components/dashboard-form-dialog/dashboard-form-dialog.component';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { TranslationService } from '../../services/translation/translation.service';
@@ -88,7 +90,8 @@ export class QuickSearchComponent implements OnInit, OnDestroy {
     private router: Router,
     private apollo: Apollo,
     private translationService: TranslationService,
-    private shareDataService: ShareDataService
+    private shareDataService: ShareDataService,
+    private dialog: MatDialog
   ) {}
   
   ngOnInit() {
@@ -356,20 +359,71 @@ export class QuickSearchComponent implements OnInit, OnDestroy {
   quickAction(action: string) {
     console.log('Quick action clicked:', action);
     switch (action) {
-      case 'create-dashboard':
-        this.router.navigate(['/admin/dashboard-create']);
-        break;
+      case 'create-es-dashboard':
+        this.openCreateEsDashboard();
+        return; // Don't close search yet, dialog will handle it
+      case 'create-jd-dashboard':
+        this.openCreateJdDashboard();
+        return; // Don't close search yet, dialog will handle it
       case 'manage-users':
         this.router.navigate(['/admin/user-management']);
         break;
-      case 'view-dashboards':
+      case 'view-es-dashboards':
         this.router.navigate(['/admin/dashboard-list']);
         break;
-      case 'job-descriptions':
+      case 'view-jd-dashboards':
         this.router.navigate(['/admin/job-description']);
         break;
     }
     this.closeSearch();
+  }
+
+  /**
+   * QA-090: Open create ES dashboard dialog directly from quick actions
+   */
+  private openCreateEsDashboard(): void {
+    this.closeSearch();
+    const dialogRef = this.dialog.open<DashboardFormDialogComponent, DashboardFormDialogData, any>(
+      DashboardFormDialogComponent,
+      {
+        width: '600px',
+        data: {},
+        panelClass: 'modern-dialog',
+        backdropClass: 'modern-backdrop',
+      }
+    );
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (typeof result === 'string' && result.length > 0) {
+        this.shareDataService.setDashboardId(result);
+        this.router.navigate(['/dashboard']);
+      }
+    });
+  }
+
+  /**
+   * QA-090: Open create JD dashboard dialog directly from quick actions
+   */
+  private openCreateJdDashboard(): void {
+    this.closeSearch();
+    const dialogRef = this.dialog.open<DashboardFormDialogComponent, DashboardFormDialogData, any>(
+      DashboardFormDialogComponent,
+      {
+        width: '600px',
+        data: {
+          typeOfUsage: 'JOB_DESCRIPTION_EVALUATION'
+        },
+        panelClass: 'modern-dialog',
+        backdropClass: 'modern-backdrop',
+      }
+    );
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (typeof result === 'string' && result.length > 0) {
+        this.shareDataService.setDashboardId(result);
+        this.router.navigate(['/dashboard']);
+      }
+    });
   }
   
   // Helper method to get translation with fallback

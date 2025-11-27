@@ -620,10 +620,10 @@
       "view_permissions": "View Permissions",
       "load_more": "Load More",
       "quick_actions": "Quick Actions",
-      "create_dashboard": "Create Dashboard",
-      "manage_users": "Manage Users",
-      "view_dashboards": "Employability Surveys",
-      "job_descriptions": "Job Descriptions"
+      "create_es_dashboard": "Create a DataViz Employability Surveys",
+      "create_jd_dashboard": "Create a DataViz Job Descriptions",
+      "view_es_dashboards": "View Employability Surveys",
+      "view_jd_dashboards": "View Job Descriptions"
     },
     "shared": {
       "language_changed": "Language changed",
