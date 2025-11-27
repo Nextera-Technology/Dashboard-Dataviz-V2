@@ -23,6 +23,24 @@
         "userManagement": "User Management",
         "jobDescription": "Job Description"
       },
+      "welcomeModal": {
+        "title": "What do you want to do today?",
+        "subtitle": "Tell us what you're looking for or choose from quick actions",
+        "search_placeholder": "Search users, dashboards...",
+        "search_hint": "Type to search. Results will appear here.",
+        "quick_actions_label": "Quick actions",
+        "action_create_es_title": "Create employability survey dashboard",
+        "action_create_jd_title": "Create job description dashboard",
+        "action_new_dashboard_sub": "New dashboard",
+        "action_view_es_title": "Enter view dashboard employability survey (last)",
+        "action_view_jd_title": "Enter view dashboard job description (last)",
+        "action_view_last_sub": "Uses last dashboard",
+        "footer_hint": "You can close this and continue; it appears only on first entry.",
+        "no_results": "No results found.",
+        "result_sub_job": "job description",
+        "result_sub_es": "employability survey",
+        "result_sub_user": "user"
+      },
       "dashboardList": {
         "header_title": "Employability Survey",
         "header_subtitle": "Create and manage your interactive dashboards",
@@ -47,6 +65,10 @@
         "empty_title": "No Dashboards Yet",
         "empty_description": "Create your first dashboard to get started with data visualization.",
         "empty_cta": "Create Your First Dashboard"
+      },
+      "dashboardTypes": {
+        "employability_survey": "Employability Survey",
+        "job_description": "Job Description"
       },
       "dashboardTable": {
         "tabs": {
@@ -446,7 +468,10 @@
         "selected_certifications": "certification(s) selected",
         "apply_filters": "Apply Filters",
         "sections": "Sections",
-        "selected_sections": "section(s) selected"
+        "selected_sections": "section(s) selected",
+        "manage_sections_title": "Manage sections",
+        "manage_sections_description": "Use the section manager to show, hide, reorder and edit sections of this dashboard.",
+        "manage_sections_button": "Open section manager"
       }
     },
     "notifications": {

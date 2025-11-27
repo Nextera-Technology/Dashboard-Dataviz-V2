@@ -1063,6 +1063,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.translation.translate('admin.dashboardBuilder.data_source_label') || 'Data Source';
   }
 
+  openManageSections(): void {
+    if (!this.dashboardId) {
+      return;
+    }
+    this.router.navigate(['/admin/dashboard-builder', this.dashboardId]);
+  }
+
   // Toggle section visibility from frozen header
   toggleSectionVisibility(sectionId: string, event: any): void {
     const isChecked = event.target.checked;

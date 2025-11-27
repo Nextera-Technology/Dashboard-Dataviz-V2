@@ -995,55 +995,75 @@ export class AdminLayoutComponent implements OnInit {
 
   private openWelcomeModal(): void {
     const lastId = localStorage.getItem('dashboardId');
+    const t = (key: string, fallback: string): string => this.translation.translate(key) || fallback;
+
+    const title = t('admin.welcomeModal.title', 'What do you want to do today?');
+    const subtitle = t('admin.welcomeModal.subtitle', "Tell us what you're looking for or choose from quick actions");
+    const searchPlaceholder = t('admin.welcomeModal.search_placeholder', 'Search users, dashboards...');
+    const searchHint = t('admin.welcomeModal.search_hint', 'Type to search. Results will appear here.');
+    const quickActionsLabel = t('admin.welcomeModal.quick_actions_label', 'Quick actions');
+    const actionCreateEsTitle = t('admin.welcomeModal.action_create_es_title', 'Create employability survey dashboard');
+    const actionCreateJdTitle = t('admin.welcomeModal.action_create_jd_title', 'Create job description dashboard');
+    const actionNewDashboardSub = t('admin.welcomeModal.action_new_dashboard_sub', 'New dashboard');
+    const actionViewEsTitle = t('admin.welcomeModal.action_view_es_title', 'Enter view dashboard employability survey (last)');
+    const actionViewJdTitle = t('admin.welcomeModal.action_view_jd_title', 'Enter view dashboard job description (last)');
+    const actionViewLastSub = t('admin.welcomeModal.action_view_last_sub', 'Uses last dashboard');
+    const footerHint = t('admin.welcomeModal.footer_hint', 'You can close this and continue; it appears only on first entry.');
+
+    const noResultsText = t('admin.welcomeModal.no_results', 'No results found.');
+    const resultSubJob = t('admin.welcomeModal.result_sub_job', 'job description');
+    const resultSubEs = t('admin.welcomeModal.result_sub_es', 'employability survey');
+    const resultSubUser = t('admin.welcomeModal.result_sub_user', 'user');
+
     const html = `
       <div class="welcome-modal" style="text-align:left;">
         <div class="wm-header" style="padding:16px 18px;border-bottom:1px solid var(--dv-rail-border);background:linear-gradient(135deg,var(--dv-item-bg),var(--dv-item-hover-bg));border-top-left-radius:16px;border-top-right-radius:16px;">
-          <div style="font-size:20px;font-weight:800;">What do you want to do today?</div>
-          <div style="font-size:12px;color:var(--text-secondary);">Tell us what you're looking for or choose from quick actions</div>
+          <div style="font-size:20px;font-weight:800;">${title}</div>
+          <div style="font-size:12px;color:var(--text-secondary);">${subtitle}</div>
         </div>
 
         <div class="wm-body" style="padding:16px 18px;">
           <div id="welcome-search" style="display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--dv-rail-border);border-radius:14px;background:var(--dv-item-bg);box-shadow:0 6px 16px rgba(17,24,39,0.08);">
             <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--dv-item-hover-bg);color:var(--text-secondary);font-size:14px;">🔎</span>
-            <input id="wm-search-input" type="text" placeholder="Search users, dashboards..." style="flex:1;border:none;background:transparent;color:var(--text-primary);outline:none;font-size:13px;" />
+            <input id="wm-search-input" type="text" placeholder="${searchPlaceholder}" style="flex:1;border:none;background:transparent;color:var(--text-primary);outline:none;font-size:13px;" />
           </div>
 
           <div id="wm-results" style="margin-top:12px;">
-            <div style="font-size:12px;color:var(--text-secondary);">Type to search. Results will appear here.</div>
+            <div style="font-size:12px;color:var(--text-secondary);">${searchHint}</div>
           </div>
 
-          <div style="margin-top:16px;font-size:12px;color:var(--text-secondary);">Quick actions</div>
+          <div style="margin-top:16px;font-size:12px;color:var(--text-secondary);">${quickActionsLabel}</div>
           <div class="wm-actions" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
             <button id="action-create-es" class="wm-action">
               <span class="wm-action-icon">📊</span>
               <div class="wm-action-text">
-                <div class="wm-action-title">Create employability survey dashboard</div>
-                <div class="wm-action-sub">New dashboard</div>
+                <div class="wm-action-title">${actionCreateEsTitle}</div>
+                <div class="wm-action-sub">${actionNewDashboardSub}</div>
               </div>
             </button>
             <button id="action-create-jd" class="wm-action">
               <span class="wm-action-icon">🗂️</span>
               <div class="wm-action-text">
-                <div class="wm-action-title">Create job description dashboard</div>
-                <div class="wm-action-sub">New dashboard</div>
+                <div class="wm-action-title">${actionCreateJdTitle}</div>
+                <div class="wm-action-sub">${actionNewDashboardSub}</div>
               </div>
             </button>
             <button id="action-view-es" class="wm-action">
               <span class="wm-action-icon">📄</span>
               <div class="wm-action-text">
-                <div class="wm-action-title">Enter view dashboard employability survey (last)</div>
-                <div class="wm-action-sub">Uses last dashboard</div>
+                <div class="wm-action-title">${actionViewEsTitle}</div>
+                <div class="wm-action-sub">${actionViewLastSub}</div>
               </div>
             </button>
             <button id="action-view-jd" class="wm-action">
               <span class="wm-action-icon">📄</span>
               <div class="wm-action-text">
-                <div class="wm-action-title">Enter view dashboard job description (last)</div>
-                <div class="wm-action-sub">Uses last dashboard</div>
+                <div class="wm-action-title">${actionViewJdTitle}</div>
+                <div class="wm-action-sub">${actionViewLastSub}</div>
               </div>
             </button>
           </div>
-          <div style="margin-top:14px;font-size:11px;color:var(--text-secondary);">You can close this and continue; it appears only on first entry.</div>
+          <div style="margin-top:14px;font-size:11px;color:var(--text-secondary);">${footerHint}</div>
         </div>
       </div>
       <style>
@@ -1097,13 +1117,19 @@ export class AdminLayoutComponent implements OnInit {
         const renderResults = (items: any[]) => {
           if (!resultsEl) return;
           if (!items || items.length === 0) {
-            resultsEl.innerHTML = `<div style="font-size:12px;color:var(--text-secondary);">No results found.</div>`;
+            resultsEl.innerHTML = `<div style="font-size:12px;color:var(--text-secondary);">${noResultsText}</div>`;
             return;
           }
           resultsEl.innerHTML = items.map((item: any) => {
             const cat = (item.category || '').toLowerCase();
             const icon = cat.includes('job') ? '🗂️' : (cat.includes('es') ? '📊' : (cat.includes('user') ? '👤' : '🔎'));
-            const subtitle = cat.includes('job') ? 'job description' : (cat.includes('es') ? 'employability survey' : (cat.includes('user') ? 'user' : (item.subtitle || '')));
+            const subtitle = cat.includes('job')
+              ? `${resultSubJob}`
+              : (cat.includes('es')
+                  ? `${resultSubEs}`
+                  : (cat.includes('user')
+                      ? `${resultSubUser}`
+                      : (item.subtitle || '')));
             return `
               <div class="wm-result-item" data-id="${item.id || ''}" data-cat="${item.category || ''}">
                 <span class="wm-result-icon">${icon}</span>

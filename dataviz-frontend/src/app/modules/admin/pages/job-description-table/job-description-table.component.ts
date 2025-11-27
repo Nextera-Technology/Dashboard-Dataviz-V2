@@ -650,7 +650,8 @@ export class JobDescriptionTableComponent implements OnInit, AfterViewInit, OnDe
     private router: Router,
     private shareDataService: ShareDataService,
     private notifier: NotificationService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translationService: TranslationService
   ) {}
 
   ngOnInit(): void {
@@ -898,7 +899,7 @@ export class JobDescriptionTableComponent implements OnInit, AfterViewInit, OnDe
   }
 
   getDashboardType(dashboard: JobDescriptionDashboard): string {
-    return 'Job Description';
+    return this.translationService.translate('admin.dashboardTypes.employability_survey') || 'Employability Survey';
   }
 
   getCreatorName(dashboard: JobDescriptionDashboard): string {

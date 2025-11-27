@@ -336,12 +336,10 @@ export class JobDescriptionListComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      // If dialog returned a dashboard id (string), reload and scroll to it
+      // QA-087: If dialog returned a dashboard id (string), redirect to view that dashboard
       if (typeof result === 'string' && result.length > 0) {
-        this.loadDashboards().then(() => {
-          // Wait a tick for DOM to update
-          setTimeout(() => this.scrollToDashboard(result), 150);
-        });
+        this.shareDataService.setDashboardId(result);
+        this.router.navigate(['/dashboard']);
       } else if (result === true) {
         this.loadDashboards();
       }
