@@ -132,7 +132,7 @@
     </div>
 
     <!-- Search Bar -->
-    <div class="search-bar mb-8">
+    <div class="search-bar mb-6">
       <div class="backdrop-blur-xl bg-white/70 rounded-2xl shadow-sm border border-white/20 p-4">
         <div class="relative">
           <mat-icon class="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400">search</mat-icon>
@@ -141,71 +141,55 @@
             [(ngModel)]="searchQuery"
             (input)="onSearch(searchQuery)"
             [placeholder]="'admin.dashboardList.search_placeholder' | translate"
-            class="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-white/50"
+            class="w-full pl-12 pr-4 py-2 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-white/50"
           />
         </div>
       </div>
     </div>
 
     <!-- Enhanced Dashboard Grid (Card View) -->
-    <div *ngIf="viewMode === 'card'" class="dashboards-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+    <div *ngIf="viewMode === 'card'" class="dashboards-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       <div
         *ngFor="let dashboard of filteredDashboards; trackBy: trackByDashboardId"
-        class="dashboard-card group relative overflow-hidden bg-white/80 backdrop-blur-sm rounded-3xl shadow-md hover:shadow-md border border-white/30 transform hover:-translate-y-2 hover:rotate-1 transition-all duration-500 ease-out cursor-pointer flex flex-col h-full"
+        class="dashboard-card group relative overflow-hidden bg-white/70 backdrop-blur-lg rounded-xl shadow-sm hover:shadow-md border border-white/30 transform hover:-translate-y-1 transition-all duration-200 ease-out cursor-pointer flex flex-col h-full"
         [attr.data-dashboard-id]="dashboard._id"
         [attr.tabindex]="0"
         (click)="openDashboard(dashboard)"
       >
         <!-- Card Content (Header / Content / Footer) -->
-        <div class="relative p-6 pb-0 flex flex-col h-full">
-          <!-- Header (flex-shrink-0) -->
-          <div class="mb-6 flex-shrink-0">
-            <div class="flex items-center justify-between mb-3">
-              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
-                <mat-icon class="text-white text-2xl">dashboard</mat-icon>
+        <div class="relative p-4 pb-0 flex flex-col h-full">
+          <!-- Compact Header -->
+          <div class="mb-2 flex-shrink-0">
+            <div class="flex items-start justify-between">
+              <div class="header-line flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                  <mat-icon class="text-blue-600 text-[18px]">dashboard</mat-icon>
+                </div>
+                <div class="title-block min-w-0 flex-1">
+                  <h2 class="title-text text-base font-semibold text-slate-800 transition-colors duration-200">{{ dashboard.title }}</h2>
+                  <p class="text-xs text-slate-500">{{ dashboard.name }}</p>
+                </div>
               </div>
-              <div class="flex items-center space-x-2">
-                <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                <span class="text-xs text-green-600 font-medium">{{ 'admin.dashboardList.active_badge' | translate }}</span>
+              <div class="flex items-center gap-1">
+                <div class="w-2 h-2 bg-green-400 rounded-full"></div>
               </div>
             </div>
-
-            <h2 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">
-              {{ dashboard.title }}
-            </h2>
-            <p class="text-slate-600 font-medium">{{ dashboard.name }}</p>
           </div>
 
           <!-- Content (Data Sources) - should be centered / grow to keep alignment -->
-          <div class="sources-section mb-6 flex-grow">
-            <div class="flex items-center mb-4" *ngIf="dashboard.sources && dashboard.sources.length > 0">
-              <mat-icon class="text-blue-500 mr-2">source</mat-icon>
-              <h3 class="text-slate-700 font-semibold">{{ 'admin.dashboardList.data_sources' | translate }}</h3>
-            </div>
-            
-            <div *ngIf="dashboard.sources && dashboard.sources.length > 0; else noSources" class="space-y-3">
+          <div class="sources-section mb-3 flex-grow">
+            <div *ngIf="dashboard.sources && dashboard.sources.length > 0; else noSources" class="space-y-1.5">
               <div 
                 *ngFor="let sourceEntry of dashboard.sources | slice:0: (isSourcesExpanded(dashboard._id!) ? (dashboard.sources.length) : initialVisibleSources)" 
-                class="source-item p-4 rounded-2xl bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 hover:border-blue-300 transition-all duration-300"
-                >
-                <div class="flex items-center mb-3">
-                  <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mr-3">
-                    <mat-icon class="text-white text-sm">folder_open</mat-icon>
-                  </div>
-                  <span class="font-bold text-slate-800">{{ sourceEntry.certification }}</span>
+                class="source-line flex items-start gap-2 flex-wrap"
+              >
+                <div class="cert-block flex items-center gap-1 min-w-0 flex-1">
+                  <mat-icon class="text-slate-600 text-base">folder_open</mat-icon>
+                  <span class="source-title font-semibold text-sm text-slate-800">{{ sourceEntry.certification }}</span>
                 </div>
-
-                <div class="classes-tags flex flex-wrap gap-2">
-                  <span
-                    *ngFor="let cls of sourceEntry.classes"
-                    class="px-3 py-1 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 rounded-full text-sm font-medium border border-blue-200 hover:shadow-md transition-shadow duration-200"
-                  >
-                    {{ cls }}
-                  </span>
-                  <span
-                    *ngIf="!sourceEntry.classes || sourceEntry.classes.length === 0"
-                    class="px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-sm italic"
-                    >{{ 'admin.dashboardList.no_classes' | translate }}</span>
+                <div class="classes-tags flex flex-wrap gap-1">
+                  <span *ngFor="let cls of sourceEntry.classes" class="px-2 py-0.5 bg-slate-50 text-slate-700 rounded-full text-[11px] font-medium border border-slate-200 hover:bg-slate-100">{{ cls }}</span>
+                  <span *ngIf="!sourceEntry.classes || sourceEntry.classes.length === 0" class="px-2 py-0.5 bg-slate-50 text-slate-500 rounded-full text-[11px] italic no-classes">{{ 'admin.dashboardList.no_classes' | translate }}</span>
                 </div>
               </div>
               
@@ -213,7 +197,7 @@
                 mat-button
                 (click)="toggleSourcesExpansion(dashboard._id!); $event.stopPropagation();"
                 *ngIf="dashboard.sources.length > initialVisibleSources"
-                class="expand-btn w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-slate-100 to-blue-100 border border-slate-200 hover:border-blue-300 text-slate-700 hover:text-blue-600 font-medium transition-all duration-300 flex items-center justify-center space-x-2"
+                class="expand-btn w-full py-2 px-3 rounded-2xl bg-gradient-to-r from-slate-100 to-blue-100 border border-slate-200 hover:border-blue-300 text-slate-700 hover:text-blue-600 font-medium transition-all duration-300 flex items-center justify-center space-x-2"
                 [matTooltip]="isSourcesExpanded(dashboard._id!) ? ('admin.dashboardList.expand_less' | translate) : ('admin.dashboardList.expand_more' | translate)"
               >
                 <mat-icon class="transform transition-transform duration-300" [class.rotate-180]="isSourcesExpanded(dashboard._id!)">
@@ -232,30 +216,17 @@
           </div>
 
           <!-- Footer (Manage + Actions) - mt-auto to stick to bottom -->
-          <div class="action-buttons relative p-6 pt-0 mt-auto">
-            <div class="flex space-x-3 mb-3">
-              <button 
-                (click)="manageDashboard(dashboard, $event)"
-                [matTooltip]="'admin.dashboardList.manage' | translate"
-                matTooltipPosition="above"
-                class="flex-1 py-2 px-5 rounded-2xl bg-gradient-to-r bg-gradient-to-r from-[#303AA1] via-[#2C3E50] to-[#2C3E50] text-white text-sm font-semibold hover:from-gray-500 hover:to-gray-700 transform hover:scale-105 transition ease-in-out duration-300 shadow-md hover:shadow-md"
-              >
-                <div class="flex items-center justify-center space-x-1">
-                  <mat-icon class="text-base mb-0.5">settings</mat-icon>
-                  <span>{{ 'admin.dashboardList.manage' | translate }}</span>
-                </div>
-              </button>
-            </div>
-
-            <div class="flex space-x-3">
+          <div class="action-buttons relative p-3 pt-0 mt-auto">
+            <div class="action-grid grid grid-cols-2 gap-2">
               <button 
                 (click)="openDashboard(dashboard)"
                 [matTooltip]="'admin.dashboardList.view' | translate"
                 matTooltipPosition="below"
-                class="flex-1 py-2 px-5 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-semibold hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 transition ease-in-out duration-300 shadow-md hover:shadow-md border"
+                class="w-full py-1.5 px-3 rounded-lg transition ease-in-out duration-150"
+                data-action="view"
               >
                 <div class="flex items-center justify-center space-x-1">
-                  <mat-icon class="text-base mb-0.5">visibility</mat-icon>
+                  <mat-icon class="text-sm">visibility</mat-icon>
                   <span>{{ 'admin.dashboardList.view' | translate }}</span>
                 </div>
               </button>
@@ -263,10 +234,11 @@
                 (click)="editDashboard(dashboard, $event)"
                 [matTooltip]="'admin.dashboardList.edit' | translate"
                 matTooltipPosition="below"
-                class="flex-1 py-2 px-5 rounded-2xl bg-gradient-to-r from-slate-500 to-slate-600 text-white text-sm font-semibold hover:from-slate-600 hover:to-slate-700 transform hover:scale-105 transition ease-in-out duration-300 shadow-md hover:shadow-md"
+                class="w-full py-1.5 px-3 rounded-lg transition ease-in-out duration-150"
+                data-action="edit"
               >
                 <div class="flex items-center justify-center space-x-1">
-                  <mat-icon class="text-base mb-0.5">edit</mat-icon>
+                  <mat-icon class="text-sm">edit</mat-icon>
                   <span>{{ 'admin.dashboardList.edit' | translate }}</span>
                 </div>
               </button>
@@ -274,11 +246,24 @@
                 (click)="deleteDashboard(dashboard, $event)"
                 [matTooltip]="'admin.dashboardList.delete' | translate"
                 matTooltipPosition="below"
-                class="flex-1 py-2 px-5 rounded-2xl bg-gradient-to-r from-red-500 to-rose-600 text-white text-sm font-semibold hover:from-red-600 hover:to-rose-700 transform hover:scale-105 transition ease-in-out duration-300 shadow-md"
+                class="w-full py-1.5 px-3 rounded-lg transition ease-in-out duration-150"
+                data-action="delete"
               >
                 <div class="flex items-center justify-center space-x-1">
-                  <mat-icon class="text-base mb-0.5">delete</mat-icon>
+                  <mat-icon class="text-sm">delete</mat-icon>
                   <span>{{ 'admin.dashboardList.delete' | translate }}</span>
+                </div>
+              </button>
+              <button 
+                (click)="manageDashboard(dashboard, $event)"
+                [matTooltip]="'admin.dashboardList.manage' | translate"
+                matTooltipPosition="below"
+                class="w-full py-1.5 px-3 rounded-lg transition ease-in-out duration-150"
+                data-action="manage"
+              >
+                <div class="flex items-center justify-center space-x-1">
+                  <mat-icon class="text-sm">settings</mat-icon>
+                  <span>{{ 'admin.dashboardList.manage' | translate }}</span>
                 </div>
               </button>
             </div>

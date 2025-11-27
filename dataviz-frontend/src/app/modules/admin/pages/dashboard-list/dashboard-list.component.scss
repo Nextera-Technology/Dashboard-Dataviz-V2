@@ -137,8 +137,8 @@
 /* Dashboard Grid */
 .dashboards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
   position: relative;
   z-index: 5;
 }
@@ -146,8 +146,13 @@
 /* Dashboard Card Animations */
 .dashboard-card {
   position: relative;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,0.75), rgba(255,255,255,0.55));
+  backdrop-filter: blur(10px);
+  border-color: rgba(255,255,255,0.60);
+  box-shadow: 0 8px 24px rgba(15,23,42,0.10);
 }
 
 .dashboard-card:hover::before {
@@ -155,15 +160,52 @@
 }
 
 .dashboard-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15), 0 10px 20px rgba(59, 130, 246, 0.2);
+  transform: translateY(-4px);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08), 0 6px 14px rgba(99, 102, 241, 0.14);
 }
+
+.dashboard-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(99,102,241,0.5), rgba(14,165,233,0.5));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.dashboard-card:hover::before { opacity: 0.95; }
+
+.dashboard-card::after {
+  content: '';
+  position: absolute;
+  right: -48px;
+  bottom: -48px;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(closest-side, rgba(99,102,241,0.12), transparent 70%);
+  pointer-events: none;
+}
+
+:host-context(.theme-dark) .dashboard-card::before { background: linear-gradient(135deg, rgba(99,102,241,0.7), rgba(14,165,233,0.7)); opacity: 0.75; }
+:host-context(.theme-dark) .dashboard-card::after { background: radial-gradient(closest-side, rgba(99,102,241,0.18), transparent 70%); }
 
 /* Card Content Animation */
 .dashboard-card h2 {
   transition: all 0.3s ease;
   position: relative;
 }
+
+.title-block { min-width: 0; }
+.title-text { display: block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.header-line { min-width: 0; }
+.source-line { flex-wrap: wrap; }
+.cert-block { min-width: 0; }
+.source-title { display: block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Source Items */
 .source-item {
@@ -177,18 +219,18 @@
    relatively so we can absolutely place the expand button inside it. */
 .sources-section {
   position: relative;
-  /* reserve approx the height of the expand button + spacing */
-  padding-bottom: 4.25rem;
-  min-height: 6rem;
+  /* reserve approx the height of the smaller expand button + spacing */
+  padding-bottom: 3.25rem;
+  min-height: 5.5rem;
 }
 
 /* If the expand button exists, keep it visually anchored to the bottom
    of the sources area so layout is stable whether it's present or not. */
 .sources-section .expand-btn {
   position: absolute;
-  left: 1rem;
-  right: 1rem;
-  bottom: 0.75rem;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.5rem;
   width: auto;
   display: flex;
   justify-content: center;
@@ -200,6 +242,9 @@
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  background: linear-gradient(180deg, #e0e7ff, #dbeafe);
+  border: 1px solid #c7d2fe;
+  color: #1e3a8a;
 }
 
 .classes-tags span::before {
@@ -216,6 +261,9 @@
 .classes-tags span:hover::before {
   left: 100%;
 }
+
+/* Light mode hover polish */
+.classes-tags span:hover { filter: brightness(1.05); }
 
 /* Expand Button */
 .expand-btn {
@@ -235,6 +283,22 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Shine effect for buttons */
+.action-grid [data-action]::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 60%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(255,255,255,0.0), rgba(255,255,255,0.28), rgba(255,255,255,0.0));
+  transform: translateX(-120%);
+  transition: transform 0.45s ease;
+  pointer-events: none;
+}
+.action-grid [data-action]:hover::after { transform: translateX(120%); }
+
 /* Ensure icons are always visible and don't shrink when translations
    change length (e.g. in French). Fix icon sizing and keep text legible. */
 .action-buttons button mat-icon,
@@ -243,11 +307,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem; /* ~16px - slightly smaller */
-  width: 1.125rem;
-  height: 1.125rem;
-  flex: 0 0 auto; /* prevent shrinking when text is long */
-  margin-right: 0; /* reduce gap; spacing handled by container */
+  font-size: 0.9rem;
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  margin-right: 0;
 }
 
 .action-buttons button > div > span,
@@ -258,12 +322,10 @@
 
 /* Ensure buttons keep a minimum width so icons and text don't wrap */
 .action-buttons .flex > button {
-  /* keep the current width but increase vertical size for better touch
-     and visual hierarchy. */
-  min-width: 4.5rem;
-  padding: 0.65rem 0.6rem; /* taller buttons */
-  font-size: 0.95rem; /* slightly larger text */
-  border-radius: 0.75rem;
+  min-width: 3.25rem;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.8rem;
+  border-radius: 0.5rem;
 }
 
 /* Force icons to inherit color in RTL/L10n contexts where mat-icon
@@ -281,8 +343,7 @@
    collapsing: make text truncate with ellipsis and keep icon visible. */
 .action-buttons button span {
   display: inline-block;
-  /* slightly smaller max-width so labels truncate and keep buttons narrow */
-  max-width: 6.5rem;
+  max-width: 5rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -369,10 +430,14 @@
     gap: 1rem;
   }
   
-  .dashboard-card {
-    margin: 0;
-    border-radius: 1rem;
-  }
+.dashboard-card {
+  margin: 0;
+  border-radius: 1rem;
+  background: linear-gradient(180deg, rgba(255,255,255,0.75), rgba(255,255,255,0.55));
+  backdrop-filter: blur(10px);
+  border-color: rgba(255,255,255,0.6);
+  box-shadow: 0 8px 24px rgba(15,23,42,0.10);
+}
   
   .action-buttons {
     padding: 1rem;
@@ -419,22 +484,75 @@ button:focus,
 :host-context(.theme-dark) .search-bar mat-icon { color: rgba(255,255,255,0.80) !important; }
 
 :host-context(.theme-dark) .dashboard-card {
-  background: linear-gradient(180deg, rgba(15,23,42,0.55), rgba(15,23,42,0.40)) !important;
-  backdrop-filter: blur(8px) !important;
-  border-color: rgba(255,255,255,0.14) !important;
-  box-shadow: 0 6px 20px rgba(2,6,23,0.30) !important;
+  background: linear-gradient(180deg, rgba(31,41,55,0.55), rgba(15,23,42,0.40)) !important;
+  backdrop-filter: blur(10px) !important;
+  border-color: rgba(99,102,241,0.35) !important;
+  box-shadow: 0 8px 24px rgba(99,102,241,0.18) !important;
 }
 
 :host-context(.theme-dark) .dashboard-card h2 { color: var(--text-primary) !important; }
 :host-context(.theme-dark) .dashboard-card p { color: var(--text-secondary) !important; }
 :host-context(.theme-dark) .sources-section h3 { color: var(--text-primary) !important; }
 
+/* Strengthen title/subtitle contrast in dark mode */
+:host-context(.theme-dark) .dashboard-card h2 {
+  color: #e6edf3 !important;
+  text-shadow: 0 1px 1px rgba(2,6,23,0.6);
+}
+:host-context(.theme-dark) .dashboard-card p {
+  color: #cbd5e1 !important;
+}
+
+/* Dark mode: certification title and folder icon */
+:host-context(.theme-dark) .source-title { color: #e6edf3 !important; text-shadow: 0 1px 1px rgba(2,6,23,0.5); }
+:host-context(.theme-dark) .sources-section mat-icon { color: rgba(255,255,255,0.85) !important; }
+
+/* Dark mode: high-contrast action buttons */
+:host-context(.theme-dark) .action-grid [data-action="view"] {
+  background: linear-gradient(180deg, #0b1b36, #1d4ed8) !important;
+  border-color: #3b82f6 !important;
+  color: #e6edf3 !important;
+  box-shadow: none !important;
+}
+:host-context(.theme-dark) .action-grid [data-action="view"]:hover { filter: brightness(1.06); }
+
+:host-context(.theme-dark) .action-grid [data-action="edit"] {
+  background: linear-gradient(180deg, #111347, #7c3aed) !important;
+  border-color: #8b5cf6 !important;
+  color: #e6edf3 !important;
+  box-shadow: none !important;
+}
+:host-context(.theme-dark) .action-grid [data-action="edit"]:hover { filter: brightness(1.06); }
+
+:host-context(.theme-dark) .action-grid [data-action="delete"] {
+  background: linear-gradient(180deg, #2a0e12, #dc2626) !important;
+  border-color: #ef4444 !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+:host-context(.theme-dark) .action-grid [data-action="delete"]:hover { filter: brightness(1.06); }
+
+:host-context(.theme-dark) .action-grid [data-action="manage"] {
+  background: linear-gradient(180deg, #0a1f24, #0ea5e9) !important;
+  border-color: #22d3ee !important;
+  color: #e6edf3 !important;
+  box-shadow: none !important;
+}
+:host-context(.theme-dark) .action-grid [data-action="manage"]:hover { filter: brightness(1.06); }
+
+/* Dark mode: source pills legibility */
+:host-context(.theme-dark) .classes-tags span {
+  background: rgba(255,255,255,0.08) !important;
+  border-color: rgba(255,255,255,0.16) !important;
+  color: var(--text-primary) !important;
+}
+
 :host-context(.theme-dark) .source-item {
   background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04)) !important;
   border-color: rgba(255,255,255,0.12) !important;
 }
 :host-context(.theme-dark) .source-item .font-bold { color: var(--text-primary) !important; }
-:host-context(.theme-dark) .classes-tags span { color: var(--text-primary) !important; background: rgba(255,255,255,0.08) !important; border-color: rgba(255,255,255,0.16) !important; }
+:host-context(.theme-dark) .classes-tags span { color: #e6edf3 !important; background: rgba(59,130,246,0.18) !important; border-color: rgba(59,130,246,0.35) !important; }
 
 :host-context(.theme-dark) .expand-btn {
   background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04)) !important;
@@ -478,4 +596,40 @@ button:focus,
   .dashboard-card:hover {
     transform: none;
   }
+}
+:host-context(.theme-dark) .classes-tags span:hover { background: rgba(59,130,246,0.26) !important; }
+
+/* Neutral badge for "no classes" */
+.classes-tags .no-classes { background: linear-gradient(180deg, #f1f5f9, #e2e8f0) !important; border-color: #cbd5e1 !important; color: #334155 !important; }
+:host-context(.theme-dark) .classes-tags .no-classes { background: rgba(148,163,184,0.18) !important; border-color: rgba(148,163,184,0.35) !important; color: #e6edf3 !important; }
+/* Light theme vibrant buttons inside cards */
+.action-grid [data-action="view"] { background: linear-gradient(180deg, #3b82f6, #2563eb) !important; border-color: #1d4ed8 !important; color: #fff !important; box-shadow: 0 4px 12px rgba(59,130,246,0.30) !important; }
+.action-grid [data-action="view"]:hover { filter: brightness(1.08); }
+
+.action-grid [data-action="edit"] { background: linear-gradient(180deg, #a78bfa, #6366f1) !important; border-color: #4f46e5 !important; color: #fff !important; box-shadow: 0 4px 12px rgba(99,102,241,0.30) !important; }
+.action-grid [data-action="edit"]:hover { filter: brightness(1.08); }
+
+.action-grid [data-action="delete"] { background: linear-gradient(180deg, #ef4444, #dc2626) !important; border-color: #b91c1c !important; color: #fff !important; box-shadow: 0 4px 12px rgba(239,68,68,0.35) !important; }
+.action-grid [data-action="delete"]:hover { filter: brightness(1.08); }
+
+.action-grid [data-action="manage"] { background: linear-gradient(180deg, #22d3ee, #06b6d4) !important; border-color: #0891b2 !important; color: #fff !important; box-shadow: 0 4px 12px rgba(6,182,212,0.30) !important; }
+.action-grid [data-action="manage"]:hover { filter: brightness(1.08); }
+
+.navigation-bar .backdrop-blur-xl,
+.header-container .backdrop-blur-xl,
+.search-bar .backdrop-blur-xl {
+  background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(99,102,241,0.12), rgba(14,165,233,0.12)) !important;
+  border-color: rgba(99,102,241,0.25) !important;
+  box-shadow: 0 10px 30px rgba(99,102,241,0.12) !important;
+}
+:host-context(.theme-dark) .action-grid [data-action="view"],
+:host-context(.theme-dark) .action-grid [data-action="edit"],
+:host-context(.theme-dark) .action-grid [data-action="delete"],
+:host-context(.theme-dark) .action-grid [data-action="manage"],
+.action-grid [data-action="view"],
+.action-grid [data-action="edit"],
+.action-grid [data-action="delete"],
+.action-grid [data-action="manage"] {
+  color: #fff !important;
+  border: 1px solid transparent !important;
 }
