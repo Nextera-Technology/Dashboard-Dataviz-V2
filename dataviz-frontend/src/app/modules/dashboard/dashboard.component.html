@@ -160,8 +160,8 @@
                 <mat-icon>home</mat-icon>
                 <span>Home</span>
               </a>
-              <button mat-raised-button color="primary" class="export-pdf-btn" (click)="exportFullDashboardToPDF()" [disabled]="!dashboard || exportLoading" [matTooltip]="'Export full dashboard to PDF'">
-                <mat-icon>picture_as_pdf</mat-icon>
+              <button mat-raised-button class="export-pdf-btn" (click)="exportFullDashboardToPDF()" [disabled]="!dashboard || exportLoading" [matTooltip]="'Export full dashboard to PDF'">
+                <mat-icon>library_books</mat-icon>
                 <span>{{ 'shared.export.pdf.button' | translate }}</span>
               </button>
               <button mat-icon-button (click)="toggleTheme()" class="theme-toggle" [matTooltip]="currentTheme === 'theme-dark' ? 'Light mode' : 'Dark mode'">

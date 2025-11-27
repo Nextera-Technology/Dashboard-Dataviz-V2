@@ -234,6 +234,13 @@ header {
   justify-self: end; /* stick to right edge */
 }
 
+.export-pdf-btn { display: inline-flex; align-items: center; gap: 8px; border-radius: 12px; border: 1px solid var(--dv-rail-border); background: linear-gradient(180deg, #ffffff, #f3f4f6); color: var(--text-primary) !important; box-shadow: 0 8px 20px rgba(17,24,39,0.12); }
+.export-pdf-btn .mat-mdc-button-touch-target { background: transparent !important; }
+.export-pdf-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(17,24,39,0.16); }
+.export-pdf-btn mat-icon { color: currentColor !important; }
+:host-context(.theme-dark) .export-pdf-btn { background: var(--dv-item-bg) !important; border-color: var(--dv-rail-border) !important; color: #e6edf3 !important; box-shadow: 0 8px 20px rgba(2,6,23,0.30) !important; }
+:host-context(.theme-dark) .export-pdf-btn:hover { background: var(--dv-item-hover-bg) !important; border-color: rgba(59,130,246,0.35) !important; }
+
 /* QuickSearch wrapper in header */
 .quicksearch-wrapper {
   grid-column: 2;
