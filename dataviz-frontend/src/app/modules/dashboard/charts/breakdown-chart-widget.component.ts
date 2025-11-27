@@ -167,6 +167,10 @@ declare var am5xy: any;
       font-weight: 500;
     }
 
+    :host-context(.theme-dark) .status-value { color: #0f172a !important; }
+    :host-context(.theme-dark) .status-value-title { color: #0f172a !important; }
+    :host-context(.theme-dark) .status-category { color: #0f172a !important; }
+
     /* Color header wave labels (EE1–EE4) to match wave palette */
     .status-grid-rowed > .status-row:first-child .status-value-title:nth-child(2) { color: #BCDCDC; }
     .status-grid-rowed > .status-row:first-child .status-value-title:nth-child(3) { color: #68B3B3; }
@@ -344,4 +348,4 @@ export class BreakDownChartWidgetComponent implements OnInit, OnDestroy {
     // Case 3: If totalData field exists directly
     this.totalData = dataObj.totalData ?? 0;
   }
-} 
+}

@@ -95,6 +95,9 @@
   border-left: 4px solid;
 }
 
+:host-context(.theme-dark) .status-value { color: #0f172a !important; }
+:host-context(.theme-dark) .status-value-title { color: #0f172a !important; }
+
 .status-value-title {
   padding: 10px;
   text-align: center;

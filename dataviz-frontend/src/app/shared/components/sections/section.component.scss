@@ -35,15 +35,18 @@
       color: #15616D;
     }
 
-    .status-value {
-      background-color: #f5f7fa;
-      padding: 10px;
-      text-align: center;
-      border-radius: 8px;
-      font-size: 14px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-      font-weight: 500;
-    }
+.status-value {
+  background-color: #f5f7fa;
+  padding: 10px;
+  text-align: center;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  font-weight: 500;
+}
+
+:host-context(.theme-dark) .status-value { color: #0f172a !important; }
+:host-context(.theme-dark) .status-value-title { color: #0f172a !important; }
 
     .status-value-title {
       /* background-color: #f5f7fa; */
