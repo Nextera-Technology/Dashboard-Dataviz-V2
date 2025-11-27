@@ -509,36 +509,36 @@ button:focus,
 
 /* Dark mode: high-contrast action buttons */
 :host-context(.theme-dark) .action-grid [data-action="view"] {
-  background: rgba(37,99,235,0.22) !important;
-  border-color: rgba(37,99,235,0.38) !important;
+  background: #1e3a8a !important;
+  border-color: #1d4ed8 !important;
   color: #e6edf3 !important;
   box-shadow: none !important;
 }
-:host-context(.theme-dark) .action-grid [data-action="view"]:hover { filter: brightness(1.02); }
+:host-context(.theme-dark) .action-grid [data-action="view"]:hover { filter: brightness(1.03); }
 
 :host-context(.theme-dark) .action-grid [data-action="edit"] {
-  background: rgba(109,40,217,0.22) !important;
-  border-color: rgba(109,40,217,0.38) !important;
+  background: #312e81 !important;
+  border-color: #4f46e5 !important;
   color: #e6edf3 !important;
   box-shadow: none !important;
 }
-:host-context(.theme-dark) .action-grid [data-action="edit"]:hover { filter: brightness(1.02); }
+:host-context(.theme-dark) .action-grid [data-action="edit"]:hover { filter: brightness(1.03); }
 
 :host-context(.theme-dark) .action-grid [data-action="delete"] {
-  background: rgba(220,38,38,0.22) !important;
-  border-color: rgba(220,38,38,0.40) !important;
+  background: #991b1b !important;
+  border-color: #b91c1c !important;
   color: #fff !important;
   box-shadow: none !important;
 }
-:host-context(.theme-dark) .action-grid [data-action="delete"]:hover { filter: brightness(1.02); }
+:host-context(.theme-dark) .action-grid [data-action="delete"]:hover { filter: brightness(1.03); }
 
 :host-context(.theme-dark) .action-grid [data-action="manage"] {
-  background: rgba(6,182,212,0.22) !important;
-  border-color: rgba(6,182,212,0.38) !important;
+  background: #155e75 !important;
+  border-color: #0ea5b7 !important;
   color: #e6edf3 !important;
   box-shadow: none !important;
 }
-:host-context(.theme-dark) .action-grid [data-action="manage"]:hover { filter: brightness(1.02); }
+:host-context(.theme-dark) .action-grid [data-action="manage"]:hover { filter: brightness(1.03); }
 
 /* Dark mode: source pills legibility */
 :host-context(.theme-dark) .classes-tags span {
