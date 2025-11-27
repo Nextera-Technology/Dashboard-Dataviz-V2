@@ -1070,6 +1070,11 @@ export class AdminLayoutComponent implements OnInit {
       allowOutsideClick: true,
       allowEscapeKey: true,
       background: 'var(--dv-item-bg)',
+      backdrop: this.currentTheme === 'theme-dark' ? 'rgba(2,6,23,0.72)' : undefined,
+      customClass: {
+        container: 'dv-welcome-container',
+        popup: 'dv-welcome-popup'
+      },
       didOpen: () => {
         sessionStorage.setItem('dv-welcome-modal-session-shown', 'true');
         const container = Swal.getHtmlContainer();

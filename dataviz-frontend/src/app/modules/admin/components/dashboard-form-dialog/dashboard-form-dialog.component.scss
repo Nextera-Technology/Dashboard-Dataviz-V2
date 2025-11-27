@@ -2,8 +2,8 @@
   min-width: 450px;
   max-width: 90vw;
   max-height: 90vh;
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
+  background: var(--dv-item-bg) !important;
+  border: 1px solid var(--dv-rail-border) !important;
 }
 
 /* Angular Material specific overrides for full width inputs */
@@ -33,31 +33,58 @@ mat-form-field {
 }
 
 ::ng-deep .mat-mdc-dialog-surface{
-  background: transparent;
+  background: transparent !important;
 }
 
 /* Dark theme alignment */
 :host-context(.theme-dark) .dashboard-form-dialog .header {
-  background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--primary-light), var(--primary-dark)) !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid var(--dv-rail-border) !important;
 }
 
-.dashboard-form-dialog .header { border-bottom: 1px solid var(--border-color); }
-.dashboard-form-dialog .header h2 { color: #ffffff; }
-.dashboard-form-dialog .header p { color: rgba(255,255,255,0.85); }
+:host-context(.theme-navy) .dashboard-form-dialog .header {
+  background: linear-gradient(135deg, var(--primary-light), var(--primary-dark)) !important;
+  color: var(--text-primary) !important;
+  border-bottom: 1px solid var(--dv-rail-border) !important;
+}
+
+.dashboard-form-dialog .header { border-bottom: 1px solid var(--dv-rail-border) !important; }
+.dashboard-form-dialog .header h2 { color: #ffffff !important; }
+.dashboard-form-dialog .header p { color: rgba(255,255,255,0.85) !important; }
 
 .dashboard-form-dialog .dialog-content,
 .dashboard-form-dialog .grid,
 .dashboard-form-dialog input,
 .dashboard-form-dialog select {
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  border-color: var(--border-color);
+  background: var(--dv-item-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--dv-rail-border) !important;
 }
-.dashboard-form-dialog input::placeholder { color: var(--text-muted); }
+.dashboard-form-dialog input::placeholder { color: var(--text-secondary) !important; }
 
 .dashboard-form-dialog .fuse-dialog-actions,
 .dashboard-form-dialog .px-8.py-6.bg-gray-50 {
-  background: var(--bg-primary);
-  border-top: 1px solid var(--border-color);
+  background: var(--dv-item-bg) !important;
+  border-top: 1px solid var(--dv-rail-border) !important;
+}
+
+:host-context(.theme-dark) .dashboard-form-dialog .source-item,
+:host-context(.theme-navy) .dashboard-form-dialog .source-item {
+  background: var(--dv-item-bg) !important;
+  border-color: var(--dv-rail-border) !important;
+}
+
+:host-context(.theme-dark) .dashboard-form-dialog .text-gray-900,
+:host-context(.theme-dark) .dashboard-form-dialog .text-gray-700,
+:host-context(.theme-dark) .dashboard-form-dialog .text-gray-600,
+:host-context(.theme-dark) .dashboard-form-dialog .text-gray-500 {
+  color: rgba(255,255,255,0.92) !important;
+}
+
+:host-context(.theme-navy) .dashboard-form-dialog .text-gray-900,
+:host-context(.theme-navy) .dashboard-form-dialog .text-gray-700,
+:host-context(.theme-navy) .dashboard-form-dialog .text-gray-600,
+:host-context(.theme-navy) .dashboard-form-dialog .text-gray-500 {
+  color: var(--text-primary) !important;
 }

@@ -807,7 +807,8 @@
 :host-context(.theme-dark) .search-bar .search-placeholder { color: rgba(255,255,255,0.75) !important; }
 :host-context(.theme-dark) .search-bar .search-shortcut { background: var(--dv-item-hover-bg) !important; border-color: var(--dv-rail-border) !important; }
 :host-context(.theme-dark) .search-bar .search-shortcut span { color: rgba(255,255,255,0.85) !important; }
-:host-context(.theme-dark) .search-dialog { background: var(--bg-primary) !important; border: 1px solid var(--dv-rail-border) !important; }
+:host-context(.theme-dark) .search-modal { background: rgba(2,6,23,0.72) !important; backdrop-filter: blur(2px) !important; }
+:host-context(.theme-dark) .search-dialog { background: linear-gradient(135deg, rgba(11,17,34,0.95), rgba(6,12,24,0.92)) !important; border: 1px solid rgba(255,255,255,0.18) !important; box-shadow: 0 22px 46px rgba(2,6,23,0.60) !important; }
 :host-context(.theme-dark) .search-header { border-bottom: 1px solid var(--dv-rail-border) !important; }
 :host-context(.theme-dark) .search-input-wrapper { background: var(--dv-item-bg) !important; }
 :host-context(.theme-dark) .search-input { color: var(--text-primary) !important; }
@@ -836,7 +837,7 @@
 :host-context(.theme-navy) .search-bar .search-placeholder { color: var(--text-secondary) !important; }
 :host-context(.theme-navy) .search-bar .search-shortcut { background: var(--dv-item-hover-bg) !important; border-color: var(--dv-rail-border) !important; }
 :host-context(.theme-navy) .search-bar .search-shortcut span { color: var(--text-secondary) !important; }
-:host-context(.theme-navy) .search-dialog { background: var(--bg-primary) !important; border: 1px solid var(--dv-rail-border) !important; }
+:host-context(.theme-navy) .search-dialog { background: var(--dv-item-bg) !important; border: 1px solid var(--dv-rail-border) !important; }
 :host-context(.theme-navy) .search-header { border-bottom: 1px solid var(--dv-rail-border) !important; }
 :host-context(.theme-navy) .search-input-wrapper { background: var(--dv-item-bg) !important; }
 :host-context(.theme-navy) .search-input { color: var(--text-primary) !important; }

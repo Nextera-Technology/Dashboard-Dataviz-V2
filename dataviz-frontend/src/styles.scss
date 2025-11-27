@@ -63,6 +63,17 @@
   z-index: 9998 !important;
 }
 
+.modern-backdrop.cdk-overlay-backdrop {
+  background-color: rgba(2, 6, 23, 0.75) !important;
+}
+
+.modern-dialog .mat-mdc-dialog-container .mdc-dialog__surface,
+.modern-dialog .mat-dialog-container {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
 /* Additional notification coverage for edge cases */
 .mat-snack-bar-handset,
 .swal2-toast,
@@ -74,4 +85,4 @@
 body .frozen-sections-header {
   z-index: 1000 !important;
   position: sticky !important;
-} 
+}
