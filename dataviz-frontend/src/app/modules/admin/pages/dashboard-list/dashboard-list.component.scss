@@ -137,7 +137,7 @@
 /* Dashboard Grid */
 .dashboards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1.25rem;
   position: relative;
   z-index: 5;
@@ -153,6 +153,7 @@
   backdrop-filter: blur(10px);
   border-color: rgba(255,255,255,0.60);
   box-shadow: 0 8px 24px rgba(15,23,42,0.10);
+  min-height: 280px;
 }
 
 .dashboard-card:hover::before {

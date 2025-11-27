@@ -148,7 +148,7 @@
     </div>
 
     <!-- Enhanced Dashboard Grid (Card View) -->
-    <div *ngIf="viewMode === 'card'" class="dashboards-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <div *ngIf="viewMode === 'card'" class="dashboards-grid grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
       <div
         *ngFor="let dashboard of filteredDashboards; trackBy: trackByDashboardId"
         class="dashboard-card group relative overflow-hidden bg-white/70 backdrop-blur-lg rounded-xl shadow-sm hover:shadow-md border border-white/30 transform hover:-translate-y-1 transition-all duration-200 ease-out cursor-pointer flex flex-col h-full"
@@ -181,13 +181,13 @@
             <div *ngIf="dashboard.sources && dashboard.sources.length > 0; else noSources" class="space-y-1.5">
               <div 
                 *ngFor="let sourceEntry of dashboard.sources | slice:0: (isSourcesExpanded(dashboard._id!) ? (dashboard.sources.length) : initialVisibleSources)" 
-                class="source-line flex items-start gap-2 flex-wrap"
+                class="source-line flex flex-col items-start gap-1"
               >
-                <div class="cert-block flex items-center gap-1 min-w-0 flex-1">
+                <div class="cert-block flex items-center gap-1 min-w-0">
                   <mat-icon class="text-slate-600 text-base">folder_open</mat-icon>
                   <span class="source-title font-semibold text-sm text-slate-800">{{ sourceEntry.certification }}</span>
                 </div>
-                <div class="classes-tags flex flex-wrap gap-1">
+                <div class="classes-tags flex flex-wrap gap-1 w-full">
                   <span *ngFor="let cls of sourceEntry.classes" class="px-2 py-0.5 bg-slate-50 text-slate-700 rounded-full text-[11px] font-medium border border-slate-200 hover:bg-slate-100">{{ cls }}</span>
                   <span *ngIf="!sourceEntry.classes || sourceEntry.classes.length === 0" class="px-2 py-0.5 bg-slate-50 text-slate-500 rounded-full text-[11px] italic no-classes">{{ 'admin.dashboardList.no_classes' | translate }}</span>
                 </div>
@@ -217,43 +217,7 @@
 
           <!-- Footer (Manage + Actions) - mt-auto to stick to bottom -->
           <div class="action-buttons relative p-3 pt-0 mt-auto">
-            <div class="action-grid grid grid-cols-2 gap-2">
-              <button 
-                (click)="openDashboard(dashboard)"
-                [matTooltip]="'admin.dashboardList.view' | translate"
-                matTooltipPosition="below"
-                class="w-full py-1.5 px-3 rounded-lg transition ease-in-out duration-150"
-                data-action="view"
-              >
-                <div class="flex items-center justify-center space-x-1">
-                  <mat-icon class="text-sm">visibility</mat-icon>
-                  <span>{{ 'admin.dashboardList.view' | translate }}</span>
-                </div>
-              </button>
-              <button 
-                (click)="editDashboard(dashboard, $event)"
-                [matTooltip]="'admin.dashboardList.edit' | translate"
-                matTooltipPosition="below"
-                class="w-full py-1.5 px-3 rounded-lg transition ease-in-out duration-150"
-                data-action="edit"
-              >
-                <div class="flex items-center justify-center space-x-1">
-                  <mat-icon class="text-sm">edit</mat-icon>
-                  <span>{{ 'admin.dashboardList.edit' | translate }}</span>
-                </div>
-              </button>
-              <button 
-                (click)="deleteDashboard(dashboard, $event)"
-                [matTooltip]="'admin.dashboardList.delete' | translate"
-                matTooltipPosition="below"
-                class="w-full py-1.5 px-3 rounded-lg transition ease-in-out duration-150"
-                data-action="delete"
-              >
-                <div class="flex items-center justify-center space-x-1">
-                  <mat-icon class="text-sm">delete</mat-icon>
-                  <span>{{ 'admin.dashboardList.delete' | translate }}</span>
-                </div>
-              </button>
+            <div class="action-grid flex flex-col gap-2">
               <button 
                 (click)="manageDashboard(dashboard, $event)"
                 [matTooltip]="'admin.dashboardList.manage' | translate"
@@ -266,6 +230,41 @@
                   <span>{{ 'admin.dashboardList.manage' | translate }}</span>
                 </div>
               </button>
+              <div class="grid grid-cols-3 gap-2">
+                <button 
+                  (click)="openDashboard(dashboard)"
+                  [matTooltip]="'admin.dashboardList.view' | translate"
+                  matTooltipPosition="below"
+                  class="w-full py-1.5 rounded-lg transition ease-in-out duration-150"
+                  data-action="view"
+                >
+                  <div class="flex items-center justify-center">
+                    <mat-icon class="text-sm">visibility</mat-icon>
+                  </div>
+                </button>
+                <button 
+                  (click)="editDashboard(dashboard, $event)"
+                  [matTooltip]="'admin.dashboardList.edit' | translate"
+                  matTooltipPosition="below"
+                  class="w-full py-1.5 rounded-lg transition ease-in-out duration-150"
+                  data-action="edit"
+                >
+                  <div class="flex items-center justify-center">
+                    <mat-icon class="text-sm">edit</mat-icon>
+                  </div>
+                </button>
+                <button 
+                  (click)="deleteDashboard(dashboard, $event)"
+                  [matTooltip]="'admin.dashboardList.delete' | translate"
+                  matTooltipPosition="below"
+                  class="w-full py-1.5 rounded-lg transition ease-in-out duration-150"
+                  data-action="delete"
+                >
+                  <div class="flex items-center justify-center">
+                    <mat-icon class="text-sm">delete</mat-icon>
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
         </div>
