@@ -1070,7 +1070,7 @@ export class AdminLayoutComponent implements OnInit {
       allowOutsideClick: true,
       allowEscapeKey: true,
       background: 'var(--dv-item-bg)',
-      backdrop: this.currentTheme === 'theme-dark' ? 'rgba(2,6,23,0.72)' : undefined,
+      backdrop: this.currentTheme === 'theme-dark' ? 'rgba(2,6,23,0.72)' : 'rgba(17,24,39,0.28)',
       customClass: {
         container: 'dv-welcome-container',
         popup: 'dv-welcome-popup'
