@@ -81,22 +81,21 @@
 
 
         <!-- Sections Filter Section -->
-        <div class="filter-section" *ngIf="!isSidebarCollapsed">
+        <div class="filter-section" *ngIf="!isSidebarCollapsed && isAdminUser()">
             <div class="section-title sections-title">
                 <span class="section-icon">📋</span>
-                {{ 'dashboard.sidebar.sections' | translate }}
+                {{ 'dashboard.sidebar.manage_sections_title' | translate }}
             </div>
-            <div class="checkbox-list">
-                <label class="checkbox-item" *ngFor="let section of sectionsList; let i = index">
-                    <input type="checkbox" 
-                           [id]="'sidebar_section_' + section._id" 
-                           [checked]="sidebarSectionVisibility[section._id]"
-                           (change)="onSidebarCheckboxChange(section._id, $event.target.checked)">
-                    {{ section.name }}
-                </label>
+            <div class="manage-sections-body">
+                <p class="manage-sections-text">
+                    {{ 'dashboard.sidebar.manage_sections_description' | translate }}
+                </p>
+                <button class="clear-filters"
+                        (click)="openManageSections()"
+                        [disabled]="!dashboardId">
+                    {{ 'dashboard.sidebar.manage_sections_button' | translate }}
+                </button>
             </div>
-            <div class="selected-count">{{ getVisibleSectionsCount() }} {{ 'dashboard.sidebar.selected_sections' | translate }}</div>
-            <button class="clear-filters" (click)="applySectionFilters()">{{ 'dashboard.sidebar.apply_filters' | translate }}</button>
         </div>
 
         <!-- Admin Navigation Section with Expandable Menus -->
