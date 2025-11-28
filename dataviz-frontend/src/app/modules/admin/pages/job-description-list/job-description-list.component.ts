@@ -390,8 +390,9 @@ export class JobDescriptionListComponent implements OnInit, OnDestroy {
         const result = await this.dashboardService.deleteDashboard(dashboard._id);
 
         if (result) {
-          // Remove from local array with smooth animation
+          // Remove from both local arrays immediately for instant UI update
           this.dashboards = this.dashboards.filter(d => d._id !== dashboard._id);
+          this.filteredDashboards = this.filteredDashboards.filter(d => d._id !== dashboard._id);
 
           // Clean up expansion state
           if (dashboard._id) {
@@ -399,11 +400,6 @@ export class JobDescriptionListComponent implements OnInit, OnDestroy {
           }
 
           await this.notifier.successKey('notifications.dashboard_deleted', { title: dashboard.title });
-
-          // Refresh the list to ensure consistency
-          setTimeout(() => {
-            this.loadDashboards();
-          }, 500);
         }
       } catch (error) {
         console.error(`Error deleting dashboard "${dashboard.title}":`, error);

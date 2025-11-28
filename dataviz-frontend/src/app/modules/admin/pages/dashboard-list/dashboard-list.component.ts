@@ -173,10 +173,13 @@ import {
   DashboardFormDialogComponent,
   DashboardFormDialogData,
 } from "../../components/dashboard-form-dialog/dashboard-form-dialog.component";
+import { SchoolSelectionDialogComponent, SchoolSelectionResult } from '../../components/school-selection-dialog/school-selection-dialog.component';
+import { LoadingSpinnerDialogComponent } from '../../components/loading-spinner-dialog/loading-spinner-dialog.component';
 import { ShareDataService } from "app/shared/services/share-data.service";
 import Swal from 'sweetalert2';
 import { NotificationService } from '@dataviz/services/notification/notification.service';
 import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
+import { TranslationService } from 'app/shared/services/translation/translation.service';
 
 // UPDATED: Dashboard interface to reflect the new 'sources' array structure
 interface Section {
@@ -195,6 +198,7 @@ interface Dashboard {
   sources?: { certification: string | null; classes: string[] | null }[]; // Updated source structure
   title: string;
   status?: string;
+  isDuplicationProcessInProgress?: boolean;
 }
 
 @Component({
@@ -237,7 +241,8 @@ export class DashboardListComponent implements OnInit {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private shareDataService: ShareDataService,
-    private notifier: NotificationService
+    private notifier: NotificationService,
+    private translationService: TranslationService
   ) {}
 
   ngOnInit(): void {
@@ -331,30 +336,120 @@ export class DashboardListComponent implements OnInit {
     }
   }
 
-  openDashboard(dashboard: Dashboard, event?: Event): void {
+  /**
+   * Open dashboard with school selection dialog (same as Job Description)
+   */
+  async openDashboard(dashboard: Dashboard, event?: Event): Promise<void> {
     // Prevent bubbling when called from button click
     if (event) {
       event.stopPropagation();
     }
 
-    // Try to animate the clicked element, fall back to card element
-    const clickedEl = (event && ((event.currentTarget as HTMLElement) || (event.target as HTMLElement))) || null;
-    const cardEl = document.querySelector(`[data-dashboard-id="${dashboard._id}"]`) as HTMLElement | null;
-
-    const elToAnimate = clickedEl || cardEl;
-    if (elToAnimate) {
-      elToAnimate.style.transform = 'scale(0.95)';
-      elToAnimate.style.transition = 'transform 0.1s ease';
-      setTimeout(() => {
-        this.shareDataService.setDashboardId(dashboard._id || '');
-        this.router.navigate(['/dashboard']);
-      }, 100);
+    // Step 1: Validate dashboard ID
+    if (!dashboard._id) {
+      await this.notifier.toastKey('notifications.no_dashboard_to_view', 'info', undefined, 3000);
       return;
     }
 
-    // Fallback navigation
-    this.shareDataService.setDashboardId(dashboard._id || '');
-    this.router.navigate(['/dashboard']);
+    try {
+      // Step 2: Fetch the latest dashboard data to ensure up-to-date information
+      const latestDashboard = await this.dashboardService.getOneDashboard(dashboard._id);
+      if (!latestDashboard) {
+        await this.notifier.toastKey('notifications.dashboard_not_found', 'error', undefined, 3000);
+        return;
+      }
+
+      // Step 3: Check if duplication process is in progress
+      if (latestDashboard.isDuplicationProcessInProgress) {
+        await this.notifier.infoKey('notifications.duplication_in_progress', undefined, 4000);
+        return;
+      }
+
+      // Step 4: Proceed with school selection dialog
+      this.openSchoolSelectionDialog(latestDashboard);
+    } catch (error) {
+      console.error('Error fetching latest dashboard data:', error);
+      await this.notifier.errorKey('notifications.error_loading_dashboard');
+    }
+  }
+
+  /**
+   * Open school selection dialog for ES Dashboard
+   */
+  private openSchoolSelectionDialog(dashboard: Dashboard): void {
+    const dialogRef = this.dialog.open(SchoolSelectionDialogComponent, {
+      width: '600px',
+      data: {
+        dashboardId: dashboard._id,
+        dashboardTitle: dashboard.title || dashboard.name || 'Dashboard'
+      },
+      panelClass: 'modern-dialog',
+      backdropClass: 'modern-backdrop',
+      disableClose: false,
+      hasBackdrop: true,
+      closeOnNavigation: true
+    });
+
+    dialogRef.afterClosed().subscribe(async (result: SchoolSelectionResult | undefined) => {
+      if (result) {
+        // Force close any remaining dialogs
+        this.dialog.closeAll();
+        
+        // Show loading spinner
+        const loadingMessage = result.openWithAllData 
+          ? this.translationService.translate('shared.dashboard.loading.opening_dashboard')
+          : this.translationService.translate('shared.dashboard.loading.applying_school_filters')
+            .replace('{{schools}}', result.selectedSchools.join(', '));
+            
+        const loadingDialogRef = this.dialog.open(LoadingSpinnerDialogComponent, {
+          width: '400px',
+          disableClose: true,
+          hasBackdrop: true,
+          backdropClass: 'loading-backdrop',
+          panelClass: 'loading-dialog',
+          data: {
+            message: loadingMessage
+          }
+        });
+        
+        try {
+          // Always use school filter query, but pass all schools for "all data" option
+          const schoolsToFilter = result.openWithAllData 
+            ? ['ALL'] // All available schools
+            : result.selectedSchools;
+          
+          const filterResult = await this.dashboardService.openDashboardWithSchoolFilter(
+            dashboard._id || '',
+            schoolsToFilter
+          );
+          
+          loadingDialogRef.close();
+          
+          if (filterResult?._id) {
+            this.shareDataService.setDashboardId(filterResult._id);
+            this.router.navigate(['/dashboard']);
+            
+            // Show success message
+            const message = result.openWithAllData
+              ? this.translationService.translate('shared.dashboard.notifications.opened_all_data')
+              : this.translationService.translate('shared.dashboard.notifications.opened_filtered_data').replace('{{schools}}', result.selectedSchools.join(', '));
+            
+            const title = this.translationService.translate('shared.dashboard.notifications.opened_title');
+            await this.notifier.success(message, title);
+          } else {
+            const errorMessage = this.translationService.translate('shared.dashboard.notifications.failed_open_filter');
+            const errorTitle = this.translationService.translate('shared.dashboard.notifications.error_title');
+            await this.notifier.error(errorMessage, errorTitle);
+          }
+        } catch (error) {
+          loadingDialogRef.close();
+          console.error('Error opening dashboard:', error);
+          const errorMessage = this.translationService.translate('shared.dashboard.notifications.failed_open_generic');
+          const errorTitle = this.translationService.translate('shared.dashboard.notifications.error_title');
+          await this.notifier.error(errorMessage, errorTitle);
+        }
+      }
+    });
   }
 
   manageDashboard(dashboard: Dashboard, event?: Event): void {
@@ -442,8 +537,9 @@ export class DashboardListComponent implements OnInit {
         const result = await this.dashboardService.deleteDashboard(dashboard._id);
 
         if (result) {
-          // Remove from local array with smooth animation
+          // Remove from both local arrays immediately for instant UI update
           this.dashboards = this.dashboards.filter(d => d._id !== dashboard._id);
+          this.filteredDashboards = this.filteredDashboards.filter(d => d._id !== dashboard._id);
 
           // Clean up expansion state
           if (dashboard._id) {
@@ -451,11 +547,6 @@ export class DashboardListComponent implements OnInit {
           }
 
           await this.notifier.successKey('notifications.dashboard_deleted', { title: dashboard.title });
-
-          // Refresh the list to ensure consistency
-          setTimeout(() => {
-            this.loadDashboards();
-          }, 500);
         }
       } catch (error) {
         console.error(`Error deleting dashboard "${dashboard.title}":`, error);
