@@ -203,3 +203,129 @@ body {
     background: transparent !important;
     color: var(--text-primary) !important;
 }
+
+/* ======================================
+   Global Dark Mode for SweetAlert2
+   ====================================== */
+
+/* Dark theme: SWAL backdrop */
+.theme-dark .swal2-container {
+    background: rgba(2,6,23,0.72) !important;
+    backdrop-filter: blur(2px) !important;
+}
+
+/* Dark theme: All SWAL popups (confirmations, alerts, etc) */
+.theme-dark .swal2-popup {
+    background: linear-gradient(135deg, rgba(17,24,39,0.98), rgba(11,17,34,0.95)) !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Dark theme: SWAL title */
+.theme-dark .swal2-title {
+    color: #f9fafb !important;
+}
+
+/* Dark theme: SWAL content text */
+.theme-dark .swal2-html-container,
+.theme-dark .swal2-content {
+    color: #d1d5db !important;
+}
+
+/* Dark theme: SWAL confirm button */
+.theme-dark .swal2-confirm {
+    background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(59,130,246,0.3) !important;
+}
+.theme-dark .swal2-confirm:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+}
+
+/* Dark theme: SWAL cancel button */
+.theme-dark .swal2-cancel {
+    background: rgba(107,114,128,0.3) !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    color: #d1d5db !important;
+}
+.theme-dark .swal2-cancel:hover {
+    background: rgba(107,114,128,0.5) !important;
+}
+
+/* Dark theme: SWAL deny button (for delete confirmations) */
+.theme-dark .swal2-deny {
+    background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+    border: none !important;
+    color: #ffffff !important;
+}
+
+/* Dark theme: SWAL input fields */
+.theme-dark .swal2-input,
+.theme-dark .swal2-textarea,
+.theme-dark .swal2-select {
+    background: rgba(31,41,55,0.8) !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    color: #f9fafb !important;
+}
+.theme-dark .swal2-input:focus,
+.theme-dark .swal2-textarea:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.2) !important;
+}
+
+/* Dark theme: SWAL timer progress bar */
+.theme-dark .swal2-timer-progress-bar {
+    background: rgba(59,130,246,0.6) !important;
+}
+
+/* Dark theme: SWAL close button */
+.theme-dark .swal2-close {
+    color: #9ca3af !important;
+}
+.theme-dark .swal2-close:hover {
+    color: #f9fafb !important;
+}
+
+/* Dark theme: SWAL icon colors */
+.theme-dark .swal2-icon.swal2-warning {
+    border-color: #f59e0b !important;
+    color: #f59e0b !important;
+}
+.theme-dark .swal2-icon.swal2-error {
+    border-color: #ef4444 !important;
+}
+.theme-dark .swal2-icon.swal2-error .swal2-x-mark-line-left,
+.theme-dark .swal2-icon.swal2-error .swal2-x-mark-line-right {
+    background-color: #ef4444 !important;
+}
+.theme-dark .swal2-icon.swal2-success {
+    border-color: #10b981 !important;
+    color: #10b981 !important;
+}
+.theme-dark .swal2-icon.swal2-success .swal2-success-line-tip,
+.theme-dark .swal2-icon.swal2-success .swal2-success-line-long {
+    background-color: #10b981 !important;
+}
+.theme-dark .swal2-icon.swal2-success .swal2-success-ring {
+    border-color: rgba(16,185,129,0.3) !important;
+}
+.theme-dark .swal2-icon.swal2-info {
+    border-color: #3b82f6 !important;
+    color: #3b82f6 !important;
+}
+.theme-dark .swal2-icon.swal2-question {
+    border-color: #8b5cf6 !important;
+    color: #8b5cf6 !important;
+}
+
+/* Dark theme: SWAL toast */
+.theme-dark .swal2-toast {
+    background: linear-gradient(135deg, rgba(17,24,39,0.98), rgba(11,17,34,0.95)) !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4) !important;
+}
+.theme-dark .swal2-toast .swal2-title {
+    color: #f9fafb !important;
+}
