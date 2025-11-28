@@ -14,6 +14,7 @@ import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 export interface SchoolSelectionDialogData {
   dashboardId: string;
   dashboardTitle: string;
+  isEmployabilitySurvey?: boolean; // true for ES dashboards, false/undefined for JD dashboards
 }
 
 export interface SchoolSelectionResult {
@@ -363,7 +364,11 @@ export class SchoolSelectionDialogComponent implements OnInit {
 
     try {
       this.isLoadingSchools = true;
-      const schools = await this.dashboardRepository.getSchoolDropdown(this.data.dashboardId);
+      // Pass employability parameter for ES dashboards (default false for JD)
+      const schools = await this.dashboardRepository.getSchoolDropdown(
+        this.data.dashboardId,
+        this.data.isEmployabilitySurvey ?? false
+      );
       this.availableSchools = schools || [];
       
       // Initialize all schools as unselected

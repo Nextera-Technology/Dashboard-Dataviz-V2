@@ -232,7 +232,8 @@ export class JobDescriptionListComponent implements OnInit, OnDestroy {
       width: '600px',
       data: {
         dashboardId: dashboard._id,
-        dashboardTitle: dashboard.title || dashboard.name || 'Dashboard'
+        dashboardTitle: dashboard.title || dashboard.name || 'Dashboard',
+        isEmployabilitySurvey: false // JD Dashboard - do not pass employability flag
       },
       panelClass: 'modern-dialog',
       backdropClass: 'modern-backdrop',

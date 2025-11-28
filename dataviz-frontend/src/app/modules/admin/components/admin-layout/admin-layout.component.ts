@@ -14,6 +14,7 @@ import { ShareDataService } from 'app/shared/services/share-data.service';
 import { TranslationService } from '../../../../shared/services/translation/translation.service';
 import { Router } from '@angular/router';
 import { AuthService, User } from '../../../../core/auth/auth.service';
+import { SessionMonitorService } from '../../../../core/auth/session-monitor.service';
 import { QuickSearchComponent } from '../../../../shared/components/quick-search/quick-search.component';
 import Swal from 'sweetalert2';
 
@@ -848,7 +849,8 @@ export class AdminLayoutComponent implements OnInit {
     public translation: TranslationService,
     private notifier: NotificationService,
     private apollo: Apollo,
-    private shareDataService: ShareDataService
+    private shareDataService: ShareDataService,
+    private sessionMonitor: SessionMonitorService // Initialize session monitoring early
   ) {}
 
   setLanguage(lang: string): void {

@@ -683,4 +683,14 @@
       "error_message": "Désolé, j'ai rencontré une erreur. Veuillez réessayer plus tard.",
       "no_response": "J'ai reçu votre message mais je n'ai pas pu générer de réponse."
     }
+    ,"session": {
+      "expired_title": "Session Expirée",
+      "expired_export_message": "Votre session a expiré. Veuillez vous reconnecter pour exporter le PDF.",
+      "insufficient_title": "Session Bientôt Expirée",
+      "insufficient_export_message": "Votre session expirera dans {{time}}. L'export PDF peut échouer si cela prend plus de temps. Voulez-vous continuer quand même?",
+      "continue_anyway": "Continuer Quand Même",
+      "cancel_export": "Annuler"
+    }
+    
+
   }

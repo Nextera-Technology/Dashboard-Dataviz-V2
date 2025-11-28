@@ -689,5 +689,13 @@
       "clear_history": "Clear chat history",
       "error_message": "Sorry, I encountered an error. Please try again later.",
       "no_response": "I received your message but couldn't generate a response."
+    },
+    "session": {
+      "expired_title": "Session Expired",
+      "expired_export_message": "Your session has expired. Please login again to export PDF.",
+      "insufficient_title": "Session Expiring Soon",
+      "insufficient_export_message": "Your session will expire in {{time}}. PDF export may fail if it takes longer than this. Do you want to continue anyway?",
+      "continue_anyway": "Continue Anyway",
+      "cancel_export": "Cancel"
     }
   }

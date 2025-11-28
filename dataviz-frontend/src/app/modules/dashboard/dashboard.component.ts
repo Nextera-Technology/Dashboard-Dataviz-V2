@@ -19,6 +19,7 @@ import { QuickSearchComponent } from 'app/shared/components/quick-search/quick-s
 import { FloatingChatComponent } from 'app/shared/components/floating-chat/floating-chat.component';
 
 import { AuthService, User } from '../../core/auth/auth.service';
+import { SessionMonitorService } from '../../core/auth/session-monitor.service';
 import { DashboardService, DashboardData, FilterData, CertificationFilter, SectionFilter, Section } from '../../shared/services/dashboard.service';
 import { SectionComponent } from '../../shared/components/sections/section.component';
 import { DashboardBuilderService } from '../admin/pages/dashboard-builder/dashboard-builder.service';
@@ -148,10 +149,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
     private notifier: NotificationService,
-    private shareDataService: ShareDataService
-    ,
+    private shareDataService: ShareDataService,
     public translation: TranslationService,
-    private apollo: Apollo
+    private apollo: Apollo,
+    private sessionMonitor: SessionMonitorService // Initialize session monitoring early
   ) {
     shareDataService.setIsDashboard(true);
     this.dashboardRepo = RepositoryFactory.createRepository('dashboard-builder') as DashboardBuilderRepository;

@@ -10,6 +10,7 @@ import { DashboardBuilderRepository } from '@dataviz/repositories/dashboard-buil
 import { environment } from 'environments/environment';
 import { DatavizPlatformService } from '@dataviz/services/platform/platform.service';
 import { TranslationService } from 'app/shared/services/translation/translation.service';
+import { SessionMonitorService } from 'app/core/auth/session-monitor.service';
 import Swal from 'sweetalert2';
 import * as am5 from '@amcharts/amcharts5';
 import * as am5xy from '@amcharts/amcharts5/xy';
@@ -36,6 +37,7 @@ export class ActionsButtonsComponent implements OnInit {
   private dashboardRepo: DashboardBuilderRepository;
   private platform = inject(DatavizPlatformService);
   private translationService = inject(TranslationService);
+  private sessionMonitor = inject(SessionMonitorService);
 
   scopedata = [
     { name: 'Insertion rapide dans l’emploi', detail: 'majorité en emploi dès l’ES2 (105 à l’ES2, stable à 95 pour les ES3/ES4).' },
@@ -169,6 +171,52 @@ export class ActionsButtonsComponent implements OnInit {
         console.error('Widget id not found');
         return;
       }
+
+      // === SESSION CHECK GUARD ===
+      // Check if session has enough time for PDF export (long-running operation)
+      const sessionCheck = this.sessionMonitor.checkBeforeExport();
+      
+      if (!sessionCheck.canProceed) {
+        if (sessionCheck.message === 'session_expired') {
+          // Session already expired - block and redirect
+          await Swal.fire({
+            icon: 'warning',
+            title: this.translationService.translate('shared.session.expired_title'),
+            text: this.translationService.translate('shared.session.expired_export_message'),
+            confirmButtonText: 'OK',
+            allowOutsideClick: false
+          });
+          // Trigger logout
+          try {
+            const win = window as any;
+            if (win?.appLogout) win.appLogout();
+          } catch {}
+          window.location.replace('/auth/login');
+          return;
+        }
+        
+        if (sessionCheck.message === 'session_insufficient') {
+          // Session will likely expire during export - warn and ask confirmation
+          const remainingTime = this.sessionMonitor.formatRemainingTime(sessionCheck.remainingMs);
+          const result = await Swal.fire({
+            icon: 'warning',
+            title: this.translationService.translate('shared.session.insufficient_title'),
+            html: this.translationService.translate('shared.session.insufficient_export_message')
+              .replace('{{time}}', remainingTime),
+            showCancelButton: true,
+            confirmButtonText: this.translationService.translate('shared.session.continue_anyway'),
+            cancelButtonText: this.translationService.translate('shared.session.cancel_export'),
+            confirmButtonColor: '#f59e0b',
+            reverseButtons: true
+          });
+          
+          if (!result.isConfirmed) {
+            return; // User chose to cancel
+          }
+          // User chose to continue anyway - proceed with export
+        }
+      }
+      // === END SESSION CHECK GUARD ===
 
       this.exportLoading = true;
       Swal.fire({

@@ -381,7 +381,8 @@ export class DashboardListComponent implements OnInit {
       width: '600px',
       data: {
         dashboardId: dashboard._id,
-        dashboardTitle: dashboard.title || dashboard.name || 'Dashboard'
+        dashboardTitle: dashboard.title || dashboard.name || 'Dashboard',
+        isEmployabilitySurvey: true // ES Dashboard - pass employability flag to backend
       },
       panelClass: 'modern-dialog',
       backdropClass: 'modern-backdrop',
