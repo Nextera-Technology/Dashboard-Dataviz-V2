@@ -11,6 +11,7 @@ import { environment } from 'environments/environment';
 import { DatavizPlatformService } from '@dataviz/services/platform/platform.service';
 import { TranslationService } from 'app/shared/services/translation/translation.service';
 import { SessionMonitorService } from 'app/core/auth/session-monitor.service';
+import { PdfExportStateService } from 'app/shared/services/pdf-export-state.service';
 import Swal from 'sweetalert2';
 import * as am5 from '@amcharts/amcharts5';
 import * as am5xy from '@amcharts/amcharts5/xy';
@@ -38,6 +39,7 @@ export class ActionsButtonsComponent implements OnInit {
   private platform = inject(DatavizPlatformService);
   private translationService = inject(TranslationService);
   private sessionMonitor = inject(SessionMonitorService);
+  private pdfExportState = inject(PdfExportStateService);
 
   scopedata = [
     { name: 'Insertion rapide dans l’emploi', detail: 'majorité en emploi dès l’ES2 (105 à l’ES2, stable à 95 pour les ES3/ES4).' },
@@ -172,6 +174,20 @@ export class ActionsButtonsComponent implements OnInit {
         return;
       }
 
+      // === Check if another PDF export is already in progress ===
+      if (this.pdfExportState.isExporting) {
+        const currentWidget = this.pdfExportState.currentWidgetTitle || this.pdfExportState.currentWidgetId || 'another widget';
+        await Swal.fire({
+          icon: 'warning',
+          title: this.translationService.translate('shared.export.pdf.already_processing_title'),
+          html: this.translationService.translate('shared.export.pdf.already_processing_message')
+            .replace('{{widget}}', currentWidget),
+          confirmButtonText: 'OK'
+        });
+        return;
+      }
+      // === END EXPORT CHECK ===
+
       // === SESSION CHECK GUARD ===
       // Check if session has enough time for PDF export (long-running operation)
       const sessionCheck = this.sessionMonitor.checkBeforeExport();
@@ -217,6 +233,11 @@ export class ActionsButtonsComponent implements OnInit {
         }
       }
       // === END SESSION CHECK GUARD ===
+
+      // === Track global PDF export state ===
+      const widgetTitle = this.widget?.title || this.widget?.name || `Widget ${widgetId}`;
+      this.pdfExportState.startExport(widgetId, widgetTitle);
+      // === END TRACKING ===
 
       this.exportLoading = true;
       Swal.fire({
@@ -405,10 +426,12 @@ export class ActionsButtonsComponent implements OnInit {
         });
       } finally {
         this.exportLoading = false;
+        this.pdfExportState.endExport(); // End global export tracking
       }
       
     } catch (e) {
       this.exportLoading = false;
+      this.pdfExportState.endExport(); // End global export tracking
       Swal.close();
       Swal.fire({
         toast: true,

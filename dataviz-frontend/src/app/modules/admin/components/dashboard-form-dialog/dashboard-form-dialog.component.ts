@@ -250,7 +250,7 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
 
   /**
    * Updates the filteredClasses for a specific source FormGroup.
-   * QA-086: Auto-select all classes when certification is selected
+   * Auto-select all classes when certification is selected
    */
   updateFilteredClassesForGroup(sourceGroup: FormGroup, selectedCert: string): void {
     const availableSources = this.getAvailableSources();
@@ -258,7 +258,8 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
     const classesForThisCert = selectedSourceOption?.classes || [];
     this.filteredClassesMap.set(sourceGroup, classesForThisCert);
 
-    // QA-086: Auto-select all available classes when certification changes
+    // Auto-select all available classes when certification changes
+
     if (classesForThisCert.length > 0) {
       sourceGroup.get('classes')?.setValue([...classesForThisCert]);
     } else {

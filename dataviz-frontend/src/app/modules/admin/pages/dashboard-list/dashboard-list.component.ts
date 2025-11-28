@@ -484,7 +484,7 @@ export class DashboardListComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      // QA-087: If dialog returned a dashboard id (string), redirect to view that dashboard
+      // If dialog returned a dashboard id (string), redirect to view that dashboard
       if (typeof result === 'string' && result.length > 0) {
         this.shareDataService.setDashboardId(result);
         this.router.navigate(['/dashboard']);

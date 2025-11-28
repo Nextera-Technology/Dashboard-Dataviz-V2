@@ -655,7 +655,9 @@
           "success_message": "Your PDF has been generated and downloaded.",
           "error_title": "Export Failed",
           "error_message": "Failed to generate PDF. Please try again later.",
-          "confirm_button": "OK"
+          "confirm_button": "OK",
+          "already_processing_title": "Export In Progress",
+          "already_processing_message": "Another PDF export is currently processing for <b>{{widget}}</b>. Please wait until it completes before starting a new export."
         }
       },
       "dashboard": {

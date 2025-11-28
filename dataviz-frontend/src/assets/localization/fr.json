@@ -648,7 +648,9 @@
           "success_message": "Votre PDF a été généré et téléchargé.",
           "error_title": "Échec de l'Export",
           "error_message": "Impossible de générer le PDF. Veuillez réessayer plus tard.",
-          "confirm_button": "OK"
+          "confirm_button": "OK",
+          "already_processing_title": "Export en cours",
+          "already_processing_message": "Un autre export PDF est en cours pour <b>{{widget}}</b>. Veuillez attendre qu'il soit terminé avant de commencer un nouvel export."
         }
       },
       "dashboard": {

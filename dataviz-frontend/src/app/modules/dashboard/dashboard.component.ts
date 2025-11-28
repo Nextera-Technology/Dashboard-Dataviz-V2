@@ -32,6 +32,7 @@ import { toBlob } from 'html-to-image';
 import { Apollo, gql } from 'apollo-angular';
 import * as am5plugins_exporting from '@amcharts/amcharts5/plugins/exporting';
 import { ShareDataService } from 'app/shared/services/share-data.service';
+import { PdfExportStateService } from 'app/shared/services/pdf-export-state.service';
 import { Subscription } from 'rxjs';
 
 declare var am5xy: any;
@@ -152,7 +153,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private shareDataService: ShareDataService,
     public translation: TranslationService,
     private apollo: Apollo,
-    private sessionMonitor: SessionMonitorService // Initialize session monitoring early
+    private sessionMonitor: SessionMonitorService, // Initialize session monitoring early
+    private pdfExportState: PdfExportStateService //  Track global PDF export state
   ) {
     shareDataService.setIsDashboard(true);
     this.dashboardRepo = RepositoryFactory.createRepository('dashboard-builder') as DashboardBuilderRepository;
@@ -170,6 +172,20 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async exportFullDashboardToPDF(): Promise<void> {
     if (!this.dashboard || !this.dashboardId) return;
+    
+    // Check if another PDF export is already in progress ===
+    if (this.pdfExportState.isExporting) {
+      const currentWidget = this.pdfExportState.currentWidgetTitle || this.pdfExportState.currentWidgetId || 'another widget';
+      await Swal.fire({
+        icon: 'warning',
+        title: this.translation.translate('shared.export.pdf.already_processing_title'),
+        html: this.translation.translate('shared.export.pdf.already_processing_message')
+          .replace('{{widget}}', currentWidget),
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+    // === END ===
     const allWidgets: any[] = (this.dashboard.sectionIds || [])
       .flatMap((section: any) => (section.widgetIds || []))
       .filter((w: any) => w && (w.visible !== false));
@@ -182,6 +198,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.exportLoading = true;
+    
+    // === Track global PDF export state ===
+    this.pdfExportState.startExport(this.dashboardId, this.dashboard.title || 'Full Dashboard');
+    
     try {
       this.showExportHud(widgets.length);
 
@@ -315,6 +335,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       await this.notifier.error(eTitle, eMsg);
     } finally {
       this.exportLoading = false;
+      this.pdfExportState.endExport(); //End global export tracking
     }
   }
 

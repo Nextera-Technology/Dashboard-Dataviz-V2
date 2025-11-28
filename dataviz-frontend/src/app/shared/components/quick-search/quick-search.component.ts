@@ -379,7 +379,7 @@ export class QuickSearchComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * QA-090: Open create ES dashboard dialog directly from quick actions
+   * Open create ES dashboard dialog directly from quick actions
    */
   private openCreateEsDashboard(): void {
     this.closeSearch();
@@ -402,7 +402,7 @@ export class QuickSearchComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * QA-090: Open create JD dashboard dialog directly from quick actions
+   * Open create JD dashboard dialog directly from quick actions
    */
   private openCreateJdDashboard(): void {
     this.closeSearch();
