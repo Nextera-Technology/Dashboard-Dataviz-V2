@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, HostListener, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, HostListener, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -158,7 +158,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private apollo: Apollo,
     private sessionMonitor: SessionMonitorService, // Initialize session monitoring early
     private pdfExportState: PdfExportStateService, //  Track global PDF export state
-    private dialog: MatDialog // For PDF export options dialog
+    private dialog: MatDialog, // For PDF export options dialog
+    private cdr: ChangeDetectorRef, // For explicit change detection in production
+    private ngZone: NgZone // For running outside Angular zone
   ) {
     shareDataService.setIsDashboard(true);
     this.dashboardRepo = RepositoryFactory.createRepository('dashboard-builder') as DashboardBuilderRepository;
@@ -960,7 +962,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       // If dashboard duplication is still in progress, wait and retry a few times
       if (result?.isDuplicationProcessInProgress) {
         if (!isRetry) {
-          await this.notifier.infoKey('notifications.duplication_in_progress', undefined, 4000);
+          await this.notifier.infoKey('notifications.duplication_in_progress', undefined, 8000);
         }
 
         if (this.duplicationRetryCount < this.maxDuplicationRetries) {
@@ -999,6 +1001,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           this.updateVisibleSections();
           this.updateSelectionCounts();
         }
+        
+        // Force change detection to ensure view updates in production (AOT)
+        // This is critical for navigation from duplicate dashboard flow
+        this.ngZone.run(() => {
+          this.cdr.detectChanges();
+        });
       }
     } catch (error) {
       console.error("Error loading dashboards:", error);

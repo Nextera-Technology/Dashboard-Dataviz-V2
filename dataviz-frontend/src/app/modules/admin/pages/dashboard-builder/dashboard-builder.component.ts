@@ -207,7 +207,7 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
 
       // Check if duplication process is in progress
       if (latestDashboard.isDuplicationProcessInProgress) {
-        await this.notifier.infoKey('notifications.duplication_in_progress', undefined, 4000);
+        await this.notifier.infoKey('notifications.duplication_in_progress', undefined, 8000);
         return;
       }
 

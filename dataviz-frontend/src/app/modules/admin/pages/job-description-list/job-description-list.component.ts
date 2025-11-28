@@ -89,6 +89,9 @@ export class JobDescriptionListComponent implements OnInit, OnDestroy {
   
   // Search query
   searchQuery: string = '';
+  
+  // Prevent double dialog opening
+  private isDialogOpen = false;
 
   private createDashboardListener: any;
 
@@ -215,7 +218,7 @@ export class JobDescriptionListComponent implements OnInit, OnDestroy {
 
       // Step 3: Check if duplication process is in progress
       if (latestDashboard.isDuplicationProcessInProgress) {
-        await this.notifier.infoKey('notifications.duplication_in_progress', undefined, 4000);
+        await this.notifier.infoKey('notifications.duplication_in_progress', undefined, 8000);
         return;
       }
 
@@ -228,6 +231,12 @@ export class JobDescriptionListComponent implements OnInit, OnDestroy {
   }
 
   private openSchoolSelectionDialog(dashboard: Dashboard): void {
+    // Prevent double dialog opening
+    if (this.isDialogOpen) {
+      return;
+    }
+    this.isDialogOpen = true;
+    
     const dialogRef = this.dialog.open(SchoolSelectionDialogComponent, {
       width: '600px',
       data: {
@@ -239,13 +248,15 @@ export class JobDescriptionListComponent implements OnInit, OnDestroy {
       backdropClass: 'modern-backdrop',
       disableClose: false,
       hasBackdrop: true,
-      closeOnNavigation: true
+      closeOnNavigation: true,
+      autoFocus: 'first-tabbable' // Ensure proper focus management
     });
 
     dialogRef.afterClosed().subscribe(async (result: SchoolSelectionResult | undefined) => {
+      // Reset flag when dialog closes
+      this.isDialogOpen = false;
+      
       if (result) {
-        // Force close any remaining dialogs
-        this.dialog.closeAll();
         
         // Show loading spinner
         const loadingMessage = result.openWithAllData 
