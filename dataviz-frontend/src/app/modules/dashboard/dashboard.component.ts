@@ -12,6 +12,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { PdfExportDialogComponent, PdfExportDialogData, PdfExportResult } from 'app/shared/components/pdf-export-dialog/pdf-export-dialog.component';
 import { NotificationService } from '@dataviz/services/notification/notification.service';
 import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 import { TranslationService } from 'app/shared/services/translation/translation.service';
@@ -57,6 +59,7 @@ declare var am5geodata_worldLow: any;
     MatMenuModule,
     MatSnackBarModule,
     MatTooltipModule,
+    MatDialogModule,
     TranslatePipe,
     SectionComponent,
     QuickSearchComponent,
@@ -154,7 +157,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public translation: TranslationService,
     private apollo: Apollo,
     private sessionMonitor: SessionMonitorService, // Initialize session monitoring early
-    private pdfExportState: PdfExportStateService //  Track global PDF export state
+    private pdfExportState: PdfExportStateService, //  Track global PDF export state
+    private dialog: MatDialog // For PDF export options dialog
   ) {
     shareDataService.setIsDashboard(true);
     this.dashboardRepo = RepositoryFactory.createRepository('dashboard-builder') as DashboardBuilderRepository;
@@ -173,7 +177,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   async exportFullDashboardToPDF(): Promise<void> {
     if (!this.dashboard || !this.dashboardId) return;
     
-    // Check if another PDF export is already in progress ===
+    // Check if another PDF export is already in progress
     if (this.pdfExportState.isExporting) {
       const currentWidget = this.pdfExportState.currentWidgetTitle || this.pdfExportState.currentWidgetId || 'another widget';
       await Swal.fire({
@@ -185,7 +189,28 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       return;
     }
-    // === END ===
+
+    // Show PDF export options dialog
+    // Determine if this is an ES or JD dashboard for school dropdown
+    const isES = !this.isJobDescriptionDashboard(); // ES = true, JD = false
+    
+    const dialogRef = this.dialog.open(PdfExportDialogComponent, {
+      width: '600px',
+      data: {
+        dashboardId: this.dashboardId,
+        dashboardTitle: this.dashboard.title || this.dashboard.name || 'Dashboard',
+        isEmployabilitySurvey: isES // true for ES, false for JD
+      } as PdfExportDialogData,
+      panelClass: 'modern-dialog',
+      backdropClass: 'modern-backdrop',
+      disableClose: false
+    });
+
+    const result: PdfExportResult | null = await dialogRef.afterClosed().toPromise();
+    
+    // User cancelled
+    if (!result) return;
+
     const allWidgets: any[] = (this.dashboard.sectionIds || [])
       .flatMap((section: any) => (section.widgetIds || []))
       .filter((w: any) => w && (w.visible !== false));
@@ -196,6 +221,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       await this.notifier.error(t || 'Export Failed', m || 'Failed to generate PDF');
       return;
     }
+
+    // Store export options for use in PDF generation
+    const exportOptions = {
+      exportType: result.exportType,
+      selectedSchools: result.selectedSchools
+    };
 
     this.exportLoading = true;
     

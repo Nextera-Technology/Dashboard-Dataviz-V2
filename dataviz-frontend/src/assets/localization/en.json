@@ -658,6 +658,31 @@
           "confirm_button": "OK",
           "already_processing_title": "Export In Progress",
           "already_processing_message": "Another PDF export is currently processing for <b>{{widget}}</b>. Please wait until it completes before starting a new export."
+        },
+        "pdfExportDialog": {
+          "title": "Export Dashboard to PDF",
+          "options": {
+            "all_schools": {
+              "title": "All Dashboard + All Schools",
+              "description": "Generate PDF with complete dashboard data including all school information"
+            },
+            "selected_school": {
+              "title": "Dashboard + Selected School",
+              "description": "Generate PDF filtered by specific school(s) you select"
+            },
+            "no_school": {
+              "title": "Dashboard Only",
+              "description": "Generate PDF without any school filter applied"
+            }
+          },
+          "select_schools_title": "Select School(s)",
+          "search_placeholder": "Search schools...",
+          "no_results": "No schools found for",
+          "loading": "Loading available schools...",
+          "schools_selected_suffix": "school(s) selected",
+          "please_select_one": "Please select at least one school",
+          "cancel": "Cancel",
+          "export_button": "Export PDF"
         }
       },
       "dashboard": {

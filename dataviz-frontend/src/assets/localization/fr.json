@@ -667,6 +667,31 @@
           "opening_dashboard": "Ouverture du tableau de bord...",
           "applying_school_filters": "Application des filtres d'école : {{schools}}..."
         }
+      },
+      "pdfExportDialog": {
+        "title": "Exporter le Tableau de Bord en PDF",
+        "options": {
+          "all_schools": {
+            "title": "Tableau de Bord Complet + Toutes les Écoles",
+            "description": "Générer un PDF avec les données complètes du tableau de bord incluant toutes les informations des écoles"
+          },
+          "selected_school": {
+            "title": "Tableau de Bord + École Sélectionnée",
+            "description": "Générer un PDF filtré par la ou les école(s) que vous sélectionnez"
+          },
+          "no_school": {
+            "title": "Tableau de Bord Uniquement",
+            "description": "Générer un PDF sans aucun filtre d'école appliqué"
+          }
+        },
+        "select_schools_title": "Sélectionner École(s)",
+        "search_placeholder": "Rechercher des écoles...",
+        "no_results": "Aucune école trouvée pour",
+        "loading": "Chargement des écoles disponibles...",
+        "schools_selected_suffix": "école(s) sélectionnée(s)",
+        "please_select_one": "Veuillez sélectionner au moins une école",
+        "cancel": "Annuler",
+        "export_button": "Exporter PDF"
       }
     },
     "chat": {
