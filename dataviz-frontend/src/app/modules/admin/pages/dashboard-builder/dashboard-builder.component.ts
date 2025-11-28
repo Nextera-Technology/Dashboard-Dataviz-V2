@@ -217,7 +217,7 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
       } else {
         // Regular dashboard - open directly
         this.shareDataService.setDashboardId(latestDashboard._id);
-        const url = `${window.location.origin}/#/dashboard`;
+        const url = `${window.location.origin}/dashboard`;
         window.open(url, '_blank');
       }
     } catch (error) {
@@ -280,7 +280,7 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
           
           if (filterResult?._id) {
             this.shareDataService.setDashboardId(filterResult._id);
-            const url = `${window.location.origin}/#/dashboard`;
+            const url = `${window.location.origin}/dashboard`;
             window.open(url, '_blank');
             
             // Show success message
