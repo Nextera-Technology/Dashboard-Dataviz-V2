@@ -192,14 +192,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.updateExportHud(processed, widgets.length, succeeded);
       };
 
-      // Build payload with images per widget
-      for (let idx = 0; idx < allWidgets.length; idx++) {
-        const w = allWidgets[idx];
+      const tasks = allWidgets.map((w, idx) => (async () => {
         const id = w._id || w.id;
         const title = w.title || w.name || '';
         let displayChartS3Key: string | undefined;
         let lineChartS3Key: string | undefined;
-
         try {
           const widgetContainer = this.findWidgetContainerById(id) || this.findWidgetBoxElementByTitle(title);
           if (widgetContainer) {
@@ -232,13 +229,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
               } catch {}
             }
           }
-          // Do not fall back to amCharts exporter for display image; UI must match exactly
         } catch {}
-
         try {
           lineChartS3Key = await this.generateInformationChartS3Key(id);
         } catch {}
-
         if (!displayChartS3Key) {
           const box = this.findWidgetBoxElementByTitle(title);
           if (box) {
@@ -250,7 +244,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             }
           }
         }
-
         try {
           const res = await this.dashboardRepo.exportWidgetData(
             id,
@@ -262,17 +255,25 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           if (filename) {
             const base = environment.fileUrl || '';
             const url = filename.startsWith('http') ? filename : `${base}${filename}`;
-            pdfUrls.push(url);
             try { localStorage.setItem(`DV_WIDGET_PDF_${id}`, url); } catch {}
             succeeded += 1;
+            return url;
           } else {
             failed.push({ index: idx + 1, title: title || '', id });
+            return undefined;
           }
         } catch {
           failed.push({ index: idx + 1, title: title || '', id });
+          return undefined;
+        } finally {
+          processed += 1;
+          progressUpdate();
         }
-        processed += 1;
-        progressUpdate();
+      })());
+
+      const results = await Promise.all(tasks);
+      for (const url of results) {
+        if (url) pdfUrls.push(url);
       }
 
       if (pdfUrls.length === 0) {
