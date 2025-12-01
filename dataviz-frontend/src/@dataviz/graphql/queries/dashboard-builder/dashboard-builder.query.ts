@@ -172,7 +172,7 @@ export const gqlGetDashboardTemplates = gql`
 `;
 
 export const gqlGetSchoolDropdown = gql`
-  query getSchoolDropdown($dashboardId: String!) {
-    getSchoolDropdown(dashboardId: $dashboardId)
+  query getSchoolDropdown($dashboardId: String!, $employability: Boolean!) {
+    getSchoolDropdown(dashboardId: $dashboardId, employability: $employability)
   }
 `;

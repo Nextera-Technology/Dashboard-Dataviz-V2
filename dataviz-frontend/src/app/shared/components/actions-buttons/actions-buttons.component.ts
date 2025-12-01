@@ -10,6 +10,8 @@ import { DashboardBuilderRepository } from '@dataviz/repositories/dashboard-buil
 import { environment } from 'environments/environment';
 import { DatavizPlatformService } from '@dataviz/services/platform/platform.service';
 import { TranslationService } from 'app/shared/services/translation/translation.service';
+import { SessionMonitorService } from 'app/core/auth/session-monitor.service';
+import { PdfExportStateService } from 'app/shared/services/pdf-export-state.service';
 import Swal from 'sweetalert2';
 import * as am5 from '@amcharts/amcharts5';
 import * as am5xy from '@amcharts/amcharts5/xy';
@@ -36,6 +38,8 @@ export class ActionsButtonsComponent implements OnInit {
   private dashboardRepo: DashboardBuilderRepository;
   private platform = inject(DatavizPlatformService);
   private translationService = inject(TranslationService);
+  private sessionMonitor = inject(SessionMonitorService);
+  private pdfExportState = inject(PdfExportStateService);
 
   scopedata = [
     { name: 'Insertion rapide dans l’emploi', detail: 'majorité en emploi dès l’ES2 (105 à l’ES2, stable à 95 pour les ES3/ES4).' },
@@ -169,6 +173,71 @@ export class ActionsButtonsComponent implements OnInit {
         console.error('Widget id not found');
         return;
       }
+
+      // === Check if another PDF export is already in progress ===
+      if (this.pdfExportState.isExporting) {
+        const currentWidget = this.pdfExportState.currentWidgetTitle || this.pdfExportState.currentWidgetId || 'another widget';
+        await Swal.fire({
+          icon: 'warning',
+          title: this.translationService.translate('shared.export.pdf.already_processing_title'),
+          html: this.translationService.translate('shared.export.pdf.already_processing_message')
+            .replace('{{widget}}', currentWidget),
+          confirmButtonText: 'OK'
+        });
+        return;
+      }
+      // === END EXPORT CHECK ===
+
+      // === SESSION CHECK GUARD ===
+      // Check if session has enough time for PDF export (long-running operation)
+      const sessionCheck = this.sessionMonitor.checkBeforeExport();
+      
+      if (!sessionCheck.canProceed) {
+        if (sessionCheck.message === 'session_expired') {
+          // Session already expired - block and redirect
+          await Swal.fire({
+            icon: 'warning',
+            title: this.translationService.translate('shared.session.expired_title'),
+            text: this.translationService.translate('shared.session.expired_export_message'),
+            confirmButtonText: 'OK',
+            allowOutsideClick: false
+          });
+          // Trigger logout
+          try {
+            const win = window as any;
+            if (win?.appLogout) win.appLogout();
+          } catch {}
+          window.location.replace('/auth/login');
+          return;
+        }
+        
+        if (sessionCheck.message === 'session_insufficient') {
+          // Session will likely expire during export - warn and ask confirmation
+          const remainingTime = this.sessionMonitor.formatRemainingTime(sessionCheck.remainingMs);
+          const result = await Swal.fire({
+            icon: 'warning',
+            title: this.translationService.translate('shared.session.insufficient_title'),
+            html: this.translationService.translate('shared.session.insufficient_export_message')
+              .replace('{{time}}', remainingTime),
+            showCancelButton: true,
+            confirmButtonText: this.translationService.translate('shared.session.continue_anyway'),
+            cancelButtonText: this.translationService.translate('shared.session.cancel_export'),
+            confirmButtonColor: '#f59e0b',
+            reverseButtons: true
+          });
+          
+          if (!result.isConfirmed) {
+            return; // User chose to cancel
+          }
+          // User chose to continue anyway - proceed with export
+        }
+      }
+      // === END SESSION CHECK GUARD ===
+
+      // === Track global PDF export state ===
+      const widgetTitle = this.widget?.title || this.widget?.name || `Widget ${widgetId}`;
+      this.pdfExportState.startExport(widgetId, widgetTitle);
+      // === END TRACKING ===
 
       this.exportLoading = true;
       Swal.fire({
@@ -357,10 +426,12 @@ export class ActionsButtonsComponent implements OnInit {
         });
       } finally {
         this.exportLoading = false;
+        this.pdfExportState.endExport(); // End global export tracking
       }
       
     } catch (e) {
       this.exportLoading = false;
+      this.pdfExportState.endExport(); // End global export tracking
       Swal.close();
       Swal.fire({
         toast: true,

@@ -655,7 +655,34 @@
           "success_message": "Your PDF has been generated and downloaded.",
           "error_title": "Export Failed",
           "error_message": "Failed to generate PDF. Please try again later.",
-          "confirm_button": "OK"
+          "confirm_button": "OK",
+          "already_processing_title": "Export In Progress",
+          "already_processing_message": "Another PDF export is currently processing for <b>{{widget}}</b>. Please wait until it completes before starting a new export."
+        },
+        "pdfExportDialog": {
+          "title": "Export Dashboard to PDF",
+          "options": {
+            "all_schools": {
+              "title": "All Dashboard + All Schools",
+              "description": "Generate PDF with complete dashboard data including all school information"
+            },
+            "selected_school": {
+              "title": "Dashboard + Selected School",
+              "description": "Generate PDF filtered by specific school(s) you select"
+            },
+            "no_school": {
+              "title": "Dashboard Only",
+              "description": "Generate PDF without any school filter applied"
+            }
+          },
+          "select_schools_title": "Select School(s)",
+          "search_placeholder": "Search schools...",
+          "no_results": "No schools found for",
+          "loading": "Loading available schools...",
+          "schools_selected_suffix": "school(s) selected",
+          "please_select_one": "Please select at least one school",
+          "cancel": "Cancel",
+          "export_button": "Export PDF"
         }
       },
       "dashboard": {
@@ -689,5 +716,13 @@
       "clear_history": "Clear chat history",
       "error_message": "Sorry, I encountered an error. Please try again later.",
       "no_response": "I received your message but couldn't generate a response."
+    },
+    "session": {
+      "expired_title": "Session Expired",
+      "expired_export_message": "Your session has expired. Please login again to export PDF.",
+      "insufficient_title": "Session Expiring Soon",
+      "insufficient_export_message": "Your session will expire in {{time}}. PDF export may fail if it takes longer than this. Do you want to continue anyway?",
+      "continue_anyway": "Continue Anyway",
+      "cancel_export": "Cancel"
     }
   }

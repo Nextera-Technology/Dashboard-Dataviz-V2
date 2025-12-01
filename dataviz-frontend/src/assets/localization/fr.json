@@ -648,7 +648,9 @@
           "success_message": "Votre PDF a été généré et téléchargé.",
           "error_title": "Échec de l'Export",
           "error_message": "Impossible de générer le PDF. Veuillez réessayer plus tard.",
-          "confirm_button": "OK"
+          "confirm_button": "OK",
+          "already_processing_title": "Export en cours",
+          "already_processing_message": "Un autre export PDF est en cours pour <b>{{widget}}</b>. Veuillez attendre qu'il soit terminé avant de commencer un nouvel export."
         }
       },
       "dashboard": {
@@ -665,6 +667,31 @@
           "opening_dashboard": "Ouverture du tableau de bord...",
           "applying_school_filters": "Application des filtres d'école : {{schools}}..."
         }
+      },
+      "pdfExportDialog": {
+        "title": "Exporter le Tableau de Bord en PDF",
+        "options": {
+          "all_schools": {
+            "title": "Tableau de Bord Complet + Toutes les Écoles",
+            "description": "Générer un PDF avec les données complètes du tableau de bord incluant toutes les informations des écoles"
+          },
+          "selected_school": {
+            "title": "Tableau de Bord + École Sélectionnée",
+            "description": "Générer un PDF filtré par la ou les école(s) que vous sélectionnez"
+          },
+          "no_school": {
+            "title": "Tableau de Bord Uniquement",
+            "description": "Générer un PDF sans aucun filtre d'école appliqué"
+          }
+        },
+        "select_schools_title": "Sélectionner École(s)",
+        "search_placeholder": "Rechercher des écoles...",
+        "no_results": "Aucune école trouvée pour",
+        "loading": "Chargement des écoles disponibles...",
+        "schools_selected_suffix": "école(s) sélectionnée(s)",
+        "please_select_one": "Veuillez sélectionner au moins une école",
+        "cancel": "Annuler",
+        "export_button": "Exporter PDF"
       }
     },
     "chat": {
@@ -683,4 +710,14 @@
       "error_message": "Désolé, j'ai rencontré une erreur. Veuillez réessayer plus tard.",
       "no_response": "J'ai reçu votre message mais je n'ai pas pu générer de réponse."
     }
+    ,"session": {
+      "expired_title": "Session Expirée",
+      "expired_export_message": "Votre session a expiré. Veuillez vous reconnecter pour exporter le PDF.",
+      "insufficient_title": "Session Bientôt Expirée",
+      "insufficient_export_message": "Votre session expirera dans {{time}}. L'export PDF peut échouer si cela prend plus de temps. Voulez-vous continuer quand même?",
+      "continue_anyway": "Continuer Quand Même",
+      "cancel_export": "Annuler"
+    }
+    
+
   }

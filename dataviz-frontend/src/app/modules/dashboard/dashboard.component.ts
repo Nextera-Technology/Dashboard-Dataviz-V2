@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, HostListener, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, HostListener, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -12,6 +12,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { PdfExportDialogComponent, PdfExportDialogData, PdfExportResult } from 'app/shared/components/pdf-export-dialog/pdf-export-dialog.component';
 import { NotificationService } from '@dataviz/services/notification/notification.service';
 import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 import { TranslationService } from 'app/shared/services/translation/translation.service';
@@ -19,6 +21,7 @@ import { QuickSearchComponent } from 'app/shared/components/quick-search/quick-s
 import { FloatingChatComponent } from 'app/shared/components/floating-chat/floating-chat.component';
 
 import { AuthService, User } from '../../core/auth/auth.service';
+import { SessionMonitorService } from '../../core/auth/session-monitor.service';
 import { DashboardService, DashboardData, FilterData, CertificationFilter, SectionFilter, Section } from '../../shared/services/dashboard.service';
 import { SectionComponent } from '../../shared/components/sections/section.component';
 import { DashboardBuilderService } from '../admin/pages/dashboard-builder/dashboard-builder.service';
@@ -31,6 +34,7 @@ import { toBlob } from 'html-to-image';
 import { Apollo, gql } from 'apollo-angular';
 import * as am5plugins_exporting from '@amcharts/amcharts5/plugins/exporting';
 import { ShareDataService } from 'app/shared/services/share-data.service';
+import { PdfExportStateService } from 'app/shared/services/pdf-export-state.service';
 import { Subscription } from 'rxjs';
 
 declare var am5xy: any;
@@ -55,6 +59,7 @@ declare var am5geodata_worldLow: any;
     MatMenuModule,
     MatSnackBarModule,
     MatTooltipModule,
+    MatDialogModule,
     TranslatePipe,
     SectionComponent,
     QuickSearchComponent,
@@ -148,10 +153,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
     private notifier: NotificationService,
-    private shareDataService: ShareDataService
-    ,
+    private shareDataService: ShareDataService,
     public translation: TranslationService,
-    private apollo: Apollo
+    private apollo: Apollo,
+    private sessionMonitor: SessionMonitorService, // Initialize session monitoring early
+    private pdfExportState: PdfExportStateService, //  Track global PDF export state
+    private dialog: MatDialog, // For PDF export options dialog
+    private cdr: ChangeDetectorRef, // For explicit change detection in production
+    private ngZone: NgZone // For running outside Angular zone
   ) {
     shareDataService.setIsDashboard(true);
     this.dashboardRepo = RepositoryFactory.createRepository('dashboard-builder') as DashboardBuilderRepository;
@@ -169,6 +178,41 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async exportFullDashboardToPDF(): Promise<void> {
     if (!this.dashboard || !this.dashboardId) return;
+    
+    // Check if another PDF export is already in progress
+    if (this.pdfExportState.isExporting) {
+      const currentWidget = this.pdfExportState.currentWidgetTitle || this.pdfExportState.currentWidgetId || 'another widget';
+      await Swal.fire({
+        icon: 'warning',
+        title: this.translation.translate('shared.export.pdf.already_processing_title'),
+        html: this.translation.translate('shared.export.pdf.already_processing_message')
+          .replace('{{widget}}', currentWidget),
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+
+    // Show PDF export options dialog
+    // Determine if this is an ES or JD dashboard for school dropdown
+    const isES = !this.isJobDescriptionDashboard(); // ES = true, JD = false
+    
+    const dialogRef = this.dialog.open(PdfExportDialogComponent, {
+      width: '600px',
+      data: {
+        dashboardId: this.dashboardId,
+        dashboardTitle: this.dashboard.title || this.dashboard.name || 'Dashboard',
+        isEmployabilitySurvey: isES // true for ES, false for JD
+      } as PdfExportDialogData,
+      panelClass: 'modern-dialog',
+      backdropClass: 'modern-backdrop',
+      disableClose: false
+    });
+
+    const result: PdfExportResult | null = await dialogRef.afterClosed().toPromise();
+    
+    // User cancelled
+    if (!result) return;
+
     const allWidgets: any[] = (this.dashboard.sectionIds || [])
       .flatMap((section: any) => (section.widgetIds || []))
       .filter((w: any) => w && (w.visible !== false));
@@ -180,7 +224,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
+    // Store export options for use in PDF generation
+    const exportOptions = {
+      exportType: result.exportType,
+      selectedSchools: result.selectedSchools
+    };
+
     this.exportLoading = true;
+    
+    // === Track global PDF export state ===
+    this.pdfExportState.startExport(this.dashboardId, this.dashboard.title || 'Full Dashboard');
+    
     try {
       this.showExportHud(widgets.length);
 
@@ -315,6 +369,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       await this.notifier.error(eTitle, eMsg);
     } finally {
       this.exportLoading = false;
+      this.pdfExportState.endExport(); //End global export tracking
     }
   }
 
@@ -908,7 +963,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       // If dashboard duplication is still in progress, wait and retry a few times
       if (result?.isDuplicationProcessInProgress) {
         if (!isRetry) {
-          await this.notifier.infoKey('notifications.duplication_in_progress', undefined, 4000);
+          await this.notifier.infoKey('notifications.duplication_in_progress', undefined, 8000);
         }
 
         if (this.duplicationRetryCount < this.maxDuplicationRetries) {
@@ -947,6 +1002,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           this.updateVisibleSections();
           this.updateSelectionCounts();
         }
+        
+        // Force change detection to ensure view updates in production (AOT)
+        // This is critical for navigation from duplicate dashboard flow
+        this.ngZone.run(() => {
+          this.cdr.detectChanges();
+        });
       }
     } catch (error) {
       console.error("Error loading dashboards:", error);

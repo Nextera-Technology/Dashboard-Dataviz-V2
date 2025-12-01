@@ -672,14 +672,15 @@ export class DashboardBuilderRepository {
   /**
    * Get school dropdown options for a specific dashboard using GraphQL.
    * @param {string} dashboardId - The ID of the dashboard to get schools for.
+   * @param {boolean} employability - Whether this is for an Employability Survey dashboard.
    * @returns {Promise<string[]>} - Array of school names.
    */
-  async getSchoolDropdown(dashboardId: string) {
+  async getSchoolDropdown(dashboardId: string, employability: boolean = false) {
     if (!dashboardId) {
       throw new Error("Dashboard ID is required");
     }
     const query = gqlGetSchoolDropdown;
-    const variables = { dashboardId };
+    const variables = { dashboardId, employability };
 
     try {
       const queryResult = await this._client.GraphqlQuery(query, variables);

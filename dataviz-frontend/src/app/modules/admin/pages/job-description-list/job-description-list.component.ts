@@ -89,6 +89,9 @@ export class JobDescriptionListComponent implements OnInit, OnDestroy {
   
   // Search query
   searchQuery: string = '';
+  
+  // Prevent double dialog opening
+  private isDialogOpen = false;
 
   private createDashboardListener: any;
 
@@ -215,7 +218,7 @@ export class JobDescriptionListComponent implements OnInit, OnDestroy {
 
       // Step 3: Check if duplication process is in progress
       if (latestDashboard.isDuplicationProcessInProgress) {
-        await this.notifier.infoKey('notifications.duplication_in_progress', undefined, 4000);
+        await this.notifier.infoKey('notifications.duplication_in_progress', undefined, 8000);
         return;
       }
 
@@ -228,23 +231,32 @@ export class JobDescriptionListComponent implements OnInit, OnDestroy {
   }
 
   private openSchoolSelectionDialog(dashboard: Dashboard): void {
+    // Prevent double dialog opening
+    if (this.isDialogOpen) {
+      return;
+    }
+    this.isDialogOpen = true;
+    
     const dialogRef = this.dialog.open(SchoolSelectionDialogComponent, {
       width: '600px',
       data: {
         dashboardId: dashboard._id,
-        dashboardTitle: dashboard.title || dashboard.name || 'Dashboard'
+        dashboardTitle: dashboard.title || dashboard.name || 'Dashboard',
+        isEmployabilitySurvey: false // JD Dashboard - do not pass employability flag
       },
       panelClass: 'modern-dialog',
       backdropClass: 'modern-backdrop',
       disableClose: false,
       hasBackdrop: true,
-      closeOnNavigation: true
+      closeOnNavigation: true,
+      autoFocus: 'first-tabbable' // Ensure proper focus management
     });
 
     dialogRef.afterClosed().subscribe(async (result: SchoolSelectionResult | undefined) => {
+      // Reset flag when dialog closes
+      this.isDialogOpen = false;
+      
       if (result) {
-        // Force close any remaining dialogs
-        this.dialog.closeAll();
         
         // Show loading spinner
         const loadingMessage = result.openWithAllData 
@@ -336,7 +348,7 @@ export class JobDescriptionListComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      // QA-087: If dialog returned a dashboard id (string), redirect to view that dashboard
+      // If dialog returned a dashboard id (string), redirect to view that dashboard
       if (typeof result === 'string' && result.length > 0) {
         this.shareDataService.setDashboardId(result);
         this.router.navigate(['/dashboard']);
@@ -390,8 +402,9 @@ export class JobDescriptionListComponent implements OnInit, OnDestroy {
         const result = await this.dashboardService.deleteDashboard(dashboard._id);
 
         if (result) {
-          // Remove from local array with smooth animation
+          // Remove from both local arrays immediately for instant UI update
           this.dashboards = this.dashboards.filter(d => d._id !== dashboard._id);
+          this.filteredDashboards = this.filteredDashboards.filter(d => d._id !== dashboard._id);
 
           // Clean up expansion state
           if (dashboard._id) {
@@ -399,11 +412,6 @@ export class JobDescriptionListComponent implements OnInit, OnDestroy {
           }
 
           await this.notifier.successKey('notifications.dashboard_deleted', { title: dashboard.title });
-
-          // Refresh the list to ensure consistency
-          setTimeout(() => {
-            this.loadDashboards();
-          }, 500);
         }
       } catch (error) {
         console.error(`Error deleting dashboard "${dashboard.title}":`, error);

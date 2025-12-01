@@ -207,7 +207,7 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
 
       // Check if duplication process is in progress
       if (latestDashboard.isDuplicationProcessInProgress) {
-        await this.notifier.infoKey('notifications.duplication_in_progress', undefined, 4000);
+        await this.notifier.infoKey('notifications.duplication_in_progress', undefined, 8000);
         return;
       }
 
@@ -217,7 +217,7 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
       } else {
         // Regular dashboard - open directly
         this.shareDataService.setDashboardId(latestDashboard._id);
-        const url = `${window.location.origin}/#/dashboard`;
+        const url = `${window.location.origin}/dashboard`;
         window.open(url, '_blank');
       }
     } catch (error) {
@@ -280,7 +280,7 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
           
           if (filterResult?._id) {
             this.shareDataService.setDashboardId(filterResult._id);
-            const url = `${window.location.origin}/#/dashboard`;
+            const url = `${window.location.origin}/dashboard`;
             window.open(url, '_blank');
             
             // Show success message

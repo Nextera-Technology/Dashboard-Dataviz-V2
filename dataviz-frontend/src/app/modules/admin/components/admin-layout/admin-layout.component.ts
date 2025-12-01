@@ -14,6 +14,7 @@ import { ShareDataService } from 'app/shared/services/share-data.service';
 import { TranslationService } from '../../../../shared/services/translation/translation.service';
 import { Router } from '@angular/router';
 import { AuthService, User } from '../../../../core/auth/auth.service';
+import { SessionMonitorService } from '../../../../core/auth/session-monitor.service';
 import { QuickSearchComponent } from '../../../../shared/components/quick-search/quick-search.component';
 import Swal from 'sweetalert2';
 
@@ -720,11 +721,17 @@ import Swal from 'sweetalert2';
     .theme-toggle { color: var(--text-secondary); }
     .theme-toggle:hover { color: var(--text-primary); }
 
-    .create-dashboard-btn { border: none; outline: none; cursor: pointer; background-color: var(--dv-accent) !important; color: white !important; }
-    .create-dashboard-btn mat-icon { font-size: 20px; width: 20px; height: 20px; color: white !important; }
-    .create-dashboard-btn span { color: white !important; }
+    .create-dashboard-btn { border: none; outline: none; cursor: pointer; background-color: var(--dv-accent) !important; color: white !important; white-space: nowrap; min-width: fit-content; max-width: 280px; padding: 8px 16px !important; }
+    .create-dashboard-btn .flex { flex-wrap: nowrap; }
+    .create-dashboard-btn mat-icon { font-size: 20px; width: 20px; height: 20px; color: white !important; flex-shrink: 0; }
+    .create-dashboard-btn span { color: white !important; overflow: hidden; text-overflow: ellipsis; }
     .create-dashboard-btn:hover { background-color: var(--primary-dark) !important; box-shadow: 0 8px 20px rgba(59,130,246,0.4) !important; }
     .create-dashboard-btn:active { transform: scale(0.98) !important; }
+    
+    /* Responsive button text for smaller screens */
+    @media (max-width: 1200px) {
+      .create-dashboard-btn { max-width: 220px; padding: 6px 12px !important; font-size: 12px; }
+    }
 
     .header-content h1 {
       margin: 0 0 5px 0;
@@ -848,7 +855,8 @@ export class AdminLayoutComponent implements OnInit {
     public translation: TranslationService,
     private notifier: NotificationService,
     private apollo: Apollo,
-    private shareDataService: ShareDataService
+    private shareDataService: ShareDataService,
+    private sessionMonitor: SessionMonitorService // Initialize session monitoring early
   ) {}
 
   setLanguage(lang: string): void {
