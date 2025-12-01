@@ -540,6 +540,14 @@ button:focus,
   box-shadow: none !important;
 }
 :host-context(.theme-dark) .action-grid [data-action="manage"]:hover { filter: brightness(1.03); }
+/* Dark mode export button */
+:host-context(.theme-dark) .action-grid [data-action="export"] {
+  background: #155e75 !important;
+  border-color: #0ea5b7 !important;
+  color: #e6edf3 !important;
+  box-shadow: none !important;
+}
+:host-context(.theme-dark) .action-grid [data-action="export"]:hover { filter: brightness(1.03); }
 
 /* Dark mode: source pills legibility */
 :host-context(.theme-dark) .classes-tags span {
@@ -615,6 +623,9 @@ button:focus,
 
 .action-grid [data-action="manage"] { background: #06b6d4 !important; border-color: #0891b2 !important; color: #fff !important; box-shadow: none !important; }
 .action-grid [data-action="manage"]:hover { filter: brightness(1.06); }
+/* Export button styling (library icon) */
+.action-grid [data-action="export"] { background: #06b6d4 !important; border-color: #0891b2 !important; color: #fff !important; box-shadow: none !important; }
+.action-grid [data-action="export"]:hover { filter: brightness(1.06); }
 
 .navigation-bar .backdrop-blur-xl,
 .header-container .backdrop-blur-xl,

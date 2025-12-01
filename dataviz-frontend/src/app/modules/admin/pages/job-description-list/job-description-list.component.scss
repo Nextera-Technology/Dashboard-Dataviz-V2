@@ -221,6 +221,8 @@
 .action-grid [data-action="edit"] { background: #6366f1; border-color: #4f46e5; color: #fff; box-shadow: none; }
 .action-grid [data-action="delete"] { background: #dc2626; border-color: #b91c1c; color: #fff; box-shadow: none; }
 .action-grid [data-action="manage"] { background: #06b6d4; border-color: #0891b2; color: #fff; box-shadow: none; }
+/* Export button styling (library icon) */
+.action-grid [data-action="export"] { background: #06b6d4; border-color: #0891b2; color: #fff; box-shadow: none; }
  .action-grid [data-action]::after {
   content: '';
   position: absolute;
@@ -454,6 +456,8 @@ button:focus,
 :host-context(.theme-dark) .action-grid [data-action="edit"] { background: #312e81 !important; border-color: #4f46e5 !important; color: #e6edf3 !important; box-shadow: none !important; }
 :host-context(.theme-dark) .action-grid [data-action="delete"] { background: #991b1b !important; border-color: #b91c1c !important; color: #fff !important; box-shadow: none !important; }
 :host-context(.theme-dark) .action-grid [data-action="manage"] { background: #155e75 !important; border-color: #0ea5b7 !important; color: #e6edf3 !important; box-shadow: none !important; }
+/* Dark mode export button */
+:host-context(.theme-dark) .action-grid [data-action="export"] { background: #155e75 !important; border-color: #0ea5b7 !important; color: #e6edf3 !important; box-shadow: none !important; }
 
 :host-context(.theme-dark) .no-sources {
   background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04)) !important;

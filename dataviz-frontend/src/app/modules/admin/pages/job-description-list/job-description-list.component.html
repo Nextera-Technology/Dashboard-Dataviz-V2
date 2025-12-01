@@ -138,7 +138,7 @@
                   <span>{{ 'admin.jobDescriptionList.manage' | translate }}</span>
                 </div>
               </button>
-              <div class="grid grid-cols-3 gap-2">
+              <div class="grid grid-cols-4 gap-2">
                 <button 
                   (click)="openDashboard(dashboard, $event)"
                   [matTooltip]="'admin.jobDescriptionList.view' | translate"
@@ -159,6 +159,17 @@
                 >
                   <div class="flex items-center justify-center">
                     <mat-icon class="text-sm">edit</mat-icon>
+                  </div>
+                </button>
+                <button 
+                  (click)="exportToPDF(dashboard, $event)"
+                  [matTooltip]="'shared.export.pdf.button' | translate"
+                  matTooltipPosition="below"
+                  class="w-full py-1.5 rounded-lg transition ease-in-out duration-150"
+                  data-action="export"
+                >
+                  <div class="flex items-center justify-center">
+                    <mat-icon class="text-sm">library_books</mat-icon>
                   </div>
                 </button>
                 <button 

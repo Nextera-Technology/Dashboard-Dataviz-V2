@@ -188,6 +188,9 @@ interface JobDescriptionDashboard {
                   <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef>{{ 'admin.jobDescriptionTable.columns.actions' | translate }}</th>
                     <td mat-cell *matCellDef="let element">
+                      <button mat-icon-button (click)="exportToPDF(element)" [matTooltip]="'shared.export.pdf.button' | translate" matTooltipPosition="below">
+                        <mat-icon>library_books</mat-icon>
+                      </button>
                       <button mat-icon-button [matMenuTriggerFor]="actionsMenu2">
                         <mat-icon>more_vert</mat-icon>
                       </button>
@@ -199,10 +202,6 @@ interface JobDescriptionDashboard {
                         <button mat-menu-item (click)="manageJobDescription(element)">
                           <mat-icon>edit</mat-icon>
                           <span>{{ 'admin.jobDescriptionTable.actions.manage' | translate }}</span>
-                        </button>
-                        <button mat-menu-item (click)="exportToPDF(element)">
-                          <mat-icon>picture_as_pdf</mat-icon>
-                          <span>{{ 'shared.export.pdf.button' | translate }}</span>
                         </button>
                         <button mat-menu-item (click)="archiveJobDescription(element)">
                           <mat-icon>archive</mat-icon>
@@ -300,6 +299,9 @@ interface JobDescriptionDashboard {
                   <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef>{{ 'admin.jobDescriptionTable.columns.actions' | translate }}</th>
                     <td mat-cell *matCellDef="let element">
+                      <button mat-icon-button (click)="exportToPDF(element)" [matTooltip]="'shared.export.pdf.button' | translate" matTooltipPosition="below">
+                        <mat-icon>library_books</mat-icon>
+                      </button>
                       <button mat-icon-button [matMenuTriggerFor]="actionsMenu">
                         <mat-icon>more_vert</mat-icon>
                       </button>
@@ -311,10 +313,6 @@ interface JobDescriptionDashboard {
                         <button mat-menu-item (click)="manageJobDescription(element)">
                           <mat-icon>edit</mat-icon>
                           <span>{{ 'admin.jobDescriptionTable.actions.manage' | translate }}</span>
-                        </button>
-                        <button mat-menu-item (click)="exportToPDF(element)">
-                          <mat-icon>picture_as_pdf</mat-icon>
-                          <span>{{ 'shared.export.pdf.button' | translate }}</span>
                         </button>
                         <button mat-menu-item (click)="archiveJobDescription(element)">
                           <mat-icon>archive</mat-icon>

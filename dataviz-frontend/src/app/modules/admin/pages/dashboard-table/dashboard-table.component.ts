@@ -195,6 +195,9 @@ interface Dashboard {
                   <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef>{{ 'admin.dashboardTable.columns.actions' | translate }}</th>
                     <td mat-cell *matCellDef="let element">
+                      <button mat-icon-button (click)="exportToPDF(element)" [matTooltip]="'shared.export.pdf.button' | translate" matTooltipPosition="below">
+                        <mat-icon>library_books</mat-icon>
+                      </button>
                       <button mat-icon-button [matMenuTriggerFor]="actionsMenu2">
                         <mat-icon>more_vert</mat-icon>
                       </button>
@@ -206,10 +209,6 @@ interface Dashboard {
                         <button mat-menu-item (click)="manageDashboard(element)">
                           <mat-icon>edit</mat-icon>
                           <span>{{ 'admin.dashboardTable.actions.manage' | translate }}</span>
-                        </button>
-                        <button mat-menu-item (click)="exportToPDF(element)">
-                          <mat-icon>picture_as_pdf</mat-icon>
-                          <span>{{ 'shared.export.pdf.button' | translate }}</span>
                         </button>
                         <button mat-menu-item (click)="archiveDashboard(element)">
                           <mat-icon>archive</mat-icon>
@@ -308,6 +307,9 @@ interface Dashboard {
                   <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef>{{ 'admin.dashboardTable.columns.actions' | translate }}</th>
                     <td mat-cell *matCellDef="let element">
+                      <button mat-icon-button (click)="exportToPDF(element)" [matTooltip]="'shared.export.pdf.button' | translate" matTooltipPosition="below">
+                        <mat-icon>library_books</mat-icon>
+                      </button>
                       <button mat-icon-button [matMenuTriggerFor]="actionsMenu">
                         <mat-icon>more_vert</mat-icon>
                       </button>
@@ -319,10 +321,6 @@ interface Dashboard {
                         <button mat-menu-item (click)="manageDashboard(element)">
                           <mat-icon>edit</mat-icon>
                           <span>{{ 'admin.dashboardTable.actions.manage' | translate }}</span>
-                        </button>
-                        <button mat-menu-item (click)="exportToPDF(element)">
-                          <mat-icon>picture_as_pdf</mat-icon>
-                          <span>{{ 'shared.export.pdf.button' | translate }}</span>
                         </button>
                         <button mat-menu-item (click)="archiveDashboard(element)">
                           <mat-icon>archive</mat-icon>
