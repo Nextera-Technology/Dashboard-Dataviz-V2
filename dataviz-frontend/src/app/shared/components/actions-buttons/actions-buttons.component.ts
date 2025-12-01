@@ -197,8 +197,8 @@ export class ActionsButtonsComponent implements OnInit {
           // Session already expired - block and redirect
           await Swal.fire({
             icon: 'warning',
-            title: this.translationService.translate('shared.session.expired_title'),
-            text: this.translationService.translate('shared.session.expired_export_message'),
+            title: this.translationService.translate('session.expired_title'),
+            text: this.translationService.translate('session.expired_export_message'),
             confirmButtonText: 'OK',
             allowOutsideClick: false
           });
@@ -216,12 +216,12 @@ export class ActionsButtonsComponent implements OnInit {
           const remainingTime = this.sessionMonitor.formatRemainingTime(sessionCheck.remainingMs);
           const result = await Swal.fire({
             icon: 'warning',
-            title: this.translationService.translate('shared.session.insufficient_title'),
-            html: this.translationService.translate('shared.session.insufficient_export_message')
+            title: this.translationService.translate('session.insufficient_title'),
+            html: this.translationService.translate('session.insufficient_export_message')
               .replace('{{time}}', remainingTime),
             showCancelButton: true,
-            confirmButtonText: this.translationService.translate('shared.session.continue_anyway'),
-            cancelButtonText: this.translationService.translate('shared.session.cancel_export'),
+            confirmButtonText: this.translationService.translate('session.continue_anyway'),
+            cancelButtonText: this.translationService.translate('session.cancel_export'),
             confirmButtonColor: '#f59e0b',
             reverseButtons: true
           });

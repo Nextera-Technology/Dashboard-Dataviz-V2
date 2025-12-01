@@ -3,6 +3,7 @@ import { BehaviorSubject, Subject, interval, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { environment } from 'environments/environment';
 import Swal from 'sweetalert2';
+import { TranslationService } from 'app/shared/services/translation/translation.service';
 
 export interface SessionStatus {
   isValid: boolean;
@@ -34,8 +35,9 @@ export class SessionMonitorService implements OnDestroy {
     warned: false
   });
   
-  constructor() {
+  constructor(private translationService: TranslationService) {
     this.initializeFromToken();
+    this.checkSession();
     this.startMonitoring();
   }
   
@@ -205,13 +207,16 @@ export class SessionMonitorService implements OnDestroy {
    */
   private warnSessionExpiringSoon(remainingMs: number): void {
     const timeStr = this.formatRemainingTime(remainingMs);
-    
+    const title = this.translationService.translate('session.global_expiring_title');
+    const messageTemplate = this.translationService.translate('session.global_expiring_message');
+    const text = messageTemplate.replace('{{time}}', timeStr);
+
     Swal.fire({
       toast: true,
       position: 'top-end',
       icon: 'warning',
-      title: 'Session Expiring Soon',
-      text: `Your session will expire in ${timeStr}. Please save your work.`,
+      title,
+      text,
       showConfirmButton: false,
       timer: 8000,
       timerProgressBar: true
@@ -240,10 +245,13 @@ export class SessionMonitorService implements OnDestroy {
       sessionStorage.clear();
     } catch {}
     
+    const title = this.translationService.translate('session.global_expired_title');
+    const text = this.translationService.translate('session.global_expired_message');
+
     Swal.fire({
       icon: 'warning',
-      title: 'Session Expired',
-      text: 'Your session has expired. Please login again.',
+      title,
+      text,
       confirmButtonText: 'OK',
       allowOutsideClick: false,
       allowEscapeKey: false
