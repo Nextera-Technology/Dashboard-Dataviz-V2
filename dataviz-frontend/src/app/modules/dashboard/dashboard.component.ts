@@ -110,6 +110,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   exportLoading = false;
   private dashboardRepo: DashboardBuilderRepository;
   private autoExportTriggered = false;
+  autoExportDataLoading = false;
 
   get filteredCertifications() {
     if (!this.certificationSearch) {
@@ -961,6 +962,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadSidebarState();
     const auto = this.route.snapshot.queryParamMap.get('autoExport');
     if (auto === '1' && this.dashboardId) {
+      this.autoExportDataLoading = true;
       const key = `DV_AUTO_EXPORT_OPTS_${this.dashboardId}`;
       try {
         const raw = localStorage.getItem(key) || '';
@@ -1046,6 +1048,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.ngZone.run(() => {
           this.cdr.detectChanges();
         });
+        this.autoExportDataLoading = false;
 
         this.autoExportIfRequested();
 
@@ -1066,12 +1069,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.updateSelectionCounts();
               }
               this.ngZone.run(() => { this.cdr.detectChanges(); });
+              this.autoExportDataLoading = false;
             }
           } catch {}
         }
       }
     } catch (error) {
       console.error("Error loading dashboards:", error);
+      this.autoExportDataLoading = false;
     }
   }
 

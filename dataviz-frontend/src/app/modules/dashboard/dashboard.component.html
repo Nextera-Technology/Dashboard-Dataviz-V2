@@ -250,3 +250,10 @@
     <!-- Floating Chat Component -->
     <app-floating-chat></app-floating-chat>
 </div>
+<div *ngIf="autoExportDataLoading" class="auto-export-overlay">
+  <div class="auto-export-box">
+    <mat-spinner diameter="42"></mat-spinner>
+    <div class="auto-export-text">Preparing data for export</div>
+    <div class="loading-dots"><span></span><span></span><span></span></div>
+  </div>
+</div>
