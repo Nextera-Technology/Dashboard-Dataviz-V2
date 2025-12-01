@@ -108,140 +108,8 @@ interface JobDescriptionDashboard {
           </div>
         </div>
 
-        <!-- Tabs for Templates, Created, Archived -->
+        <!-- Tabs for Created, Templates, Archived -->
         <mat-tab-group [(selectedIndex)]="selectedTabIndex" class="job-description-tabs" (selectedTabChange)="onTabChange()">
-          <mat-tab label="{{ 'admin.jobDescriptionTable.tabs.templates' | translate }}">
-            <div class="tab-content">
-              <div class="dv-table-header">
-                <h2>{{ 'admin.jobDescriptionTable.headers.templates' | translate }}</h2>
-                <div class="header-actions">
-                  <mat-form-field appearance="outline" class="search-field">
-                    <mat-icon matPrefix>search</mat-icon>
-                    <input matInput placeholder="{{ 'admin.jobDescriptionTable.search_placeholder' | translate }}" (input)="onSearchInput('templates', $event)" [value]="searchValues.templates" />
-                    <button mat-icon-button matSuffix *ngIf="searchValues.templates" aria-label="Clear search" (click)="clearSearch('templates')">
-                      <mat-icon>close</mat-icon>
-                    </button>
-                  </mat-form-field>
-                  <div class="bulk-actions" *ngIf="templatesSelection.hasValue()">
-                    <button mat-button color="warn" (click)="archiveSelected('templates')">
-                      {{ 'admin.jobDescriptionTable.bulk.archive_selected' | translate }} ({{ templatesSelection.selected.length }})
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div class="table-container">
-                <!-- Loading Spinner -->
-                <div class="loading-container" *ngIf="isLoading">
-                  <mat-spinner diameter="40"></mat-spinner>
-                  <p>{{ 'admin.jobDescriptionTable.loading' | translate }}</p>
-                </div>
-                
-                <table mat-table [dataSource]="templatesData" class="job-description-table" matSort #templatesSort="matSort" [matSortDisableClear]="false" *ngIf="!isLoading">
-                  <!-- Checkbox Column -->
-                  <ng-container matColumnDef="select">
-                    <th mat-header-cell *matHeaderCellDef>
-                      <mat-checkbox (change)="$event ? masterToggle('templates') : null"
-                                    [checked]="templatesSelection.hasValue() && isAllSelected('templates')"
-                                    [indeterminate]="templatesSelection.hasValue() && !isAllSelected('templates')">
-                      </mat-checkbox>
-                    </th>
-                    <td mat-cell *matCellDef="let row">
-                      <mat-checkbox (click)="$event.stopPropagation()"
-                                    (change)="$event ? templatesSelection.toggle(row) : null"
-                                    [checked]="templatesSelection.isSelected(row)">
-                      </mat-checkbox>
-                    </td>
-                  </ng-container>
-
-                  <!-- Name Column -->
-                  <ng-container matColumnDef="name">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.name' | translate }}</th>
-                    <td mat-cell *matCellDef="let element">{{ element.name || element.title }}</td>
-                  </ng-container>
-
-                  <!-- Date Created Column -->
-                  <ng-container matColumnDef="dateCreated">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.dateCreated' | translate }}</th>
-                    <td mat-cell *matCellDef="let element">{{ getCreatedDate(element) | date:'short' }}</td>
-                  </ng-container>
-
-                  <!-- Date Modified Column -->
-                  <ng-container matColumnDef="dateModified">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.dateModified' | translate }}</th>
-                    <td mat-cell *matCellDef="let element">{{ getModifiedDate(element) | date:'short' }}</td>
-                  </ng-container>
-
-                  <!-- Type Column -->
-                  <ng-container matColumnDef="type">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.type' | translate }}</th>
-                    <td mat-cell *matCellDef="let element">
-                      <span class="type-badge type-job-desc" style="text-align:center">
-                        {{ getDashboardType(element) }}
-                      </span>
-                    </td>
-                  </ng-container>
-
-                  <!-- Creator Column -->
-                  <ng-container matColumnDef="creator">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.creator' | translate }}</th>
-                    <td mat-cell *matCellDef="let element">{{ getCreatorName(element) }}</td>
-                  </ng-container>
-
-                  <!-- Number of Sections Column -->
-                  <ng-container matColumnDef="sections">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.sections' | translate }}</th>
-                    <td mat-cell *matCellDef="let element">{{ getSectionCount(element) }}</td>
-                  </ng-container>
-
-                  <!-- Data Source Column -->
-                  <ng-container matColumnDef="dataSource">
-                    <th mat-header-cell *matHeaderCellDef>{{ 'admin.jobDescriptionTable.columns.dataSource' | translate }}</th>
-                    <td mat-cell *matCellDef="let element">
-                      <div class="data-source">
-                        <div class="source-title">{{ getDataSourceInfo(element).title }}</div>
-                        <div class="source-classes" *ngIf="getDataSourceInfo(element).classes.length > 0">
-                          {{ getDataSourceInfo(element).classes.join(', ') }}
-                        </div>
-                      </div>
-                    </td>
-                  </ng-container>
-
-                  <!-- Actions Column -->
-                  <ng-container matColumnDef="actions">
-                    <th mat-header-cell *matHeaderCellDef>{{ 'admin.jobDescriptionTable.columns.actions' | translate }}</th>
-                    <td mat-cell *matCellDef="let element">
-                      <button mat-icon-button [matMenuTriggerFor]="actionsMenu">
-                        <mat-icon>more_vert</mat-icon>
-                      </button>
-                      <mat-menu #actionsMenu="matMenu">
-                        <button mat-menu-item (click)="viewJobDescription(element)">
-                          <mat-icon>visibility</mat-icon>
-                          <span>{{ 'admin.jobDescriptionTable.actions.view' | translate }}</span>
-                        </button>
-                        <button mat-menu-item (click)="manageJobDescription(element)">
-                          <mat-icon>edit</mat-icon>
-                          <span>{{ 'admin.jobDescriptionTable.actions.manage' | translate }}</span>
-                        </button>
-                        <button mat-menu-item (click)="exportToPDF(element)">
-                          <mat-icon>picture_as_pdf</mat-icon>
-                          <span>{{ 'shared.export.pdf.button' | translate }}</span>
-                        </button>
-                        <button mat-menu-item (click)="archiveJobDescription(element)">
-                          <mat-icon>archive</mat-icon>
-                          <span>{{ 'admin.jobDescriptionTable.actions.archive' | translate }}</span>
-                        </button>
-                      </mat-menu>
-                    </td>
-                  </ng-container>
-
-                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                </table>
-              </div>
-              <mat-paginator #templatesPaginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
-            </div>
-          </mat-tab>
-
           <mat-tab label="{{ 'admin.jobDescriptionTable.tabs.created' | translate }}">
             <div class="tab-content">
               <div class="dv-table-header">
@@ -262,10 +130,8 @@ interface JobDescriptionDashboard {
                   </div>
                 </div>
               </div>
-              <!-- Similar table structure for created job descriptions -->
               <div class="table-container">
                 <table mat-table [dataSource]="createdData" class="job-description-table" matSort #createdSort="matSort" [matSortDisableClear]="false">
-                  <!-- Same column definitions as templates -->
                   <ng-container matColumnDef="select">
                     <th mat-header-cell *matHeaderCellDef>
                       <mat-checkbox (change)="$event ? masterToggle('created') : null"
@@ -280,7 +146,6 @@ interface JobDescriptionDashboard {
                       </mat-checkbox>
                     </td>
                   </ng-container>
-                  <!-- Other columns same as templates -->
                   <ng-container matColumnDef="name">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.name' | translate }}</th>
                     <td mat-cell *matCellDef="let element">{{ element.name || element.title }}</td>
@@ -351,6 +216,118 @@ interface JobDescriptionDashboard {
                 </table>
               </div>
               <mat-paginator #createdPaginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+            </div>
+          </mat-tab>
+
+          <mat-tab label="{{ 'admin.jobDescriptionTable.tabs.templates' | translate }}">
+            <div class="tab-content">
+              <div class="dv-table-header">
+                <h2>{{ 'admin.jobDescriptionTable.headers.templates' | translate }}</h2>
+                <div class="header-actions">
+                  <mat-form-field appearance="outline" class="search-field">
+                    <mat-icon matPrefix>search</mat-icon>
+                    <input matInput placeholder="{{ 'admin.jobDescriptionTable.search_placeholder' | translate }}" (input)="onSearchInput('templates', $event)" [value]="searchValues.templates" />
+                    <button mat-icon-button matSuffix *ngIf="searchValues.templates" aria-label="Clear search" (click)="clearSearch('templates')">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </mat-form-field>
+                  <div class="bulk-actions" *ngIf="templatesSelection.hasValue()">
+                    <button mat-button color="warn" (click)="archiveSelected('templates')">
+                      {{ 'admin.jobDescriptionTable.bulk.archive_selected' | translate }} ({{ templatesSelection.selected.length }})
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="table-container">
+                <div class="loading-container" *ngIf="isLoading">
+                  <mat-spinner diameter="40"></mat-spinner>
+                  <p>{{ 'admin.jobDescriptionTable.loading' | translate }}</p>
+                </div>
+                <table mat-table [dataSource]="templatesData" class="job-description-table" matSort #templatesSort="matSort" [matSortDisableClear]="false" *ngIf="!isLoading">
+                  <ng-container matColumnDef="select">
+                    <th mat-header-cell *matHeaderCellDef>
+                      <mat-checkbox (change)="$event ? masterToggle('templates') : null"
+                                    [checked]="templatesSelection.hasValue() && isAllSelected('templates')"
+                                    [indeterminate]="templatesSelection.hasValue() && !isAllSelected('templates')">
+                      </mat-checkbox>
+                    </th>
+                    <td mat-cell *matCellDef="let row">
+                      <mat-checkbox (click)="$event.stopPropagation()"
+                                    (change)="$event ? templatesSelection.toggle(row) : null"
+                                    [checked]="templatesSelection.isSelected(row)">
+                      </mat-checkbox>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.name' | translate }}</th>
+                    <td mat-cell *matCellDef="let element">{{ element.name || element.title }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="dateCreated">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.dateCreated' | translate }}</th>
+                    <td mat-cell *matCellDef="let element">{{ getCreatedDate(element) | date:'short' }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="dateModified">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.dateModified' | translate }}</th>
+                    <td mat-cell *matCellDef="let element">{{ getModifiedDate(element) | date:'short' }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.type' | translate }}</th>
+                    <td mat-cell *matCellDef="let element">
+                      <span class="type-badge type-job-desc" style="text-align:center">
+                        {{ getDashboardType(element) }}
+                      </span>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="creator">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.creator' | translate }}</th>
+                    <td mat-cell *matCellDef="let element">{{ getCreatorName(element) }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="sections">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'admin.jobDescriptionTable.columns.sections' | translate }}</th>
+                    <td mat-cell *matCellDef="let element">{{ getSectionCount(element) }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="dataSource">
+                    <th mat-header-cell *matHeaderCellDef>{{ 'admin.jobDescriptionTable.columns.dataSource' | translate }}</th>
+                    <td mat-cell *matCellDef="let element">
+                      <div class="data-source">
+                        <div class="source-title">{{ getDataSourceInfo(element).title }}</div>
+                        <div class="source-classes" *ngIf="getDataSourceInfo(element).classes.length > 0">
+                          {{ getDataSourceInfo(element).classes.join(', ') }}
+                        </div>
+                      </div>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>{{ 'admin.jobDescriptionTable.columns.actions' | translate }}</th>
+                    <td mat-cell *matCellDef="let element">
+                      <button mat-icon-button [matMenuTriggerFor]="actionsMenu">
+                        <mat-icon>more_vert</mat-icon>
+                      </button>
+                      <mat-menu #actionsMenu="matMenu">
+                        <button mat-menu-item (click)="viewJobDescription(element)">
+                          <mat-icon>visibility</mat-icon>
+                          <span>{{ 'admin.jobDescriptionTable.actions.view' | translate }}</span>
+                        </button>
+                        <button mat-menu-item (click)="manageJobDescription(element)">
+                          <mat-icon>edit</mat-icon>
+                          <span>{{ 'admin.jobDescriptionTable.actions.manage' | translate }}</span>
+                        </button>
+                        <button mat-menu-item (click)="exportToPDF(element)">
+                          <mat-icon>picture_as_pdf</mat-icon>
+                          <span>{{ 'shared.export.pdf.button' | translate }}</span>
+                        </button>
+                        <button mat-menu-item (click)="archiveJobDescription(element)">
+                          <mat-icon>archive</mat-icon>
+                          <span>{{ 'admin.jobDescriptionTable.actions.archive' | translate }}</span>
+                        </button>
+                      </mat-menu>
+                    </td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+              </div>
+              <mat-paginator #templatesPaginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
             </div>
           </mat-tab>
 
@@ -900,6 +877,9 @@ export class JobDescriptionTableComponent implements OnInit, AfterViewInit, OnDe
   }
 
   getDashboardType(dashboard: JobDescriptionDashboard): string {
+    if (dashboard.typeOfUsage === 'JOB_DESCRIPTION_EVALUATION') {
+      return this.translationService.translate('admin.dashboardTypes.job_description') || 'Job Description';
+    }
     return this.translationService.translate('admin.dashboardTypes.employability_survey') || 'Employability Survey';
   }
 
