@@ -394,7 +394,7 @@ export class DashboardListComponent implements OnInit {
         isEmployabilitySurvey: true // ES Dashboard - pass employability flag to backend
       },
       panelClass: 'modern-dialog',
-      backdropClass: 'modern-backdrop',
+      backdropClass: 'loading-backdrop',
       disableClose: false,
       hasBackdrop: true,
       closeOnNavigation: true,
@@ -414,7 +414,7 @@ export class DashboardListComponent implements OnInit {
             .replace('{{schools}}', result.selectedSchools.join(', '));
             
         const loadingDialogRef = this.dialog.open(LoadingSpinnerDialogComponent, {
-          width: '400px',
+          width: '340px',
           disableClose: true,
           hasBackdrop: true,
           backdropClass: 'loading-backdrop',
