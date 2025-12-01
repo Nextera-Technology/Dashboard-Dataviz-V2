@@ -109,6 +109,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   exportLoading = false;
   private dashboardRepo: DashboardBuilderRepository;
+  private autoExportTriggered = false;
 
   get filteredCertifications() {
     if (!this.certificationSearch) {
@@ -1046,6 +1047,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           this.cdr.detectChanges();
         });
 
+        this.autoExportIfRequested();
+
         if (!this.dashboard?.sectionIds || (this.dashboard.sectionIds as any[])?.length === 0) {
           try {
             const fallback = await this.dashboardService.getOneDashboard(this.dashboardId!);
@@ -1454,6 +1457,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       const auto = this.route.snapshot.queryParamMap.get('autoExport');
       if (auto !== '1') return;
       if (!this.dashboardId) return;
+      if (this.autoExportTriggered) return;
       if (!this.dashboard) {
         for (let i = 0; i < 20; i++) {
           if (this.dashboard) break;
@@ -1461,13 +1465,24 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         if (!this.dashboard) return;
       }
+      const allWidgets: any[] = (this.dashboard.sectionIds || [])
+        .flatMap((section: any) => (section.widgetIds || []))
+        .filter((w: any) => w && (w.visible !== false));
+      if (allWidgets.length > 0) {
+        this.showExportHud(allWidgets.length);
+      }
       const key = `DV_AUTO_EXPORT_OPTS_${this.dashboardId}`;
       let optsStr = '';
       try { optsStr = localStorage.getItem(key) || ''; } catch {}
-      if (!optsStr) return;
+      if (!optsStr) {
+        this.autoExportTriggered = true;
+        await this.exportDashboardBatchFromOptions({ exportType: 'no_school', selectedSchools: [] });
+        return;
+      }
       let opts: any;
       try { opts = JSON.parse(optsStr); } catch { return; }
       if (!opts || !opts.exportType) return;
+      this.autoExportTriggered = true;
       try { localStorage.removeItem(key); } catch {}
       if (opts.exportType === 'selected_school' && Array.isArray(opts.selectedSchools) && opts.selectedSchools.length > 0) {
         try {
