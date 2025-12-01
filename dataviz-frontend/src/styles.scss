@@ -67,6 +67,21 @@
   background-color: rgba(2, 6, 23, 0.75) !important;
 }
 
+/* Loading spinner backdrop with blur for both themes */
+.loading-backdrop.cdk-overlay-backdrop {
+  backdrop-filter: blur(10px) saturate(1.05);
+  -webkit-backdrop-filter: blur(10px) saturate(1.05);
+  background-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+.theme-light .loading-backdrop.cdk-overlay-backdrop {
+  background-color: rgba(255, 255, 255, 0.40) !important;
+}
+
+.theme-dark .loading-backdrop.cdk-overlay-backdrop {
+  background-color: rgba(2, 6, 23, 0.55) !important;
+}
+
 .modern-dialog .mat-mdc-dialog-container .mdc-dialog__surface,
 .modern-dialog .mat-dialog-container {
   background: transparent !important;

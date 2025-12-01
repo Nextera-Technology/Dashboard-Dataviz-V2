@@ -245,7 +245,7 @@ export class JobDescriptionListComponent implements OnInit, OnDestroy {
         isEmployabilitySurvey: false // JD Dashboard - do not pass employability flag
       },
       panelClass: 'modern-dialog',
-      backdropClass: 'modern-backdrop',
+      backdropClass: 'loading-backdrop',
       disableClose: false,
       hasBackdrop: true,
       closeOnNavigation: true,
@@ -265,7 +265,7 @@ export class JobDescriptionListComponent implements OnInit, OnDestroy {
             .replace('{{schools}}', result.selectedSchools.join(', '));
             
         const loadingDialogRef = this.dialog.open(LoadingSpinnerDialogComponent, {
-          width: '400px',
+          width: '340px',
           disableClose: true,
           hasBackdrop: true,
           backdropClass: 'loading-backdrop',
