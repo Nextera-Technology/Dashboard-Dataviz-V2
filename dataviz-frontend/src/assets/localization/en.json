@@ -723,6 +723,10 @@
       "insufficient_title": "Session Expiring Soon",
       "insufficient_export_message": "Your session will expire in {{time}}. PDF export may fail if it takes longer than this. Do you want to continue anyway?",
       "continue_anyway": "Continue Anyway",
-      "cancel_export": "Cancel"
+      "cancel_export": "Cancel",
+      "global_expiring_title": "Session Expiring Soon",
+      "global_expiring_message": "Your session will expire in {{time}}. Please save your work.",
+      "global_expired_title": "Session Expired",
+      "global_expired_message": "Your session has expired. Please login again."
     }
   }
