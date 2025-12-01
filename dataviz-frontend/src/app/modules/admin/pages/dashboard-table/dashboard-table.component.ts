@@ -1081,7 +1081,8 @@ export class DashboardTableComponent implements OnInit, AfterViewInit, OnDestroy
         localStorage.setItem(key, JSON.stringify(result));
       } catch {}
       this.shareDataService.setDashboardId(dashboard._id);
-      this.router.navigate(['/dashboard'], { queryParams: { autoExport: '1' } });
+      const url = `${location.origin}/dashboard?autoExport=1&id=${encodeURIComponent(dashboard._id)}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
     });
   }
 

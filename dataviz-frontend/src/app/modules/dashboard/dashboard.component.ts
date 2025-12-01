@@ -944,7 +944,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
-    this.dashboardId = this.shareDataService.getDashboardId();
+    const qpId = this.route.snapshot.queryParamMap.get('id');
+    if (qpId) {
+      this.dashboardId = qpId;
+      this.shareDataService.setDashboardId(qpId);
+    } else {
+      this.dashboardId = this.shareDataService.getDashboardId();
+    }
 
     if (!this.currentUser) {
       this.router.navigate(['/auth/login']);
