@@ -1479,10 +1479,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         } catch {}
       } else if (opts.exportType === 'no_school') {
         try {
-          const fresh = await this.dashboardService.getOneDashboard(this.dashboardId!);
-          if (fresh) {
-            this.applyDashboardData(fresh);
-            await new Promise(res => setTimeout(res, 200));
+          const filtered = await this.dashboardService.openDashboardWithSchoolFilter(this.dashboardId!, ['ALL']);
+          if (filtered) {
+            this.applyDashboardData(filtered);
+            await new Promise(res => setTimeout(res, 250));
           }
         } catch {}
       }
@@ -1494,14 +1494,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.dashboardId) return;
     const isES = !this.isJobDescriptionDashboard();
     const original = this.dashboardOriginal;
-    const includeGeneral = opts.exportType === 'no_school' || opts.exportType === 'all_schools';
     const schools = opts.exportType === 'all_schools'
       ? await this.dashboardRepo.getSchoolDropdown(this.dashboardId, isES)
       : (opts.exportType === 'selected_school' ? (opts.selectedSchools || []) : []);
 
-    if (includeGeneral) {
-      await this.exportFullDashboardToPDF({ exportType: 'no_school', selectedSchools: [] });
-    }
     if (opts.exportType === 'selected_school' && schools.length) {
       try {
         const filtered = await this.dashboardService.openDashboardWithSchoolFilter(this.dashboardId!, schools);
@@ -1522,6 +1518,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         } catch {}
       }
+    } else if (opts.exportType === 'no_school') {
+      try {
+        const filtered = await this.dashboardService.openDashboardWithSchoolFilter(this.dashboardId!, ['ALL']);
+        if (filtered) {
+          this.applyDashboardData(filtered);
+          await new Promise(res => setTimeout(res, 350));
+          await this.exportFullDashboardToPDF({ exportType: 'no_school', selectedSchools: [] });
+        }
+      } catch {}
     }
     if (original) {
       this.applyDashboardData(original);
