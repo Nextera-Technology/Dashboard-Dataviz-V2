@@ -378,6 +378,7 @@ export class JobDescriptionListComponent implements OnInit, OnDestroy {
       width: "600px",
       data: {
         dashboard: dashboard,
+        typeOfUsage: (dashboard as any)?.typeOfUsage || 'JOB_DESCRIPTION_EVALUATION'
       },
       panelClass: 'modern-dialog',
       backdropClass: 'modern-backdrop',

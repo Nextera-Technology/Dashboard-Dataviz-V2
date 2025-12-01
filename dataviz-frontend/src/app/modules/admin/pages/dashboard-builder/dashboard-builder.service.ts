@@ -93,6 +93,10 @@ export class DashboardBuilderService {
     return await this.dashboardBuilderRepository.getDashboardTemplates(type, isForJobDescription);
   }
 
+  async getTitleAndClassDropdown(typeOfUsage: string) {
+    return await this.dashboardBuilderRepository.getTitleAndClassDropdown(typeOfUsage);
+  }
+
   async duplicateDashboardFromOther(input: any) {
     return await this.dashboardBuilderRepository.duplicateDashboardFromOther(input);
   }

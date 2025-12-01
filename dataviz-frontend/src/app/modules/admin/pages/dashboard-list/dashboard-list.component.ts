@@ -489,7 +489,7 @@ export class DashboardListComponent implements OnInit {
       any
     >(DashboardFormDialogComponent, {
       width: "600px",
-      data: {},
+      data: { typeOfUsage: 'EMPLOYABILITY_SURVEY' },
       panelClass: 'modern-dialog',
       backdropClass: 'modern-backdrop',
     });
@@ -525,6 +525,7 @@ export class DashboardListComponent implements OnInit {
       width: "600px",
       data: {
         dashboard: dashboard,
+        typeOfUsage: (dashboard as any)?.typeOfUsage || 'EMPLOYABILITY_SURVEY'
       },
       panelClass: 'modern-dialog',
       backdropClass: 'modern-backdrop',

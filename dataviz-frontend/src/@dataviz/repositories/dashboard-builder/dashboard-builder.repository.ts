@@ -31,7 +31,8 @@ import {
   gqlGetChartOptions,
   gqlGetOneDashboard,
   gqlGetDashboardTemplates,
-  gqlGetSchoolDropdown
+  gqlGetSchoolDropdown,
+  gqlGetTitleAndClassDropdown
 } from "@dataviz/graphql/queries/dashboard-builder/dashboard-builder.query";
 
 @Injectable({
@@ -688,6 +689,22 @@ export class DashboardBuilderRepository {
     } catch (error) {
       throw {
         message: "Failed to get school dropdown options.",
+        originalError: error,
+        queryOrMutation: query,
+        input: JSON.stringify(variables),
+      };
+    }
+  }
+
+  async getTitleAndClassDropdown(typeOfUsage: string) {
+    const query = gqlGetTitleAndClassDropdown;
+    const variables = { typeOfUsage };
+    try {
+      const queryResult = await this._client.GraphqlQuery(query, variables);
+      return queryResult.getTitleAndClassDropdown || [];
+    } catch (error) {
+      throw {
+        message: "Failed to get title/class dropdown options.",
         originalError: error,
         queryOrMutation: query,
         input: JSON.stringify(variables),

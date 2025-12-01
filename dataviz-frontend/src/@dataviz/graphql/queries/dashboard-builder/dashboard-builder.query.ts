@@ -176,3 +176,12 @@ export const gqlGetSchoolDropdown = gql`
     getSchoolDropdown(dashboardId: $dashboardId, employability: $employability)
   }
 `;
+
+export const gqlGetTitleAndClassDropdown = gql`
+  query getTitleAndClassDropdown($typeOfUsage: EnumDashboardTypeOfUsage!) {
+    getTitleAndClassDropdown(typeOfUsage: $typeOfUsage) {
+      title
+      classes
+    }
+  }
+`;

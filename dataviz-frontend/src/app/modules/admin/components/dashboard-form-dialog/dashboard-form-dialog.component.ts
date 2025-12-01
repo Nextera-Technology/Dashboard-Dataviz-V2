@@ -34,12 +34,13 @@ interface Dashboard {
   status?: string;
   duplicationType?: string;
   dashboardOriginId?: { _id?: string; name?: string; title?: string; type?: string };
+  typeOfUsage?: string;
 }
 
 // UPDATED: Interface for the structured source data to use 'classes'
 interface SourceDataOption {
   certification: string;
-  classes?: string[]; // Renamed 'class' to 'classes'
+  classes?: string[];
 }
 
 // Data passed to the dialog
@@ -74,29 +75,7 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
 
   private certificationSubscriptions: Map<FormGroup, Subscription> = new Map(); // Store subscriptions per source group
 
-  // UPDATED: Structured list of all possible sources based on new data
-  readonly allSources: SourceDataOption[] = [
-    { certification: "RDC", classes: ["2025 DECAL OCT", "2025"] },
-    { certification: "RDC 2021", classes: [] },
-    { certification: "RDC 2022", classes: ["Classe 2022", "Classe Excellence 2022"] },
-    { certification: "RDC 2023", classes: [] },
-    { certification: "RDC 2024", classes: [] },
-    { certification: "RDC 2025", classes: [] },
-    { certification: "CDRH 2022", classes: [] },
-    { certification: "CDRH 2023", classes: [] },
-    { certification: "CDRH 2024", classes: [] },
-    { certification: "CDRH 2025", classes: [] },
-    { certification: "CPEB 2021", classes: [] },
-    { certification: "CPEB 2022", classes: [] },
-    { certification: "CPEB 2023", classes: [] },
-    { certification: "CPEB 2024", classes: [] },
-    { certification: "CPEB 2025", classes: [] },
-  ];
-
-  // Filtered sources for Job Description context
-  readonly jobDescriptionSources: SourceDataOption[] = [
-    { certification: "RDC", classes: ["2025 DECAL OCT", "2025"] }
-  ];
+  availableSources: SourceDataOption[] = [];
 
   // Map to store filtered classes for each source FormGroup
   filteredClassesMap: Map<FormGroup, string[]> = new Map();
@@ -126,8 +105,14 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.isEditMode = !!this.currentDashboard && !!this.currentDashboard._id;
+    const typeOfUsage = (this.currentDashboard?.typeOfUsage || this.data?.typeOfUsage || 'EMPLOYABILITY_SURVEY') as string;
+    const dropdown = await this.dashboardService.getTitleAndClassDropdown(typeOfUsage);
+    this.availableSources = (dropdown || []).map((item: any) => ({
+      certification: item.title,
+      classes: Array.from(new Set(item.classes || []))
+    }));
 
     if (this.isEditMode && this.currentDashboard?.sources && this.currentDashboard.sources.length > 0) {
       // Populate sourcesFormArray from existing dashboard sources
@@ -141,13 +126,9 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
         this.refreshAllFilteredClasses();
       }
     } else {
-      // For new dashboards, add at least one source entry by default
-      if (this.data.typeOfUsage === 'JOB_DESCRIPTION_EVALUATION') {
-        // For Job Description dashboards, pre-populate with RDC 2025 and 2025 DECAL OCT
-        this.addSource({
-          certification: 'RDC',
-          classes: ['2025']
-        });
+      if (this.availableSources.length > 0) {
+        const first = this.availableSources[0];
+        this.addSource({ certification: first.certification, classes: first.classes || [] });
       } else {
         this.addSource();
       }
@@ -171,7 +152,7 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
   createSourceFormGroup(certification?: string | null, classes?: string[] | null): FormGroup {
     return this.fb.group({
       certification: [certification || '', Validators.required],
-      classes: [classes || []] // Can be an empty array if no classes are selected
+      classes: [Array.from(new Set(classes || []))] // Can be an empty array if no classes are selected
     });
   }
 
@@ -183,11 +164,15 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
     this.sourcesFormArray.push(newSourceGroup);
 
     // Initialize filteredClasses for this new source group
-    this.updateFilteredClassesForGroup(newSourceGroup, newSourceGroup.get('certification')?.value);
+    this.updateFilteredClassesForGroup(
+      newSourceGroup,
+      newSourceGroup.get('certification')?.value,
+      !this.isEditMode || !(source?.classes && source.classes.length > 0)
+    );
 
     // Subscribe to certification changes for this specific source group
     const sub = newSourceGroup.get('certification')?.valueChanges.subscribe(selectedCert => {
-      this.updateFilteredClassesForGroup(newSourceGroup, selectedCert);
+      this.updateFilteredClassesForGroup(newSourceGroup, selectedCert, true);
 
       const currentIndex = this.sourcesFormArray.controls.indexOf(newSourceGroup);
 
@@ -243,27 +228,24 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
    * Get the appropriate sources list based on context (Job Description vs regular)
    */
   getAvailableSources(): SourceDataOption[] {
-    return this.data.typeOfUsage === 'JOB_DESCRIPTION_EVALUATION' 
-      ? this.jobDescriptionSources 
-      : this.allSources;
+    return this.availableSources;
   }
 
   /**
    * Updates the filteredClasses for a specific source FormGroup.
    * Auto-select all classes when certification is selected
    */
-  updateFilteredClassesForGroup(sourceGroup: FormGroup, selectedCert: string): void {
+  updateFilteredClassesForGroup(sourceGroup: FormGroup, selectedCert: string, autoSelectAll: boolean = false): void {
     const availableSources = this.getAvailableSources();
     const selectedSourceOption = availableSources.find(s => s.certification === selectedCert);
-    const classesForThisCert = selectedSourceOption?.classes || [];
+    const classesForThisCert = Array.from(new Set(selectedSourceOption?.classes || []));
     this.filteredClassesMap.set(sourceGroup, classesForThisCert);
-
-    // Auto-select all available classes when certification changes
-
-    if (classesForThisCert.length > 0) {
+    const currentSelected = sourceGroup.get('classes')?.value || [];
+    if (autoSelectAll) {
       sourceGroup.get('classes')?.setValue([...classesForThisCert]);
     } else {
-      sourceGroup.get('classes')?.setValue([]);
+      const filtered = currentSelected.filter((c: string) => classesForThisCert.includes(c));
+      sourceGroup.get('classes')?.setValue(filtered);
     }
   }
 
@@ -281,17 +263,7 @@ export class DashboardFormDialogComponent implements OnInit, OnDestroy {
           group.get('certification')?.setValue(this.firstSourceCertification, { emitEvent: false });
         }
       }
-      const selectedSourceOption = availableSources.find(s => s.certification === group.get('certification')?.value);
-      const classesForThisCert = selectedSourceOption?.classes || [];
-      this.filteredClassesMap.set(group, classesForThisCert);
-      // Reset classes if invalid
-      const currentSelectedClasses = group.get('classes')?.value;
-      if (currentSelectedClasses && currentSelectedClasses.length > 0) {
-        const invalidClasses = currentSelectedClasses.filter((c: string) => !classesForThisCert.includes(c));
-        if (invalidClasses.length > 0) {
-          group.get('classes')?.setValue([]);
-        }
-      }
+      this.updateFilteredClassesForGroup(group, group.get('certification')?.value, false);
     });
   }
 
