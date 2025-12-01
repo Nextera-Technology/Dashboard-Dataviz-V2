@@ -243,6 +243,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       let succeeded = 0;
       const failed: Array<{index:number; title:string; id:string}> = [];
       const pdfUrls: string[] = [];
+      const widgetsInput: Array<{ widgetId: string; lineChartFilename?: string | null; displayChartFilename?: string | null }> = new Array(allWidgets.length);
       const progressUpdate = () => {
         this.updateExportHud(processed, widgets.length, succeeded);
       };
@@ -321,6 +322,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           failed.push({ index: idx + 1, title: title || '', id });
           return undefined;
         } finally {
+          widgetsInput[idx] = { widgetId: id, lineChartFilename: lineChartS3Key || null, displayChartFilename: displayChartS3Key || null };
           processed += 1;
           progressUpdate();
         }
@@ -339,8 +341,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
       const mergedName = this.buildMergedFileName();
-      const mergeRes = await this.dashboardRepo.mergeAsset(pdfUrls, mergedName);
-      const mergedFile: string = (mergeRes && (mergeRes.filename || mergeRes?.fileName)) || '';
+      let mergedFile: string = '';
+      try {
+        const mergeRes = await this.dashboardRepo.mergeAsset(pdfUrls, mergedName);
+        mergedFile = (mergeRes && (mergeRes.filename || mergeRes?.fileName)) || '';
+      } catch (mergeErr) {
+        try {
+          const fullRes = await this.dashboardRepo.exportDashboardData(this.dashboardId!, 'PDF', widgetsInput);
+          mergedFile = (fullRes && (fullRes.filename || (fullRes as any)?.fileName)) || '';
+        } catch (fullErr) {
+          throw fullErr;
+        }
+      }
       if (!mergedFile) throw new Error('No merged filename returned');
 
       const base = environment.fileUrl || '';
@@ -1027,6 +1039,27 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.ngZone.run(() => {
           this.cdr.detectChanges();
         });
+
+        if (!this.dashboard?.sectionIds || (this.dashboard.sectionIds as any[])?.length === 0) {
+          try {
+            const fallback = await this.dashboardService.getOneDashboard(this.dashboardId!);
+            if (fallback) {
+              this.dashboardOriginal = fallback;
+              this.dashboard = { ...fallback };
+              this.sectionsList = []; this.selectedSections = []; this.sectionVisibility = {}; this.sidebarSectionVisibility = {};
+              if (this.dashboardOriginal.sectionIds) {
+                this.sectionsList = this.dashboardOriginal.sectionIds || [];
+                this.sectionsList.forEach(section => {
+                  if (section?.name) this.selectedSections.push(section.name);
+                  if (section?._id) { this.sectionVisibility[section._id] = true; this.sidebarSectionVisibility[section._id] = true; }
+                });
+                this.updateVisibleSections();
+                this.updateSelectionCounts();
+              }
+              this.ngZone.run(() => { this.cdr.detectChanges(); });
+            }
+          } catch {}
+        }
       }
     } catch (error) {
       console.error("Error loading dashboards:", error);
@@ -1436,6 +1469,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           if (filtered) {
             this.applyDashboardData(filtered);
             await new Promise(res => setTimeout(res, 300));
+          }
+        } catch {}
+      } else if (opts.exportType === 'no_school') {
+        try {
+          const fresh = await this.dashboardService.getOneDashboard(this.dashboardId!);
+          if (fresh) {
+            this.applyDashboardData(fresh);
+            await new Promise(res => setTimeout(res, 200));
           }
         } catch {}
       }

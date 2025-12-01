@@ -21,6 +21,7 @@ import { NotificationService } from '@dataviz/services/notification/notification
 import { TranslationService } from 'app/shared/services/translation/translation.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DashboardFormDialogComponent, DashboardFormDialogData } from '../../components/dashboard-form-dialog/dashboard-form-dialog.component';
+import { PdfExportDialogComponent, PdfExportDialogData, PdfExportResult } from 'app/shared/components/pdf-export-dialog/pdf-export-dialog.component';
 
 interface Section {
   _id?: string;
@@ -939,8 +940,28 @@ export class JobDescriptionTableComponent implements OnInit, AfterViewInit, OnDe
   }
 
   exportToPDF(dashboard: JobDescriptionDashboard): void {
-    // TODO: Implement PDF export functionality
-    this.notifier.infoKey('notifications.feature_coming_soon');
+    if (!dashboard || !dashboard._id) return;
+    const isES = !!dashboard.typeOfUsage ? (dashboard.typeOfUsage !== 'JOB_DESCRIPTION_EVALUATION') : true;
+    const dialogRef = this.dialog.open(PdfExportDialogComponent, {
+      width: '600px',
+      data: {
+        dashboardId: dashboard._id,
+        dashboardTitle: dashboard.title || dashboard.name || 'Dashboard',
+        isEmployabilitySurvey: isES
+      } as PdfExportDialogData,
+      panelClass: 'modern-dialog',
+      backdropClass: 'modern-backdrop'
+    });
+
+    dialogRef.afterClosed().subscribe((result: PdfExportResult | null) => {
+      if (!result) return;
+      try {
+        const key = `DV_AUTO_EXPORT_OPTS_${dashboard._id}`;
+        localStorage.setItem(key, JSON.stringify(result));
+      } catch {}
+      this.shareDataService.setDashboardId(dashboard._id);
+      this.router.navigate(['/dashboard'], { queryParams: { autoExport: '1' } });
+    });
   }
 
   async archiveJobDescription(dashboard: JobDescriptionDashboard): Promise<void> {
