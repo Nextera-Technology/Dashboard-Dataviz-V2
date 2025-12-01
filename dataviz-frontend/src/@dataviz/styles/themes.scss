@@ -234,15 +234,24 @@ body {
 }
 
 /* Dark theme: SWAL confirm button */
-.theme-dark .swal2-confirm {
+.theme-dark .swal2-confirm:not(.swal-btn-danger) {
     background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
     border: none !important;
     color: #ffffff !important;
     box-shadow: 0 4px 12px rgba(59,130,246,0.3) !important;
 }
-.theme-dark .swal2-confirm:hover {
+.theme-dark .swal2-confirm:not(.swal-btn-danger):hover {
     background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
 }
+
+/* Danger variant for confirm buttons (used for deletes) */
+.swal-btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(239,68,68,0.3) !important;
+}
+.swal-btn-danger:hover { background: linear-gradient(135deg, #dc2626, #b91c1c) !important; }
 
 /* Dark theme: SWAL cancel button */
 .theme-dark .swal2-cancel {
