@@ -83,6 +83,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedCertificationsCount: number = 0;
   selectedSectionsCount: number = 0;
   dashboardId: string | null = null;
+  private pendingSchoolFilters: string[] = [];
 
   langMenuOpen = false;
 
@@ -176,7 +177,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.langMenuOpen = false;
   }
 
-  async exportFullDashboardToPDF(): Promise<void> {
+  async exportFullDashboardToPDF(opts?: { exportType: 'all_schools' | 'selected_school' | 'no_school'; selectedSchools: string[] }): Promise<void> {
     if (!this.dashboard || !this.dashboardId) return;
     
     // Check if another PDF export is already in progress
@@ -192,26 +193,26 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    // Show PDF export options dialog
-    // Determine if this is an ES or JD dashboard for school dropdown
-    const isES = !this.isJobDescriptionDashboard(); // ES = true, JD = false
-    
-    const dialogRef = this.dialog.open(PdfExportDialogComponent, {
-      width: '600px',
-      data: {
-        dashboardId: this.dashboardId,
-        dashboardTitle: this.dashboard.title || this.dashboard.name || 'Dashboard',
-        isEmployabilitySurvey: isES // true for ES, false for JD
-      } as PdfExportDialogData,
-      panelClass: 'modern-dialog',
-      backdropClass: 'modern-backdrop',
-      disableClose: false
-    });
-
-    const result: PdfExportResult | null = await dialogRef.afterClosed().toPromise();
-    
-    // User cancelled
-    if (!result) return;
+    let result: PdfExportResult | null = null;
+    if (!opts) {
+      // Show PDF export options dialog
+      const isES = !this.isJobDescriptionDashboard();
+      const dialogRef = this.dialog.open(PdfExportDialogComponent, {
+        width: '600px',
+        data: {
+          dashboardId: this.dashboardId,
+          dashboardTitle: this.dashboard.title || this.dashboard.name || 'Dashboard',
+          isEmployabilitySurvey: isES
+        } as PdfExportDialogData,
+        panelClass: 'modern-dialog',
+        backdropClass: 'modern-backdrop',
+        disableClose: false
+      });
+      result = await dialogRef.afterClosed().toPromise();
+      if (!result) return;
+    } else {
+      result = { exportType: opts.exportType, selectedSchools: opts.selectedSchools };
+    }
 
     const allWidgets: any[] = (this.dashboard.sectionIds || [])
       .flatMap((section: any) => (section.widgetIds || []))
@@ -939,6 +940,19 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.loadSidebarState();
+    const auto = this.route.snapshot.queryParamMap.get('autoExport');
+    if (auto === '1' && this.dashboardId) {
+      const key = `DV_AUTO_EXPORT_OPTS_${this.dashboardId}`;
+      try {
+        const raw = localStorage.getItem(key) || '';
+        if (raw) {
+          const opts = JSON.parse(raw);
+          if (opts && opts.exportType === 'selected_school' && Array.isArray(opts.selectedSchools)) {
+            this.pendingSchoolFilters = opts.selectedSchools;
+          }
+        }
+      } catch {}
+    }
     this.loadDashboards();
     this.applyTheme(this.currentTheme);
 
@@ -958,7 +972,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async loadDashboards(isRetry: boolean = false) {
     try {
-      const result = await this.dashboardService.getOneDashboard(this.dashboardId);
+      let result: any;
+      if (this.pendingSchoolFilters && this.pendingSchoolFilters.length > 0) {
+        result = await this.dashboardService.openDashboardWithSchoolFilter(this.dashboardId!, this.pendingSchoolFilters);
+      } else {
+        result = await this.dashboardService.getOneDashboard(this.dashboardId);
+      }
 
       // If dashboard duplication is still in progress, wait and retry a few times
       if (result?.isDuplicationProcessInProgress) {
@@ -1016,6 +1035,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     // Chart initialization can be added here when needed
+    setTimeout(() => this.autoExportIfRequested(), 500);
   }
 
   trackBySection(index: number, section: any): string {
@@ -1364,6 +1384,101 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       if (roots.length === 1) return roots[0] || (roots.getIndex ? roots.getIndex(0) : null);
     }
     return null;
+  }
+
+  private applyDashboardData(result: any): void {
+    this.dashboardOriginal = result;
+    this.dashboard = { ...result };
+    this.sectionsList = [];
+    this.selectedSections = [];
+    this.sectionVisibility = {};
+    this.sidebarSectionVisibility = {};
+    if (this.dashboardOriginal && this.dashboardOriginal.sectionIds) {
+      this.sectionsList = this.dashboardOriginal.sectionIds || [];
+      this.sectionsList.forEach(section => {
+        if (section?.name) {
+          this.selectedSections.push(section.name);
+        }
+        if (section?._id) {
+          this.sectionVisibility[section._id] = true;
+          this.sidebarSectionVisibility[section._id] = true;
+        }
+      });
+      this.updateVisibleSections();
+      this.updateSelectionCounts();
+    }
+    this.ngZone.run(() => this.cdr.detectChanges());
+  }
+
+  private async autoExportIfRequested(): Promise<void> {
+    try {
+      const auto = this.route.snapshot.queryParamMap.get('autoExport');
+      if (auto !== '1') return;
+      if (!this.dashboardId) return;
+      if (!this.dashboard) {
+        for (let i = 0; i < 20; i++) {
+          if (this.dashboard) break;
+          await new Promise(res => setTimeout(res, 250));
+        }
+        if (!this.dashboard) return;
+      }
+      const key = `DV_AUTO_EXPORT_OPTS_${this.dashboardId}`;
+      let optsStr = '';
+      try { optsStr = localStorage.getItem(key) || ''; } catch {}
+      if (!optsStr) return;
+      let opts: any;
+      try { opts = JSON.parse(optsStr); } catch { return; }
+      if (!opts || !opts.exportType) return;
+      try { localStorage.removeItem(key); } catch {}
+      if (opts.exportType === 'selected_school' && Array.isArray(opts.selectedSchools) && opts.selectedSchools.length > 0) {
+        try {
+          const filtered = await this.dashboardService.openDashboardWithSchoolFilter(this.dashboardId!, opts.selectedSchools);
+          if (filtered) {
+            this.applyDashboardData(filtered);
+            await new Promise(res => setTimeout(res, 300));
+          }
+        } catch {}
+      }
+      await this.exportDashboardBatchFromOptions({ exportType: opts.exportType, selectedSchools: opts.selectedSchools || [] });
+    } catch {}
+  }
+
+  async exportDashboardBatchFromOptions(opts: { exportType: 'all_schools' | 'selected_school' | 'no_school'; selectedSchools: string[] }): Promise<void> {
+    if (!this.dashboardId) return;
+    const isES = !this.isJobDescriptionDashboard();
+    const original = this.dashboardOriginal;
+    const includeGeneral = opts.exportType === 'no_school' || opts.exportType === 'all_schools';
+    const schools = opts.exportType === 'all_schools'
+      ? await this.dashboardRepo.getSchoolDropdown(this.dashboardId, isES)
+      : (opts.exportType === 'selected_school' ? (opts.selectedSchools || []) : []);
+
+    if (includeGeneral) {
+      await this.exportFullDashboardToPDF({ exportType: 'no_school', selectedSchools: [] });
+    }
+    if (opts.exportType === 'selected_school' && schools.length) {
+      try {
+        const filtered = await this.dashboardService.openDashboardWithSchoolFilter(this.dashboardId!, schools);
+        if (filtered) {
+          this.applyDashboardData(filtered);
+          await new Promise(res => setTimeout(res, 350));
+          await this.exportFullDashboardToPDF({ exportType: 'no_school', selectedSchools: [] });
+        }
+      } catch {}
+    } else if (opts.exportType === 'all_schools') {
+      for (const school of schools) {
+        try {
+          const filtered = await this.dashboardService.openDashboardWithSchoolFilter(this.dashboardId!, [school]);
+          if (filtered) {
+            this.applyDashboardData(filtered);
+            await new Promise(res => setTimeout(res, 350));
+            await this.exportFullDashboardToPDF({ exportType: 'no_school', selectedSchools: [] });
+          }
+        } catch {}
+      }
+    }
+    if (original) {
+      this.applyDashboardData(original);
+    }
   }
 
   private async exportChartToPNG(root: any): Promise<string | undefined> {

@@ -371,10 +371,33 @@ export class DashboardBuilderRepository {
     
     try {
       const queryResult = await this._client.GraphqlQuery(query, variables);
-      
-      const result = queryResult.openDashboardWithSchoolFilter;
-      
-      return result;
+      const result = queryResult?.openDashboardWithSchoolFilter;
+      if (result) return result;
+
+      // Fallback: perform raw POST to GraphQL endpoint if Apollo did not dispatch
+      const operation = (query as any)?.loc?.source?.body || '';
+      const opDef: any = (query as any)?.definitions?.find((d: any) => d && d.kind === 'OperationDefinition');
+      const operationName = opDef?.name?.value || 'openDashboardWithSchoolFilter';
+      const payload = JSON.stringify({ operationName, query: operation, variables });
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'apollo-require-preflight': 'true',
+        'x-apollo-operation-name': operationName
+      };
+      const resp = await fetch(environment.apiGraphqlUrl, {
+        method: 'POST',
+        credentials: 'include',
+        headers,
+        body: payload
+      });
+      const text = await resp.text();
+      let json: any = null;
+      try { json = JSON.parse(text); } catch {}
+      if (json?.errors && json.errors.length) {
+        throw new Error(json.errors[0]?.message || 'GraphQL error');
+      }
+      return json?.data?.openDashboardWithSchoolFilter;
     } catch (error) {
       throw {
         message: "Failed to open dashboard with school filter.",
