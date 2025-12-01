@@ -211,15 +211,8 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
         return;
       }
 
-      // Check if this is a job description dashboard
-      if (latestDashboard.typeOfUsage === 'JOB_DESCRIPTION_EVALUATION') {
-        this.openJobDescriptionDashboard();
-      } else {
-        // Regular dashboard - open directly
-        this.shareDataService.setDashboardId(latestDashboard._id);
-        const url = `${window.location.origin}/dashboard`;
-        window.open(url, '_blank');
-      }
+      this.dashboard = latestDashboard;
+      this.openJobDescriptionDashboard(latestDashboard);
     } catch (error) {
       console.error('Error fetching latest dashboard data:', error);
       await this.notifier.errorKey('notifications.error_loading_dashboard');
@@ -229,12 +222,15 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
   /**
    * Opens job description dashboard with school selection dialog
    */
-  private openJobDescriptionDashboard(): void {
+  private openJobDescriptionDashboard(dashboard: Dashboard): void {
+    const isEmployabilitySurvey = dashboard.typeOfUsage === 'EMPLOYABILITY_SURVEY';
+
     const dialogRef = this.dialog.open(SchoolSelectionDialogComponent, {
       width: '600px',
       data: {
-        dashboardId: this.dashboard._id,
-        dashboardTitle: this.dashboard.title || this.dashboard.name || 'Dashboard'
+        dashboardId: dashboard._id,
+        dashboardTitle: dashboard.title || dashboard.name || 'Dashboard',
+        isEmployabilitySurvey
       },
       panelClass: 'modern-dialog',
       backdropClass: 'modern-backdrop',
@@ -272,7 +268,7 @@ export class  DashboardBuilderComponent implements OnInit, OnDestroy {
             : result.selectedSchools;
           
           const filterResult = await this.dashboardService.openDashboardWithSchoolFilter(
-            this.dashboard._id || '',
+            dashboard._id || '',
             schoolsToFilter
           );
           
