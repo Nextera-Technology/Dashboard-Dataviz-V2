@@ -18,7 +18,7 @@ import { NotificationService } from '@dataviz/services/notification/notification
 import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 import { TranslationService } from 'app/shared/services/translation/translation.service';
 import { QuickSearchComponent } from 'app/shared/components/quick-search/quick-search.component';
-import { FloatingChatComponent } from 'app/shared/components/floating-chat/floating-chat.component';
+// import { FloatingChatComponent } from 'app/shared/components/floating-chat/floating-chat.component';
 
 import { AuthService, User } from '../../core/auth/auth.service';
 import { SessionMonitorService } from '../../core/auth/session-monitor.service';
@@ -62,8 +62,7 @@ declare var am5geodata_worldLow: any;
     MatDialogModule,
     TranslatePipe,
     SectionComponent,
-    QuickSearchComponent,
-    FloatingChatComponent
+    QuickSearchComponent
   ],
   templateUrl: "./dashboard.component.html",
   styleUrl: "./dashboard.component.scss",
