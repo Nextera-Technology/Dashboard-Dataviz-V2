@@ -83,6 +83,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedCertificationsCount: number = 0;
   selectedSectionsCount: number = 0;
   dashboardId: string | null = null;
+  private pendingSchoolFilters: string[] = [];
 
   langMenuOpen = false;
 
@@ -108,6 +109,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   exportLoading = false;
   private dashboardRepo: DashboardBuilderRepository;
+  private autoExportTriggered = false;
+  autoExportDataLoading = false;
 
   get filteredCertifications() {
     if (!this.certificationSearch) {
@@ -176,7 +179,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.langMenuOpen = false;
   }
 
-  async exportFullDashboardToPDF(): Promise<void> {
+  async exportFullDashboardToPDF(opts?: { exportType: 'all_schools' | 'selected_school' | 'no_school'; selectedSchools: string[] }): Promise<void> {
     if (!this.dashboard || !this.dashboardId) return;
     
     // Check if another PDF export is already in progress
@@ -192,26 +195,26 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    // Show PDF export options dialog
-    // Determine if this is an ES or JD dashboard for school dropdown
-    const isES = !this.isJobDescriptionDashboard(); // ES = true, JD = false
-    
-    const dialogRef = this.dialog.open(PdfExportDialogComponent, {
-      width: '600px',
-      data: {
-        dashboardId: this.dashboardId,
-        dashboardTitle: this.dashboard.title || this.dashboard.name || 'Dashboard',
-        isEmployabilitySurvey: isES // true for ES, false for JD
-      } as PdfExportDialogData,
-      panelClass: 'modern-dialog',
-      backdropClass: 'modern-backdrop',
-      disableClose: false
-    });
-
-    const result: PdfExportResult | null = await dialogRef.afterClosed().toPromise();
-    
-    // User cancelled
-    if (!result) return;
+    let result: PdfExportResult | null = null;
+    if (!opts) {
+      // Show PDF export options dialog
+      const isES = !this.isJobDescriptionDashboard();
+      const dialogRef = this.dialog.open(PdfExportDialogComponent, {
+        width: '600px',
+        data: {
+          dashboardId: this.dashboardId,
+          dashboardTitle: this.dashboard.title || this.dashboard.name || 'Dashboard',
+          isEmployabilitySurvey: isES
+        } as PdfExportDialogData,
+        panelClass: 'modern-dialog',
+        backdropClass: 'modern-backdrop',
+        disableClose: false
+      });
+      result = await dialogRef.afterClosed().toPromise();
+      if (!result) return;
+    } else {
+      result = { exportType: opts.exportType, selectedSchools: opts.selectedSchools };
+    }
 
     const allWidgets: any[] = (this.dashboard.sectionIds || [])
       .flatMap((section: any) => (section.widgetIds || []))
@@ -242,6 +245,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       let succeeded = 0;
       const failed: Array<{index:number; title:string; id:string}> = [];
       const pdfUrls: string[] = [];
+      const widgetsInput: Array<{ widgetId: string; lineChartFilename?: string | null; displayChartFilename?: string | null }> = new Array(allWidgets.length);
       const progressUpdate = () => {
         this.updateExportHud(processed, widgets.length, succeeded);
       };
@@ -320,6 +324,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           failed.push({ index: idx + 1, title: title || '', id });
           return undefined;
         } finally {
+          widgetsInput[idx] = { widgetId: id, lineChartFilename: lineChartS3Key || null, displayChartFilename: displayChartS3Key || null };
           processed += 1;
           progressUpdate();
         }
@@ -338,8 +343,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
       const mergedName = this.buildMergedFileName();
-      const mergeRes = await this.dashboardRepo.mergeAsset(pdfUrls, mergedName);
-      const mergedFile: string = (mergeRes && (mergeRes.filename || mergeRes?.fileName)) || '';
+      let mergedFile: string = '';
+      try {
+        const mergeRes = await this.dashboardRepo.mergeAsset(pdfUrls, mergedName);
+        mergedFile = (mergeRes && (mergeRes.filename || mergeRes?.fileName)) || '';
+      } catch (mergeErr) {
+        try {
+          const fullRes = await this.dashboardRepo.exportDashboardData(this.dashboardId!, 'PDF', widgetsInput);
+          mergedFile = (fullRes && (fullRes.filename || (fullRes as any)?.fileName)) || '';
+        } catch (fullErr) {
+          throw fullErr;
+        }
+      }
       if (!mergedFile) throw new Error('No merged filename returned');
 
       const base = environment.fileUrl || '';
@@ -897,8 +912,32 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         const yAxis = chart.yAxes.push((window as any).am5xy.CategoryAxis.new(root, { categoryField: 'category', renderer: yRenderer }));
         const xAxis = chart.xAxes.push((window as any).am5xy.ValueAxis.new(root, { min: 0, renderer: (window as any).am5xy.AxisRendererX.new(root, {}) }));
         const series = chart.series.push((window as any).am5xy.ColumnSeries.new(root, { xAxis, yAxis, valueXField: 'count', categoryYField: 'category' }));
+
+        // Style columns for clarity in PDF
+        series.columns.template.setAll({
+          cornerRadiusTL: 4,
+          cornerRadiusBL: 4,
+          strokeWidth: 1
+        });
+
         yAxis.data.setAll(chartData);
         series.data.setAll(chartData);
+
+        // Add value labels inside bar end to avoid clipping
+        series.bullets.push(() => {
+          const label = (window as any).am5.Label.new(root, {
+            text: "{valueX}",
+            populateText: true,
+            centerY: (window as any).am5.percent(50),
+            centerX: (window as any).am5.percent(100),
+            dx: -8,
+            fontSize: 12
+          });
+          return (window as any).am5.Bullet.new(root, {
+            locationX: 1,
+            sprite: label
+          });
+        });
 
         const s3OrUndefined = await this.exportChartToPNG(root as any);
         s3Key = s3OrUndefined || undefined;
@@ -931,7 +970,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
-    this.dashboardId = this.shareDataService.getDashboardId();
+    const qpId = this.route.snapshot.queryParamMap.get('id');
+    if (qpId) {
+      this.dashboardId = qpId;
+      this.shareDataService.setDashboardId(qpId);
+    } else {
+      this.dashboardId = this.shareDataService.getDashboardId();
+    }
 
     if (!this.currentUser) {
       this.router.navigate(['/auth/login']);
@@ -939,6 +984,20 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.loadSidebarState();
+    const auto = this.route.snapshot.queryParamMap.get('autoExport');
+    if (auto === '1' && this.dashboardId) {
+      this.autoExportDataLoading = true;
+      const key = `DV_AUTO_EXPORT_OPTS_${this.dashboardId}`;
+      try {
+        const raw = localStorage.getItem(key) || '';
+        if (raw) {
+          const opts = JSON.parse(raw);
+          if (opts && opts.exportType === 'selected_school' && Array.isArray(opts.selectedSchools)) {
+            this.pendingSchoolFilters = opts.selectedSchools;
+          }
+        }
+      } catch {}
+    }
     this.loadDashboards();
     this.applyTheme(this.currentTheme);
 
@@ -958,7 +1017,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async loadDashboards(isRetry: boolean = false) {
     try {
-      const result = await this.dashboardService.getOneDashboard(this.dashboardId);
+      let result: any;
+      if (this.pendingSchoolFilters && this.pendingSchoolFilters.length > 0) {
+        result = await this.dashboardService.openDashboardWithSchoolFilter(this.dashboardId!, this.pendingSchoolFilters);
+      } else {
+        result = await this.dashboardService.getOneDashboard(this.dashboardId);
+      }
 
       // If dashboard duplication is still in progress, wait and retry a few times
       if (result?.isDuplicationProcessInProgress) {
@@ -1008,14 +1072,41 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.ngZone.run(() => {
           this.cdr.detectChanges();
         });
+        this.autoExportDataLoading = false;
+
+        this.autoExportIfRequested();
+
+        if (!this.dashboard?.sectionIds || (this.dashboard.sectionIds as any[])?.length === 0) {
+          try {
+            const fallback = await this.dashboardService.getOneDashboard(this.dashboardId!);
+            if (fallback) {
+              this.dashboardOriginal = fallback;
+              this.dashboard = { ...fallback };
+              this.sectionsList = []; this.selectedSections = []; this.sectionVisibility = {}; this.sidebarSectionVisibility = {};
+              if (this.dashboardOriginal.sectionIds) {
+                this.sectionsList = this.dashboardOriginal.sectionIds || [];
+                this.sectionsList.forEach(section => {
+                  if (section?.name) this.selectedSections.push(section.name);
+                  if (section?._id) { this.sectionVisibility[section._id] = true; this.sidebarSectionVisibility[section._id] = true; }
+                });
+                this.updateVisibleSections();
+                this.updateSelectionCounts();
+              }
+              this.ngZone.run(() => { this.cdr.detectChanges(); });
+              this.autoExportDataLoading = false;
+            }
+          } catch {}
+        }
       }
     } catch (error) {
       console.error("Error loading dashboards:", error);
+      this.autoExportDataLoading = false;
     }
   }
 
   ngAfterViewInit(): void {
     // Chart initialization can be added here when needed
+    setTimeout(() => this.autoExportIfRequested(), 500);
   }
 
   trackBySection(index: number, section: any): string {
@@ -1364,6 +1455,126 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       if (roots.length === 1) return roots[0] || (roots.getIndex ? roots.getIndex(0) : null);
     }
     return null;
+  }
+
+  private applyDashboardData(result: any): void {
+    this.dashboardOriginal = result;
+    this.dashboard = { ...result };
+    this.sectionsList = [];
+    this.selectedSections = [];
+    this.sectionVisibility = {};
+    this.sidebarSectionVisibility = {};
+    if (this.dashboardOriginal && this.dashboardOriginal.sectionIds) {
+      this.sectionsList = this.dashboardOriginal.sectionIds || [];
+      this.sectionsList.forEach(section => {
+        if (section?.name) {
+          this.selectedSections.push(section.name);
+        }
+        if (section?._id) {
+          this.sectionVisibility[section._id] = true;
+          this.sidebarSectionVisibility[section._id] = true;
+        }
+      });
+      this.updateVisibleSections();
+      this.updateSelectionCounts();
+    }
+    this.ngZone.run(() => this.cdr.detectChanges());
+  }
+
+  private async autoExportIfRequested(): Promise<void> {
+    try {
+      const auto = this.route.snapshot.queryParamMap.get('autoExport');
+      if (auto !== '1') return;
+      if (!this.dashboardId) return;
+      if (this.autoExportTriggered) return;
+      if (!this.dashboard) {
+        for (let i = 0; i < 20; i++) {
+          if (this.dashboard) break;
+          await new Promise(res => setTimeout(res, 250));
+        }
+        if (!this.dashboard) return;
+      }
+      const allWidgets: any[] = (this.dashboard.sectionIds || [])
+        .flatMap((section: any) => (section.widgetIds || []))
+        .filter((w: any) => w && (w.visible !== false));
+      if (allWidgets.length > 0) {
+        this.showExportHud(allWidgets.length);
+      }
+      const key = `DV_AUTO_EXPORT_OPTS_${this.dashboardId}`;
+      let optsStr = '';
+      try { optsStr = localStorage.getItem(key) || ''; } catch {}
+      if (!optsStr) {
+        this.autoExportTriggered = true;
+        await this.exportDashboardBatchFromOptions({ exportType: 'no_school', selectedSchools: [] });
+        return;
+      }
+      let opts: any;
+      try { opts = JSON.parse(optsStr); } catch { return; }
+      if (!opts || !opts.exportType) return;
+      this.autoExportTriggered = true;
+      try { localStorage.removeItem(key); } catch {}
+      if (opts.exportType === 'selected_school' && Array.isArray(opts.selectedSchools) && opts.selectedSchools.length > 0) {
+        try {
+          const filtered = await this.dashboardService.openDashboardWithSchoolFilter(this.dashboardId!, opts.selectedSchools);
+          if (filtered) {
+            this.applyDashboardData(filtered);
+            await new Promise(res => setTimeout(res, 300));
+          }
+        } catch {}
+      } else if (opts.exportType === 'no_school') {
+        try {
+          const filtered = await this.dashboardService.openDashboardWithSchoolFilter(this.dashboardId!, ['ALL']);
+          if (filtered) {
+            this.applyDashboardData(filtered);
+            await new Promise(res => setTimeout(res, 250));
+          }
+        } catch {}
+      }
+      await this.exportDashboardBatchFromOptions({ exportType: opts.exportType, selectedSchools: opts.selectedSchools || [] });
+    } catch {}
+  }
+
+  async exportDashboardBatchFromOptions(opts: { exportType: 'all_schools' | 'selected_school' | 'no_school'; selectedSchools: string[] }): Promise<void> {
+    if (!this.dashboardId) return;
+    const isES = !this.isJobDescriptionDashboard();
+    const original = this.dashboardOriginal;
+    const schools = opts.exportType === 'all_schools'
+      ? await this.dashboardRepo.getSchoolDropdown(this.dashboardId, isES)
+      : (opts.exportType === 'selected_school' ? (opts.selectedSchools || []) : []);
+
+    if (opts.exportType === 'selected_school' && schools.length) {
+      try {
+        const filtered = await this.dashboardService.openDashboardWithSchoolFilter(this.dashboardId!, schools);
+        if (filtered) {
+          this.applyDashboardData(filtered);
+          await new Promise(res => setTimeout(res, 350));
+          await this.exportFullDashboardToPDF({ exportType: 'no_school', selectedSchools: [] });
+        }
+      } catch {}
+    } else if (opts.exportType === 'all_schools') {
+      for (const school of schools) {
+        try {
+          const filtered = await this.dashboardService.openDashboardWithSchoolFilter(this.dashboardId!, [school]);
+          if (filtered) {
+            this.applyDashboardData(filtered);
+            await new Promise(res => setTimeout(res, 350));
+            await this.exportFullDashboardToPDF({ exportType: 'no_school', selectedSchools: [] });
+          }
+        } catch {}
+      }
+    } else if (opts.exportType === 'no_school') {
+      try {
+        const filtered = await this.dashboardService.openDashboardWithSchoolFilter(this.dashboardId!, ['ALL']);
+        if (filtered) {
+          this.applyDashboardData(filtered);
+          await new Promise(res => setTimeout(res, 350));
+          await this.exportFullDashboardToPDF({ exportType: 'no_school', selectedSchools: [] });
+        }
+      } catch {}
+    }
+    if (original) {
+      this.applyDashboardData(original);
+    }
   }
 
   private async exportChartToPNG(root: any): Promise<string | undefined> {

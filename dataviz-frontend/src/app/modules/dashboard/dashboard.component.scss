@@ -843,3 +843,15 @@ header {
 
 .lang-menu { background: var(--bg-primary) !important; border: 1px solid var(--border-color) !important; }
 .lang-item span { color: var(--text-primary) !important; }
+.auto-export-overlay { position: fixed; inset: 0; z-index: 9998; background: rgba(255,255,255,0.75); display: flex; align-items: center; justify-content: center; }
+.auto-export-box { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 16px 20px; border-radius: 12px; background: #ffffff; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 10px 24px rgba(0,0,0,0.12); }
+.auto-export-text { font-size: 14px; color: #374151; font-weight: 600; }
+.loading-dots { display: inline-flex; gap: 6px; align-items: center; justify-content: center; height: 12px; }
+.loading-dots span { width: 8px; height: 8px; border-radius: 50%; background: #3b82f6; opacity: 0.6; animation: dotPulse 1.2s infinite ease-in-out; }
+.loading-dots span:nth-child(2) { animation-delay: 0.15s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes dotPulse { 0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; } 40% { transform: scale(1.15); opacity: 1; } }
+:host-context(.theme-dark) .auto-export-overlay { background: rgba(2,6,23,0.55) !important; }
+:host-context(.theme-dark) .auto-export-box { background: var(--dv-item-bg) !important; border-color: var(--dv-rail-border) !important; box-shadow: 0 10px 24px rgba(2,6,23,0.45) !important; }
+:host-context(.theme-dark) .auto-export-text { color: var(--text-primary) !important; }
+:host-context(.theme-dark) .loading-dots span { background: #60a5fa !important; }

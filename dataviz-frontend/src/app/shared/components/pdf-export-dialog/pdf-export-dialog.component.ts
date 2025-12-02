@@ -59,7 +59,8 @@ export interface PdfExportResult {
         <div class="space-y-4">
           <!-- Export Options -->
           <mat-radio-group [(ngModel)]="selectedOption" class="w-full">
-            <!-- Option 1: All Dashboard + All Schools -->
+            <!-- Option 1: All Dashboard + All Schools (temporarily hidden) -->
+            <!--
             <div class="fuse-option-card" [class.selected]="selectedOption === 'all_schools'" (click)="selectedOption = 'all_schools'">
               <div class="flex items-center">
                 <mat-radio-button class="mr-4" value="all_schools"></mat-radio-button>
@@ -74,6 +75,7 @@ export interface PdfExportResult {
                 </div>
               </div>
             </div>
+            -->
 
             <!-- Option 2: Dashboard + Selected School -->
             <div class="fuse-option-card mt-3" [class.selected]="selectedOption === 'selected_school'" (click)="selectedOption = 'selected_school'">
@@ -356,7 +358,7 @@ export interface PdfExportResult {
   `]
 })
 export class PdfExportDialogComponent implements OnInit {
-  selectedOption: 'all_schools' | 'selected_school' | 'no_school' = 'all_schools';
+  selectedOption: 'all_schools' | 'selected_school' | 'no_school' = 'selected_school';
   schoolSelections: { [key: string]: boolean } = {};
   availableSchools: string[] = [];
   filteredSchools: string[] = [];
@@ -448,9 +450,10 @@ export class PdfExportDialogComponent implements OnInit {
     
     let selectedSchools: string[] = [];
     
-    if (this.selectedOption === 'all_schools') {
-      selectedSchools = ['ALL'];
-    } else if (this.selectedOption === 'selected_school') {
+    // if (this.selectedOption === 'all_schools') {
+    //   selectedSchools = ['ALL'];
+    // } else 
+    if (this.selectedOption === 'selected_school') {
       selectedSchools = this.getSelectedSchools();
     }
     // For 'no_school', selectedSchools remains empty

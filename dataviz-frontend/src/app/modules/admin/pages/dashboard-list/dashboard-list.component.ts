@@ -180,6 +180,7 @@ import Swal from 'sweetalert2';
 import { NotificationService } from '@dataviz/services/notification/notification.service';
 import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 import { TranslationService } from 'app/shared/services/translation/translation.service';
+import { PdfExportDialogComponent, PdfExportDialogData, PdfExportResult } from 'app/shared/components/pdf-export-dialog/pdf-export-dialog.component';
 
 // UPDATED: Dashboard interface to reflect the new 'sources' array structure
 interface Section {
@@ -480,6 +481,36 @@ export class DashboardListComponent implements OnInit {
     }
 
     this.router.navigate(["/admin/dashboard-builder", dashboard._id]);
+  }
+
+  exportToPDF(dashboard: Dashboard, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (!dashboard || !dashboard._id) return;
+    const isES = true;
+
+    const dialogRef = this.dialog.open(PdfExportDialogComponent, {
+      width: '600px',
+      data: {
+        dashboardId: dashboard._id,
+        dashboardTitle: dashboard.title || dashboard.name || 'Dashboard',
+        isEmployabilitySurvey: isES
+      },
+      panelClass: 'modern-dialog',
+      backdropClass: 'modern-backdrop'
+    });
+
+    dialogRef.afterClosed().subscribe((result: PdfExportResult | null) => {
+      if (!result) return;
+      try {
+        const key = `DV_AUTO_EXPORT_OPTS_${dashboard._id}`;
+        localStorage.setItem(key, JSON.stringify(result));
+      } catch {}
+      this.shareDataService.setDashboardId(dashboard._id);
+      const url = `${location.origin}/dashboard?autoExport=1&id=${encodeURIComponent(dashboard._id)}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+    });
   }
 
   createNewDashboard(): void {

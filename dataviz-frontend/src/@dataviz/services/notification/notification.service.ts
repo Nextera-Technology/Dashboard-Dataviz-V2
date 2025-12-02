@@ -96,15 +96,21 @@ export class NotificationService {
     const text = this.interpolate(this.translation.translate(`${key}.message`), params) || undefined;
     const confirmButtonText = this.interpolate(this.translation.translate(`${key}.confirmButtonText`), params) || undefined;
     const cancelButtonText = this.interpolate(this.translation.translate(`${key}.cancelButtonText`), params) || undefined;
+    const isDelete = key.includes('delete') || (typeof overrides.confirmButtonColor === 'string' && overrides.confirmButtonColor.toLowerCase() === '#d33');
+    const mergedCustomClass = {
+      ...(overrides.customClass || {}),
+      ...(isDelete ? { confirmButton: [overrides.customClass?.confirmButton, 'swal-btn-danger'].filter(Boolean).join(' ') } : {}),
+    } as any;
+
     const cfg: SweetAlertOptions = {
       ...overrides,
       title,
       text,
       confirmButtonText: confirmButtonText || overrides.confirmButtonText,
       cancelButtonText: cancelButtonText || overrides.cancelButtonText,
+      ...(Object.keys(mergedCustomClass).length ? { customClass: mergedCustomClass } : {}),
     };
     return this.confirm(cfg);
   }
 }
-
 
