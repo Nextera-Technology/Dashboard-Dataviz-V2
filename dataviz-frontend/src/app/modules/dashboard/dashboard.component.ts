@@ -259,8 +259,25 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           const widgetContainer = this.findWidgetContainerById(id) || this.findWidgetBoxElementByTitle(title);
           if (widgetContainer) {
             try {
-              displayChartS3Key = await this.withTimeout(this.exportDomElementToPNG(widgetContainer), 8000);
+              const isWorldMap = String(w?.chartType || '') === 'DRILL_DOWN_MAP' || ['STUDENT_REGION_DISTRIBUTION','REGION_SALARY_AVERAGE'].includes(String(w?.widgetSubType || ''));
+              const mapCardEl = (widgetContainer.closest('.map-card') as HTMLElement) || widgetContainer;
+              const elementToCapture = isWorldMap ? mapCardEl : widgetContainer;
+              displayChartS3Key = await this.withTimeout(this.exportDomElementToPNG(elementToCapture), isWorldMap ? 12000 : 8000);
             } catch {}
+            if (!displayChartS3Key) {
+              const isWorldMap = String(w?.chartType || '') === 'DRILL_DOWN_MAP' || ['STUDENT_REGION_DISTRIBUTION','REGION_SALARY_AVERAGE'].includes(String(w?.widgetSubType || ''));
+              if (isWorldMap) {
+                try {
+                  const target = (widgetContainer.closest('.map-card') as HTMLElement) || widgetContainer;
+                  const blob = await this.withTimeout(toBlob(target as any, { quality: 0.95, backgroundColor: '#ffffff', pixelRatio: 1, cacheBust: true } as any), 9000).catch(()=>undefined);
+                  if (blob) {
+                    const file = new File([blob], `widget-${id}-display.png`, { type: 'image/png' });
+                    const upload = await this.dashboardRepo.uploadPublicAsset(file, 'IMAGE');
+                    displayChartS3Key = upload?.s3Key;
+                  }
+                } catch {}
+              }
+            }
             if (!displayChartS3Key) {
               const fileFromWidget = await this.withTimeout(this.exportChartElementFallback(widgetContainer), 8000).catch(()=>undefined);
               if (fileFromWidget) {
@@ -1622,17 +1639,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     try {
       if (!element || !element.offsetWidth || !element.offsetHeight) return undefined;
       const blob = await toBlob(element as any, {
-        quality: 0.98,
+        quality: 0.95,
         width: Math.max(element.offsetWidth, 400),
         height: Math.max(element.offsetHeight, 300),
         backgroundColor: '#ffffff',
-        pixelRatio: 2,
+        pixelRatio: 1,
         cacheBust: true,
         skipFonts: true,
         style: { transform: 'scale(1)', transformOrigin: 'top left' },
         filter: (node: any) => {
           if (node && node.classList) {
-            const exclude = ['export-wrapper','display-mode-toggle','mat-menu','cdk-overlay','material-icons','mat-icon'];
+            const exclude = ['actions-buttons','export-wrapper','display-mode-toggle','mat-menu','cdk-overlay','material-icons','mat-icon'];
             return !exclude.some(cls => node.classList.contains(cls));
           }
           return true;
