@@ -783,8 +783,31 @@ export class ActionsButtonsComponent implements OnInit {
           categoryYField: 'category'
         }));
 
+        // Style columns
+        series.columns.template.setAll({
+          cornerRadiusTL: 4,
+          cornerRadiusBL: 4,
+          strokeWidth: 1
+        });
+
         yAxis.data.setAll(chartData);
         series.data.setAll(chartData);
+
+        // Add value labels inside bar end to avoid clipping in exports
+        series.bullets.push(() => {
+          const label = am5.Label.new(root, {
+            text: "{valueX}",
+            populateText: true,
+            centerY: am5.percent(50),
+            centerX: am5.percent(100),
+            dx: -8,
+            fontSize: 12
+          });
+          return am5.Bullet.new(root, {
+            locationX: 1,
+            sprite: label
+          });
+        });
 
         // 4) Export to PNG using same exporter and upload
         const s3OrUndefined = await this.exportChartToPNG(root as any);

@@ -347,12 +347,11 @@ export class BarChartWidgetComponent implements OnInit, OnDestroy {
           text: "{valueX}",
           populateText: true,
           centerY: am5.percent(50),
-          centerX: am5.percent(0),
-          paddingLeft: 10,
+          centerX: am5.percent(100),
+          dx: -8,
           fontSize: 10
         });
 
-        // Match label color to bar fill color
         label.adapters.add("fill", (fill, target) => {
           const dataItem = target.dataItem;
           const jobTitle = dataItem?.dataContext?.name;
@@ -491,12 +490,11 @@ export class BarChartWidgetComponent implements OnInit, OnDestroy {
           text: "{valueX}",
           populateText: true,
           centerY: am5.percent(50),
-          centerX: am5.percent(0),
-          paddingLeft: 10,
+          centerX: am5.percent(100),
+          dx: -8,
           fontSize: 10
         });
 
-        // Match label color to bar fill color
         label.adapters.add("fill", (fill, target) => {
           const dataItem = target.dataItem;
           const jobTitle = dataItem?.dataContext?.name;
@@ -667,6 +665,8 @@ export class BarChartWidgetComponent implements OnInit, OnDestroy {
         renderer: am5xy.AxisRendererX.new(this.root, {}),
       })
     );
+    // Add a small extra space to the right to prevent label clipping
+    this.xAxis.set("extraMax", 0.05);
 
     // Series
     this.series = this.chart.series.push(
@@ -681,6 +681,22 @@ export class BarChartWidgetComponent implements OnInit, OnDestroy {
       })
     );
     this.series.data.setAll(this.widget.data);
+
+    // End-of-bar value labels inside the bar
+    this.series.bullets.push(() => {
+      return am5.Bullet.new(this.root, {
+        locationX: 1,
+        sprite: am5.Label.new(this.root, {
+          text: "{valueX}",
+          populateText: true,
+          centerY: am5.percent(50),
+          centerX: am5.percent(100),
+          dx: -8,
+          fontSize: 12,
+          fill: am5.color(0x000000)
+        })
+      });
+    });
 
     // Bar colors
     this.series.columns.template.adapters.add(

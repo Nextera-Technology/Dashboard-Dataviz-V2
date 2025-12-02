@@ -912,8 +912,32 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         const yAxis = chart.yAxes.push((window as any).am5xy.CategoryAxis.new(root, { categoryField: 'category', renderer: yRenderer }));
         const xAxis = chart.xAxes.push((window as any).am5xy.ValueAxis.new(root, { min: 0, renderer: (window as any).am5xy.AxisRendererX.new(root, {}) }));
         const series = chart.series.push((window as any).am5xy.ColumnSeries.new(root, { xAxis, yAxis, valueXField: 'count', categoryYField: 'category' }));
+
+        // Style columns for clarity in PDF
+        series.columns.template.setAll({
+          cornerRadiusTL: 4,
+          cornerRadiusBL: 4,
+          strokeWidth: 1
+        });
+
         yAxis.data.setAll(chartData);
         series.data.setAll(chartData);
+
+        // Add value labels inside bar end to avoid clipping
+        series.bullets.push(() => {
+          const label = (window as any).am5.Label.new(root, {
+            text: "{valueX}",
+            populateText: true,
+            centerY: (window as any).am5.percent(50),
+            centerX: (window as any).am5.percent(100),
+            dx: -8,
+            fontSize: 12
+          });
+          return (window as any).am5.Bullet.new(root, {
+            locationX: 1,
+            sprite: label
+          });
+        });
 
         const s3OrUndefined = await this.exportChartToPNG(root as any);
         s3Key = s3OrUndefined || undefined;
