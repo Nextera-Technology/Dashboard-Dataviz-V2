@@ -271,15 +271,19 @@ export class ActionsButtonsComponent implements OnInit {
           const isMetricWidget = this.widget?.chartType === 'CARD' || 
                                 this.widget?.widgetType === 'metric' ||
                                 this.widget?.type === 'metric';
+          // Prefer DOM capture for world map widget to include legend and labels
+          const mapCard = chartContainer.closest('.map-card');
+          const isWorldMap = !!mapCard || ['STUDENT_REGION_DISTRIBUTION','REGION_SALARY_AVERAGE'].includes(String(this.widget?.widgetSubType || ''));
           
-          if (isMetricWidget) {
+          if (isMetricWidget || isWorldMap) {
             // Use html-to-image for metric/card widgets
             try {
-              displayChartS3Key = await this.exportDomElementToPNG(chartContainer);
+              const elementToCapture = isWorldMap && mapCard instanceof HTMLElement ? mapCard : chartContainer;
+              displayChartS3Key = await this.exportDomElementToPNG(elementToCapture);
               
               // If html-to-image failed, try fallback method
               if (!displayChartS3Key) {
-                const fallbackFile = await this.exportChartElementFallback(chartContainer);
+                const fallbackFile = await this.exportChartElementFallback(elementToCapture);
                 if (fallbackFile) {
                   const uploadResult = await this.dashboardRepo.uploadPublicAsset(fallbackFile, 'IMAGE');
                   displayChartS3Key = uploadResult?.s3Key;
@@ -289,7 +293,8 @@ export class ActionsButtonsComponent implements OnInit {
               console.error('Failed to export metric widget:', err);
               // Try fallback method as last resort
               try {
-                const fallbackFile = await this.exportChartElementFallback(chartContainer);
+                const elementToCapture = isWorldMap && mapCard instanceof HTMLElement ? mapCard : chartContainer;
+                const fallbackFile = await this.exportChartElementFallback(elementToCapture);
                 if (fallbackFile) {
                   const uploadResult = await this.dashboardRepo.uploadPublicAsset(fallbackFile, 'IMAGE');
                   displayChartS3Key = uploadResult?.s3Key;

@@ -446,7 +446,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!widgetId) return null;
     const el = document.querySelector(`[data-widget-id="${widgetId}"]`);
     if (el instanceof HTMLElement) {
-      const innerBox = el.querySelector('.chart-box, .text-box');
+      const innerBox = el.querySelector('.chart-box, .text-box, .widget-container, .map-card');
       if (innerBox instanceof HTMLElement) return innerBox as HTMLElement;
       return el as HTMLElement;
     }
