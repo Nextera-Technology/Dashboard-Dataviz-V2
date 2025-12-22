@@ -18,6 +18,14 @@
             </div>
         </div>
 
+        <!-- Mailbox Section -->
+        <div class="mailbox-section" *ngIf="!isSidebarCollapsed" style="margin-bottom: 12px;">
+            <div class="nav-item" (click)="mailbox.toggleMailbox()">
+                <mat-icon>mail</mat-icon>
+                <span>{{ 'shared.mailbox.title' | translate }}</span>
+            </div>
+        </div>
+
         <!-- Certification Filter Section -->
         <div class="filter-section" *ngIf="!isSidebarCollapsed">
             <div class="section-title">
@@ -103,6 +111,11 @@
 
         <!-- Collapsed Icon Menu -->
         <div class="collapsed-menu" *ngIf="isSidebarCollapsed">
+            <!-- Mailbox Icon -->
+            <div class="collapsed-menu-item" (click)="mailbox.toggleMailbox()" [matTooltip]="'shared.mailbox.title' | translate" matTooltipPosition="right">
+                <mat-icon>mail</mat-icon>
+            </div>
+
             <!-- Certification Filter Icon -->
             <div class="collapsed-menu-item" [matTooltip]="'dashboard.sidebar.certification' | translate" matTooltipPosition="right">
                 <mat-icon>filter_list</mat-icon>
@@ -250,6 +263,9 @@
     <!-- Floating Chat Component -->
     <!-- <app-floating-chat></app-floating-chat> -->
 </div>
+
+<app-mailbox #mailbox></app-mailbox>
+
 <div *ngIf="autoExportDataLoading" class="auto-export-overlay">
   <div class="auto-export-box">
     <mat-spinner diameter="42"></mat-spinner>

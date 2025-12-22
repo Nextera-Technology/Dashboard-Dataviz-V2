@@ -465,18 +465,22 @@ export class PdfExportDialogComponent implements OnInit {
         // Calculate estimation
         const totalPdfs = result.totalPdfs || (allSchools.length + 1);
         const estimationSeconds = totalPdfs * 30; // 30 seconds per PDF
+        
+        const secondsText = this.translationService.translate('shared.export.pdfExportDialog.seconds');
+        const minutesText = this.translationService.translate('shared.export.pdfExportDialog.minutes');
+
         // Convert to minutes for better display if large number
         const estimationText = estimationSeconds < 60 
-          ? `${estimationSeconds} seconds` 
-          : `${Math.ceil(estimationSeconds / 60)} minutes`;
+          ? `${estimationSeconds} ${secondsText}` 
+          : `${Math.ceil(estimationSeconds / 60)} ${minutesText}`;
 
-        const currentLang = this.translationService.getCurrentLanguage();
-        const isFr = currentLang === 'fr' || currentLang === 'FR';
-
-        const title = isFr ? 'Exportation en cours' : 'Export in progress';
-        const message = isFr
-          ? `L'exportation de ${totalPdfs} fichiers PDF (1 général + ${allSchools.length} écoles) est en cours de traitement en arrière-plan.<br><br>Estimation: ~${estimationText}.<br><br>Vous recevrez les fichiers par email une fois terminé.`
-          : `Exporting ${totalPdfs} PDF files (1 general + ${allSchools.length} schools) is being processed in the background.<br><br>Estimation: ~${estimationText}.<br><br>You will receive the files via email once completed.`;
+        const title = this.translationService.translate('shared.export.pdfExportDialog.export_process_title');
+        let message = this.translationService.translate('shared.export.pdfExportDialog.export_process_message');
+        
+        // Manual parameter replacement
+        message = message.replace('{{totalPdfs}}', totalPdfs.toString())
+                         .replace('{{schoolCount}}', allSchools.length.toString())
+                         .replace('{{estimation}}', estimationText);
 
         await Swal.fire({
           icon: 'info',

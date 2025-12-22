@@ -16,6 +16,7 @@ import { Router } from '@angular/router';
 import { AuthService, User } from '../../../../core/auth/auth.service';
 import { SessionMonitorService } from '../../../../core/auth/session-monitor.service';
 import { QuickSearchComponent } from '../../../../shared/components/quick-search/quick-search.component';
+import { MailboxComponent } from '../../../../shared/components/mailbox/mailbox.component';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -30,7 +31,8 @@ import Swal from 'sweetalert2';
     MatSnackBarModule,
     MatTooltipModule,
     TranslatePipe,
-    QuickSearchComponent
+    QuickSearchComponent,
+    MailboxComponent
   ],
   template: `
     <div class="admin-layout">
@@ -55,6 +57,16 @@ import Swal from 'sweetalert2';
             <p class="user-email">{{ currentUser?.email }}</p>
             <p class="user-role">{{ currentUser?.role | titlecase }}</p>
           </div>
+        </div>
+
+        <!-- Mailbox Section -->
+        <div class="admin-nav" *ngIf="!isSidebarCollapsed" style="flex: 0; margin-bottom: 12px;">
+            <div class="nav-menu">
+                <a class="nav-item" (click)="mailbox.toggleMailbox()">
+                    <mat-icon>mail</mat-icon>
+                    <span>{{ 'shared.mailbox.title' | translate }}</span>
+                </a>
+            </div>
         </div>
 
         <!-- Admin Navigation -->
@@ -86,6 +98,11 @@ import Swal from 'sweetalert2';
 
         <!-- Collapsed Icon Menu -->
         <div class="collapsed-menu" *ngIf="isSidebarCollapsed">
+          <!-- Mailbox Icon -->
+          <div class="collapsed-menu-item" (click)="mailbox.toggleMailbox()" [matTooltip]="'shared.mailbox.title' | translate" matTooltipPosition="right">
+            <mat-icon>mail</mat-icon>
+          </div>
+
           <!-- Admin Dashboard Icon -->
           <a routerLink="/admin/dashboard-list" routerLinkActive="active" class="collapsed-menu-item" 
              [matTooltip]="'admin.dashboardList.header_title' | translate" matTooltipPosition="right">
@@ -445,6 +462,8 @@ import Swal from 'sweetalert2';
         </div>
       </main>
     </div>
+
+    <app-mailbox #mailbox></app-mailbox>
   `,
   styles: [`
     .admin-layout {

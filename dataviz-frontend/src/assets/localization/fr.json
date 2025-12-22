@@ -619,6 +619,13 @@
       "view_jd_dashboards": "Voir les Fiches de postes"
     },
     "shared": {
+      "actions": {
+        "edit": "Modifier",
+        "delete": "Supprimer"
+      },
+      "mailbox": {
+        "title": "Messagerie"
+      },
       "language_changed": "Langue modifiée",
       "close": "Fermer",
       "logout": "Se déconnecter",
@@ -679,7 +686,11 @@
           "schools_selected_suffix": "école(s) sélectionnée(s)",
           "please_select_one": "Veuillez sélectionner au moins une école",
           "cancel": "Annuler",
-          "export_button": "Exporter PDF"
+          "export_button": "Exporter PDF",
+          "export_process_title": "Exportation en cours",
+          "export_process_message": "L'exportation de {{totalPdfs}} fichiers PDF (1 général + {{schoolCount}} écoles) est en cours de traitement en arrière-plan.<br><br>Estimation: ~{{estimation}}.<br><br>Vous pourrez télécharger le résultat depuis la messagerie plus tard.",
+          "seconds": "secondes",
+          "minutes": "minutes"
         }
       },
       "dashboard": {

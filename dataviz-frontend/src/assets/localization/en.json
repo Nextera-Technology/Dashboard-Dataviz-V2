@@ -225,12 +225,6 @@
           "toggle_visibility": "Toggle section visibility"
         }
       },
-      "shared": {
-        "actions": {
-          "edit": "Edit",
-          "delete": "Delete"
-        }
-      },
       "dashboardBuilder": {
         "loading_dashboard": "Loading Dashboard...",
         "back_to_dashboards": "Back to Dashboards",
@@ -626,6 +620,9 @@
       "view_jd_dashboards": "View Job Descriptions"
     },
     "shared": {
+      "mailbox": {
+        "title": "Mailbox"
+      },
       "language_changed": "Language changed",
       "close": "Close",
       "logout": "Logout",
@@ -686,7 +683,11 @@
           "schools_selected_suffix": "school(s) selected",
           "please_select_one": "Please select at least one school",
           "cancel": "Cancel",
-          "export_button": "Export PDF"
+          "export_button": "Export PDF",
+          "export_process_title": "Export In Progress",
+          "export_process_message": "Exporting {{totalPdfs}} PDF files (1 general + {{schoolCount}} schools) is being processed in the background.<br><br>Estimation: ~{{estimation}}.<br><br>You can download the result from the mailbox later.",
+          "seconds": "seconds",
+          "minutes": "minutes"
         }
       },
       "dashboard": {
