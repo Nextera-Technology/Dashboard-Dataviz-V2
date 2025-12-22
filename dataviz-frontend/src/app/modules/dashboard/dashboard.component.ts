@@ -36,6 +36,7 @@ import { Apollo, gql } from 'apollo-angular';
 import * as am5plugins_exporting from '@amcharts/amcharts5/plugins/exporting';
 import { ShareDataService } from 'app/shared/services/share-data.service';
 import { PdfExportStateService } from 'app/shared/services/pdf-export-state.service';
+import { MailboxService } from 'app/shared/services/mailbox.service';
 import { Subscription } from 'rxjs';
 
 declare var am5xy: any;
@@ -164,7 +165,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private pdfExportState: PdfExportStateService, //  Track global PDF export state
     private dialog: MatDialog, // For PDF export options dialog
     private cdr: ChangeDetectorRef, // For explicit change detection in production
-    private ngZone: NgZone // For running outside Angular zone
+    private ngZone: NgZone, // For running outside Angular zone
+    public mailboxService: MailboxService
   ) {
     shareDataService.setIsDashboard(true);
     this.dashboardRepo = RepositoryFactory.createRepository('dashboard-builder') as DashboardBuilderRepository;

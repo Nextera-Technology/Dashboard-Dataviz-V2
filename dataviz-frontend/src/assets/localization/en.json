@@ -621,7 +621,7 @@
     },
     "shared": {
       "mailbox": {
-        "title": "Mailbox",
+        "title": "Notifications",
         "attachments": "Attachments",
         "no_notifications": "No notifications"
       },
@@ -687,7 +687,7 @@
           "cancel": "Cancel",
           "export_button": "Export PDF",
           "export_process_title": "Export In Progress",
-          "export_process_message": "Exporting {{totalPdfs}} PDF files (1 general + {{schoolCount}} schools) is being processed in the background.<br><br>Estimation: ~{{estimation}}.<br><br>You can download the result from the mailbox later.",
+          "export_process_message": "Exporting {{totalPdfs}} PDF files (1 general + {{schoolCount}} schools) is being processed in the background.<br><br>Estimation: ~{{estimation}}.<br><br>You can download the result from the notifications later.",
           "seconds": "seconds",
           "minutes": "minutes"
         }

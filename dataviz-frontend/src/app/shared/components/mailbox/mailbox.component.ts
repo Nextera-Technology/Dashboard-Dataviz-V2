@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { NotificationRepository } from '@dataviz/repositories/notification/notification.repository';
+import { MailboxService } from 'app/shared/services/mailbox.service';
 import { Subscription } from 'rxjs';
 import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
 
@@ -28,7 +28,7 @@ import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
       <div class="mailbox-header">
         <div class="header-title">
             <h3>{{ 'shared.mailbox.title' | translate }}</h3>
-            <span class="badge" *ngIf="totalData > 0">{{ totalData }}</span>
+            <span class="badge" *ngIf="(unreadCount$ | async)! > 0">{{ unreadCount$ | async }}</span>
         </div>
         <button mat-icon-button (click)="toggleMailbox()">
           <mat-icon>close</mat-icon>
@@ -312,13 +312,32 @@ export class MailboxComponent implements OnInit {
     page: 0
   };
 
-  private _notificationRepository = inject(NotificationRepository);
+  private _mailboxService = inject(MailboxService);
   private _cdr = inject(ChangeDetectorRef);
+  
+  public unreadCount$ = this._mailboxService.unreadCount$;
 
   constructor() {}
 
   ngOnInit() {
+    // Initial load
     this.loadNotifications();
+    
+    // Subscribe to notifications updates
+    this._mailboxService.notifications$.subscribe(notifications => {
+      this.notifications = notifications;
+      this._cdr.markForCheck();
+    });
+
+    this._mailboxService.loading$.subscribe(loading => {
+      this.loading = loading;
+      this._cdr.markForCheck();
+    });
+
+    this._mailboxService.totalData$.subscribe(total => {
+      this.totalData = total;
+      this._cdr.markForCheck();
+    });
   }
 
   toggleMailbox() {
@@ -329,37 +348,12 @@ export class MailboxComponent implements OnInit {
     this._cdr.markForCheck();
   }
 
-  async loadNotifications(append = false) {
-    if (this.loading) return;
-    
-    this.loading = true;
-    this._cdr.markForCheck();
-
-    try {
-      const result = await this._notificationRepository.getAllNotification(
-        this.pagination,
-        {}, // filter
-        { field: 'CREATED_AT', ascending: false } // sort
-      );
-
-      if (append) {
-        this.notifications = [...this.notifications, ...result.data];
-      } else {
-        this.notifications = result.data;
-      }
-      
-      this.totalData = result.totalData;
-    } catch (error) {
-      console.error('Failed to load notifications', error);
-    } finally {
-      this.loading = false;
-      this._cdr.markForCheck();
-    }
+  loadNotifications(append = false) {
+    this._mailboxService.loadNotifications(this.pagination, append);
   }
 
   resetAndLoad() {
     this.pagination.page = 0;
-    this.notifications = [];
     this.loadNotifications();
   }
 
@@ -387,6 +381,8 @@ export class MailboxComponent implements OnInit {
       this.expandedAttachmentIds.delete(notification._id);
     } else {
       this.expandedAttachmentIds.add(notification._id);
+      // Mark as read when expanded
+      this._mailboxService.markAsRead(notification);
     }
   }
 

@@ -624,7 +624,7 @@
         "delete": "Supprimer"
       },
       "mailbox": {
-        "title": "Messagerie",
+        "title": "Notifications",
         "attachments": "Pièces jointes",
         "no_notifications": "Aucune notification"
       },
@@ -690,7 +690,7 @@
           "cancel": "Annuler",
           "export_button": "Exporter PDF",
           "export_process_title": "Exportation en cours",
-          "export_process_message": "L'exportation de {{totalPdfs}} fichiers PDF (1 général + {{schoolCount}} écoles) est en cours de traitement en arrière-plan.<br><br>Estimation: ~{{estimation}}.<br><br>Vous pourrez télécharger le résultat depuis la messagerie plus tard.",
+          "export_process_message": "L'exportation de {{totalPdfs}} fichiers PDF (1 général + {{schoolCount}} écoles) est en cours de traitement en arrière-plan.<br><br>Estimation: ~{{estimation}}.<br><br>Vous pourrez télécharger le résultat depuis la notifications plus tard.",
           "seconds": "secondes",
           "minutes": "minutes"
         }

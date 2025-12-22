@@ -23,6 +23,7 @@
             <div class="nav-item" (click)="mailbox.toggleMailbox()">
                 <mat-icon>mail</mat-icon>
                 <span>{{ 'shared.mailbox.title' | translate }}</span>
+                <span class="mailbox-badge" *ngIf="(mailboxService.unreadCount$ | async)! > 0">{{ mailboxService.unreadCount$ | async }}</span>
             </div>
         </div>
 
