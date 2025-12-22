@@ -121,3 +121,22 @@ export const gqlDuplicateDashboardFromOther = gql`
     }
   }
 `;
+
+export const gqlExportDashboardWithSchoolsPdf = gql`
+  mutation exportDashboardWithSchoolsPdf($dashboardId: String!, $schoolFilters: [String!]!, $lang: String!) {
+    exportDashboardWithSchoolsPdf(dashboardId: $dashboardId, schoolFilters: $schoolFilters, lang: $lang) {
+      dashboardPdf {
+        url
+        filename
+        format
+      }
+      schoolPdfs {
+        schoolName
+        filename
+        url
+        s3Key
+      }
+      totalPdfs
+    }
+  }
+`;

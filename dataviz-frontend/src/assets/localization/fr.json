@@ -653,14 +653,18 @@
           "already_processing_message": "Un autre export PDF est en cours pour <b>{{widget}}</b>. Veuillez attendre qu'il soit terminé avant de commencer un nouvel export."
         },
         "pdfExportDialog": {
-          "title": "Exporter le Tableau de Bord en PDF",
-          "options": {
-            "all_schools": {
-              "title": "Tableau de Bord Complet + Toutes les Écoles",
+            "title": "Exporter le Tableau de Bord en PDF",
+            "options": {
+              "separate_schools_pdf": {
+                "title": "Tout le tableau de bord avec 1 fichier par école",
+                "description": "Générer des fichiers PDF individuels pour chaque école plus un fichier général"
+              },
+              "all_schools": {
+                "title": "Tableau de Bord Complet Avec Toutes les Écoles",
               "description": "Générer un PDF avec les données complètes du tableau de bord incluant toutes les informations des écoles"
             },
             "selected_school": {
-              "title": "Tableau de Bord + École Sélectionnée",
+              "title": "Tableau de Bord Avec École Sélectionnée",
               "description": "Générer un PDF filtré par la ou les école(s) que vous sélectionnez"
             },
             "no_school": {

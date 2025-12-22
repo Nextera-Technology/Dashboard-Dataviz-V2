@@ -21,7 +21,8 @@ import {
   gqlExportDashboardData,
   gqlRegenerateAutoAnalysisDashboard,
   gqlDuplicateDashboardFromOther,
-  gqlMergeAsset
+  gqlMergeAsset,
+  gqlExportDashboardWithSchoolsPdf
 } from "@dataviz/graphql/mutations/dashboard-builder/dashboard-builder.mutation";
 import { gqlUploadPublicAsset } from "@dataviz/graphql/mutations/file/file-upload.mutation";
 import { environment } from 'environments/environment';
@@ -730,6 +731,40 @@ export class DashboardBuilderRepository {
         message: "Failed to get title/class dropdown options.",
         originalError: error,
         queryOrMutation: query,
+        input: JSON.stringify(variables),
+      };
+    }
+  }
+
+  /**
+   * Export dashboard PDF with separate files for each school.
+   * @param {string} dashboardId - The ID of the dashboard.
+   * @param {string[]} schoolFilters - Array of school names.
+   * @returns {Promise<any>} - The export result.
+   */
+  async exportDashboardWithSchoolsPdf(dashboardId: string, schoolFilters: string[]) {
+    if (!dashboardId || !schoolFilters) {
+      throw new Error("Dashboard ID and school filters are required");
+    }
+    const mutation = gqlExportDashboardWithSchoolsPdf;
+    const variables = { 
+      dashboardId, 
+      schoolFilters,
+      lang: this.translation.getCurrentLanguage().toUpperCase() === 'FR' ? 'FR' : 'EN'
+    };
+
+    try {
+      const mutationResult = await this._client.GraphqlMutate(
+        mutation,
+        variables
+      );
+
+      return mutationResult.exportDashboardWithSchoolsPdf;
+    } catch (error) {
+      throw {
+        message: "Failed to export dashboard with schools PDF.",
+        originalError: error,
+        queryOrMutation: mutation,
         input: JSON.stringify(variables),
       };
     }

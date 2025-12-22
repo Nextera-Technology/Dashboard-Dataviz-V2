@@ -662,12 +662,16 @@
         "pdfExportDialog": {
           "title": "Export Dashboard to PDF",
           "options": {
+            "separate_schools_pdf": {
+              "title": "All Dashboard with 1 file each school",
+              "description": "Generate individual PDF files for each school plus one general file "
+            },
             "all_schools": {
-              "title": "All Dashboard + All Schools",
+              "title": "All Dashboard With All Schools",
               "description": "Generate PDF with complete dashboard data including all school information"
             },
             "selected_school": {
-              "title": "Dashboard + Selected School",
+              "title": "Dashboard With Selected School",
               "description": "Generate PDF filtered by specific school(s) you select"
             },
             "no_school": {

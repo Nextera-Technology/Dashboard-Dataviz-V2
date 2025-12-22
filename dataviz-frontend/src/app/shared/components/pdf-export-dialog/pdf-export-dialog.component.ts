@@ -10,6 +10,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { DashboardBuilderRepository } from '@dataviz/repositories/dashboard-builder/dashboard-builder.repository';
 import { TranslatePipe } from 'app/shared/pipes/translate.pipe';
+import { TranslationService } from 'app/shared/services/translation/translation.service';
+import Swal from 'sweetalert2';
 
 export interface PdfExportDialogData {
   dashboardId: string;
@@ -18,7 +20,7 @@ export interface PdfExportDialogData {
 }
 
 export interface PdfExportResult {
-  exportType: 'all_schools' | 'selected_school' | 'no_school';
+  exportType: 'all_schools' | 'selected_school' | 'no_school' | 'separate_schools_pdf';
   selectedSchools: string[];
 }
 
@@ -59,23 +61,22 @@ export interface PdfExportResult {
         <div class="space-y-4">
           <!-- Export Options -->
           <mat-radio-group [(ngModel)]="selectedOption" class="w-full">
-            <!-- Option 1: All Dashboard + All Schools (temporarily hidden) -->
-            <!--
-            <div class="fuse-option-card" [class.selected]="selectedOption === 'all_schools'" (click)="selectedOption = 'all_schools'">
+            
+            <!-- Option New: All Dashboard with 1 file each school -->
+            <div class="fuse-option-card" [class.selected]="selectedOption === 'separate_schools_pdf'" (click)="selectedOption = 'separate_schools_pdf'">
               <div class="flex items-center">
-                <mat-radio-button class="mr-4" value="all_schools"></mat-radio-button>
+                <mat-radio-button class="mr-4" value="separate_schools_pdf"></mat-radio-button>
                 <div class="flex items-start space-x-4">
-                  <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-50">
-                    <mat-icon class="text-blue-600">public</mat-icon>
+                  <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-purple-50">
+                    <mat-icon class="text-purple-600">collections_bookmark</mat-icon>
                   </div>
                   <div>
-                    <h3 class="fuse-option-title">{{ 'shared.export.pdfExportDialog.options.all_schools.title' | translate }}</h3>
-                    <p class="fuse-option-paragraf">{{ 'shared.export.pdfExportDialog.options.all_schools.description' | translate }}</p>
+                    <h3 class="fuse-option-title">{{ 'shared.export.pdfExportDialog.options.separate_schools_pdf.title' | translate }}</h3>
+                    <p class="fuse-option-paragraf">{{ 'shared.export.pdfExportDialog.options.separate_schools_pdf.description' | translate }}</p>
                   </div>
                 </div>
               </div>
             </div>
-            -->
 
             <!-- Option 2: Dashboard + Selected School -->
             <div class="fuse-option-card mt-3" [class.selected]="selectedOption === 'selected_school'" (click)="selectedOption = 'selected_school'">
@@ -345,6 +346,7 @@ export interface PdfExportResult {
     :host-context(.theme-dark) .bg-primary-50,
     :host-context(.theme-dark) .bg-blue-50,
     :host-context(.theme-dark) .bg-indigo-50,
+    :host-context(.theme-dark) .bg-purple-50,
     :host-context(.theme-dark) .bg-green-50,
     :host-context(.theme-dark) .bg-gray-100 {
       background: rgba(255,255,255,0.08) !important;
@@ -353,12 +355,13 @@ export interface PdfExportResult {
     :host-context(.theme-dark) .text-primary-600,
     :host-context(.theme-dark) .text-blue-600,
     :host-context(.theme-dark) .text-indigo-600,
+    :host-context(.theme-dark) .text-purple-600,
     :host-context(.theme-dark) .text-green-600,
     :host-context(.theme-dark) .text-gray-600 { color: rgba(255,255,255,0.92) !important; }
   `]
 })
 export class PdfExportDialogComponent implements OnInit {
-  selectedOption: 'all_schools' | 'selected_school' | 'no_school' = 'selected_school';
+  selectedOption: 'all_schools' | 'selected_school' | 'no_school' | 'separate_schools_pdf' = 'separate_schools_pdf';
   schoolSelections: { [key: string]: boolean } = {};
   availableSchools: string[] = [];
   filteredSchools: string[] = [];
@@ -368,7 +371,8 @@ export class PdfExportDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<PdfExportDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: PdfExportDialogData,
-    private dashboardRepository: DashboardBuilderRepository
+    private dashboardRepository: DashboardBuilderRepository,
+    private translationService: TranslationService
   ) {}
 
   async ngOnInit() {
@@ -442,12 +446,60 @@ export class PdfExportDialogComponent implements OnInit {
     this.dialogRef.close(null);
   }
 
-  onConfirm(event?: Event): void {
+  async onConfirm(event?: Event): Promise<void> {
     if (event) {
       event.preventDefault();
       event.stopPropagation();
     }
     
+    if (this.selectedOption === 'separate_schools_pdf') {
+      try {
+        const allSchools = this.availableSchools;
+        
+        // Call backend API
+        const result = await this.dashboardRepository.exportDashboardWithSchoolsPdf(
+          this.data.dashboardId,
+          allSchools
+        );
+
+        // Calculate estimation
+        const totalPdfs = result.totalPdfs || (allSchools.length + 1);
+        const estimationSeconds = totalPdfs * 30; // 30 seconds per PDF
+        // Convert to minutes for better display if large number
+        const estimationText = estimationSeconds < 60 
+          ? `${estimationSeconds} seconds` 
+          : `${Math.ceil(estimationSeconds / 60)} minutes`;
+
+        const currentLang = this.translationService.getCurrentLanguage();
+        const isFr = currentLang === 'fr' || currentLang === 'FR';
+
+        const title = isFr ? 'Exportation en cours' : 'Export in progress';
+        const message = isFr
+          ? `L'exportation de ${totalPdfs} fichiers PDF (1 général + ${allSchools.length} écoles) est en cours de traitement en arrière-plan.<br><br>Estimation: ~${estimationText}.<br><br>Vous recevrez les fichiers par email une fois terminé.`
+          : `Exporting ${totalPdfs} PDF files (1 general + ${allSchools.length} schools) is being processed in the background.<br><br>Estimation: ~${estimationText}.<br><br>You will receive the files via email once completed.`;
+
+        await Swal.fire({
+          icon: 'info',
+          title: title,
+          html: message,
+          confirmButtonText: 'OK'
+        });
+
+        this.dialogRef.close(null);
+      } catch (error) {
+        console.error('Export failed:', error);
+        const currentLang = this.translationService.getCurrentLanguage();
+        const isFr = currentLang === 'fr' || currentLang === 'FR';
+        
+        Swal.fire({
+          icon: 'error',
+          title: isFr ? 'Erreur' : 'Error',
+          text: isFr ? "Échec du démarrage du processus d'exportation" : 'Failed to start export process'
+        });
+      }
+      return;
+    }
+
     let selectedSchools: string[] = [];
     
     // if (this.selectedOption === 'all_schools') {
