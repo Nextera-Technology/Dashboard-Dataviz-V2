@@ -621,7 +621,9 @@
     },
     "shared": {
       "mailbox": {
-        "title": "Mailbox"
+        "title": "Mailbox",
+        "attachments": "Attachments",
+        "no_notifications": "No notifications"
       },
       "language_changed": "Language changed",
       "close": "Close",

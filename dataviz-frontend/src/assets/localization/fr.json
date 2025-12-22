@@ -624,7 +624,9 @@
         "delete": "Supprimer"
       },
       "mailbox": {
-        "title": "Messagerie"
+        "title": "Messagerie",
+        "attachments": "Pièces jointes",
+        "no_notifications": "Aucune notification"
       },
       "language_changed": "Langue modifiée",
       "close": "Fermer",
