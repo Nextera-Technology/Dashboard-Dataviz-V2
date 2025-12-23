@@ -160,7 +160,7 @@ import Swal from 'sweetalert2';
               <mat-icon>{{ currentTheme === 'theme-dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
             </button>
             <button mat-icon-button (click)="openWelcomeModal()" [matTooltip]="'admin.welcomeModal.quick_actions_label' | translate" aria-label="Open admin quick actions">
-              <mat-icon>front_hand</mat-icon>
+              <mat-icon>flash_on</mat-icon>
             </button>
           <!-- User Menu -->
           <div class="user-menu" style="display:flex; align-items:center; gap:8px;">
