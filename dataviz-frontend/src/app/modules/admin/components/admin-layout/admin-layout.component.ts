@@ -159,6 +159,9 @@ import Swal from 'sweetalert2';
             <button mat-icon-button (click)="toggleTheme()" class="theme-toggle" [matTooltip]="currentTheme === 'theme-dark' ? 'Light mode' : 'Dark mode'">
               <mat-icon>{{ currentTheme === 'theme-dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
             </button>
+            <button mat-icon-button (click)="openWelcomeModal()" [matTooltip]="'admin.welcomeModal.quick_actions_label' | translate" aria-label="Open admin quick actions">
+              <mat-icon>front_hand</mat-icon>
+            </button>
           <!-- User Menu -->
           <div class="user-menu" style="display:flex; align-items:center; gap:8px;">
             <!-- Language dropdown -->
@@ -1020,7 +1023,7 @@ export class AdminLayoutComponent implements OnInit {
     this.applyTheme(this.currentTheme === 'theme-dark' ? 'theme-navy' : 'theme-dark');
   }
 
-  private openWelcomeModal(): void {
+  openWelcomeModal(): void {
     const lastId = localStorage.getItem('dashboardId');
     const t = (key: string, fallback: string): string => this.translation.translate(key) || fallback;
 

@@ -182,6 +182,312 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.langMenuOpen = false;
   }
 
+  openWelcomeModal(): void {
+    const lastId = localStorage.getItem('dashboardId');
+    const t = (key: string, fallback: string): string => this.translation.translate(key) || fallback;
+
+    let title = t('admin.welcomeModal.title', 'What do you want to do today?');
+    let subtitle = t('admin.welcomeModal.subtitle', "Tell us what you're looking for or choose from quick actions");
+    let searchPlaceholder = t('admin.welcomeModal.search_placeholder', 'Search users, dashboards...');
+    let searchHint = t('admin.welcomeModal.search_hint', 'Type to search. Results will appear here.');
+    let quickActionsLabel = t('admin.welcomeModal.quick_actions_label', 'Quick actions');
+    let actionCreateEsTitle = t('admin.welcomeModal.action_create_es_title', 'Create employability survey dashboard');
+    let actionCreateJdTitle = t('admin.welcomeModal.action_create_jd_title', 'Create job description dashboard');
+    let actionNewDashboardSub = t('admin.welcomeModal.action_new_dashboard_sub', 'New dashboard');
+    let actionViewEsTitle = t('admin.welcomeModal.action_view_es_title', 'Enter view dashboard employability survey (last)');
+    let actionViewJdTitle = t('admin.welcomeModal.action_view_jd_title', 'Enter view dashboard job description (last)');
+    let actionViewLastSub = t('admin.welcomeModal.action_view_last_sub', 'Uses last dashboard');
+    let footerHint = t('admin.welcomeModal.footer_hint', 'You can close this and continue; it appears only on first entry.');
+
+    let noResultsText = t('admin.welcomeModal.no_results', 'No results found.');
+    let resultSubJob = t('admin.welcomeModal.result_sub_job', 'job description');
+    let resultSubEs = t('admin.welcomeModal.result_sub_es', 'employability survey');
+    let resultSubUser = t('admin.welcomeModal.result_sub_user', 'user');
+
+    const html = `
+      <div class="welcome-modal" style="text-align:left;">
+        <div class="wm-header" style="padding:16px 18px;border-bottom:1px solid var(--dv-rail-border);background:linear-gradient(135deg,var(--dv-item-bg),var(--dv-item-hover-bg));border-top-left-radius:16px;border-top-right-radius:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <div class="wm-header-left">
+            <div id="wm-title" style="font-size:20px;font-weight:800;">${title}</div>
+            <div id="wm-subtitle" style="font-size:12px;color:var(--text-secondary);">${subtitle}</div>
+          </div>
+          <div class="wm-header-right" style="display:flex;align-items:center;gap:8px;position:relative;">
+            <div class="wm-lang" style="position:relative;">
+              <button id="wm-lang-toggle" style="display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--dv-rail-border);border-radius:10px;background:var(--dv-item-bg);color:var(--text-primary);">
+                <img id="wm-lang-flag" src="${this.translation.getCurrentLanguage() === 'fr' 
+                  ? 'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/fr.svg' 
+                  : 'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/gb.svg'}" alt="lang" style="width:20px;height:14px;object-fit:cover;border-radius:2px;" />
+                <span id="wm-lang-label" style="font-size:12px;">${this.translation.getCurrentLanguage() === 'fr' ? 'FR' : 'EN'}</span>
+                <span style="font-size:10px;color:var(--text-secondary);">▼</span>
+              </button>
+              <div id="wm-lang-menu" style="display:none;position:absolute;right:0;top:36px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.08);overflow:hidden;min-width:140px;z-index:8500;background:var(--dv-item-bg);border:1px solid var(--dv-rail-border);">
+                <button id="wm-lang-en-item" class="wm-lang-item" style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:transparent;border:none;width:100%;text-align:left;color:var(--text-primary)">
+                  <img src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/gb.svg" alt="EN" style="width:20px;height:14px;object-fit:cover" />
+                  <span>English</span>
+                </button>
+                <button id="wm-lang-fr-item" class="wm-lang-item" style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:transparent;border:none;width:100%;text-align:left;color:var(--text-primary)">
+                  <img src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/fr.svg" alt="FR" style="width:20px;height:14px;object-fit:cover" />
+                  <span>Français</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wm-body" style="padding:16px 18px;">
+          <div id="welcome-search" style="display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--dv-rail-border);border-radius:14px;background:var(--dv-item-bg);box-shadow:0 6px 16px rgba(17,24,39,0.08);">
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--dv-item-hover-bg);color:var(--text-secondary);font-size:14px;">🔎</span>
+            <input id="wm-search-input" type="text" placeholder="${searchPlaceholder}" style="flex:1;border:none;background:transparent;color:var(--text-primary);outline:none;font-size:13px;" />
+          </div>
+
+          <div id="wm-results" style="margin-top:12px;">
+            <div id="wm-hint" style="font-size:12px;color:var(--text-secondary);">${searchHint}</div>
+          </div>
+
+          <div id="wm-quick-label" style="margin-top:16px;font-size:12px;color:var(--text-secondary);">${quickActionsLabel}</div>
+          <div class="wm-actions" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+            <button id="action-create-es" class="wm-action">
+              <span class="wm-action-icon">📊</span>
+              <div class="wm-action-text">
+                <div id="wm-action-create-es-title" class="wm-action-title">${actionCreateEsTitle}</div>
+                <div id="wm-action-create-es-sub" class="wm-action-sub">${actionNewDashboardSub}</div>
+              </div>
+            </button>
+            <button id="action-create-jd" class="wm-action">
+              <span class="wm-action-icon">🗂️</span>
+              <div class="wm-action-text">
+                <div id="wm-action-create-jd-title" class="wm-action-title">${actionCreateJdTitle}</div>
+                <div id="wm-action-create-jd-sub" class="wm-action-sub">${actionNewDashboardSub}</div>
+              </div>
+            </button>
+            <button id="action-view-es" class="wm-action">
+              <span class="wm-action-icon">📄</span>
+              <div class="wm-action-text">
+                <div id="wm-action-view-es-title" class="wm-action-title">${actionViewEsTitle}</div>
+                <div id="wm-action-view-es-sub" class="wm-action-sub">${actionViewLastSub}</div>
+              </div>
+            </button>
+            <button id="action-view-jd" class="wm-action">
+              <span class="wm-action-icon">📄</span>
+              <div class="wm-action-text">
+                <div id="wm-action-view-jd-title" class="wm-action-title">${actionViewJdTitle}</div>
+                <div id="wm-action-view-jd-sub" class="wm-action-sub">${actionViewLastSub}</div>
+              </div>
+            </button>
+          </div>
+          <div id="wm-footer-hint" style="margin-top:14px;font-size:11px;color:var(--text-secondary);">${footerHint}</div>
+        </div>
+      </div>
+      <style>
+        .wm-action { display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--dv-rail-border);border-radius:14px;background:var(--dv-item-bg);cursor:pointer;transition:transform .15s ease, box-shadow .15s ease; }
+        .wm-action:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(17,24,39,0.10); }
+        .wm-action-icon { font-size:18px; }
+        .wm-action-title { font-size:13px;font-weight:600;color:var(--text-primary); }
+        .wm-action-sub { font-size:11px;color:var(--text-secondary); }
+        .wm-result-item { display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--dv-rail-border); border-radius:12px; background:var(--dv-item-bg); cursor:pointer; }
+        .wm-result-item + .wm-result-item { margin-top:8px; }
+        .wm-result-icon { width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:6px; background:var(--dv-item-hover-bg); font-size:14px; }
+        .wm-result-title { font-size:13px; font-weight:600; color:var(--text-primary); }
+        .wm-result-sub { font-size:11px; color:var(--text-secondary); }
+        .wm-chip { font-size:10px; padding:2px 6px; border-radius:8px; background:var(--dv-item-hover-bg); color:var(--text-secondary); margin-left:auto; }
+        .wm-lang button { transition:background .15s ease, box-shadow .15s ease; }
+        .wm-lang button:hover { background: var(--dv-item-hover-bg); box-shadow: 0 6px 12px rgba(17,24,39,0.08); }
+        .wm-lang-item:hover { background: var(--dv-item-hover-bg); }
+      </style>
+    `;
+
+    Swal.fire({
+      html,
+      width: 720,
+      padding: '0',
+      showConfirmButton: false,
+      showCloseButton: true,
+      allowOutsideClick: true,
+      allowEscapeKey: true,
+      background: 'var(--dv-item-bg)',
+      backdrop: this.currentTheme === 'theme-dark' ? 'rgba(2,6,23,0.72)' : 'rgba(17,24,39,0.28)',
+      customClass: {
+        container: 'dv-welcome-container',
+        popup: 'dv-welcome-popup'
+      },
+      didOpen: () => {
+        let langSub: any = null;
+        const container = Swal.getHtmlContainer();
+        if (!container) return;
+
+        const goDashboard = (id: string | null) => {
+          if (id) {
+            try { localStorage.setItem('dashboardId', id); } catch {}
+            this.shareDataService.setDashboardId(id);
+            this.router.navigate(['/dashboard']);
+          } else {
+            this.router.navigate(['/admin/dashboard-list']);
+          }
+          Swal.close();
+        };
+
+        const resultsEl = container.querySelector('#wm-results') as HTMLElement | null;
+        const searchInput = container.querySelector('#wm-search-input') as HTMLInputElement | null;
+        const titleEl = container.querySelector('#wm-title') as HTMLElement | null;
+        const subtitleEl = container.querySelector('#wm-subtitle') as HTMLElement | null;
+        const hintEl = container.querySelector('#wm-hint') as HTMLElement | null;
+        const quickLabelEl = container.querySelector('#wm-quick-label') as HTMLElement | null;
+        const acEsTitleEl = container.querySelector('#wm-action-create-es-title') as HTMLElement | null;
+        const acEsSubEl = container.querySelector('#wm-action-create-es-sub') as HTMLElement | null;
+        const acJdTitleEl = container.querySelector('#wm-action-create-jd-title') as HTMLElement | null;
+        const acJdSubEl = container.querySelector('#wm-action-create-jd-sub') as HTMLElement | null;
+        const vEsTitleEl = container.querySelector('#wm-action-view-es-title') as HTMLElement | null;
+        const vEsSubEl = container.querySelector('#wm-action-view-es-sub') as HTMLElement | null;
+        const vJdTitleEl = container.querySelector('#wm-action-view-jd-title') as HTMLElement | null;
+        const vJdSubEl = container.querySelector('#wm-action-view-jd-sub') as HTMLElement | null;
+        const footerHintEl = container.querySelector('#wm-footer-hint') as HTMLElement | null;
+
+        let debounceTimer: any = null;
+        const renderResults = (items: any[]) => {
+          if (!resultsEl) return;
+          if (!items || items.length === 0) {
+            resultsEl.innerHTML = `<div style="font-size:12px;color:var(--text-secondary);">${noResultsText}</div>`;
+            return;
+          }
+          resultsEl.innerHTML = items.map((item: any) => {
+            const cat = (item.category || '').toLowerCase();
+            const icon = cat.includes('job') ? '🗂️' : (cat.includes('es') ? '📊' : (cat.includes('user') ? '👤' : '🔎'));
+            const subtitle = cat.includes('job')
+              ? `${resultSubJob}`
+              : (cat.includes('es')
+                  ? `${resultSubEs}`
+                  : (cat.includes('user')
+                      ? `${resultSubUser}`
+                      : (item.subtitle || '')));
+            return `
+              <div class="wm-result-item" data-id="${item.id || ''}" data-cat="${item.category || ''}">
+                <span class="wm-result-icon">${icon}</span>
+                <div>
+                  <div class="wm-result-title">${item.title || item.name || 'Untitled'}</div>
+                  <div class="wm-result-sub">${subtitle}</div>
+                </div>
+                <span class="wm-chip">${item.category || ''}</span>
+              </div>
+            `;
+          }).join('');
+
+          resultsEl.querySelectorAll('.wm-result-item').forEach(el => {
+            el.addEventListener('click', () => {
+              const id = (el as HTMLElement).getAttribute('data-id');
+              const cat = ((el as HTMLElement).getAttribute('data-cat') || '').toUpperCase();
+              if (cat.includes('USER')) {
+                this.router.navigate(['/admin/user-management']);
+                Swal.close();
+                return;
+              }
+              if (id) {
+                this.shareDataService.setDashboardId(id);
+                this.router.navigate(['/dashboard']);
+                Swal.close();
+              }
+            });
+          });
+        };
+
+        const performSearch = async (query: string) => {
+          if (!query || query.length < 2) { renderResults([]); return; }
+          try {
+            const result = await this.apollo.query<any>({
+              query: gql`query QuickSearch($input: QuickSearchInput!) { quickSearch(input: $input) { results { category items { id title name subtitle } } } }`,
+              variables: { input: { query, categories: null, limit: 8, page: 1 } },
+              fetchPolicy: 'network-only'
+            }).toPromise();
+            const flat = (result?.data?.quickSearch?.results || []).flatMap((cat: any) =>
+              (cat.items || []).map((it: any) => ({ ...it, category: cat.category }))
+            );
+            renderResults(flat);
+          } catch (e) {
+            renderResults([]);
+          }
+        };
+
+        const setVars = () => {
+          title = t('admin.welcomeModal.title', 'What do you want to do today?');
+          subtitle = t('admin.welcomeModal.subtitle', "Tell us what you're looking for or choose from quick actions");
+          searchPlaceholder = t('admin.welcomeModal.search_placeholder', 'Search users, dashboards...');
+          searchHint = t('admin.welcomeModal.search_hint', 'Type to search. Results will appear here.');
+          quickActionsLabel = t('admin.welcomeModal.quick_actions_label', 'Quick actions');
+          actionCreateEsTitle = t('admin.welcomeModal.action_create_es_title', 'Create employability survey dashboard');
+          actionCreateJdTitle = t('admin.welcomeModal.action_create_jd_title', 'Create job description dashboard');
+          actionNewDashboardSub = t('admin.welcomeModal.action_new_dashboard_sub', 'New dashboard');
+          actionViewEsTitle = t('admin.welcomeModal.action_view_es_title', 'Enter view dashboard employability survey (last)');
+          actionViewJdTitle = t('admin.welcomeModal.action_view_jd_title', 'Enter view dashboard job description (last)');
+          actionViewLastSub = t('admin.welcomeModal.action_view_last_sub', 'Uses last dashboard');
+          footerHint = t('admin.welcomeModal.footer_hint', 'You can close this and continue; it appears only on first entry.');
+          noResultsText = t('admin.welcomeModal.no_results', 'No results found.');
+          resultSubJob = t('admin.welcomeModal.result_sub_job', 'job description');
+          resultSubEs = t('admin.welcomeModal.result_sub_es', 'employability survey');
+          resultSubUser = t('admin.welcomeModal.result_sub_user', 'user');
+        };
+
+        const updateTexts = () => {
+          titleEl && (titleEl.textContent = title);
+          subtitleEl && (subtitleEl.textContent = subtitle);
+          hintEl && (hintEl.textContent = searchHint);
+          quickLabelEl && (quickLabelEl.textContent = quickActionsLabel);
+          acEsTitleEl && (acEsTitleEl.textContent = actionCreateEsTitle);
+          acEsSubEl && (acEsSubEl.textContent = actionNewDashboardSub);
+          acJdTitleEl && (acJdTitleEl.textContent = actionCreateJdTitle);
+          acJdSubEl && (acJdSubEl.textContent = actionNewDashboardSub);
+          vEsTitleEl && (vEsTitleEl.textContent = actionViewEsTitle);
+          vEsSubEl && (vEsSubEl.textContent = actionViewLastSub);
+          vJdTitleEl && (vJdTitleEl.textContent = actionViewJdTitle);
+          vJdSubEl && (vJdSubEl.textContent = actionViewLastSub);
+          footerHintEl && (footerHintEl.textContent = footerHint);
+          searchInput && (searchInput.placeholder = searchPlaceholder);
+        };
+
+        setVars();
+        updateTexts();
+
+        const langToggle = container.querySelector('#wm-lang-toggle') as HTMLElement | null;
+        const langMenu = container.querySelector('#wm-lang-menu') as HTMLElement | null;
+        const langFlag = container.querySelector('#wm-lang-flag') as HTMLImageElement | null;
+        const langLabel = container.querySelector('#wm-lang-label') as HTMLElement | null;
+        const langEnItem = container.querySelector('#wm-lang-en-item');
+        const langFrItem = container.querySelector('#wm-lang-fr-item');
+
+        const updateFlag = () => {
+          const cur = this.translation.getCurrentLanguage();
+          if (langFlag) langFlag.src = cur === 'fr'
+            ? 'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/fr.svg'
+            : 'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/flags/4x3/gb.svg';
+          if (langLabel) langLabel.textContent = cur === 'fr' ? 'FR' : 'EN';
+        };
+
+        langToggle?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (langMenu) langMenu.style.display = langMenu.style.display === 'none' || !langMenu.style.display ? 'block' : 'none';
+        });
+        document.addEventListener('click', () => { if (langMenu) langMenu.style.display = 'none'; });
+        langEnItem?.addEventListener('click', () => { this.setLanguage('en'); if (langMenu) langMenu.style.display = 'none'; });
+        langFrItem?.addEventListener('click', () => { this.setLanguage('fr'); if (langMenu) langMenu.style.display = 'none'; });
+
+        langSub = this.translation.translationsLoaded$.subscribe(() => {
+          setVars();
+          updateTexts();
+          updateFlag();
+        });
+
+        searchInput?.addEventListener('input', (e: any) => {
+          const q = (e.target?.value || '').toString();
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(() => performSearch(q), 300);
+        });
+
+        container.querySelector('#action-create-es')?.addEventListener('click', () => { this.router.navigate(['/admin/dashboard-create']); Swal.close(); });
+        container.querySelector('#action-create-jd')?.addEventListener('click', () => { this.router.navigate(['/admin/job-description-create']); Swal.close(); });
+        container.querySelector('#action-view-es')?.addEventListener('click', () => goDashboard(lastId));
+        container.querySelector('#action-view-jd')?.addEventListener('click', () => goDashboard(lastId));
+      },
+    });
+  }
+
   async exportFullDashboardToPDF(opts?: { exportType: 'all_schools' | 'selected_school' | 'no_school'; selectedSchools: string[] }): Promise<void> {
     if (!this.dashboard || !this.dashboardId) return;
     
