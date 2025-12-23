@@ -44,6 +44,6 @@ export class StatusGridWidgetComponent implements OnInit {
   }
 
   getIconUrl(icon: string): string {
-    return `https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/${icon}`;
+    return `https://staging-sg-map.s3.ap-southeast-1.amazonaws.com/public/${icon}`;
   }
 } 

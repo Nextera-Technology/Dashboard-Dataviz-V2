@@ -202,11 +202,11 @@ export class TextWidgetComponent {
 
   getActionIcon(iconName: string): string {
     const iconMap: { [key: string]: string } = {
-      'paragraph.png': 'https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png',
-      'excel.png': 'https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png',
-      'audience_4644048.png': 'https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png'
+      'paragraph.png': 'https://staging-sg-map.s3.ap-southeast-1.amazonaws.com/public/paragraph.png',
+      'excel.png': 'https://staging-sg-map.s3.ap-southeast-1.amazonaws.com/public/excel.png',
+      'audience_4644048.png': 'https://staging-sg-map.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png'
     };
-    return iconMap[iconName] || `https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/${iconName}`;
+    return iconMap[iconName] || `https://staging-sg-map.s3.ap-southeast-1.amazonaws.com/public/${iconName}`;
   }
 
   getAnalysisButtonText(): string {

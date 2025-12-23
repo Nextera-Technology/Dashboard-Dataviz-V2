@@ -93,13 +93,13 @@ import { SortedBarChartWidgetComponent } from "../widgets/sorted-bar-chart-widge
                 <div class="button-container">
                   <button class="info-button" title="Information">
                     <img
-                      src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/paragraph.png "
+                      src="https://staging-sg-map.s3.ap-southeast-1.amazonaws.com/public/paragraph.png "
                       alt="Info"
                     />
                   </button>
                   <button class="info-button primary" title="Export">
                     <img
-                      src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/excel.png"
+                      src="https://staging-sg-map.s3.ap-southeast-1.amazonaws.com/public/excel.png"
                       alt="Download"
                     />
                   </button>
@@ -109,7 +109,7 @@ import { SortedBarChartWidgetComponent } from "../widgets/sorted-bar-chart-widge
                     title="Scope"
                   >
                     <img
-                      src="https://staging-sg-map-bucket.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
+                      src="https://staging-sg-map.s3.ap-southeast-1.amazonaws.com/public/audience_4644048.png"
                       alt="Download"
                     />
                   </button>
