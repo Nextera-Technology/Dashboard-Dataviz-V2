@@ -8,7 +8,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 import { NotificationService } from '../../../../../@dataviz/services/notification/notification.service';
-import { Apollo } from 'apollo-angular';
+import { Apollo, gql } from 'apollo-angular';
 import { QUICK_SEARCH_QUERY } from '../../../../../@dataviz/graphql/queries/quick-search/quick-search.query';
 import { ShareDataService } from 'app/shared/services/share-data.service';
 import { TranslationService } from '../../../../shared/services/translation/translation.service';
@@ -1322,10 +1322,115 @@ export class AdminLayoutComponent implements OnInit {
           debounceTimer = setTimeout(() => performSearch(q), 300);
         });
 
+        const openDashboardPicker = async (typeOfUsage: 'EMPLOYABILITY_SURVEY' | 'JOB_DESCRIPTION_EVALUATION') => {
+          try {
+            const res = await this.apollo.query<any>({
+              query: gql`query getAllDashboards($filter: DashboardFilterInput){ getAllDashboards(filter:$filter){ data { _id name title sources { certification classes } typeOfUsage } } }`,
+              variables: { filter: { typeOfUsage } },
+              fetchPolicy: 'network-only'
+            }).toPromise();
+            const all = res?.data?.getAllDashboards?.data || [];
+
+            const pickerHtml = `
+              <div style="padding:16px; text-align:left;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                  <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:8px;background:var(--dv-item-hover-bg);">📚</span>
+                  <div style="font-size:16px;font-weight:800;">Select a dashboard</div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 160px 160px;gap:8px;align-items:center;">
+                  <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--dv-rail-border);border-radius:10px;background:var(--dv-item-bg);">
+                    <span style="width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:var(--dv-item-hover-bg);">🔎</span>
+                    <input id="picker-search" type="text" placeholder="Filter by name, certification, or class" style="flex:1;border:none;background:transparent;color:var(--text-primary);outline:none;font-size:12px;" />
+                  </div>
+                  <select id="picker-title" style="height:32px;padding:6px 8px;border:1px solid var(--dv-rail-border);border-radius:10px;background:var(--dv-item-bg);color:var(--text-primary);font-size:12px;"></select>
+                  <select id="picker-class" style="height:32px;padding:6px 8px;border:1px solid var(--dv-rail-border);border-radius:10px;background:var(--dv-item-bg);color:var(--text-primary);font-size:12px;"></select>
+                </div>
+                <div id="picker-results" style="margin-top:10px; max-height:420px; overflow:auto;"></div>
+              </div>`;
+
+            const renderList = (items: any[]) => {
+              const cont = Swal.getHtmlContainer();
+              const list = cont?.querySelector('#picker-results') as HTMLElement | null;
+              if (!list) return;
+              if (!items.length) { list.innerHTML = `<div style="font-size:12px;color:var(--text-secondary);">No results found.</div>`; return; }
+              list.innerHTML = items.map((d: any) => {
+                const src = (d.sources || []);
+                const cert = src[0]?.certification || '';
+                const classes = (src[0]?.classes || []).join(', ');
+                return `
+                  <div class="wm-result-item" data-id="${d._id}" style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--dv-rail-border);border-radius:14px;background:var(--dv-item-bg);">
+                    <span class="wm-result-icon" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:var(--dv-item-hover-bg);font-size:16px;">${typeOfUsage === 'JOB_DESCRIPTION_EVALUATION' ? '🗂️' : '📊'}</span>
+                    <div style="flex:1;">
+                      <div class="wm-result-title" style="font-size:14px;font-weight:700;color:var(--text-primary);">${d.title || d.name || 'Untitled'}</div>
+                      <div class="wm-result-sub" style="font-size:12px;color:var(--text-secondary);">${[cert, classes].filter(Boolean).join(' • ')}</div>
+                    </div>
+                    <button class="open-btn" data-id="${d._id}" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid var(--dv-rail-border);border-radius:12px;background:var(--dv-item-bg);cursor:pointer;"><span>👁</span><span>View</span></button>
+                  </div>`;
+              }).join('');
+              list.querySelectorAll('.open-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                  const id = (btn as HTMLElement).getAttribute('data-id');
+                  if (id) {
+                    this.shareDataService.setDashboardId(id);
+                    this.router.navigate(['/dashboard']);
+                    Swal.close();
+                  }
+                });
+              });
+            };
+
+            Swal.fire({
+              html: pickerHtml,
+              width: 720,
+              padding: '0',
+              showConfirmButton: false,
+              showCloseButton: true,
+              background: 'var(--dv-item-bg)',
+              backdrop: this.currentTheme === 'theme-dark' ? 'rgba(2,6,23,0.72)' : 'rgba(17,24,39,0.28)',
+              didOpen: () => {
+                renderList(all);
+                const input = Swal.getHtmlContainer()?.querySelector('#picker-search') as HTMLInputElement | null;
+                const titleSel = Swal.getHtmlContainer()?.querySelector('#picker-title') as HTMLSelectElement | null;
+                const classSel = Swal.getHtmlContainer()?.querySelector('#picker-class') as HTMLSelectElement | null;
+                const unique = (arr: string[]) => Array.from(new Set(arr.filter(Boolean)));
+                const titles = unique(all.flatMap((d: any) => (d.sources || []).map((s: any) => s.certification || '')));
+                const classesList = unique(all.flatMap((d: any) => (d.sources || []).flatMap((s: any) => (s.classes || []))));
+                if (titleSel) {
+                  titleSel.innerHTML = ['All titles', ...titles].map(t => `<option value="${t}">${t}</option>`).join('');
+                }
+                if (classSel) {
+                  classSel.innerHTML = ['All classes', ...classesList].map(c => `<option value="${c}">${c}</option>`).join('');
+                }
+                let selectedTitle = '';
+                let selectedClass = '';
+                const applyFilter = () => {
+                  const q = (input?.value || '').toLowerCase().trim();
+                  const filtered = all.filter((d: any) => {
+                    const name = (d.name || '').toLowerCase();
+                    const title = (d.title || '').toLowerCase();
+                    const srcs = (d.sources || []);
+                    const certs = srcs.map((s: any) => (s.certification || '').toLowerCase());
+                    const cls = srcs.flatMap((s: any) => (s.classes || []).map((c: any) => (c || '').toLowerCase()));
+                    const matchSearch = !q || name.includes(q) || title.includes(q) || certs.some((c: any) => c.includes(q)) || cls.some((c: any) => c.includes(q));
+                    const matchTitle = !selectedTitle || selectedTitle === 'All titles' || certs.includes(selectedTitle.toLowerCase());
+                    const matchClass = !selectedClass || selectedClass === 'All classes' || cls.includes(selectedClass.toLowerCase());
+                    return matchSearch && matchTitle && matchClass;
+                  });
+                  renderList(filtered);
+                };
+                let t: any = null;
+                input?.addEventListener('input', () => { clearTimeout(t); t = setTimeout(applyFilter, 200); });
+                titleSel?.addEventListener('change', () => { selectedTitle = titleSel.value || ''; applyFilter(); });
+                classSel?.addEventListener('change', () => { selectedClass = classSel.value || ''; applyFilter(); });
+              }
+            });
+          } catch {}
+        };
+
         container.querySelector('#action-create-es')?.addEventListener('click', () => { this.router.navigate(['/admin/dashboard-create']); Swal.close(); });
         container.querySelector('#action-create-jd')?.addEventListener('click', () => { this.router.navigate(['/admin/job-description-create']); Swal.close(); });
-        container.querySelector('#action-view-es')?.addEventListener('click', () => goDashboard(lastId));
-        container.querySelector('#action-view-jd')?.addEventListener('click', () => goDashboard(lastId));
+        container.querySelector('#action-view-es')?.addEventListener('click', () => openDashboardPicker('EMPLOYABILITY_SURVEY'));
+        container.querySelector('#action-view-jd')?.addEventListener('click', () => openDashboardPicker('JOB_DESCRIPTION_EVALUATION'));
       },
       willClose: () => {
         try { (Swal as any).closeTimer && clearTimeout((Swal as any).closeTimer); } catch {}
