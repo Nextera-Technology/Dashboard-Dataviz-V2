@@ -511,7 +511,7 @@ export class UserManagementComponent implements OnInit, AfterViewInit {
     const createData: CreateUserData = {
       name: data.name,
       email: data.email,
-      password: 'default123', // In real app, generate or ask for password
+      password: data.password, // In real app, generate or ask for password
       role: data.role
     };
 
