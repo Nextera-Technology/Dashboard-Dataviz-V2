@@ -173,10 +173,10 @@
                 <mat-icon>home</mat-icon>
                 <span>Home</span>
               </a>
-              <!-- <button mat-raised-button class="export-pdf-btn" (click)="exportFullDashboardToPDF({ exportType: 'no_school', selectedSchools: [] })" [disabled]="!dashboard || exportLoading" [matTooltip]="'Export full dashboard to PDF'">
+              <button mat-raised-button class="export-pdf-btn" (click)="exportFullDashboardToPDF({ exportType: 'no_school', selectedSchools: [] })" [disabled]="!dashboard || exportLoading" [matTooltip]="'Export full dashboard to PDF'">
                 <mat-icon>library_books</mat-icon>
                 <span>{{ 'shared.export.pdf.button' | translate }}</span>
-              </button> -->
+              </button>
               <button mat-icon-button (click)="toggleTheme()" class="theme-toggle" [matTooltip]="currentTheme === 'theme-dark' ? 'Light mode' : 'Dark mode'">
                 <mat-icon>{{ currentTheme === 'theme-dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
               </button>
