@@ -593,10 +593,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  async exportFullDashboardToPDF(opts?: { exportType: 'all_schools' | 'selected_school' | 'no_school'; selectedSchools: string[] }): Promise<void> {
+  async exportFullDashboardToPDF(opts?: { exportType: 'all_schools' | 'selected_school' | 'no_school'; selectedSchools: string[]; useServerExport?: boolean }): Promise<void> {
     if (!this.dashboard || !this.dashboardId) return;
     
-    // Check if another PDF export is already in progress
     if (this.pdfExportState.isExporting) {
       const currentWidget = this.pdfExportState.currentWidgetTitle || this.pdfExportState.currentWidgetId || 'another widget';
       await Swal.fire({
@@ -606,6 +605,63 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           .replace('{{widget}}', currentWidget),
         confirmButtonText: 'OK'
       });
+      return;
+    }
+
+    if (opts?.useServerExport) {
+      this.exportLoading = true;
+      this.pdfExportState.startExport(this.dashboardId, this.dashboard.title || this.dashboard.name || 'Dashboard');
+      try {
+        const raw = (this.dashboard as any)?.currentSchools || '';
+        const trimmed = typeof raw === 'string' ? raw.trim() : '';
+        let specificSchools: string[] = [];
+        if (trimmed && trimmed.toUpperCase() !== 'ALL') {
+          specificSchools = trimmed.split(',').map(s => s.trim()).filter(Boolean);
+        }
+
+        const schoolFilters: string[] = [];
+
+        const result = await this.dashboardRepo.exportDashboardWithSchoolsPdf(
+          this.dashboardId!,
+          schoolFilters,
+          false,
+          specificSchools
+        );
+
+        const dashboardPdf = result?.dashboardPdf;
+        const filename = dashboardPdf?.filename || '';
+        let url = dashboardPdf?.url || '';
+        if (!url && filename) {
+          const base = environment.fileUrl || '';
+          url = filename.startsWith('http') ? filename : `${base}${filename}`;
+        }
+
+        if (!url) {
+          const eTitle = this.translation.translate('shared.export.pdf.error_title') || 'Export Failed';
+          const eMsg = this.translation.translate('shared.export.pdf.error_message') || 'Failed to generate PDF. Please try again later.';
+          await this.notifier.error(eTitle, eMsg);
+          return;
+        }
+
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.target = '_blank';
+        anchor.download = filename || `dashboard-${this.dashboardId}.pdf`;
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+
+        const sTitle = this.translation.translate('shared.export.pdf.success_title') || 'PDF Export Successful';
+        const sMsg = this.translation.translate('shared.export.pdf.success_message') || 'Your PDF has been generated and downloaded.';
+        await this.notifier.success(sTitle, sMsg);
+      } catch (e) {
+        const eTitle = this.translation.translate('shared.export.pdf.error_title') || 'Export Failed';
+        const eMsg = this.translation.translate('shared.export.pdf.error_message') || 'Failed to generate PDF. Please try again later.';
+        await this.notifier.error(eTitle, eMsg);
+      } finally {
+        this.exportLoading = false;
+        this.pdfExportState.endExport();
+      }
       return;
     }
 

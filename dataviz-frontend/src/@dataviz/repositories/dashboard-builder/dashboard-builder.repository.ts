@@ -742,7 +742,12 @@ export class DashboardBuilderRepository {
    * @param {string[]} schoolFilters - Array of school names.
    * @returns {Promise<any>} - The export result.
    */
-  async exportDashboardWithSchoolsPdf(dashboardId: string, schoolFilters: string[]) {
+  async exportDashboardWithSchoolsPdf(
+    dashboardId: string,
+    schoolFilters: string[],
+    isBackground: boolean,
+    specificSchools: string[]
+  ) {
     if (!dashboardId || !schoolFilters) {
       throw new Error("Dashboard ID and school filters are required");
     }
@@ -750,7 +755,8 @@ export class DashboardBuilderRepository {
     const variables = { 
       dashboardId, 
       schoolFilters,
-      lang: this.translation.getCurrentLanguage().toUpperCase() === 'FR' ? 'FR' : 'EN'
+      isBackground,
+      specificSchools
     };
 
     try {

@@ -123,12 +123,23 @@ export const gqlDuplicateDashboardFromOther = gql`
 `;
 
 export const gqlExportDashboardWithSchoolsPdf = gql`
-  mutation exportDashboardWithSchoolsPdf($dashboardId: String!, $schoolFilters: [String!]!, $lang: String!) {
-    exportDashboardWithSchoolsPdf(dashboardId: $dashboardId, schoolFilters: $schoolFilters, lang: $lang) {
+  mutation exportDashboardWithSchoolsPdf(
+    $dashboardId: String!
+    $schoolFilters: [String!]!
+    $isBackground: Boolean
+    $specificSchools: [String!]
+  ) {
+    exportDashboardWithSchoolsPdf(
+      dashboardId: $dashboardId
+      schoolFilters: $schoolFilters
+      isBackground: $isBackground
+      specificSchools: $specificSchools
+    ) {
       dashboardPdf {
         url
         filename
         format
+        s3Key
       }
       schoolPdfs {
         schoolName

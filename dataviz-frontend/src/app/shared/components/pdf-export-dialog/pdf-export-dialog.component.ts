@@ -459,7 +459,9 @@ export class PdfExportDialogComponent implements OnInit {
         // Call backend API
         const result = await this.dashboardRepository.exportDashboardWithSchoolsPdf(
           this.data.dashboardId,
-          allSchools
+          allSchools,
+          true,
+          []
         );
 
         // Calculate estimation
