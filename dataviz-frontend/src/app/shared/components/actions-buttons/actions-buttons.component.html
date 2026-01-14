@@ -16,7 +16,7 @@
         <button class="export-item" (click)="onExport('csv')">{{ ('shared.export.csv' | translate) || 'Export CSV' }}</button>
         <button class="export-item" (click)="onExport('json')">{{ ('shared.export.json' | translate) || 'Export JSON' }}</button>
         <button class="export-item" (click)="onExport('excel')">{{ ('shared.export.excel' | translate) || 'Export Excel' }}</button>
-        <button class="export-item" (click)="onExport('pdf')">{{ ('shared.export.pdf.button' | translate) || 'Export PDF' }}</button>
+        <!-- <button class="export-item" (click)="onExport('pdf')">{{ ('shared.export.pdf.button' | translate) || 'Export PDF' }}</button> -->
       </div>
 
       <div class="export-loading-overlay" *ngIf="exportLoading">
