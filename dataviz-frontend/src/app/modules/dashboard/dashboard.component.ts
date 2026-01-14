@@ -2063,7 +2063,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         if (filtered) {
           this.applyDashboardData(filtered);
           await new Promise(res => setTimeout(res, 350));
-          await this.exportFullDashboardToPDF({ exportType: 'no_school', selectedSchools: [] });
+          await this.exportFullDashboardToPDF({ exportType: 'no_school', selectedSchools: [], useServerExport: true });
         }
       } catch {}
     }
