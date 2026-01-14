@@ -617,11 +617,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.pdfExportState.startExport(this.dashboardId, this.dashboard.title || this.dashboard.name || 'Dashboard');
       this.showExportHud(widgetsCount);
       try {
-        const raw = (this.dashboard as any)?.currentSchools || '';
-        const trimmed = typeof raw === 'string' ? raw.trim() : '';
         let specificSchools: string[] = [];
-        if (trimmed && trimmed.toUpperCase() !== 'ALL') {
-          specificSchools = trimmed.split(',').map(s => s.trim()).filter(Boolean);
+        if (opts && opts.exportType === 'selected_school' && Array.isArray(opts.selectedSchools) && opts.selectedSchools.length > 0) {
+          specificSchools = opts.selectedSchools;
+        } else {
+          const raw = (this.dashboard as any)?.currentSchools || '';
+          const trimmed = typeof raw === 'string' ? raw.trim() : '';
+          if (trimmed && trimmed.toUpperCase() !== 'ALL') {
+            specificSchools = trimmed.split(',').map(s => s.trim()).filter(Boolean);
+          }
         }
 
         const schoolFilters: string[] = [];
@@ -2043,7 +2047,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         if (filtered) {
           this.applyDashboardData(filtered);
           await new Promise(res => setTimeout(res, 350));
-          await this.exportFullDashboardToPDF({ exportType: 'no_school', selectedSchools: [] });
+          await this.exportFullDashboardToPDF({ exportType: 'selected_school', selectedSchools: schools, useServerExport: true });
         }
       } catch {}
     } else if (opts.exportType === 'all_schools') {
