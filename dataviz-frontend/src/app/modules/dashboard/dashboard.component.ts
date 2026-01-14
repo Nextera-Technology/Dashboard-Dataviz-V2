@@ -609,8 +609,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (opts?.useServerExport) {
+      const allWidgets: any[] = (this.dashboard.sectionIds || [])
+        .flatMap((section: any) => (section.widgetIds || []))
+        .filter((w: any) => w && (w.visible !== false));
+      const widgetsCount = allWidgets.length || 1;
       this.exportLoading = true;
       this.pdfExportState.startExport(this.dashboardId, this.dashboard.title || this.dashboard.name || 'Dashboard');
+      this.showExportHud(widgetsCount);
       try {
         const raw = (this.dashboard as any)?.currentSchools || '';
         const trimmed = typeof raw === 'string' ? raw.trim() : '';
@@ -651,6 +656,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         anchor.click();
         document.body.removeChild(anchor);
 
+        this.updateExportHud(widgetsCount, widgetsCount, widgetsCount);
+
         const sTitle = this.translation.translate('shared.export.pdf.success_title') || 'PDF Export Successful';
         const sMsg = this.translation.translate('shared.export.pdf.success_message') || 'Your PDF has been generated and downloaded.';
         await this.notifier.success(sTitle, sMsg);
@@ -659,6 +666,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         const eMsg = this.translation.translate('shared.export.pdf.error_message') || 'Failed to generate PDF. Please try again later.';
         await this.notifier.error(eTitle, eMsg);
       } finally {
+        this.hideExportHud();
         this.exportLoading = false;
         this.pdfExportState.endExport();
       }
@@ -2139,7 +2147,20 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private exportHudDragStartY = 0;
   private exportHudStartLeft = 0;
   private exportHudStartTop = 0;
+  private exportHudTimer: any = null;
+  private exportHudSimulatedProcessed = 0;
+  private exportHudActualProcessed = 0;
+  private exportHudActualSucceeded = 0;
+  private exportHudTotal = 0;
   private showExportHud(total: number): void {
+    if (this.exportHudTimer) {
+      clearInterval(this.exportHudTimer);
+      this.exportHudTimer = null;
+    }
+    this.exportHudTotal = total;
+    this.exportHudSimulatedProcessed = 0;
+    this.exportHudActualProcessed = 0;
+    this.exportHudActualSucceeded = 0;
     const existing = document.getElementById('pdf-export-hud');
     if (existing) existing.remove();
     const el = document.createElement('div');
@@ -2171,6 +2192,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     `;
     document.body.appendChild(el);
     this.exportHudEl = el;
+    this.renderExportHud();
     setTimeout(() => {
       const rect = el.getBoundingClientRect();
       const left = window.innerWidth - rect.width - 12;
@@ -2202,14 +2224,44 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       document.removeEventListener('mouseup', up);
     };
     el.addEventListener('mousedown', down);
+    if (total > 0) {
+      this.exportHudTimer = window.setInterval(() => {
+        if (!this.exportHudEl) {
+          clearInterval(this.exportHudTimer);
+          this.exportHudTimer = null;
+          return;
+        }
+        if (this.exportHudSimulatedProcessed < this.exportHudTotal) {
+          this.exportHudSimulatedProcessed++;
+          this.renderExportHud();
+        } else {
+          clearInterval(this.exportHudTimer);
+          this.exportHudTimer = null;
+        }
+      }, 3000);
+    }
   }
-  private updateExportHud(processed: number, total: number, succeeded: number): void {
+  private renderExportHud(): void {
     const el = this.exportHudEl;
     if (!el) return;
     const p = el.querySelector('#pdf-hud-progress');
-    if (p) p.textContent = `${processed}/${total} widgets • ${succeeded} ok`;
+    if (!p) return;
+    const total = this.exportHudTotal || 0;
+    const processed = Math.max(this.exportHudSimulatedProcessed, this.exportHudActualProcessed);
+    const succeeded = this.exportHudActualSucceeded || 0;
+    (p as HTMLElement).textContent = `${processed}/${total} widgets • ${succeeded} ok`;
+  }
+  private updateExportHud(processed: number, total: number, succeeded: number): void {
+    if (total) this.exportHudTotal = total;
+    this.exportHudActualProcessed = processed;
+    this.exportHudActualSucceeded = succeeded;
+    this.renderExportHud();
   }
   private hideExportHud(): void {
+    if (this.exportHudTimer) {
+      clearInterval(this.exportHudTimer);
+      this.exportHudTimer = null;
+    }
     if (this.exportHudEl) {
       this.exportHudEl.remove();
       this.exportHudEl = null;
